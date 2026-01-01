@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>술보다 대마 음료가 건강에 좋을까요?</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700;800&family=IBM+Plex+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* 기본 폰트 설정 */
+        body { font-family: 'Nanum Gothic', sans-serif; }
+        /* 어휘 목록 사이드바 폰트 */
+        .vocab-sidebar { font-family: 'IBM Plex Sans KR', sans-serif; }
+        /* 어휘 팝업 스타일 */
+        .vocab-popup { font-family: 'Nanum Gothic', sans-serif; z-index: 50; max-width: 320px; white-space: normal; }
+        /* 호버 툴팁 스타일 */
+        .hover-tooltip { position: fixed; z-index: 9999; background: white; border: 2px solid #22c55e; border-radius: 8px; padding: 12px; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); max-width: 320px; font-family: 'Nanum Gothic', sans-serif; animation: fadeIn 0.15s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+        /* 일반 어휘 강조 스타일 */
+        .highlight-general { font-weight: 600; color: #374151; cursor: pointer; position: relative; transition: background-color 0.2s; }
+        /* 마우스 호버 또는 활성화 시 스타일 */
+        .highlight-general:hover, .active-highlight { background-color: #dcfce7; border-radius: 3px; }
+        .script-highlight { background-color: #e0f2fe; border-radius: 8px; }
+        .vocab-highlight { background-color: #dcfce7; border: 2px solid #22c55e; border-radius: 8px; }
+        /* --- 말풍선 스타일 --- */
+        .bubble-tail-left::after { content: ""; position: absolute; bottom: 6px; left: -8px; width: 0px; height: 0px; border-top: 8px solid transparent; border-bottom: 8px solid transparent; border-right: 8px solid #dcfce7; transition: border-color 0.3s; }
+        .bubble-tail-right::after { content: ""; position: absolute; bottom: 6px; right: -8px; width: 0px; height: 0px; border-top: 8px solid transparent; border-bottom: 8px solid transparent; border-left: 8px solid white; transition: border-color 0.3s; }
+        /* Specific tail colors */
+        .bubble-sbs.bubble-tail-left::after { border-right-color: #f9fafb; } /* gray-50 */
+        .bubble-other.bubble-tail-right::after { border-left-color: white; }
+        /* Active bubble tail style */
+        .bubble-active.bubble-tail-left::after { border-right-color: #fef9c3; } /* yellow-100 */
+        .bubble-active.bubble-tail-right::after { border-left-color: #fef9c3; } /* yellow-100 */
+        /* --- 디바이스별 레이아웃 스타일 --- */
+        [data-layout-mode="split"] .video-materials-content { display: flex; flex-direction: row; gap: 1.5rem; }
+        [data-layout-mode="split"] .video-wrapper { width: 60%; position: sticky; top: 1rem; align-self: flex-start; }
+        [data-layout-mode="split"] .script-wrapper { width: 40%; max-height: calc(100vh - 4rem); overflow-y: auto; }
+        [data-layout-mode="split"] .vocab-sidebar, [data-layout-mode="mobile"] .vocab-sidebar { display: none; }
+        [data-layout-mode="mobile"] .video-materials-content, [data-layout-mode="mobile"] .video-materials-content > div { display: flex; flex-direction: column; }
+        /* 인쇄 전용 스타일 */
+        .print-only { display: none; }
+        @media print {
+            @page { size: A4; margin: 0.75cm 1cm; }
+            .no-print { display: none !important; }
+            .print-only { display: inline-block !important; }
+            body, html { background: white !important; font-size: 9pt; }
+            .mx-auto { max-width: none !important; padding: 0 !important; margin: 0 !important; border: none !important; box-shadow: none !important; }
+            body > #root > div { padding: 0 !important; }
+            * { box-shadow: none !important; border-color: transparent !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            p, h1, h2, h3, h4, span, li { color: black !important; }
+            p, li { line-height: 1.5; }
+            header.text-center { margin-bottom: 1rem !important; }
+            .pt-10 { padding-top: 1rem !important; }
+            .mb-8 { margin-bottom: 0.4pt !important; }
+            h1, h2 { font-size: 12pt !important; margin-bottom: 15px; }
+            h3 { font-size: 12pt !important; margin-bottom: 10px; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div id="root"></div>
+    <script type="text/babel">
+        /**
+         * @typedef {Object} ScriptLine
+         * @property {string} id - Unique identifier (e.g., 's1')
+         * @property {string} speaker - Speaker name
+         * @property {string} kor - Korean text
+         * @property {string} eng - English translation
+         * @property {[number, number]} [time] - Optional [start, end] timestamps
+         */
+
+        // --- 아이콘 컴포넌트 ---
+        const Icon = React.memo(({ children, className = 'w-[1.5em] h-[1.5em]' }) => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>{children}</svg> ));
+        const Video = ({ className }) => <Icon className={className}><path d="m22 8-6 4 6 4V8Z"></path><rect width="14" height="12" x="2" y="6" rx="2" ry="2"></rect></Icon>;
+        const BookOpen = ({ className }) => <Icon className={className}><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></Icon>;
+        const MessageSquare = ({ className }) => <Icon className={className}><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></Icon>;
+        const ThumbsUp = ({ className }) => <Icon className={className}><path d="M7 10v12"></path><path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2h0a2 2 0 0 1 3 1.88V5Z"></path></Icon>;
+        const List = ({ className }) => <Icon className={className}><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></Icon>;
+        const Spinner = ({ className = 'w-5 h-5' }) => ( <svg className={`animate-spin ${className}`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"> <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle> <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path> </svg> );
+
+        // --- [동영상 자료] 탭 관련 컴포넌트 ---
+        const HighlightedText = React.memo(({ text, highlightData, onWordHover, onWordLeave, onWordClick, lineId, activeWordId }) => {
+            if (!text || !highlightData?.regex) return text; // Check if regex exists
+            const { regex, variantMap } = highlightData;
+            const parts = text.split(regex);
+
+            return (<>{parts.map((part, index) => {
+                // 빈 part일 경우 key를 가진 Fragment 반환
+                if (!part) return <React.Fragment key={`empty-${lineId}-${index}`} />;
+                // Check if the part is a captured variant (odd index)
+                if (index % 2 === 1) {
+                    const trimmedPart = part.trim();
+                    // Use variantMap to find the base term
+                    const baseForm = variantMap.get(trimmedPart);
+
+                    if (baseForm) {
+                            const uniqueWordId = `${lineId}-${index}-${baseForm}`; // Use baseForm for ID
+                            const classes = ['highlight-general', 'font-bold', activeWordId === uniqueWordId ? 'active-highlight' : ''].join(' ');
+                            return <span
+                                // 더 안정적인 key 사용
+                                key={`highlight-${lineId}-${index}-${baseForm}`}
+                                className={classes}
+                                onMouseEnter={(e) => onWordHover(e, baseForm, lineId, index)} // Pass baseForm
+                                onMouseLeave={onWordLeave}
+                                onClick={(e) => onWordClick(e, baseForm, lineId, index)} // Add onClick handler
+                            >{part}</span>; // Display the original matched part
+                    }
+                }
+                // 일반 텍스트 부분도 key를 가진 Fragment로 감싸기
+                return <React.Fragment key={`text-${lineId}-${index}`}>{part}</React.Fragment>;
+            })}</>);
+         });
+
+        const HoverTooltip = React.memo(({ data, position, showTranslation }) => {
+            if (!data || !position) return null;
+            return (
+                <div className="hover-tooltip" style={{ left: `${position.x}px`, top: `${position.y}px` }}>
+                    <p className="font-bold text-lg text-green-700 mb-2">{data.term}</p>
+                    <p className="text-gray-700 text-base">{data.mainDef}</p>
+                    {/* Display English translation only if showTranslation is true */}
+                    {showTranslation && data.translations?.en?.main && <p className="text-gray-500 text-sm italic mt-1">{data.translations.en.main}</p>}
+                    {data.subDefs && data.subDefs.length > 0 && (
+                        <div className="mt-3 pt-3 border-t border-gray-200">
+                            <ul className="space-y-1">
+                                {data.subDefs.map((sub, i) => (
+                                    <li key={i} className="text-sm">
+                                        <span className="font-semibold text-gray-600">{sub.subTerm}:</span> <span className="text-gray-600">{sub.subDef}</span>
+                                        {/* Display English translation for sub-definition only if showTranslation is true */}
+                                        {showTranslation && data.translations?.en?.subs?.[i]?.def && <p className="text-gray-500 text-xs italic pl-2">{data.translations.en.subs[i].def}</p>}
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
+                </div>
+            );
+        });
+
+        const VocabItem = React.memo(React.forwardRef(({ item, isHighlighted }, ref) => {
+            const { useState } = React;
+            const [showExamples, setShowExamples] = useState(false);
+            const [showTranslation, setShowTranslation] = useState(false); // State for translation visibility
+
+            return (
+                <div ref={ref} className={`p-4 rounded-lg border-b ${isHighlighted ? 'vocab-highlight' : 'bg-white'}`}>
+                    <div className="flex justify-between items-start mb-1">
+                        <p className="font-bold text-lg text-green-700">{item.term}</p>
+                        {/* Translation Button */}
+                        {item.translations?.en && (
+                             <button
+                                 onClick={() => setShowTranslation(!showTranslation)}
+                                 className="text-xs text-gray-500 hover:text-gray-800 font-semibold py-1 px-2 bg-gray-100 hover:bg-gray-200 rounded-md transition-colors ml-2 flex-shrink-0 no-print"
+                             >
+                                 {showTranslation ? '번역 숨기기' : '번역 (Eng)'}
+                             </button>
+                        )}
+                    </div>
+                    {/* Main Definition & Translation */}
+                     <p className="text-gray-700">{item.mainDef}</p>
+                     {showTranslation && item.translations?.en?.main && (
+                         <p className="text-gray-500 text-sm italic mt-1">{item.translations.en.main}</p>
+                     )}
+
+                    {/* Sub Definitions & Translations */}
+                    {item.subDefs && item.subDefs.length > 0 && (
+                        <div className="pl-4 mt-3 pt-3 border-l-2 border-t">
+                            {item.subDefs.map((sub, index) => (
+                                <div key={index} className="text-sm mt-2">
+                                    <p className="font-semibold">{sub.subTerm}</p>
+                                    <p className="text-gray-600 pl-2">{sub.subDef}</p>
+                                    {showTranslation && item.translations?.en?.subs?.[index]?.def && (
+                                         <p className="text-gray-500 text-sm italic pl-2 mt-1">{item.translations.en.subs[index].def}</p>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    )}
+
+                    {/* Sentence Examples (remains the same) */}
+                    {item.examples && item.examples.length > 0 && (
+                        <div className="mt-3 no-print">
+                            <button onClick={() => setShowExamples(!showExamples)} className="text-xs bg-green-200 hover:bg-green-300 text-gray-600 py-1 px-2 rounded-md">
+                                {showExamples ? 'Close Examples' : 'Sentence Examples'}
+                            </button>
+                            {showExamples && (
+                                <div className="mt-3 p-3 bg-green-50 rounded-lg space-y-3 text-sm">
+                                    {item.examples.map((ex, index) => (
+                                        <div key={index}>
+                                            <p className="font-medium text-gray-800">{ex.kor}</p>
+                                            <p className="text-gray-400 hover:text-gray-700 transition-colors">{ex.eng}</p>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    )}
+                </div>
+            );
+           }));
+
+        const VideoMaterialsTab = ({scriptContent, vocabAndGrammarList, highlightData, vocabMap, layoutMode}) => {
+            const { useState, useRef, useEffect, useCallback, useMemo } = React;
+            const [activeWordId, setActiveWordId] = useState(null);
+            const [player, setPlayer] = useState(null);
+            const [activeScriptLine, setActiveScriptLine] = useState(null);
+            const [isSyncEnabled, setIsSyncEnabled] = useState(true);
+            const [hoverPopupData, setHoverPopupData] = useState(null);
+            const [highlightedVocab, setHighlightedVocab] = useState(null);
+            const [translationsVisible, setTranslationsVisible] = useState({});
+            const [playerHeight, setPlayerHeight] = useState(0);
+            const [isVocabSidebarVisible, setIsVocabSidebarVisible] = useState(true);
+            const [isPortrait, setIsPortrait] = useState(window.matchMedia("(orientation: portrait)").matches);
+
+            const scriptLineRefs = useRef({});
+            const vocabRefs = useRef({});
+            const intervalRef = useRef(); // 스크립트 동기화용
+            const playerContainerRef = useRef(null);
+            const hoverTimeoutRef = useRef(null);
+            const scriptWrapperRef = useRef(null);
+            const activeScriptLineRef = useRef(activeScriptLine);
+            activeScriptLineRef.current = activeScriptLine;
+
+            const clipTimeoutRef = useRef(null);
+            
+            // --- ▼▼▼ 새로운 플레이어 초기화 로직 ▼▼▼ ---
+            const playerRef = useRef(null);
+            const isPlayerInitialized = useRef(false);
+            const initAttempts = useRef(0);
+            const maxAttempts = 10; // 최대 재시도 횟수
+
+            // 플레이어 초기화 함수
+            const initializePlayer = useCallback(() => {
+                // 중복 초기화 방지
+                if (isPlayerInitialized.current) {
+                    console.log('✅ Player already initialized');
+                    return true;
+                }
+
+                // 최대 시도 횟수 초과 확인
+                if (initAttempts.current >= maxAttempts) {
+                    console.error('❌ Max initialization attempts reached');
+                    return false;
+                }
+
+                initAttempts.current++;
+                console.log(`🔄 Initialization attempt ${initAttempts.current}/${maxAttempts}`);
+
+                // ===== 핵심: 두 조건 동시 체크 =====
+                // 조건 1: YouTube API 로딩 완료 확인
+                if (!window.YT || !window.YT.Player) {
+                    console.warn('⏳ YouTube API not ready yet');
+                    return false;
+                }
+
+                // 조건 2: DOM 요소 준비 확인
+                const playerElement = document.getElementById('youtube-player');
+                if (!playerElement) {
+                    console.warn('⏳ DOM element not ready yet');
+                    return false;
+                }
+
+                // ===== 두 조건 모두 만족 시 플레이어 생성 =====
+                try {
+                    console.log('🎬 Creating YouTube Player...');
+                    
+                    const newPlayer = new window.YT.Player('youtube-player', {
+                        height: '100%',
+                        width: '100%',
+                        videoId: 'sEit34nId58',
+                        playerVars: {
+                            'origin': window.location.protocol + "//" + window.location.hostname,
+                            'enablejsapi': 1, // JS API 활성화
+                            'rel': 0 // 관련 동영상 표시 안 함
+                        },
+                        events: {
+                            'onReady': (event) => {
+                                console.log('✅ Player ready!');
+                                setPlayer(event.target);
+                                playerRef.current = event.target;
+                            },
+                            'onError': (event) => {
+                                console.error('❌ Player error:', event.data);
+                                isPlayerInitialized.current = false;
+                                initAttempts.current = 0;
+                                setPlayer(null);
+                            }
+                        }
+                    });
+
+                    isPlayerInitialized.current = true;
+                    return true;
+
+                } catch (error) {
+                    console.error('❌ Failed to create player:', error);
+                    isPlayerInitialized.current = false;
+                    return false;
+                }
+            }, []);
+
+            // ===== React 생명주기와 동기화 =====
+            useEffect(() => {
+                let intervalId = null;
+                let timeoutId = null;
+
+                const tryInitialize = () => {
+                    const success = initializePlayer();
+                    
+                    if (success) {
+                        // 성공하면 인터벌 종료
+                        if (intervalId) {
+                            clearInterval(intervalId);
+                            intervalId = null;
+                        }
+                        if (timeoutId) {
+                            clearTimeout(timeoutId);
+                            timeoutId = null;
+                        }
+                    }
+                };
+
+                // 방법 1: API가 이미 로드되어 있으면 즉시 시도
+                if (window.YT && window.YT.Player) {
+                    // DOM이 준비될 시간을 주기 위해 약간 지연
+                    timeoutId = setTimeout(tryInitialize, 100);
+                } else {
+                    // 방법 2: API 로드 완료 시 콜백 등록 (기존 콜백 보존)
+                    const existingCallback = window.onYouTubeIframeAPIReady;
+                    window.onYouTubeIframeAPIReady = () => {
+                        console.log('📡 YouTube API loaded via callback (preserving existing)');
+                        existingCallback?.();
+                        // DOM 준비를 위해 약간의 지연 후 초기화 시도
+                        if (!timeoutId) {
+                             timeoutId = setTimeout(tryInitialize, 100);
+                        }
+                    };
+                }
+
+                // 방법 3: 폴링 방식으로 주기적 재시도 (보험)
+                intervalId = setInterval(() => {
+                    if (!isPlayerInitialized.current && initAttempts.current < maxAttempts) {
+                        console.log('🔄 Polling check...');
+                        tryInitialize();
+                    } else if (isPlayerInitialized.current) {
+                        clearInterval(intervalId);
+                    }
+                }, 500);
+
+                // 클린업 함수
+                return () => {
+                    console.log('🧹 Cleaning up...');
+                    
+                    if (intervalId) clearInterval(intervalId);
+                    if (timeoutId) clearTimeout(timeoutId);
+
+                    // 클립 재생 타임아웃 클린업
+                    if (clipTimeoutRef.current) clearTimeout(clipTimeoutRef.current);
+                    
+                    // 플레이어 정리
+                    if (playerRef.current && playerRef.current.destroy) {
+                        try {
+                            playerRef.current.destroy();
+                            console.log('🗑️ Player destroyed');
+                        } catch (e) {
+                            console.error('Error destroying player:', e);
+                        }
+                    }
+                    
+                    isPlayerInitialized.current = false;
+                    initAttempts.current = 0;
+                    playerRef.current = null;
+                };
+            }, [initializePlayer]);
+            // --- ▲▲▲ 새로운 플레이어 초기화 로직 ▲▲▲ ---
+
+
+            const timeIndex = useMemo(() => scriptContent.filter(line => line.time).map(line => ({ start: line.time[0], end: line.time[1], id: line.id })).sort((a, b) => a.start - b.start), [scriptContent]);
+
+            useEffect(() => { const mediaQuery = window.matchMedia("(orientation: portrait)"); const handleOrientationChange = (e) => setIsPortrait(e.matches); mediaQuery.addEventListener('change', handleOrientationChange); return () => mediaQuery.removeEventListener('change', handleOrientationChange); }, []);
+            
+            useEffect(() => { let ro; if (playerContainerRef.current) { const updateHeight = () => { if (playerContainerRef.current) { setPlayerHeight(playerContainerRef.current.offsetHeight); } }; ro = new ResizeObserver(updateHeight); ro.observe(playerContainerRef.current); updateHeight(); } return () => ro?.disconnect(); }, []);
+            
+            // Effect for syncing script highlight with player time
+            useEffect(() => {
+                if (player && isSyncEnabled) {
+                    intervalRef.current = setInterval(() => {
+                        if (player.getCurrentTime) {
+                            const currentTime = player.getCurrentTime();
+                            const currentLine = timeIndex.find(line => currentTime >= line.start && currentTime < line.end);
+                            const currentLineId = currentLine ? currentLine.id : null;
+                            if (activeScriptLineRef.current !== currentLineId) {
+                                setActiveScriptLine(currentLineId);
+                            }
+                        }
+                    }, 250);
+                } else {
+                    clearInterval(intervalRef.current);
+                }
+                return () => clearInterval(intervalRef.current);
+            }, [player, isSyncEnabled, timeIndex]); 
+            
+            // Effect for scrolling the script
+            useEffect(()=>{
+                if (!activeScriptLine || !isSyncEnabled) return;
+                const lineEl = scriptLineRefs.current[activeScriptLine];
+                if (!lineEl) return;
+                
+                const playerRect = playerContainerRef.current?.getBoundingClientRect();
+                const scroller = (layoutMode === 'split' && scriptWrapperRef.current) ? scriptWrapperRef.current : window;
+                
+                let targetY;
+                if (scroller === window && playerRect) { // Non-split mode
+                    targetY = playerRect.bottom + 20; // 20px buffer. This is the target for the line's TOP.
+                } else if (scroller !== window && playerRect) { // Split mode
+                    targetY = playerRect.top + playerRect.height / 2; // Target for the line's CENTER.
+                } else { // Fallback
+                    targetY = window.innerHeight / 2;
+                }
+    
+                const lineRect = lineEl.getBoundingClientRect();
+                let delta;
+
+                if (scroller === window) {
+                    delta = lineRect.top - targetY;
+                } else {
+                    const lineCenterY = lineRect.top + lineRect.height/2;
+                    delta = lineCenterY - targetY;
+                }
+                
+                if (Math.abs(delta) > 4) {
+                    if (scroller === window) {
+                        window.scrollBy({ top: delta, behavior: 'smooth' });
+                    } else {
+                        scroller.scrollBy({ top: delta, behavior: 'smooth' });
+                    }
+                }
+            }, [activeScriptLine, isSyncEnabled, layoutMode]);
+            
+            const handlePlayClipClick = (line) => {
+                // 기존 타임아웃이 있다면 취소
+                if (clipTimeoutRef.current) {
+                    clearTimeout(clipTimeoutRef.current);
+                }
+
+                if (player && player.seekTo && line.time) {
+                    const [start, end] = line.time;
+                    const duration = (end - start) * 1000;
+                    
+                    // 0초 이하거나 유효하지 않은 시간 값 방지
+                    if (duration <= 0) return; 
+
+                    player.seekTo(start);
+                    if(player.playVideo) player.playVideo();
+
+                    // (end - start) 시간 후에 비디오 정지
+                    clipTimeoutRef.current = setTimeout(() => {
+                        if (player.pauseVideo) {
+                             player.pauseVideo();
+                        }
+                    }, duration);
+                }
+            };
+
+            const handleWordHover = useCallback((e, baseForm) => {
+                 e.stopPropagation();
+                 if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+                 const wordData = vocabMap.get(baseForm);
+                 if (wordData) {
+                     const rect = e.target.getBoundingClientRect();
+                     let x = rect.left; let y = rect.bottom + 5;
+                     const tooltipWidth = 320; if (x + tooltipWidth > window.innerWidth) { x = rect.right - tooltipWidth; if (x < 0) x = 10; }
+                     const tooltipHeight = 200; if (y + tooltipHeight > window.innerHeight + window.scrollY) { y = rect.top - tooltipHeight - 5; }
+                     setHoverPopupData({ data: wordData, position: { x, y }, showTranslation: false }); // 호버 시 영어 번역 숨김
+                     setHighlightedVocab(wordData.term);
+                     const vocabElement = vocabRefs.current[wordData.term];
+                     if (vocabElement) { vocabElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }
+                 }
+            }, [vocabMap]);
+            
+            const handleWordClick = useCallback((e, baseForm) => {
+                 e.stopPropagation();
+                 if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+                 const wordData = vocabMap.get(baseForm);
+                 if (wordData) {
+                     const rect = e.target.getBoundingClientRect();
+                     let x = rect.left; let y = rect.bottom + 5;
+                     const tooltipWidth = 320; if (x + tooltipWidth > window.innerWidth) { x = rect.right - tooltipWidth; if (x < 0) x = 10; }
+                     const tooltipHeight = 200; if (y + tooltipHeight > window.innerHeight + window.scrollY) { y = rect.top - tooltipHeight - 5; }
+                     setHoverPopupData({ data: wordData, position: { x, y }, showTranslation: true }); // 클릭 시 영어 번역 표시
+                     setHighlightedVocab(wordData.term);
+                     const vocabElement = vocabRefs.current[wordData.term];
+                     if (vocabElement) { vocabElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }
+                 }
+            }, [vocabMap]);
+            
+            const handleWordLeave = useCallback(() => { hoverTimeoutRef.current = setTimeout(() => { setHoverPopupData(null); setHighlightedVocab(null); }, 200); }, []);
+            const toggleTranslation = (lineId) => setTranslationsVisible(prev => ({ ...prev, [lineId]: !prev[lineId] }));
+            const getSpeakerStyles = useCallback((speaker, isActive) => {
+                let alignmentClass = '';
+                let bgColorClass = '';
+                let tailClass = '';
+                let speakerTextColorClass = 'text-gray-800';
+                
+                if (speaker.startsWith('스브스뉴스')) {
+                    alignmentClass = 'items-start w-fit';
+                    bgColorClass = isActive ? 'bg-yellow-100' : 'bg-gray-50';
+                    tailClass = 'bubble-tail-left bubble-sbs';
+                    speakerTextColorClass = 'text-gray-900';
+                } else {
+                    alignmentClass = 'items-end self-end';
+                    bgColorClass = isActive ? 'bg-yellow-100' : 'bg-white';
+                    tailClass = 'bubble-tail-right bubble-other';
+                    speakerTextColorClass = 'text-gray-800';
+                }
+                return { alignmentClass, bgColorClass, tailClass, speakerTextColorClass };
+            }, []);
+
+            return (
+                <div className="video-materials-content">
+                    {hoverPopupData && <HoverTooltip data={hoverPopupData.data} position={hoverPopupData.position} showTranslation={hoverPopupData.showTranslation} />}
+                    <div ref={playerContainerRef} className="video-wrapper sticky z-40 bg-gray-50 py-4 no-print" style={{ top: (layoutMode === 'split') ? `calc(50vh - ${playerHeight / 2}px)` : '1rem' }}>
+                        <div className={`w-full rounded-xl shadow-lg border-4 border-white overflow-hidden transition-all duration-300 ease-in-out aspect-video`}>
+                            <div id="youtube-player" className="w-full h-full"></div>
+                        </div>
+                    </div>
+                    <div
+                        ref={scriptWrapperRef}
+                        className="script-wrapper flex flex-col md:flex-row gap-6"
+                    >
+                        <main className="flex-grow">
+                                <div className="space-y-6">
+                                    {scriptContent.map(line => {
+                                        const hasTranslation = !!line.eng;
+                                        const isActive = activeScriptLine === line.id;
+                                        const { alignmentClass, bgColorClass, tailClass, speakerTextColorClass } = getSpeakerStyles(line.speaker, isActive);
+                                        const bubbleBaseClasses = 'relative px-5 py-3 rounded-2xl shadow-md transition-colors duration-300';
+                                        const bubbleClasses = `${bubbleBaseClasses} ${bgColorClass} ${tailClass} ${isActive ? 'bubble-active' : ''}`;
+                                        const speakerNameClasses = `font-bold mb-1 ${speakerTextColorClass}`;
+
+                                        if (line.kor.startsWith('•')) {
+                                            return (
+                                                <div key={line.id} ref={el => scriptLineRefs.current[line.id] = el} className={`p-3 my-2 rounded-lg transition-colors duration-300 ${isActive ? 'bg-yellow-100' : ''}`}>
+                                                    <p className="whitespace-pre-wrap text-lg text-gray-800"><HighlightedText text={line.kor} highlightData={highlightData} onWordHover={handleWordHover} onWordLeave={handleWordLeave} onWordClick={handleWordClick} lineId={line.id} activeWordId={activeWordId} /></p>
+                                                    {translationsVisible[line.id] && hasTranslation && <p className="text-gray-600 text-base mt-2">{line.eng}</p>}
+                                                    <div className="flex items-center gap-2 mt-2 no-print">
+                                                        {hasTranslation && <button onClick={() => toggleTranslation(line.id)} className="text-xs text-gray-600 bg-gray-100 hover:bg-gray-200 px-2 py-1 rounded-md transition">{translationsVisible[line.id] ? '번역 숨기기' : '번역'}</button>}
+                                                    </div>
+                                                </div>
+                                            );
+                                        }
+
+                                        return (
+                                            <div key={line.id} ref={el => scriptLineRefs.current[line.id] = el} className="flex flex-col w-full">
+                                                <div className={`flex flex-col max-w-[100%] sm:max-w-[100%] ${alignmentClass}`}>
+                                                    <p className={`${speakerNameClasses} ${alignmentClass.includes('items-start') ? 'self-start' : 'self-end'}`}>{line.speaker}</p>
+                                                    <div className={bubbleClasses}>
+                                                        <p className="whitespace-pre-wrap text-lg text-gray-800"><HighlightedText text={line.kor} highlightData={highlightData} onWordHover={handleWordHover} onWordLeave={handleWordLeave} onWordClick={handleWordClick} lineId={line.id} activeWordId={activeWordId} /></p>
+                                                    </div>
+                                                    <div className={`w-full flex flex-col ${alignmentClass}`}>
+                                                        {translationsVisible[line.id] && hasTranslation && <p className="text-gray-500 text-base mt-2 px-2">{line.eng}</p>}
+                                                        <div className="flex items-center gap-2 mt-2 px-2 no-print">
+                                                            {line.time && <button onClick={() => handlePlayClipClick(line)} className="text-xs px-2 py-1 rounded-md transition bg-gray-100 hover:bg-gray-200 text-gray-600">재생</button>}
+                                                            {hasTranslation && <button onClick={() => toggleTranslation(line.id)} className="text-xs text-gray-600 bg-gray-100 hover:bg-gray-200 px-2 py-1 rounded-md transition">{translationsVisible[line.id] ? '번역 숨기기' : '번역'}</button>}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                        </main>
+                        <aside className="vocab-sidebar w-full md:w-auto flex-shrink-0 no-print">
+                            <div className="sticky z-30" style={{ top: `${playerHeight + 32}px` }}>
+                                <div className="flex flex-row items-stretch gap-2 mb-2" style={{ maxWidth: '7cm' }}>
+                                    <label htmlFor="sync-toggle" className="flex-1 flex items-center justify-between cursor-pointer bg-white py-1.5 px-3 rounded-lg shadow-md border">
+                                        <span className="text-xs font-medium text-gray-900 whitespace-nowrap">자동 스크롤</span>
+                                        <div className="relative">
+                                            <input type="checkbox" id="sync-toggle" className="sr-only" checked={isSyncEnabled} onChange={() => setIsSyncEnabled(!isSyncEnabled)} />
+                                            <div className={`block w-10 rounded-full transition-colors ${isSyncEnabled ? 'bg-green-500' : 'bg-gray-200'}`} style={{ height: '0.35cm' }}></div>
+                                            <div className={`dot absolute left-1 top-[2.6px] bg-white w-2 h-2 rounded-full transition-transform ${isSyncEnabled ? 'transform translate-x-6' : ''}`}></div>
+                                        </div>
+                                    </label>
+                                    <label htmlFor="vocab-toggle" className="flex-1 flex items-center justify-between cursor-pointer bg-white py-1.5 px-3 rounded-lg shadow-md border">
+                                        <span className="text-xs font-medium text-gray-900 whitespace-nowrap">핵심 어휘</span>
+                                        <div className="relative">
+                                            <input type="checkbox" id="vocab-toggle" className="sr-only" checked={isVocabSidebarVisible} onChange={() => setIsVocabSidebarVisible(!isVocabSidebarVisible)} />
+                                            <div className={`block w-10 rounded-full transition-colors ${isVocabSidebarVisible ? 'bg-green-500' : 'bg-gray-200'}`} style={{ height: '0.35cm' }}></div>
+                                            <div className={`dot absolute left-1 top-[2.6px] bg-white w-2 h-2 rounded-full transition-transform ${isVocabSidebarVisible ? 'transform translate-x-6' : ''}`}></div>
+                                        </div>
+                                    </label>
+                                </div>
+                                {isVocabSidebarVisible && (
+                                    <div className="w-full overflow-y-auto" style={{maxWidth: '7cm', maxHeight: `calc(100vh - ${playerHeight + 96}px)`}}>
+                                        <div className="border rounded-lg bg-white p-2 shadow-lg">
+                                            <div className="space-y-1">
+                                            {vocabAndGrammarList.map(item => <VocabItem key={item.term} item={item} ref={el => vocabRefs.current[item.term] = el} isHighlighted={highlightedVocab === item.term} />)}
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        </aside>
+                    </div>
+                </div>
+            )
+        }
+
+        // --- [퀴즈&토론] 탭 관련 컴포넌트 ---
+        const SummaryQuiz = ({ quizData, index }) => {
+            const { useState, useCallback } = React;
+            const [userInput, setUserInput] = useState('');
+            const [result, setResult] = useState(null);
+            const [showHint, setShowHint] = useState(false);
+            const [showAnswer, setShowAnswer] = useState(false);
+            const [isTranslationVisible, setIsTranslationVisible] = useState(false);
+
+            const handleCheckAnswer = useCallback(() => { setResult(userInput.trim() === quizData.answer ? 'correct' : 'incorrect'); setShowAnswer(false); }, [userInput, quizData.answer]);
+            const handleShowAnswer = useCallback(() => { setShowAnswer(true); setUserInput(quizData.answer); setResult(null); setShowHint(false); }, [quizData.answer]);
+            const getBorderColor = () => { if (result === 'correct') return 'border-green-500'; if (result === 'incorrect') return 'border-red-500'; return 'border-gray-300 focus:border-blue-500'; };
+
+            return (
+                <div className="p-6 bg-white rounded-xl border border-gray-200 shadow-lg">
+                    <p className="text-lg text-gray-800 leading-relaxed mb-4">
+                        {index + 1}. {quizData.textParts[0]}
+                        <input type="text" value={showAnswer ? quizData.answer : userInput} onChange={(e) => { setUserInput(e.target.value); setResult(null); setShowAnswer(false); }} className={`mx-2 px-2 py-1 border-b-2 bg-gray-50 rounded-t-md transition-colors text-center font-bold text-lg ${getBorderColor()}`} style={{width: `${(quizData.answer.length * 1.6)}ch`, minWidth: '10ch'}} placeholder="   " />
+                        {quizData.textParts[1]}
+                    </p>
+                    {isTranslationVisible && quizData.textParts_eng && <p className="text-sm text-gray-500 italic mt-2">{quizData.textParts_eng[0]}<span className="font-bold text-gray-600">{result === 'correct' ? quizData.answer_eng : ' ______ '}</span>{quizData.textParts_eng[1]}</p>}
+                    {result && <div className={`mt-4 p-3 rounded-lg ${result === 'correct' ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800'}`}><p className="font-bold flex items-center gap-2"><ThumbsUp className={`w-5 h-5 ${result === 'incorrect' ? 'transform -scale-y-100' : ''}`} />{result === 'correct' ? '정답이에요!' : '다시 생각해 보세요.'}</p>{result === 'correct' && <p className="text-sm mt-1">{quizData.explanation}</p>}</div>}
+                    <div className="mt-4 flex items-center gap-2 flex-wrap"><button onClick={handleCheckAnswer} className="px-4 py-2 text-sm font-semibold text-white bg-green-600 rounded-md hover:bg-green-700 transition-colors disabled:bg-gray-400" disabled={!userInput}>정답 확인</button><button onClick={() => setShowHint(true)} className="px-4 py-2 text-sm font-semibold text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 transition-colors">힌트 보기</button><button onClick={() => setIsTranslationVisible(prev => !prev)} className="px-4 py-2 text-sm font-semibold text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 transition-colors">번역</button><button onClick={handleShowAnswer} className="px-4 py-2 text-sm font-semibold text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 transition-colors">정답 보기</button></div>
+                    {showHint && !result && <div className="mt-4 p-3 bg-yellow-50 text-yellow-800 rounded-lg"><p className="font-semibold text-sm">힌트: {quizData.hint}</p></div>}
+                </div>
+            );
+        };
+
+        const SummarySection = ({ summaries, initialChoices }) => {
+            const { useState, useCallback } = React;
+            const shuffle = useCallback((array) => { let currentIndex = array.length, randomIndex; while (currentIndex !== 0) { randomIndex = Math.floor(Math.random() * currentIndex); currentIndex--; [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]]; } return array; }, []);
+            const [answerChoices, setAnswerChoices] = useState(() => shuffle([...initialChoices]));
+
+            return (
+                <section>
+                    <div className="flex flex-col md:flex-row gap-8">
+                        <div className="md:w-48 flex-shrink-0">
+                            <div className="sticky top-8 p-4 bg-gray-100 rounded-lg border border-gray-200">
+                                <h3 className="text-lg font-bold text-center mb-4 text-gray-900">정답 목록</h3>
+                                <ul className="space-y-2">
+                                    {answerChoices.map((choice, index) => <li key={index} className="px-2 py-3 bg-white rounded-md shadow-sm text-center font-semibold text-gray-700">{choice}</li>)}
+                                </ul>
+                            </div>
+                        </div>
+                        <div className="flex-grow space-y-4">
+                            {summaries.map((quiz, index) => <SummaryQuiz key={quiz.id} quizData={quiz} index={index} onShuffle={() => setAnswerChoices(shuffle([...initialChoices]))}/>)}
+                        </div>
+                    </div>
+                </section>
+            );
+        };
+
+        const SentenceChecker = ({ value, onChange, placeholder, question }) => {
+            const { useState } = React;
+            const [feedback, setFeedback] = useState(null);
+            const [isLoading, setIsLoading] = useState(false);
+            const [error, setError] = useState(null);
+
+            const checkSentence = async () => {
+                if (!value || value.trim() === '') { setError("문장을 입력해야 피드백을 받을 수 있어요."); setFeedback(null); return; }
+                setIsLoading(true); setError(null); setFeedback(null);
+                const systemPrompt = `다음은 B1 수준 한국어 학습자의 답변이에요. 문법, 어휘, 주장의 논리성을 중심으로 친절한 선생님처럼 피드백을 제공해주세요. 모든 문장은 '-요' 체로 끝내고, '-습니다/-입니다'는 사용하지 말아주세요.\n\n질문: ${question}\n\n학생 답변: "${value}"\n\n피드백:`;
+                const userQuery = `Please provide feedback on my answer.\n\nQuestion: "${question}"\nUser's Answer: "${value}"`;
+                const payload = { contents: [{ parts: [{ text: userQuery }] }], systemInstruction: { parts: [{ text: systemPrompt }] }, generationConfig: { responseMimeType: "application/json", responseSchema: { type: "OBJECT", properties: { "is_relevant": { "type": "BOOLEAN" }, "relevance_feedback_kor": { "type": "STRING", "nullable": true }, "relevance_feedback_eng": { "type": "STRING", "nullable": true }, "is_correct": { "type": "BOOLEAN", "nullable": true }, "feedback_message_kor": { "type": "STRING", "nullable": true }, "feedback_message_eng": { "type": "STRING", "nullable": true }, "corrected_sentence": { "type": "STRING", "nullable": true }, "explanation_kor": { "type": "STRING", "nullable": true }, "explanation_eng": { "type": "STRING", "nullable": true }, "alternative_expressions": { "type": "ARRAY", "items": { "type": "OBJECT", "properties": { "expression_kor": { "type": "STRING" }, "expression_eng": { "type": "STRING" } }, "required": ["expression_kor", "expression_eng"] } } }, "required": ["is_relevant"] } } };
+                const apiKey = "";
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+
+                try {
+                    const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                    if (!response.ok) throw new Error(`API error: ${response.statusText}`);
+                    const result = await response.json();
+                    if (result.candidates?.[0]?.content?.parts?.[0]?.text) { const parsedJson = JSON.parse(result.candidates[0].content.parts[0].text); setFeedback(parsedJson); }
+                    else { setError("AI의 응답을 처리하는 데 문제가 발생했어요."); }
+                } catch (err) { console.error("Error checking sentence:", err); setError("문장 검사에 실패했어요. 다시 시도해 주세요."); }
+                finally { setIsLoading(false); }
+            };
+
+            const renderFeedbackSection = (title, content) => (
+                content && content.length > 0 && (
+                    <div>
+                        <p className="text-gray-800 font-bold" style={{ fontSize: '17px' }}>{title}</p>
+                        {Array.isArray(content) ? (
+                            <ul className="list-disc list-inside space-y-2 mt-1">
+                                {content.map((item, index) => (
+                                    <li key={index} className="text-gray-600" style={{ fontSize: '16px' }}><p className="font-medium">{item.expression_kor || item.sentence_kor}</p><p className="text-gray-500 italic text-sm">{item.expression_eng || item.sentence_eng}</p></li>
+                                ))}
+                            </ul>
+                        ) : ( <p className="text-gray-700 font-medium" style={{ fontSize: '18px' }}>{content}</p> )}
+                    </div>
+                )
+            );
+
+            return (
+                <div>
+                    <textarea className="w-full p-3 border rounded-md focus:ring-2 focus:ring-green-400 transition text-lg" rows="3" placeholder={placeholder} value={value} onChange={onChange} />
+                    <button onClick={checkSentence} disabled={isLoading} className="mt-3 flex items-center justify-center gap-2 bg-green-200 text-gray-900 py-2 px-4 rounded-md transition-colors hover:bg-green-300 disabled:opacity-50 disabled:cursor-wait" style={{ fontWeight: 600, fontSize: '14px' }}>
+                        {isLoading ? <Spinner className="w-5 h-5" /> : '✨'} {isLoading ? '피드백 생성 중...' : 'AI에게 피드백 받기'}
+                    </button>
+                    {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
+                    {feedback && (
+                        <div className="mt-4 p-4 bg-green-50 border-l-4 border-green-100 rounded-r-lg space-y-4">
+                            {!feedback.is_relevant && ( <div><p className="font-bold text-red-800 flex items-center gap-2 text-lg">{feedback.relevance_feedback_kor}</p><p className="text-gray-600 italic">{feedback.relevance_feedback_eng}</p></div> )}
+                            {feedback.is_relevant && feedback.is_correct && ( <div><p className="font-bold text-green-800 flex items-center gap-2 text-lg"><ThumbsUp className="w-5 h-5"/> {feedback.feedback_message_kor}</p><p className="text-gray-600 italic">{feedback.feedback_message_eng}</p></div> )}
+                            {feedback.is_relevant && !feedback.is_correct && (
+                                <>
+                                    {feedback.corrected_sentence && ( <div><p className="text-gray-800 font-bold" style={{ fontSize: '17px' }}>✨ 수정된 문장:</p><p className="text-gray-700 font-medium" style={{ fontSize: '18px' }}>{feedback.corrected_sentence}</p></div> )}
+                                    {(feedback.explanation_kor || feedback.explanation_eng) && ( <div><p className="text-gray-800 font-bold" style={{ fontSize: '17px' }}>설명:</p>{feedback.explanation_kor && <p className="text-gray-600" style={{ fontSize: '16px' }}>{feedback.explanation_kor}</p>}{feedback.explanation_eng && <p className="text-gray-500 italic mt-1" style={{ fontSize: '15px' }}>{feedback.explanation_eng}</p>}</div> )}
+                                </>
+                            )}
+                            {feedback.alternative_expressions && feedback.alternative_expressions.length > 0 && renderFeedbackSection('💡 다른 표현:', feedback.alternative_expressions)}
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        const DiscussionSection = ({ questions }) => {
+            const { useState } = React;
+            const [translationsVisible, setTranslationsVisible] = useState({});
+            const [userQuestionAnswers, setUserQuestionAnswers] = useState({});
+            const toggleTranslation = (id) => setTranslationsVisible(prev => ({ ...prev, [id]: !prev[id] }));
+
+            return (
+                <div className="space-y-10">
+                    {questions.map((q) => (
+                        <div key={q.num} className="p-6 border rounded-xl bg-white shadow-lg">
+                            <p className="text-gray-900 text-xl font-bold">{q.num}. {q.kor}</p>
+                            {translationsVisible[`q-${q.num}`] && <p className="whitespace-pre-wrap text-gray-600 italic mt-1 text-base">{q.eng}</p>}
+                            <button onClick={() => toggleTranslation(`q-${q.num}`)} className="text-xs text-gray-800 bg-gray-200 hover:bg-gray-300 font-bold py-1 px-3 rounded-full transition duration-200 mt-2 mb-6">번역</button>
+                            {q.vocab && q.vocab.length > 0 && (
+                                <div className="mt-4 space-y-4">
+                                    <h3 className="font-bold text-lg text-gray-800">📍핵심 표현</h3>
+                                    {q.vocab.map((v, i) => <div key={i} className="pl-4 border-l-2 border-gray-200 py-2"><p className="font-semibold text-green-700 text-lg">{v.term}: <span className="font-medium text-gray-700 text-base">{v.meaning}</span></p></div>)}
+                                </div>
+                            )}
+                            <div className="mt-6">
+                                <h3 className="font-bold text-lg text-gray-800 mb-2">핵심 표현을 사용해서 질문에 대답해 보세요.</h3>
+                                <SentenceChecker value={userQuestionAnswers[`q-${q.num}`] || ''} onChange={(e) => setUserQuestionAnswers(prev => ({...prev, [`q-${q.num}`]: e.target.value}))} placeholder="여기에 답변을 입력하세요" question={q.kor}/>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            );
+        };
+
+        const Tabs = ({ tabs }) => {
+            const { useState } = React;
+            const [activeTab, setActiveTab] = useState(0);
+            return (
+                <div>
+                    <div className="border-b border-gray-200 no-print">
+                        <nav className="-mb-px flex space-x-6" aria-label="Tabs">
+                            {tabs.map((tab, index) => (
+                                <button key={tab.name} onClick={() => setActiveTab(index)} className={`${ index === activeTab ? 'border-green-500 text-green-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm sm:text-base transition-colors flex items-center gap-2`}>
+                                    {React.cloneElement(tab.icon, { className: 'w-[1.2em] h-[1.2em]' })} {tab.name}
+                                </button>
+                            ))}
+                        </nav>
+                    </div>
+                    <div className="pt-10">{tabs[activeTab].content}</div>
+                </div>
+            );
+        };
+
+        // --- 메인 App 컴포넌트 ---
+        const App = () => {
+            const { useState, useEffect, useMemo } = React;
+            const [containerWidth, setContainerWidth] = useState('30cm');
+            const [layoutMode, setLayoutMode] = useState('large');
+
+            useEffect(()=>{
+                const handleResize = ()=>{
+                    const heightInPx = window.innerHeight;
+                    const widthInPx = window.innerWidth;
+                    const isPortrait = window.matchMedia("(orientation: portrait)").matches;
+                    let newMode = 'large';
+                    let newContainerWidth = '30cm';
+
+                    if (widthInPx < 768 || (widthInPx < 1024 && isPortrait)) {
+                         newMode = 'mobile';
+                         newContainerWidth = '100%';
+                    } else {
+                        if (heightInPx < 832) {
+                            newMode = 'split'; newContainerWidth = '100%';
+                        } else if (heightInPx < 907) {
+                            newMode = 'small'; newContainerWidth = '22cm';
+                        } else if (heightInPx < 983) {
+                            newMode = 'medium'; newContainerWidth = '24cm';
+                        } else {
+                            newMode = 'large'; newContainerWidth = '30cm';
+                        }
+                    }
+
+                    setContainerWidth(newContainerWidth);
+                    setLayoutMode(newMode);
+                    document.body.dataset.layoutMode = newMode;
+
+                    const baseWidthPx = 30 * 37.795; let effectiveWidthPx;
+                    if (newContainerWidth === '100%') {
+                        effectiveWidthPx = widthInPx;
+                    } else {
+                        const cmValue = parseFloat(newContainerWidth);
+                        effectiveWidthPx = cmValue * 37.795;
+                    }
+                    if (newMode !== 'large') {
+                        const scale = Math.min(1.0, effectiveWidthPx / baseWidthPx);
+                        const finalScale = Math.max(0.8, scale);
+                        document.documentElement.style.fontSize = `${16 * finalScale}px`;
+                    } else {
+                        document.documentElement.style.fontSize = '16px';
+                    }
+                };
+                window.addEventListener('resize', handleResize);
+                handleResize();
+                return () => window.removeEventListener('resize', handleResize);
+            }, []);
+
+            /* ===== 데이터 정의 (스크립트, 어휘, 퀴즈 등) ===== */
+            const { scriptContent, vocabAndGrammarList, initialChoices, summaries, discussionQuestions } = useMemo(() => {
+                const convertTimeToSeconds = (timeStr) => { const [hms, ms] = timeStr.split(','); const [h, m, s] = hms.split(':').map(Number); return h * 3600 + m * 60 + s + (Number(ms) / 1000); };
+                const scriptContent = [
+                    { id: 's1', speaker: '스브스뉴스', kor: '파티에서 와인잔을 부딪치고, 위스키 1잔으로 하루를 마무리하는 미국인의 모습!', time: [convertTimeToSeconds('00:00:00,000'), convertTimeToSeconds('00:00:05,030')], eng: "Americans clinking wine glasses at parties, ending the day with a glass of whiskey!" },
+                    { id: 's2', speaker: '스브스뉴스', kor: '이 이제 옛날 얘기라는데.', time: [convertTimeToSeconds('00:00:05,070'), convertTimeToSeconds('00:00:07,341')], eng: "This is now said to be an old story." },
+                    { id: 's3', speaker: '스브스뉴스', kor: '"현재 술을 마신다"라고 답한 미국 성인이 역대 최저치를 기록할 정도.', time: [convertTimeToSeconds('00:00:07,374'), convertTimeToSeconds('00:00:12,145')], eng: "The number of American adults who said they \"currently drink alcohol\" has hit an all-time low." },
+                    { id: 's4', speaker: '스브스뉴스', kor: '요즘 미국 사람들은 술 대신 마시는 게 있었으니', time: [convertTimeToSeconds('00:00:12,179'), convertTimeToSeconds('00:00:15,249')], eng: "These days, Americans have something they drink instead of alcohol..." },
+                    { id: 's5', speaker: '스브스뉴스', kor: '바로 \'대마 음료\'라고 합니다.', time: [convertTimeToSeconds('00:00:15,282'), convertTimeToSeconds('00:00:17,784')], eng: "It's called a 'cannabis drink'." },
+                    { id: 's6', speaker: '스브스뉴스', kor: '대마 음료란 대마초의 성분 중 THC를 첨가하여 만든 음료를 의미하는데요.', time: [convertTimeToSeconds('00:00:20,254'), convertTimeToSeconds('00:00:25,259')], eng: "A cannabis drink is a beverage made by adding THC, a component of cannabis." },
+                    { id: 's7', speaker: '스브스뉴스', kor: '• THC (테트라하이드로칸나비놀): 도파민 분비와 이완 등의 효과 유발', eng: "• THC (Tetrahydrocannabinol): Induces effects such as dopamine release and relaxation." },
+                    { id: 's8', speaker: '스브스뉴스', kor: '이런 대마 음료 시장이 미국에서 엄청나게 커지고 있고,', time: [convertTimeToSeconds('00:00:25,292'), convertTimeToSeconds('00:00:28,629')], eng: "This cannabis drink market is growing tremendously in the US," },
+                    { id: 's9', speaker: '스브스뉴스', kor: '여러 브랜드의 대마 음료를 마셔볼 수 있는 축제가 열리기도 하고,', time: [convertTimeToSeconds('00:00:28,662'), convertTimeToSeconds('00:00:32,366')], eng: "Festivals are held where you can try various brands of cannabis drinks," },
+                    { id: 's10', speaker: '스브스뉴스', kor: '대마 음료를 레스토랑과 온라인에서도 쉽게 구매할 수 있다는데.', time: [convertTimeToSeconds('00:00:32,400'), convertTimeToSeconds('00:00:36,136')], eng: "And you can easily buy cannabis drinks at restaurants and online." },
+                    { id: 's11', speaker: '스브스뉴스', kor: '아니, 대마 음료 존재만으로도 놀라운데,', time: [convertTimeToSeconds('00:00:36,169'), convertTimeToSeconds('00:00:38,605')], eng: "I mean, the mere existence of cannabis drinks is surprising," },
+                    { id: 's12', speaker: '스브스뉴스', kor: '미국에서는 이미 이렇게까지 인기인 이유가 대체 뭐예요?', time: [convertTimeToSeconds('00:00:38,639'), convertTimeToSeconds('00:00:42,309')], eng: "What on earth is the reason they are already this popular in the US?" },
+                    { id: 's13', speaker: '스브스뉴스', kor: '가장 큰 이유는 술을 대하는 MZ세대의 태도가 변했기 때문이라는데요.', time: [convertTimeToSeconds('00:00:43,110'), convertTimeToSeconds('00:00:47,447')], eng: "The biggest reason is said to be the change in the MZ generation's attitude towards alcohol." },
+                    { id: 's14', speaker: '스브스뉴스', kor: '실제로 미국의 18세에서 34세 음주율 변화가 가장 크기도 한데,', time: [convertTimeToSeconds('00:00:47,481'), convertTimeToSeconds('00:00:51,752')], eng: "In fact, the change in the drinking rate among 18 to 34-year-olds in the US is the largest." },
+                    { id: 's15', speaker: '스브스뉴스', kor: '미국뿐만 아니라 전 세계적으로 건강을 중요하게 생각하는 게 트렌드가 되니', time: [convertTimeToSeconds('00:00:51,785'), convertTimeToSeconds('00:00:56,223')], eng: "As valuing health becomes a trend not only in the US but globally," },
+                    { id: 's16', speaker: '스브스뉴스', kor: '술을 멀리하는 마음까지 이어지게 된 것.', time: [convertTimeToSeconds('00:00:56,256'), convertTimeToSeconds('00:00:59,159')], eng: "It has led to a mindset of staying away from alcohol." },
+                    { id: 's17', speaker: 'Vincentblooming (미국 인디애나 거주)', kor: '최근 몇 년에는 레스토랑을 가더라도', time: [convertTimeToSeconds('00:00:59,192'), convertTimeToSeconds('00:01:01,595')], eng: "In recent years, even when you go to a restaurant," },
+                    { id: 's18', speaker: 'Vincentblooming (미국 인디애나 거주)', kor: '술을 먹지 않는 사람들을 위한', time: [convertTimeToSeconds('00:01:01,628'), convertTimeToSeconds('00:01:03,797')], eng: "for people who don't drink alcohol," },
+                    { id: 's19', speaker: 'Vincentblooming (미국 인디애나 거주)', kor: '칵테일인데 술이 빠진 흉내만 내는 그런 음료들이 항상 있어요.', time: [convertTimeToSeconds('00:01:03,830'), convertTimeToSeconds('00:01:08,635')], eng: "there are always drinks that are cocktails but just imitate them with the alcohol removed." },
+                    { id: 's20', speaker: 'Vincentblooming (미국 인디애나 거주)', kor: '그래서 그런 음료가 있는지 없는지를 먼저 메뉴에서 보고', time: [convertTimeToSeconds('00:01:08,669'), convertTimeToSeconds('00:01:12,339')], eng: "So, many people first check the menu to see if such drinks are available" },
+                    { id: 's21', speaker: 'Vincentblooming (미국 인디애나 거주)', kor: '레스토랑을 선택하는 분도 많고,', time: [convertTimeToSeconds('00:01:12,372'), convertTimeToSeconds('00:01:14,341')], eng: "before choosing a restaurant," },
+                    { id: 's22', speaker: 'Vincentblooming (미국 인디애나 거주)', kor: '"술을 안 먹는 게 쿨하고, 클린한 삶을 살자."', time: [convertTimeToSeconds('00:01:14,374'), convertTimeToSeconds('00:01:17,844')], eng: "\"Not drinking is cool, let's live a clean life.\"" },
+                    { id: 's23', speaker: 'Vincentblooming (미국 인디애나 거주)', kor: '제가 볼 때는 문화적인 성향이 있기 때문에', time: [convertTimeToSeconds('00:01:17,855'), convertTimeToSeconds('00:01:20,981')], eng: "In my view, there's a cultural tendency," },
+                    { id: 's24', speaker: 'Vincentblooming (미국 인디애나 거주)', kor: '거기에 아마 (대마 음료도) 합류된 것 같고...', time: [convertTimeToSeconds('00:01:21,014'), convertTimeToSeconds('00:01:23,750')], eng: "and (cannabis drinks) seem to have joined that..." },
+                    { id: 's25', speaker: '스브스뉴스', kor: '"술이 건강에 안 좋으니까 술 대신 대마음료를 마시자...?"', time: [convertTimeToSeconds('00:01:23,784'), convertTimeToSeconds('00:01:27,220')], eng: "\"Alcohol is bad for health, so let's drink cannabis drinks instead...?\"" },
+                    { id: 's26', speaker: '스브스뉴스', kor: '이게 대체 어떻게 나온 생각이죠?', time: [convertTimeToSeconds('00:01:27,254'), convertTimeToSeconds('00:01:29,389')], eng: "How on earth did this idea come about?" },
+                    { id: 's27', speaker: '김민지 (SWRL 오퍼레이션 매니저)', kor: '술은 너무 역사가 깊잖아요.', time: [convertTimeToSeconds('00:01:29,590'), convertTimeToSeconds('00:01:31,792')], eng: "Alcohol has such a long history, you know." },
+                    { id: 's28', speaker: '김민지 (SWRL 오퍼레이션 매니저)', kor: '건강에 해롭다는 게 이제 의학이 발달을 하면서', time: [convertTimeToSeconds('00:01:31,825'), convertTimeToSeconds('00:01:35,062')], eng: "The fact that it's harmful to health... as medicine developed," },
+                    { id: 's29', speaker: '김민지 (SWRL 오퍼레이션 매니저)', kor: '간에 해롭고 숙취가 있고,', time: [convertTimeToSeconds('00:01:35,095'), convertTimeToSeconds('00:01:37,598')], eng: "we learned that it's harmful to the liver and causes hangovers." },
+                    { id: 's30', speaker: '김민지 (SWRL 오퍼레이션 매니저)', kor: '이런 걸 알게 된 거고,', time: [convertTimeToSeconds('00:01:37,631'), convertTimeToSeconds('00:01:38,765')], eng: "We came to know these things." },
+                    { id: 's31', speaker: '김민지 (SWRL 오퍼레이션 매니저)', kor: '대마는 아직은 우울증 약으로도 치료를 하는 거고,', time: [convertTimeToSeconds('00:01:38,799'), convertTimeToSeconds('00:01:42,703')], eng: "Cannabis, on the other hand, is still used to treat depression," },
+                    { id: 's32', speaker: '김민지 (SWRL 오퍼레이션 매니저)', kor: '정신 안정에 도움이 되고,', time: [convertTimeToSeconds('00:01:42,736'), convertTimeToSeconds('00:01:44,371')], eng: "it helps with mental stability," },
+                    { id: 's33', speaker: '김민지 (SWRL 오퍼레이션 매니저)', kor: '이런 얘기도 많단 말이에요.', time: [convertTimeToSeconds('00:01:44,404'), convertTimeToSeconds('00:01:46,306')], eng: "there's a lot of talk like that." },
+                    { id: 's34', speaker: '김민지 (SWRL 오퍼레이션 매니저)', kor: '그래서 아직은 조금 역사가 짧은 게 미친 영향이지 않을까 싶고.', time: [convertTimeToSeconds('00:01:46,340'), convertTimeToSeconds('00:01:51,945')], eng: "So I think its relatively short history might have had an impact." },
+                    { id: 's35', speaker: '스브스뉴스', kor: '그런데 더 놀라운 사실은 따로 있습니다.', time: [convertTimeToSeconds('00:01:51,979'), convertTimeToSeconds('00:01:54,615')], eng: "But there's an even more surprising fact." },
+                    { id: 's36', speaker: '스브스뉴스', kor: '이런 대마 음료 열풍을 주류 회사가 만들었다는 것.', time: [convertTimeToSeconds('00:01:54,648'), convertTimeToSeconds('00:01:57,918')], eng: "This cannabis drink craze was created by beverage companies." },
+                    { id: 's37', speaker: '스브스뉴스', kor: '미국에서 주류 인기가 시들해지니', time: [convertTimeToSeconds('00:01:57,951'), convertTimeToSeconds('00:01:59,853')], eng: "As the popularity of alcohol faded in the US," },
+                    { id: 's38', speaker: '스브스뉴스', kor: '주류 회사들은 술의 대안책을 계속해서 찾고 있었고,', time: [convertTimeToSeconds('00:01:59,886'), convertTimeToSeconds('00:02:02,889')], eng: "beverage companies were continuously looking for alternatives to alcohol," },
+                    { id: 's39', speaker: '스브스뉴스', kor: '대마 음료도 그중 하나였던 거죠.', time: [convertTimeToSeconds('00:02:02,923'), convertTimeToSeconds('00:02:05,392')], eng: "and cannabis drinks were one of them." },
+                    { id: 's40', speaker: '김민지 (SWRL 오퍼레이션 매니저)', kor: '지금 맥주가 너무 어렵다 보니까', time: [convertTimeToSeconds('00:02:05,425'), convertTimeToSeconds('00:02:07,894')], eng: "Because the beer market is so difficult right now," },
+                    { id: 's41', speaker: '김민지 (SWRL 오퍼레이션 매니저)', kor: '한국에서도 맥주 회사에서 하이볼을 엄청나게 생산하고 계시거든요.', time: [convertTimeToSeconds('00:02:07,928'), convertTimeToSeconds('00:02:12,265')], eng: "in Korea, beer companies are producing a huge amount of highballs." },
+                    { id: 's42', speaker: '김민지 (SWRL 오퍼레이션 매니저)', kor: '그것도 사실은 좀 맥주의 대안이잖아요.', time: [convertTimeToSeconds('00:02:12,299'), convertTimeToSeconds('00:02:14,868')], eng: "That's also, in fact, an alternative to beer, isn't it?" },
+                    { id: 's43', speaker: '김민지 (SWRL 오퍼레이션 매니저)', kor: '가장 궁금증을 유발시키는 상품이 무엇인가 생각을 해봤을 때,', time: [convertTimeToSeconds('00:02:14,900'), convertTimeToSeconds('00:02:19,172')], eng: "When they thought about what product arouses the most curiosity," },
+                    { id: 's44', speaker: '김민지 (SWRL 오퍼레이션 매니저)', kor: '\'대마\'라는 거를 발견을 하게 된 것 같고,', time: [convertTimeToSeconds('00:02:19,200'), convertTimeToSeconds('00:02:22,309')], eng: "they seem to have discovered 'cannabis'," },
+                    { id: 's45', speaker: '김민지 (SWRL 오퍼레이션 매니저)', kor: '주류 회사들이 많이 THC 음료로 전환을 하고 계세요.', time: [convertTimeToSeconds('00:02:22,342'), convertTimeToSeconds('00:02:26,613')], eng: "Many beverage companies are switching to THC drinks." },
+                    { id: 's46', speaker: '부수현 (경상국립대학교 심리학과 교수)', kor: '어떻게 보면 마케팅적인 상술에 좀 많이 넘어간 게 아닌가라는 생각이 듭니다.', time: [convertTimeToSeconds('00:02:26,647'), convertTimeToSeconds('00:02:31,585')], eng: "In a way, I think people might be falling for marketing tactics." },
+                    { id: 's47', speaker: '부수현 (경상국립대학교 심리학과 교수)', kor: '기분이 업되지만 숙취가 없는 에너지 드링크라고 포지셔닝을 하거든요.', time: [convertTimeToSeconds('00:02:31,618'), convertTimeToSeconds('00:02:36,023')], eng: "They position it as an energy drink that lifts your mood but gives no hangover." },
+                    { id: 's48', speaker: '부수현 (경상국립대학교 심리학과 교수)', kor: '그래서 "그래 나 만취하기 싫지만,"', time: [convertTimeToSeconds('00:02:36,056'), convertTimeToSeconds('00:02:37,958')], eng: "So, \"Okay, I don't want to get wasted,\"" },
+                    { id: 's49', speaker: '부수현 (경상국립대학교 심리학과 교수)', kor: '"이거 마시면 기분이 좋아지는데,"', time: [convertTimeToSeconds('00:02:37,991'), convertTimeToSeconds('00:02:39,559')], eng: "\"but drinking this makes me feel good,\"" },
+                    { id: 's50', speaker: '부수현 (경상국립대학교 심리학과 교수)', kor: '"여기에 대마 성분이 들어갔구나."', time: [convertTimeToSeconds('00:02:39,593'), convertTimeToSeconds('00:02:41,895')], eng: "\"and it has cannabis ingredients in it.\"" },
+                    { id: 's51', speaker: '부수현 (경상국립대학교 심리학과 교수)', kor: '그러니까 연관성도 이해가 되죠.', time: [convertTimeToSeconds('00:02:41,928'), convertTimeToSeconds('00:02:43,864')], eng: "So the connection makes sense." },
+                    { id: 's52', speaker: '부수현 (경상국립대학교 심리학과 교수)', kor: '"그런데 이게 합법적이래."', time: [convertTimeToSeconds('00:02:43,897'), convertTimeToSeconds('00:02:44,965')], eng: "\"But they say it's legal.\"" },
+                    { id: 's53', speaker: '부수현 (경상국립대학교 심리학과 교수)', kor: '"그러면 위험하지는 않은 거네"라는 소비자의 생각이 있고,', time: [convertTimeToSeconds('00:02:44,998'), convertTimeToSeconds('00:02:48,235')], eng: "Then consumers think, \"Then it must not be dangerous,\"" },
+                    { id: 's54', speaker: '부수현 (경상국립대학교 심리학과 교수)', kor: '그 지점을 공격적으로 마케팅을 하고.', time: [convertTimeToSeconds('00:02:48,268'), convertTimeToSeconds('00:02:51,071')], eng: "and they market that point aggressively." },
+                    { id: 's55', speaker: '스브스뉴스', kor: '대마 음료가 합법적인 술 대체제로 자리 잡은 데엔', time: [convertTimeToSeconds('00:02:51,100'), convertTimeToSeconds('00:02:54,141')], eng: "For cannabis drinks to become established as a legal alcohol substitute," },
+                    { id: 's56', speaker: '스브스뉴스', kor: '미국의 대마 규제법이 바뀐 것도 한몫 했다는데요.', time: [convertTimeToSeconds('00:02:54,174'), convertTimeToSeconds('00:02:57,177')], eng: "the change in US cannabis regulation laws also played a big part." },
+                    { id: 's57', speaker: '스브스뉴스', kor: '2018년 개정된 농업법에 따라', time: [convertTimeToSeconds('00:02:57,210'), convertTimeToSeconds('00:02:59,413')], eng: "According to the revised 2018 Farm Bill," },
+                    { id: 's58', speaker: '스브스뉴스', kor: 'THC 함량이 0.3% 이하인 대마 성분은 단속 대상인 마약류에서 제외하고 있고,', time: [convertTimeToSeconds('00:02:59,446'), convertTimeToSeconds('00:03:04,985')], eng: "cannabis components with a THC content of 0.3% or less are excluded from narcotics subject to regulation," },
+                    { id: 's59', speaker: '스브스뉴스', kor: '이를 알게 된 미국인들은 대마 음료를 출시하면서 사람들의 반응을 살폈던 거죠.', time: [convertTimeToSeconds('00:03:05,018'), convertTimeToSeconds('00:03:09,623')], eng: "Americans who learned this launched cannabis drinks and monitored people's reactions." },
+                    { id: 's60', speaker: '스브스뉴스', kor: '이쯤 되니 한국인으로서 궁금해지는 것이 있습니다.', time: [convertTimeToSeconds('00:03:09,656'), convertTimeToSeconds('00:03:12,793')], eng: "At this point, there's something I'm curious about as a Korean." },
+                    { id: 's61', speaker: '스브스뉴스', kor: '대마 음료는 대체 무슨 맛이에요?', time: [convertTimeToSeconds('00:03:12,826'), convertTimeToSeconds('00:03:15,500')], eng: "What on earth do cannabis drinks taste like?" },
+                    { id: 's62', speaker: 'Vincentblooming (미국 인디애나 거주)', kor: '제가 사는 주 같은 경우는 THC가 0.3% 이하인 음료만 팔 수가 있어요.', time: [convertTimeToSeconds('00:03:15,562'), convertTimeToSeconds('00:03:20,867')], eng: "In the state where I live, they can only sell drinks with THC 0.3% or less." },
+                    { id: 's63', speaker: 'Vincentblooming (미국 인디애나 거주)', kor: '그렇기 때문에 아주 작은 테이블스푼을 먹었다고 해서', time: [convertTimeToSeconds('00:03:20,901'), convertTimeToSeconds('00:03:24,504')], eng: "Therefore, just because I had a very small tablespoon," },
+                    { id: 's64', speaker: 'Vincentblooming (미국 인디애나 거주)', kor: '어떤 효과가 있거나 그런 느낌은 받지 않았고,', time: [convertTimeToSeconds('00:03:25,538'), convertTimeToSeconds('00:03:27,808')], eng: "I didn't feel any effect or anything like that." },
+                    { id: 's65', speaker: 'Vincentblooming (미국 인디애나 거주)', kor: '맛이 그냥 술하고 비슷한데 술이 없구나.', time: [convertTimeToSeconds('00:03:27,841'), convertTimeToSeconds('00:03:31,745')], eng: "The taste is just similar to alcohol, but there's no alcohol." },
+                    { id: 's66', speaker: '김민지 (SWRL 오퍼레이션 매니저)', kor: '주변에서 들어보면은,', time: [convertTimeToSeconds('00:03:31,778'), convertTimeToSeconds('00:03:33,046')], eng: "From what I hear from people around me," },
+                    { id: 's67', speaker: '김민지 (SWRL 오퍼레이션 매니저)', kor: '우리가 생각할 때는', time: [convertTimeToSeconds('00:03:33,080'), convertTimeToSeconds('00:03:34,181')], eng: "we might think" },
+                    { id: 's68', speaker: '김민지 (SWRL 오퍼레이션 매니저)', kor: '뭐 담배 향이 나던지 풀 향이 나던지 풋내가 나던지 할 것 같지만', time: [convertTimeToSeconds('00:03:34,214'), convertTimeToSeconds('00:03:38,452')], eng: "it would smell like tobacco, or grass, or have a 'green' smell," },
+                    { id: 's69', speaker: '김민지 (SWRL 오퍼레이션 매니저)', kor: '전혀 그렇지 않고,', time: [convertTimeToSeconds('00:03:38,485'), convertTimeToSeconds('00:03:39,686')], eng: "but it's not like that at all." },
+                    { id: 's70', speaker: '김민지 (SWRL 오퍼레이션 매니저)', kor: '마심으로써 정신이 안정되고 맛있다고 주변에서는 말씀하세요.', time: [convertTimeToSeconds('00:03:39,720'), convertTimeToSeconds('00:03:44,124')], eng: "People around me say it's delicious and mentally calming to drink." },
+                    { id: 's71', speaker: '김민지 (SWRL 오퍼레이션 매니저)', kor: '"그냥 음료처럼 먹는다", "닥터페퍼처럼 먹는다",', time: [convertTimeToSeconds('00:03:44,157'), convertTimeToSeconds('00:03:47,561')], eng: "\"I just drink it like a soda,\" \"I drink it like Dr. Pepper,\"" },
+                    { id: 's72', speaker: '김민지 (SWRL 오퍼레이션 매니저)', kor: '이렇게 얘기를 하시더라고요.', time: [convertTimeToSeconds('00:03:47,594'), convertTimeToSeconds('00:03:49,162')], eng: "that's what they say." },
+                    { id: 's73', speaker: '스브스뉴스', kor: '주마다 THC 함유량 규제가 다르다 보니', time: [convertTimeToSeconds('00:03:49,196'), convertTimeToSeconds('00:03:51,765')], eng: "Because THC content regulations differ by state," },
+                    { id: 's74', speaker: '스브스뉴스', kor: '대마 성분 농도가 제품마다 천차만별이고,', time: [convertTimeToSeconds('00:03:51,798'), convertTimeToSeconds('00:03:54,500')], eng: "the cannabis component concentration varies wildly from product to product," },
+                    { id: 's75', speaker: '스브스뉴스', kor: '알코올에 민감한 사람이면 논알코올을 마셔도 알코올을 느끼듯이', time: [convertTimeToSeconds('00:03:54,534'), convertTimeToSeconds('00:03:58,405')], eng: "just as someone sensitive to alcohol might still feel it in non-alcoholic drinks," },
+                    { id: 's76', speaker: '스브스뉴스', kor: '대마 음료도 개인 편차가 있을 수 있다는 것.', time: [convertTimeToSeconds('00:03:58,438'), convertTimeToSeconds('00:04:01,007')], eng: "there can be individual variations with cannabis drinks too." },
+                    { id: 's77', speaker: '스브스뉴스', kor: '그런데 주마다 법이 제각각이라 소비자를 혼란스럽게 만들기도 해서', time: [convertTimeToSeconds('00:04:01,241'), convertTimeToSeconds('00:04:05,545')], eng: "But because the laws are different in each state, it can be confusing for consumers," },
+                    { id: 's78', speaker: '스브스뉴스', kor: '연방 차원에서 일관된 규제를 해야 되는 것 아니냐는 의견도 나오고 있다고 해요.', time: [convertTimeToSeconds('00:04:05,579'), convertTimeToSeconds('00:04:10,183')], eng: "so there are opinions that there should be consistent regulation at the federal level." },
+                    { id: 's79', speaker: '부수현 (경상국립대학교 심리학과 교수)', kor: '환각적인 측면을 갖고 있는 THC 성분이 작게 들어있지만,', time: [convertTimeToSeconds('00:04:10,217'), convertTimeToSeconds('00:04:14,087')], eng: "Although it contains a small amount of the hallucinogenic component THC," },
+                    { id: 's80', speaker: '부수현 (경상국립대학교 심리학과 교수)', kor: '이게 정말로 사람들의 건강에 악영향이 없는 건지', time: [convertTimeToSeconds('00:04:14,121'), convertTimeToSeconds('00:04:17,691')], eng: "whether this truly has no negative health effects on people" },
+                    { id: 's81', speaker: '부수현 (경상국립대학교 심리학과 교수)', kor: '이거는 확답하기가 어렵지 않습니까?', time: [convertTimeToSeconds('00:04:17,727'), convertTimeToSeconds('00:04:19,326')], eng: "is difficult to confirm, isn't it?" },
+                    { id: 's82', speaker: '부수현 (경상국립대학교 심리학과 교수)', kor: '이게 반복적으로 검증이 돼야 될 필요가 있는 거고.', time: [convertTimeToSeconds('00:04:19,327'), convertTimeToSeconds('00:04:21,394')], eng: "This needs to be repeatedly verified." },
+                    { id: 's83', speaker: '부수현 (경상국립대학교 심리학과 교수)', kor: '소량일지라도 이게 반복적으로 누적되거나 했을 때 중독의 문제는 없느냐?', time: [convertTimeToSeconds('00:04:21,428'), convertTimeToSeconds('00:04:25,832')], eng: "Even in small amounts, is there no problem of addiction when it's repeatedly accumulated?" },
+                    { id: 's84', speaker: '부수현 (경상국립대학교 심리학과 교수)', kor: '만약에 중독이라면, 음료 시장에서 문제가 될 수가 있겠죠.', time: [convertTimeToSeconds('00:04:25,866'), convertTimeToSeconds('00:04:29,769')], eng: "If it is addictive, it could become a problem in the beverage market." },
+                    { id: 's85', speaker: '스브스뉴스', kor: '미국에서 이미 흔하게 자리 잡은 \'대마 음료\', 여러분은 어떻게 생각하시나요?', time: [convertTimeToSeconds('00:04:29,803'), convertTimeToSeconds('00:04:34,608')], eng: "'Cannabis drinks' are already commonplace in the US. What do you all think?" }
+                ];
+                
+                const vocabAndGrammarList = [
+                    { term: '부딪치다', mainDef: '두 물건이 서로 세게 닿다.', variants: ['부딪치고'], translations: { en: { main: 'To bump into, to collide with.' } } },
+                    { term: '하루를 마무리하다', mainDef: '오늘의 일을 끝내고 하루를 정리하다.', variants: ['하루를 마무리하는'], translations: { en: { main: 'To wrap up the day, to finish the day.' } } },
+                    { term: '역대 최저치 기록할 정도', mainDef: '지금까지 중에 가장 낮은 숫자가 될 만큼 심하다.', subDefs: [{ subTerm: '• 역대', subDef: '지금까지의 모든 시간/기간.' }, { subTerm: '• 최저치', subDef: '가장 낮은 숫자.' }, { subTerm: '• 기록하다', subDef: '어떤 사실을 적거나 숫자로 남기다.' }], variants: ['역대 최저치를 기록할 정도', '역대 최저치'], translations: { en: { main: 'To the extent that it will record an all-time low.', subs: [{ term: '• 역대', def: 'All-time, historical.' }, { term: '• 최저치', def: 'The lowest value/figure.' }, { term: '• 기록하다', def: 'To record.' }] } } },
+                    { term: '술 대신 마시는 게 있었으니', mainDef: '술이 아니라 다른 것을 마셨기 때문에 (이유).', subDefs: [{ subTerm: '• 대신', subDef: '다른 것으로 바꾸어서.' }, { subTerm: '• -으니', subDef: '앞의 내용이 뒤의 이유가 될 때 사용해요.' }], variants: ['술 대신 마시는 게 있었으니'], translations: { en: { main: 'Because there was something to drink instead of alcohol.', subs: [{ term: '• 대신', def: 'Instead of.' }, { term: '• -으니', def: 'Grammar pattern for "because" or "so".' }] } } },
+                    { term: '대마 음료', mainDef: '대마 성분이 들어간 마시는 것.', subDefs: [{ subTerm: '• 대마', subDef: '특별한 식물. 약으로 쓰거나 다른 용도로 사용해요.' }], variants: ['대마 음료', '대마음료를'], translations: { en: { main: 'Cannabis drink.', subs: [{ term: '• 대마', def: 'Cannabis, hemp.' }] } } },
+                    { term: '대마초의 성분', mainDef: '대마초를 이루는 재료.', subDefs: [{ subTerm: '• 대마초', subDef: '대마 식물을 말린 것.' }, { subTerm: '• 성분', subDef: '어떤 것을 만드는 재료.' }], variants: ['대마초의 성분 중'], translations: { en: { main: 'Ingredient/component of cannabis.', subs: [{ term: '• 대마초', def: 'Cannabis (plant, drug).' }, { term: '• 성분', def: 'Component, ingredient.' }] } } },
+                    { term: 'THC를 첨가하여 만든 음료', mainDef: 'THC라는 성분을 넣어서 만든 음료.', subDefs: [{ subTerm: '• THC', subDef: '대마초에 들어있는 성분 중 하나.' }, { subTerm: '• 첨가하다', subDef: '어떤 것에 새로운 것을 더 넣다.' }, { subTerm: '• -아여(서) = 해서', subDef: '이유를 말하거나 순서를 말할 때 사용해요.' }], variants: ['THC를 첨가하여 만든 음료', 'THC를 첨가하여'], translations: { en: { main: 'A drink made by adding THC.', subs: [{ term: '• THC', def: 'A component found in cannabis.' }, { term: '• 첨가하다', def: 'To add.' }, { term: '• -아여(서) = 해서', def: 'Grammar pattern for "so" or "and then".' }] } } },
+                    { term: '도파민 분비와 이완', mainDef: '기분이 좋아지고 몸이 편안해지는 것.', subDefs: [{ subTerm: '• 도파민', subDef: '뇌에서 나오는 기분을 좋게 만드는 물질.' }, { subTerm: '• 분비', subDef: '몸 안에서 어떤 물질이 나오는 것.' }, { subTerm: '• 이완', subDef: '몸과 마음이 편안해지는 것.' }], variants: ['도파민 분비와 이완', '도파민 분비', '이완'], translations: { en: { main: 'Dopamine secretion and relaxation.', subs: [{ term: '• 도파민', def: 'Dopamine.' }, { term: '• 분비', def: 'Secretion.' }, { term: '• 이완', def: 'Relaxation.' }] } } },
+                    { term: '효과 유발', mainDef: '어떤 결과가 생기게 하다.', subDefs: [{ subTerm: '• 효과', subDef: '어떤 행동 뒤에 생기는 좋은 결과.' }, { subTerm: '• 유발', subDef: '어떤 일이 생기게 만들다.' }], variants: ['효과 유발', '효과', '유발'], translations: { en: { main: 'Causing an effect.', subs: [{ term: '• 효과', def: 'Effect.' }, { term: '• 유발', def: 'Inducement, causing.' }] } } },
+                    { term: '엄청나게', mainDef: '아주 많이, 정말 크게.', variants: ['엄청나게'], translations: { en: { main: 'Tremendously, hugely.' } } },
+                    { term: '구매하다', mainDef: '물건을 사다.', variants: ['구매할 수 있다', '구매하다'], translations: { en: { main: 'To purchase.' } } },
+                    { term: '존재만으로도 놀랍다', mainDef: '그런 것이 있다는 것 자체가 신기하다.', subDefs: [{ subTerm: '• 존재', subDef: '세상에 실제로 있는 것.' }], variants: ['존재만으로도 놀라운데'], translations: { en: { main: 'Surprising just by its existence.', subs: [{ term: '• 존재', def: 'Existence, presence.' }] } } },
+                    { term: '이유가 대체 뭐예요?', mainDef: '진짜 이유가 뭐예요? (궁금해서 강조)', subDefs: [{ subTerm: '• 대체', subDef: '정말 궁금해서 물어볼 때 강조하는 말.' }], variants: ['이유가 대체 뭐예요', '대체 뭐예요', '대체'], translations: { en: { main: 'What on earth is the reason?', subs: [{ term: '• 대체', def: 'On earth, what in the world (used for emphasis).' }] } } },
+                    { term: '술을 대하는 태도', mainDef: '술에 대해 어떻게 생각하고 행동하는지.', subDefs: [{ subTerm: '• -ㄹ/을 대하는 태도', subDef: '어떤 것에 대한 생각이나 마음가짐.' }, { subTerm: '• MZ세대', subDef: '1980년대~2000년대 초에 태어난 세대.' }], variants: ['술을 대하는 MZ세대의 태도', '술을 대하는'], translations: { en: { main: 'Attitude towards alcohol.', subs: [{ term: '• -ㄹ/을 대하는 태도', def: 'Attitude towards something.' }, { term: '• MZ세대', def: 'MZ Generation (Millennials + Gen Z).' }] } } },
+                    { term: '음주율', mainDef: '술을 마시는 사람의 비율.', variants: ['음주율'], translations: { en: { main: 'Drinking rate.' } } },
+                    { term: '트렌드가 되다', mainDef: '새로운 유행이 되다.', variants: ['트렌드가 되니', '트렌드가 되다'], translations: { en: { main: 'To become a trend.' } } },
+                    { term: '술을 멀리하다', mainDef: '술을 마시지 않고 피하다.', variants: ['술을 멀리하는', '술을 멀리하고'], translations: { en: { main: 'To stay away from alcohol.' } } },
+                    { term: '이어지다', mainDef: '어떤 생각이나 행동이 계속되다.', variants: ['이어지게 된'], translations: { en: { main: 'To be connected, to continue.' } } },
+                    { term: '흉내만 내는 음료', mainDef: '술은 아니지만 술처럼 보이거나 맛이 비슷한 음료.', subDefs: [{ subTerm: '• 흉내만 내다', subDef: '모양이나 소리만 비슷하게 따라 하다.' }], variants: ['술이 빠진 흉내만 내는', '흉내만 내는'], translations: { en: { main: 'A drink that only imitates.', subs: [{ term: '• 흉내만 내다', def: 'To only imitate/mimic.' }] } } },
+                    { term: '쿨하다', mainDef: '멋있고 좋아 보이다.', variants: ['쿨하고'], translations: { en: { main: 'To be "cool".' } } },
+                    { term: '클린한 삶', mainDef: '건강하고 깨끗한 생활.', variants: ['클린한 삶'], translations: { en: { main: 'A "clean" life.' } } },
+                    { term: '문화적인 성향', mainDef: '사람들이 공통으로 좋아하는 생각이나 행동.', subDefs: [{ subTerm: '• 성향', subDef: '생각이나 행동이 한쪽으로 기우는 것.' }], variants: ['문화적인 성향', '성향'], translations: { en: { main: 'Cultural tendency/disposition.', subs: [{ term: '• 성향', def: 'Tendency, inclination.' }] } } },
+                    { term: '합류되다', mainDef: '어떤 그룹이나 흐름에 함께하게 되다.', variants: ['합류된 것'], translations: { en: { main: 'To join, to merge with.' } } },
+                    { term: '이게 대체 어떻게 나온 생각이죠?', mainDef: '정말 궁금한데, 왜 이렇게 생각하게 됐어요?', subDefs: [{ subTerm: '• 대체 어떻게', subDef: '정말 어떻게 (궁금해서 강조).' }, { subTerm: '• 생각이 나오다', subDef: '그런 생각을 하게 되다.' }], variants: ['이게 대체 어떻게 나온 생각이죠'], translations: { en: { main: 'How on earth did this idea come about?', subs: [{ term: '• 대체 어떻게', def: 'How on earth.' }, { term: '• 생각이 나오다', def: 'For an idea to come out/emerge.' }] } } },
+                    { term: '해롭다', mainDef: '건강이나 몸에 안 좋다.', variants: ['해롭다는', '해롭고', '해로운'], translations: { en: { main: 'To be harmful.' } } },
+                    { term: '의학이 발달하다', mainDef: '사람을 치료하는 기술이 더 좋아지다.', subDefs: [{ subTerm: '• 의학', subDef: '병을 고치는 기술이나 공부.' }, { subTerm: '• 발달하다', subDef: '더 좋게 변하다.' }], variants: ['의학이 발달을 하면서'], translations: { en: { main: 'For medicine to develop.', subs: [{ term: '• 의학', def: 'Medical science.' }, { term: '• 발달하다', def: 'To develop, advance.' }] } } },
+                    { term: '간', mainDef: '몸속에서 피를 깨끗하게 만드는 중요한 장기.', variants: ['간에'], translations: { en: { main: 'Liver.' } } },
+                    { term: '숙취가 있다', mainDef: '술을 마신 다음 날 머리가 아프고 속이 안 좋다.', variants: ['숙취가 있고', '숙취가 있다', '숙취가 없는', '숙취'], translations: { en: { main: 'To have a hangover.' } } },
+                    { term: '우울증 약', mainDef: '마음이 계속 슬프고 힘든 병(우울증)을 치료하는 약.', subDefs: [{ subTerm: '• 우울증', subDef: '마음이 계속 슬프고 힘든 병.' }], variants: ['우울증 약', '우울증'], translations: { en: { main: 'Antidepressant.', subs: [{ term: '• 우울증', def: 'Depression.' }] } } },
+                    { term: '정신 안정', mainDef: '마음이 편안하고 차분해지는 것.', variants: ['정신 안정에', '정신 안정', '정신이 안정되다', '정신이 안정되고'], translations: { en: { main: 'Mental stability/calmness.', subs: [{ term: '• 정신이 안정되다', def: 'To become mentally stable/calm.' }] } } },
+                    { term: '-지 않을까 싶다', mainDef: '정확하지는 않지만 그럴 것 같다고 생각해요.', variants: ['-지 않을까 싶고', '-지 않을까 싶다'], translations: { en: { main: 'I think it might be... / I suppose it could be...' } } },
+                    { term: '따로', mainDef: '같이 하지 않고 혼자, 또는 다르게.', variants: ['따로'], translations: { en: { main: 'Separately.' } } },
+                    { term: '열풍', mainDef: '아주 많은 사람이 무언가를 좋아해서 유행하는 것.', variants: ['열풍을'], translations: { en: { main: 'Fever, craze.' } } },
+                    { term: '주류', mainDef: '술. (예: 맥주, 소주, 와인)', variants: ['주류', '주류 회사가', '주류 회사들은', '주류 회사들이'], translations: { en: { main: 'Alcoholic beverages.' } } },
+                    { term: '인기가 시들해지다', mainDef: '사람들이 예전만큼 좋아하지 않게 되다.', subDefs: [{ subTerm: '• 시들해지다', subDef: '관심이나 인기가 줄어들다.' }], variants: ['인기가 시들해지니', '인기가 시들해지다'], translations: { en: { main: 'For popularity to wane/fade.', subs: [{ term: '• 시들해지다', def: 'To fade, to wane.' }] } } },
+                    { term: '대안책', mainDef: '어떤 문제를 해결하기 위한 다른 좋은 방법.', variants: ['대안책을', '대안책'], translations: { en: { main: 'An alternative solution.' } } },
+                    { term: '맥주가 너무 어렵다 보니까', mainDef: '(이 맥락에서) 젊은 사람들에게 맥주의 인기가 없어져서 맥주를 파는 것이 어렵기 때문에', variants: ['맥주가 너무 어렵다 보니까'], translations: { en: { main: 'Because beer (market) is so difficult...' } } },
+                    { term: '하이볼', mainDef: '위스키에 탄산수나 음료를 섞어 마시는 술.', variants: ['하이볼을'], translations: { en: { main: 'Highball (cocktail).' } } },
+                    { term: '생산하다', mainDef: '물건을 만들다.', variants: ['생산하고'], translations: { en: { main: 'To produce.' } } },
+                    { term: '대안', mainDef: '어떤 것을 대신할 수 있는 다른 방법이나 물건.', variants: ['대안이잖아요'], translations: { en: { main: 'Alternative.' } } },
+                    { term: '궁금증을 유발하다', mainDef: '사람들이 "저게 뭐지?" 하고 궁금하게 만들다.', variants: ['궁금증을 유발시키는', '궁금증을 유발하다'], translations: { en: { main: 'To arouse curiosity.' } } },
+                    { term: 'THC 음료', mainDef: 'THC 성분이 들어간 마시는 것.', variants: ['THC 음료로'], translations: { en: { main: 'THC drink.' } } },
+                    { term: '전환하다', mainDef: '다른 방향이나 상태로 바꾸다.', variants: ['전환을 하고', '전환하다'], translations: { en: { main: 'To convert, to switch.' } } },
+                    { term: '어떻게 보면', mainDef: '이렇게 생각할 수도 있어요.', variants: ['어떻게 보면'], translations: { en: { main: 'In a way, if you look at it...' } } },
+                    { term: '마케팅적인', mainDef: '물건을 더 많이 팔기 위한 방법을 사용하는.', variants: ['마케팅적인'], translations: { en: { main: 'Marketing-related.' } } },
+                    { term: '상술에 넘어가다', mainDef: '물건을 팔려는 사람의 말에 속아서 사다.', subDefs: [{ subTerm: '• 상술', subDef: '물건을 팔기 위한 기술이나 방법.' }], variants: ['상술에 좀 많이 넘어간', '상술에 넘어가다', '상술'], translations: { en: { main: 'To fall for a sales tactic.', subs: [{ term: '• 상술', def: 'Sales tactic, commercial trick.' }] } } },
+                    { term: '기분이 업되다', mainDef: '기분이 좋아지고 신나다.', variants: ['기분이 업되지만', '기분이 업되다', '기분이 좋아지는데'], translations: { en: { main: 'To feel uplifted, to be in high spirits.' } } },
+                    { term: '포지셔닝을 하다', mainDef: "사람들이 그 물건을 '좋은 것'이라고 생각하게 만들다.", variants: ['포지셔닝을 하거든요', '포지셔닝을 하다', '포지셔닝되는'], translations: { en: { main: 'To position (a product in the market).' } } },
+                    { term: '만취하다', mainDef: '술을 너무 많이 마셔서 정신을 차리기 힘들다.', variants: ['만취하기'], translations: { en: { main: 'To be very drunk, wasted.' } } },
+                    { term: '대마 성분', mainDef: '대마 식물에 들어있는 재료.', subDefs: [{ subTerm: '• 성분', subDef: '어떤 것을 만드는 재료.' }], variants: ['대마 성분', '대마 성분은'], translations: { en: { main: 'Cannabis ingredient.', subs: [{ term: '• 성분', def: 'Component, ingredient.' }] } } },
+                    { term: '연관성', mainDef: '두 가지가 서로 관계가 있는 것.', variants: ['연관성도'], translations: { en: { main: 'Connection, relation.' } } },
+                    { term: '합법적', mainDef: '나라의 법에 어긋나지 않는 것.', variants: ['합법적이래', '합법적', '합법적인'], translations: { en: { main: 'Legal, lawful.' } } },
+                    { term: '소비자', mainDef: '물건이나 서비스를 사서 쓰는 사람.', variants: ['소비자의', '소비자를'], translations: { en: { main: 'Consumer.' } } },
+                    { term: '지점', mainDef: '어떤 특별한 부분이나 포인트.', variants: ['지점을'], translations: { en: { main: 'Point, aspect.' } } },
+                    { term: '공격적으로 마케팅을 하다', mainDef: '물건을 팔기 위해 아주 적극적으로 홍보하다.', subDefs: [{ subTerm: '• 공격적', subDef: '아주 힘차고 적극적인 것.' }], variants: ['공격적으로 마케팅을 하고', '공격적으로 마케팅을 하다', '공격적 마케팅에'], translations: { en: { main: 'To market aggressively.', subs: [{ term: '• 공격적', def: 'Aggressive.' }] } } },
+                    { term: '대체제', mainDef: '어떤 물건 대신 사용할 수 있는 다른 물건.', variants: ['대체제로', '대체할'], translations: { en: { main: 'Substitute.' } } },
+                    { term: '자리 잡다', mainDef: '어떤 것이 사람들에게 익숙해지고 인기를 얻다.', variants: ['자리 잡은', '자리 잡다', '자리 잡은 \'대마 음료\''], translations: { en: { main: 'To become established, to settle in.' } } },
+                    { term: '대마 규제법', mainDef: '대마초를 어떻게 사용할지 정하는 법.', subDefs: [{ subTerm: '• 규제법', subDef: '어떤 것을 못하게 막는 법.' }], variants: ['대마 규제법', '규제법'], translations: { en: { main: 'Cannabis regulation law.', subs: [{ term: '• 규제법', def: 'Regulation law.' }] } } },
+                    { term: '한몫 하다', mainDef: '어떤 일이 이루어지는 데 중요한 역할을 하다.', variants: ['한몫 했다는데요', '한몫 하다'], translations: { en: { main: 'To play a big part, to contribute significantly.' } } },
+                    { term: '개정된 농업법', mainDef: '내용이 바뀐 농사 관련 법.', subDefs: [{ subTerm: '• 개정되다', subDef: '법이나 규칙이 고쳐지다.' }, { subTerm: '• 농업', subDef: '농사를 짓는 일.' }], variants: ['개정된 농업법', '개정된', '개정되다'], translations: { en: { main: 'The revised agricultural bill.', subs: [{ term: '• 개정되다', def: 'To be revised, amended.' }, { term: '• 농업', def: 'Agriculture.' }] } } },
+                    { term: 'THC 함량', mainDef: '어떤 물건 안에 THC가 얼마나 많이 들어있는지.', subDefs: [{ subTerm: '• 함량', subDef: '어떤 물질에 성분이 포함된 양.' }], variants: ['THC 함량', '함량', 'THC 함유량', '함유량', '함유량을'], translations: { en: { main: 'THC content.', subs: [{ term: '• 함량', def: 'Content, amount contained.' }] } } },
+                    { term: '단속 대상', mainDef: '법을 어겼는지 검사하고 확인하는 목표물.', subDefs: [{ subTerm: '• 단속', subDef: '법이나 규칙을 지키는지 검사하는 것.' }], variants: ['단속 대상', '단속'], translations: { en: { main: 'Subject to crackdown/regulation.', subs: [{ term: '• 단속', def: 'Crackdown, enforcement.' }] } } },
+                    { term: '마약류', mainDef: '법으로 금지된 약물 (마약, 대마초 등).', variants: ['마약류에서'], translations: { en: { main: 'Narcotics, illicit drugs.' } } },
+                    { term: '제외하다', mainDef: '어떤 그룹에서 빼다.', variants: ['제외하고', '제외하다'], translations: { en: { main: 'To exclude.' } } },
+                    { term: '출시하다', mainDef: '새로운 물건을 만들어서 사람들에게 팔기 시작하다.', variants: ['출시하면서', '출시하다'], translations: { en: { main: 'To launch, to release (a product).' } } },
+                    { term: '반응을 살피다', mainDef: '사람들이 어떻게 생각하는지 조심스럽게 보다.', variants: ['반응을 살폈던', '반응을 살피다'], translations: { en: { main: 'To check the reaction.' } } },
+                    { term: '이쯤 되니', mainDef: '상황이 이 정도가 되니까.', variants: ['이쯤 되니'], translations: { en: { main: 'At this point...' } } },
+                    { term: '담배 향이 나던지 풀 향이 나던지 풋내가 나던지', mainDef: '(말하는 사람의 실수) 정확한 표현은 ‘-든지’', subDefs: [{ subTerm: '• 향이 나다', subDef: '어떤 냄새가 나다.' }, { subTerm: '• 풋내가 나다', subDef: '풀에서 나는 냄새가 나다.' }], variants: ['담배 향이 나던지 풀 향이 나던지 풋내가 나던지', '향이 나던지', '풀 향이 나던지', '풋내가 나던지', '향이 나다', '풋내가 나다'], translations: { en: { main: '(Speaker\'s mistake) The correct expression is \'-든지\' (not \'-던지\').', subs: [{ term: '• 향이 나다', def: 'To have a scent/smell.' }, { term: '• 풋내가 나다', def: 'To have a "green" or grassy smell.' }] } } },
+                    { term: '마심으로써', mainDef: '마시는 것을 통해서 (어떤 행동의 방법을 말함).', variants: ['마심으로써'], translations: { en: { main: 'By drinking...' } } },
+                    { term: '규제', mainDef: '규칙을 만들어서 못하게 막는 것.', variants: ['규제가', '규제를', '규제한다면'], translations: { en: { main: 'Regulation, control.' } } },
+                    { term: '대마 성분 농도', mainDef: '음료 안에 대마 성분이 얼마나 진하게 들어있는지.', subDefs: [{ subTerm: '• 성분', subDef: '어떤 것을 만드는 재료.' }, { subTerm: '• 농도', subDef: '얼마나 진한지 나타내는 정도.' }], variants: ['대마 성분 농도', '농도'], translations: { en: { main: 'Cannabis component concentration.', subs: [{ term: '• 성분', def: 'Component, ingredient.' }, { term: '• 농도', def: 'Concentration.' }] } } },
+                    { term: '천차만별이다', mainDef: '모두 다 달라서 하나도 같지 않다.', variants: ['천차만별이고', '천차만별이다'], translations: { en: { main: 'To be widely different, to vary greatly.' } } },
+                    { term: '알코올에 민감하다', mainDef: '술을 조금만 마셔도 몸이 빨리 반응하다 (얼굴이 빨개지거나 아프다).', variants: ['알코올에 민감한', '알코올에 민감하다'], translations: { en: { main: 'To be sensitive to alcohol.' } } },
+                    { term: '논알코올', mainDef: '술 성분(알코올)이 없는 것.', variants: ['논알코올을'], translations: { en: { main: 'Non-alcoholic.' } } },
+                    { term: '개인 편차', mainDef: '사람마다 다르게 나타나는 차이.', subDefs: [{ subTerm: '• 편차', subDef: '기준에서 벗어난 차이.' }], variants: ['개인 편차', '편차'], translations: { en: { main: 'Individual variation.', subs: [{ term: '• 편차', def: 'Deviation, variation.' }] } } },
+                    { term: '제각각', mainDef: '여러 개가 모두 다 다르다.', variants: ['제각각이라'], translations: { en: { main: 'Each and every one is different.' } } },
+                    { term: '혼란스럽게 만들다', mainDef: '사람들이 뭐가 맞는지 헷갈리게 하다.', subDefs: [{ subTerm: '• 혼란스럽다', subDef: '정신이 없고 헷갈리다.' }], variants: ['혼란스럽게 만들기도', '혼란스럽게 만들다', '혼란스럽다'], translations: { en: { main: 'To make things confusing.', subs: [{ term: '• 혼란스럽다', def: 'To be confusing/chaotic.' }] } } },
+                    { term: '연방 차원', mainDef: '미국 전체 나라 수준에서.', variants: ['연방 차원에서'], translations: { en: { main: 'Federal level.' } } },
+                    { term: '일관된 규제를 하다', mainDef: '모든 곳에 똑같은 규칙을 만들다.', subDefs: [{ subTerm: '• 일관되다', subDef: '처음부터 끝까지 똑같다.' }, { subTerm: '• 규제를 하다', subDef: '규칙으로 막다.' }], variants: ['일관된 규제를 하다', '일관된 규제를', '일관되다', '규제를 하다'], translations: { en: { main: 'To apply consistent regulations.', subs: [{ term: '• 일관되다', def: 'To be consistent.' }, { term: '• 규제를 하다', def: 'To regulate.' }] } } },
+                    { term: '환각적인 측면', mainDef: '헛것이 보이거나 들리게 만드는 부분.', subDefs: [{ subTerm: '• 환각적', subDef: '헛것이 보이거나 들리는 것.' }], variants: ['환각적인 측면', '환각적'], translations: { en: { main: 'Hallucinogenic aspect.', subs: [{ term: '• 환각적', def: 'Hallucinogenic.' }] } } },
+                    { term: '악영향', mainDef: '나쁜 영향.', variants: ['악영향이', '악영향'], translations: { en: { main: 'Bad influence, negative effect.' } } },
+                    { term: '확답하다', mainDef: '"네, 맞아요" 또는 "아니요" 라고 확실하게 대답하다.', variants: ['확답하기가', '확답하다'], translations: { en: { main: 'To give a definite answer.' } } },
+                    { term: '검증이 되다', mainDef: '사실인지 아닌지, 괜찮은지 아닌지 확인이 끝나다.', variants: ['검증이 돼야', '검증이 되다', '검증'], translations: { en: { main: 'To be verified, to be proven.' } } },
+                    { term: '소량', mainDef: '아주 적은 양.', variants: ['소량일지라도', '소량'], translations: { en: { main: 'A small amount.' } } },
+                    { term: '누적되다', mainDef: '조금씩 계속 쌓여서 많아지다.', variants: ['누적되거나', '누적되다'], translations: { en: { main: 'To be accumulated.' } } },
+                    { term: '중독', mainDef: '어떤 것을 너무 좋아해서 그것 없이는 못 살게 되는 것 (예: 술 중독, 게임 중독).', variants: ['중독의', '중독이라면', '중독'], translations: { en: { main: 'Addiction.' } } },
+                    { term: '의향이 있다', mainDef: '어떤 것을 하고 싶은 생각이 있다.', variants: ['의향이 있어요'], translations: { en: { main: 'To be willing to, to have an intention to.' } } },
+                    { term: '반복적으로', mainDef: '똑같은 일을 여러 번.', variants: ['반복적으로'], translations: { en: { main: 'Repeatedly.' } } },
+                    { term: '제로 슈거 음료', mainDef: '설탕이 없는 음료.', variants: ['제로 슈거 음료'], translations: { en: { main: 'Zero-sugar drink.' } } },
+                    { term: '단백질 제품', mainDef: '단백질이 많이 들어간 음식.', variants: ['단백질 제품'], translations: { en: { main: 'Protein product.' } } },
+                    { term: '비건 음식', mainDef: '동물성 재료를 쓰지 않은 음식.', variants: ['비건 음식'], translations: { en: { main: 'Vegan food.' } } },
+                ];
+                
+                const initialChoices = ['역대', '첨가하다', '음주율', '멀리하기', '해로운', '합법적', '주류', '대안책', '상술', '중독', '만취하다', '규제', '숙취', '함량', '환각'];
+                
+                const summaries = [
+                    { id: 'summary1', textParts: ["\"현재 술을 마신다\"라고 답한 미국 성인이 '", "' 최저치를 기록했어요."], answer: '역대', hint: "'역사상' 또는 '지금까지의 모든 시간'을 의미하는 단어예요", explanation: "맞아요. 술을 마시는 미국 성인의 수가 역사상 가장 낮아졌어요.", textParts_eng: ["The number of American adults who said they \"currently drink alcohol\" has hit an '", "' low."], answer_eng: 'all-time'},
+                    { id: 'summary2', textParts: ["미국 뿐만 아니라 전 세계적으로 건강한 삶이 트렌드가 되면서 사람들이 술을 '", "' 시작했어요."], answer: '멀리하기', hint: "가까이 하지 않다(활용: -기 시작하다, 명사형으로 동사를 바꿔보세요)", explanation: "맞아요. 건강 트렌드 때문에 술을 피하는 사람들이 많아졌어요.", textParts_eng: ["As healthy living becomes a trend not only in the US but globally, people have started to '", "' alcohol."], answer_eng: 'stay away from'},
+                    { id: 'summary3', textParts: ["특히, 18세에서 34세 사이에서 '", "' 변화가 가장 컸어요."], answer: '음주율', hint: "'술을 마시는 사람의 비율'을 뜻하는 단어예요", explanation: "맞아요. 젊은 세대(MZ세대)에서 술을 마시는 비율이 가장 많이 줄어들었어요.", textParts_eng: ["Especially, the change in the '", "' was largest among 18 to 34-year-olds."], answer_eng: 'drinking rate'},
+                    { id: 'summary4', textParts: ["요즘 MZ세대에게 건강에 '", "' 술 대신 대마 음료를 마시는 게 새로운 트랜드가 되었다고 해요."], answer: '해로운', hint: "건강에 좋지 않다 (활용: -ㄴ/은, 명사를 꾸미는 형태로 동사를 바꿔보세요.", explanation: "맞아요. MZ세대는 술이 건강에 해롭다고 생각해서 대마 음료를 선택하기도 해요.", textParts_eng: ["These days, it's a new trend for the MZ generation to drink cannabis drinks instead of alcohol, which is '", "' to health."], answer_eng: 'harmful'},
+                    { id: 'summary5', textParts: ["대마 음료는 대마초의 성분 중 THC를 '", "' 만든 음료예요."], answer: '첨가하여', hint: "어떤 것을 더 넣다. (활용: '...해서'와 비슷한 문법으로 바꿔보세요.)", explanation: "맞아요. 대마 음료는 THC 성분을 넣어서(첨가해서) 만들어요.", textParts_eng: ["A cannabis drink is a beverage made by '", "' THC, a component of cannabis."], answer_eng: 'adding'},
+                    { id: 'summary6', textParts: ["소비자들은 대마 음료가 '", "'이라고 생각해서 위험하지 않다고 여길 수 있어요."], answer: '합법적', hint: "'법으로 문제가 되지 않는 것'을 뜻해요.", explanation: "맞아요. 2018년 농업법 개정으로 THC 0.3% 이하 대마 성분은 합법이 되었어요.", textParts_eng: ["Consumers might think cannabis drinks are not dangerous because they are considered '", "'."], answer_eng: 'legal'},
+                    { id: 'summary7', textParts: ["그런데 놀랍게도 미국에서 대마 음료 열풍을 주도하는 회사 중에는 기존의 '", "' 회사들이 많아요."], answer: '주류', hint: "'술을 만드는 회사들'을 말해요.", explanation: "맞아요. 맥주 같은 술(주류) 회사들이 술의 대안으로 대마 음료 시장에 진출하고 있어요.", textParts_eng: ["Surprisingly, many of the companies leading the cannabis drink craze in the US are existing '", "' companies."], answer_eng: 'alcoholic beverage'},
+                    { id: 'summary8', textParts: ["이 회사들은 술의 인기가 떨어지자 새로운 '", "'을 찾기 시작했고, 그중 하나가 대마 음료였어요."], answer: '대안책', hint: "'대신할 수 있는 다른 방법'을 뜻해요", explanation: "맞아요. 술이 잘 팔리지 않자, 주류 회사들은 대마 음료를 새로운 대안책으로 선택했어요.", textParts_eng: ["When alcohol's popularity dropped, these companies started looking for a new '", "', and cannabis drinks were one of them."], answer_eng: 'alternative solution'},
+                    { id: 'summary9', textParts: ["그래서 한 전문가는 대마 음료의 인기가 마케팅적인 '", "'에 소비자들이 넘어간 결과일 수 있다고 분석해요."], answer: '상술', hint: "'물건을 팔기 위한 속임수나 기술'을 의미해요", explanation: "맞아요. \"숙취 없는 에너지 드링크\" 같은 마케팅 상술에 소비자들이 반응한 것일 수 있어요.", textParts_eng: ["So, one expert analyzes that the popularity of cannabis drinks might be the result of consumers falling for marketing '", "'."], answer_eng: 'tactics'},
+                    { id: 'summary10', textParts: ["또한 대마 음료를 소량이라도 반복적으로 마셨을 때 '", "'의 문제는 없는지 검증이 필요하다고 경고해요."], answer: '중독', hint: "'그것 없이는 못 살게 되는 무서운 상태'예요.", explanation: "맞아요. THC가 소량이라도, 반복적으로 마시면 중독의 위험이 있는지 아직 검증되지 않았어요.", textParts_eng: ["He also warns that it needs to be verified whether there is a risk of '", "' when drinking even small amounts repeatedly."], answer_eng: 'addiction'}
+                ];
+                
+                const discussionQuestions = [
+                    { num: 1, kor: "여러분 나라에서도 건강을 중요하게 생각하는 트렌드 때문에 음주율이 감소하고 있어요?", eng: "In your country, is the drinking rate also decreasing due to the trend of prioritizing health?", vocab: [{ term: "트렌드가 되다", meaning: "새로운 유행이 되다." }, { term: "음주율", meaning: "술을 마시는 사람의 비율." }] },
+                    { num: 2, kor: "여러분이라면 대마 음료를 마셔볼 의향이 있어요? 그 이유는 뭐예요?", eng: "Would you be willing to try a cannabis drink? What is the reason?", vocab: [{ term: "대마 음료", meaning: "대마 성분이 들어간 마시는 것." }, { term: "의향이 있다", meaning: "어떤 것을 하고 싶은 생각이 있다." }] },
+                    { num: 3, kor: "MZ세대가 술을 멀리하고 대마 음료를 마시는 이유가 정말 건강 때문일까요? 다른 이유가 있을까요?", eng: "Is the reason the MZ generation avoids alcohol and drinks cannabis drinks really just for health? Could there be other reasons?", vocab: [{ term: "MZ세대", meaning: "1980년대~2000년대 초에 태어난 세대." }, { term: "술을 멀리하다", meaning: "술을 마시지 않고 피하다." }] },
+                    { num: 4, kor: "대마 음료가 술의 대안책이 될 수 있을까요? 아니면 대마 음료도 술처럼 건강에 해롭다고 생각해요?", eng: "Can cannabis drinks be an alternative to alcohol? Or do you think cannabis drinks are also harmful to health, like alcohol?", vocab: [{ term: "대안책", meaning: "어떤 문제를 해결하기 위한 다른 좋은 방법." }, { term: "해롭다", meaning: "건강이나 몸에 안 좋다." }] },
+                    { num: 5, kor: "대마 음료가 미국에서 합법화된 이유는 무엇일까요? 대마가 '우울증 치료'와 '정신 안정'에 도움이 되기 때문일까요?", eng: "What do you think is the reason cannabis drinks were legalized in the US? Is it because cannabis helps with 'treating depression' and 'mental stability'?", vocab: [{ term: "합법적", meaning: "나라의 법에 어긋나지 않는 것." }, { term: "우울증", meaning: "마음이 계속 슬프고 힘든 병." }, { term: "정신 안정", meaning: "마음이 편안하고 차분해지는 것." }] },
+                    { num: 6, kor: "만약 THC 함유량을 소량(예: 0.1%)으로 규제한다면, 반복적으로 마셔도 중독 위험이 낮다고 생각해요? 아니면 함유량 상관없이 반복적으로 마시면 중독이 될까요?", eng: "If THC content is regulated to a small amount (e.g., 0.1%), do you think the risk of addiction is low even with repeated consumption? Or does repeated consumption lead to addiction regardless of the content?", vocab: [{ term: "THC 함량", meaning: "어떤 물건 안에 THC가 얼마나 많이 들어있는지." }, { term: "소량", meaning: "아주 적은 양." }, { term: "규제", meaning: "규칙을 만들어서 못하게 막는 것." }, { term: "중독", meaning: "어떤 것을 너무 좋아해서 그것 없이는 못 살게 되는 것." }, { term: "반복적으로", meaning: "똑같은 일을 여러 번." }] },
+                    { num: 7, kor: "대마 음료가 \"기분이 업되지만 숙취가 없는 에너지 드링크\"로 포지셔닝되는 것이 주류 회사의 상술이라고 생각해요?", eng: "Do you think positioning cannabis drinks as an \"energy drink that lifts your mood but gives no hangover\" is a sales tactic by beverage companies?", vocab: [{ term: "기분이 업되다", meaning: "기분이 좋아지고 신나다." }, { term: "숙취가 있다", meaning: "술을 마신 다음 날 머리가 아프고 속이 안 좋다." }, { term: "포지셔닝을 하다", meaning: "사람들이 그 물건을 '좋은 것'이라고 생각하게 만들다." }, { term: "주류", meaning: "술." }, { term: "상술", meaning: "물건을 팔기 위한 기술이나 방법." }] },
+                    { num: 8, kor: "만약 대마 음료가 장기적으로 건강에 '악영향'을 준다는 과학적 '검증' 결과가 나온다면, 주류 회사들의 공격적 마케팅에 대해 책임을 물어야 한다고 생각해요?", eng: "If scientific 'verification' shows that cannabis drinks have long-term 'negative health effects', do you think beverage companies should be held responsible for their aggressive marketing?", vocab: [{ term: "악영향", meaning: "나쁜 영향." }, { term: "검증이 되다", meaning: "사실인지 아닌지, 괜찮은지 아닌지 확인이 끝나다." }, { term: "공격적으로 마케팅을 하다", meaning: "물건을 팔기 위해 아주 적극적으로 홍보하다." }] },
+                    { num: 9, kor: "대마 음료 말고, 어떤 음료가 파티에서 술을 대체할 수 있을까요?", eng: "Besides cannabis drinks, what other beverages do you think can replace alcohol at parties?", vocab: [{ term: "대체제", meaning: "어떤 물건 대신 사용할 수 있는 다른 물건." }] },
+                    { num: 10, kor: "'건강'이 새로운 트렌드가 되는 현상(예: 제로 슈거 음료, 단백질 제품, 비건 음식 등)에 대해 어떻게 생각해요?", eng: "What do you think about the phenomenon of 'health' becoming a new trend (e.g., zero-sugar drinks, protein products, vegan food, etc.)?", vocab: [{ term: "트렌드가 되다", meaning: "새로운 유행이 되다." }, { term: "제로 슈거 음료", meaning: "설탕이 없는 음료." }, { term: "단백질 제품", meaning: "단백질이 많이 들어간 음식." }, { term: "비건 음식", meaning: "동물성 재료를 쓰지 않은 음식." }, { term: "의향이 있다", meaning: "어떤 것을 하고 싶은 생각이 있다." }] }
+                ];
+                return { scriptContent, vocabAndGrammarList, initialChoices, summaries, discussionQuestions };
+            }, []);
+
+            // Updated useMemo for highlightData and vocabMap
+            const { highlightData, vocabMap } = useMemo(() => {
+                const vocabMap = new Map(vocabAndGrammarList.map(item => [item.term, item]));
+                const variantMap = new Map();
+                const allVariants = [];
+                vocabAndGrammarList.forEach(item => {
+                    if (item.variants) {
+                        item.variants.forEach(variant => {
+                            if (variant && typeof variant === 'string' && variant.trim().length > 0) {
+                                const trimmed = variant.trim();
+                                if (variantMap.has(trimmed)) {
+                                     console.warn(`[Duplicate Variant Warning] The variant "${trimmed}" is mapped to multiple terms. It was previously mapped to "${variantMap.get(trimmed)}" and will now be overwritten by "${item.term}".`);
+                                }
+                                variantMap.set(trimmed, item.term);
+                                allVariants.push(trimmed);
+                            }
+                        });
+                    }
+                });
+                allVariants.sort((a, b) => b.length - a.length);
+                const regexString = allVariants
+                    .map(variant => variant.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
+                    .join('|');
+                const regex = regexString ? new RegExp(`(${regexString})`, 'g') : null;
+                return {
+                    highlightData: { regex, variantMap },
+                    vocabMap
+                };
+            }, [vocabAndGrammarList]);
+
+
+            const tabs = useMemo(() => {
+                const baseTabs = [
+                    { name: '대화 스크립트', icon: <Video />, content: <VideoMaterialsTab scriptContent={scriptContent} vocabAndGrammarList={vocabAndGrammarList} highlightData={highlightData} vocabMap={vocabMap} layoutMode={layoutMode} /> },
+                    {
+                        name: '핵심 어휘',
+                        icon: <List />,
+                        content: (
+                            <div>
+                                <h2 className="text-3xl font-extrabold text-gray-900 mb-8 flex items-center gap-3"><List className="w-8 h-8 text-green-600"/> 핵심 어휘</h2>
+                                <div className="w-full overflow-y-auto" style={{maxHeight: `calc(100vh - 200px)`}}>
+                                    <div className="border rounded-lg bg-white p-2 shadow-lg">
+                                        <div className="space-y-1">
+                                            {vocabAndGrammarList.map(item => <VocabItem key={item.term} item={item} />)}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )
+                    },
+                    { name: '내용 확인 퀴즈', icon: <BookOpen />, content: (<div><h2 className="text-3xl font-extrabold text-gray-900 mb-8 flex items-center gap-3"><BookOpen className="w-8 h-8 text-green-600"/> 내용 확인 퀴즈</h2><SummarySection summaries={summaries} initialChoices={initialChoices} /></div>)},
+                    { name: '생각해 보기', icon: <MessageSquare />, content: (<div><h2 className="text-3xl font-extrabold text-gray-900 mb-8 flex items-center gap-3"><MessageSquare className="w-8 h-8 text-green-600"/> 생각해 보기</h2><DiscussionSection questions={discussionQuestions} /></div>) }
+                ];
+                return baseTabs;
+            }, [layoutMode, scriptContent, vocabAndGrammarList, summaries, discussionQuestions, highlightData, vocabMap, initialChoices]);
+
+            return (
+                <div className="bg-gray-50 text-gray-800 p-4 sm:p-6 md:p-8">
+                    <div className="mx-auto transition-all duration-300" style={{ maxWidth: containerWidth }}>
+                        <header className="text-center mb-12">
+                            <h1 className="text-4xl md:text-5xl font-black text-gray-900 mb-2">술보다 대마 음료가 건강에 좋을까요?</h1>
+                            <p className="text-xl text-gray-500" style={{fontFamily: "'Nanum Gothic', sans-serif"}}>[스브스뉴스] 요즘 미국인들이 난리라는 대마 음료? 대체 무슨 맛인지 직접 들어봄</p>
+                        </header>
+                        <Tabs tabs={tabs} />
+                    </div>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
