@@ -1,0 +1,1185 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>천원의 재능마켓</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700;800&family=IBM+Plex+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* 기본 폰트 설정 */
+        body { font-family: 'Nanum Gothic', sans-serif; }
+        /* 어휘 목록 사이드바 폰트 */
+        .vocab-sidebar { font-family: 'IBM Plex Sans KR', sans-serif; }
+        /* 어휘 팝업 스타일 */
+        .vocab-popup { font-family: 'Nanum Gothic', sans-serif; z-index: 50; max-width: 320px; white-space: normal; }
+        /* 호버 툴팁 스타일 */
+        .hover-tooltip { position: fixed; z-index: 9999; background: white; border: 2px solid #22c55e; border-radius: 8px; padding: 12px; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); max-width: 320px; font-family: 'Nanum Gothic', sans-serif; animation: fadeIn 0.15s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                max-height: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                max-height: 500px;
+                transform: translateY(0);
+            }
+        }
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.7;
+            }
+        }
+        .animate-fadeIn {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        .animate-slideDown {
+            animation: slideDown 0.3s ease-in-out;
+        }
+        /* 일반 어휘 강조 스타일 */
+        .highlight-general { font-weight: 600; color: #374151; cursor: pointer; position: relative; transition: background-color 0.2s; }
+        /* 마우스 호버 또는 활성화 시 스타일 */
+        .highlight-general:hover, .active-highlight { background-color: #dcfce7; border-radius: 3px; }
+        .vocab-highlight { background-color: #dcfce7; border: 2px solid #22c55e; border-radius: 8px; }
+        /* 인쇄 전용 스타일 */
+        .print-only { display: none; }
+        @media print {
+            @page { size: A4; margin: 0.75cm 1cm; }
+            .no-print { display: none !important; }
+            .print-only { display: inline-block !important; }
+            body, html { background: white !important; font-size: 9pt; }
+            .mx-auto { max-width: none !important; padding: 0 !important; margin: 0 !important; border: none !important; box-shadow: none !important; }
+            body > #root > div { padding: 0 !important; }
+            * { box-shadow: none !important; border-color: transparent !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            p, h1, h2, h3, h4, span, li { color: black !important; }
+            p, li { line-height: 1.5; }
+            header.text-center { margin-bottom: 1rem !important; }
+            .pt-10 { padding-top: 1rem !important; }
+            .mb-8 { margin-bottom: 0.4pt !important; }
+            h1, h2 { font-size: 12pt !important; margin-bottom: 15px; }
+            h3 { font-size: 12pt !important; margin-bottom: 10px; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div id="root"></div>
+    <script type="text/babel">
+        /**
+         * @typedef {Object} ArticleParagraph
+         * @property {string} id - Unique identifier (e.g., 'p1')
+         * @property {string} kor - Korean text
+         * @property {string} eng - English translation
+         */
+
+        // --- 아이콘 컴포넌트 ---
+        const Icon = React.memo(({ children, className = 'w-[1.5em] h-[1.5em]' }) => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>{children}</svg> ));
+        const BookOpen = ({ className }) => <Icon className={className}><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></Icon>;
+        const MessageSquare = ({ className }) => <Icon className={className}><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></Icon>;
+        const ThumbsUp = ({ className }) => <Icon className={className}><path d="M7 10v12"></path><path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2h0a2 2 0 0 1 3 1.88V5Z"></path></Icon>;
+        const List = ({ className }) => <Icon className={className}><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></Icon>;
+        const FileText = ({ className }) => <Icon className={className}><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></Icon>;
+        const Mic = ({ className }) => <Icon className={className}><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></Icon>;
+        const Spinner = ({ className = 'w-5 h-5' }) => ( <svg className={`animate-spin ${className}`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"> <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle> <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path> </svg> );
+        const LinkIcon = ({ className }) => <Icon className={className}><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></Icon>;
+
+        // --- [읽기 자료] 탭 관련 컴포넌트 ---
+        const HighlightedText = React.memo(({ text, highlightData, onWordHover, onWordLeave, onWordClick, paragraphId, activeWordId }) => {
+            if (!text || !highlightData?.regex) return text;
+            const { regex, variantMap } = highlightData;
+            const parts = text.split(regex);
+
+            return (<>{parts.map((part, index) => {
+                if (!part) return <React.Fragment key={`empty-${paragraphId}-${index}`} />;
+                if (index % 2 === 1) {
+                    const trimmedPart = part.trim();
+                    const baseForm = variantMap.get(trimmedPart);
+
+                    if (baseForm) {
+                            const uniqueWordId = `${paragraphId}-${index}-${baseForm}`;
+                            const classes = ['highlight-general', 'font-bold', activeWordId === uniqueWordId ? 'active-highlight' : ''].join(' ');
+                            return <span
+                                key={`highlight-${paragraphId}-${index}-${baseForm}`}
+                                className={classes}
+                                onMouseEnter={(e) => onWordHover(e, baseForm, paragraphId, index)}
+                                onMouseLeave={onWordLeave}
+                                onClick={(e) => onWordClick(e, baseForm, paragraphId, index)}
+                            >{part}</span>;
+                    }
+                }
+                return <React.Fragment key={`text-${paragraphId}-${index}`}>{part}</React.Fragment>;
+            })}</>);
+         });
+
+        const HoverTooltip = React.memo(({ data, position, showTranslation }) => {
+            if (!data || !position) return null;
+            return (
+                <div className="hover-tooltip" style={{ left: `${position.x}px`, top: `${position.y}px` }}>
+                    <p className="font-bold text-lg text-green-700 mb-2">{data.term}</p>
+                    <p className="text-gray-700 text-base">{data.mainDef}</p>
+                    {showTranslation && data.translations?.en?.main && <p className="text-gray-500 text-sm italic mt-1">{data.translations.en.main}</p>}
+                    {data.subDefs && data.subDefs.length > 0 && (
+                        <div className="mt-3 pt-3 border-t border-gray-200">
+                            <ul className="space-y-1">
+                                {data.subDefs.map((sub, i) => (
+                                    <li key={i} className="text-sm">
+                                        <span className="font-semibold text-gray-600">{sub.subTerm}:</span> <span className="text-gray-600">{sub.subDef}</span>
+                                        {showTranslation && data.translations?.en?.subs?.[i]?.def && <p className="text-gray-500 text-xs italic pl-2">{data.translations.en.subs[i].def}</p>}
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
+                </div>
+            );
+        });
+
+        const VocabItem = React.memo(React.forwardRef(({ item, isHighlighted }, ref) => {
+            const { useState } = React;
+            const [showExamples, setShowExamples] = useState(false);
+            const [showTranslation, setShowTranslation] = useState(false);
+
+            return (
+                <div ref={ref} className={`p-4 rounded-lg border-b ${isHighlighted ? 'vocab-highlight' : 'bg-white'}`}>
+                    <div className="flex justify-between items-start mb-1">
+                        <p className="font-bold text-lg text-green-700">{item.term}</p>
+                        {item.translations?.en && (
+                             <button
+                                 onClick={() => setShowTranslation(!showTranslation)}
+                                 className="text-xs text-gray-500 hover:text-gray-800 font-semibold py-1 px-2 bg-gray-100 hover:bg-gray-200 rounded-md transition-colors ml-2 flex-shrink-0 no-print"
+                             >
+                                 {showTranslation ? '번역 숨기기' : '번역 (Eng)'}
+                             </button>
+                        )}
+                    </div>
+                     <p className="text-gray-700">{item.mainDef}</p>
+                     {showTranslation && item.translations?.en?.main && (
+                         <p className="text-gray-500 text-sm italic mt-1">{item.translations.en.main}</p>
+                     )}
+
+                    {item.subDefs && item.subDefs.length > 0 && (
+                        <div className="pl-4 mt-3 pt-3 border-l-2 border-t">
+                            {item.subDefs.map((sub, index) => (
+                                <div key={index} className="text-sm mt-2">
+                                    <p className="font-semibold">{sub.subTerm}</p>
+                                    <p className="text-gray-600 pl-2">{sub.subDef}</p>
+                                    {showTranslation && item.translations?.en?.subs?.[index]?.def && (
+                                         <p className="text-gray-500 text-sm italic pl-2 mt-1">{item.translations.en.subs[index].def}</p>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    )}
+
+                    {item.examples && item.examples.length > 0 && (
+                        <div className="mt-3 no-print">
+                            <button onClick={() => setShowExamples(!showExamples)} className="text-xs bg-green-200 hover:bg-green-300 text-gray-600 py-1 px-2 rounded-md">
+                                {showExamples ? 'Close Examples' : 'Sentence Examples'}
+                            </button>
+                            {showExamples && (
+                                <div className="mt-3 p-3 bg-green-50 rounded-lg space-y-3 text-sm">
+                                    {item.examples.map((ex, index) => (
+                                        <div key={index}>
+                                            <p className="font-medium text-gray-800">{ex.kor}</p>
+                                            <p className="text-gray-400 hover:text-gray-700 transition-colors">{ex.eng}</p>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    )}
+                </div>
+            );
+           }));
+
+        // --- 하이라이터 펜 컴포넌트 ---
+        const HighlighterPen = ({ currentTool, setCurrentTool }) => {
+            const HighlighterIcon = ({ iconColor, selected, onClick, ariaLabel }) => (
+                <button
+                    onClick={onClick}
+                    className={`
+                        p-0 border-0 bg-transparent rounded-full 
+                        transition-all duration-200 ease-in-out
+                        transform hover:scale-110 active:scale-95
+                        focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2
+                        ${selected ? 'ring-2 ring-offset-1 ring-blue-500 scale-110' : ''}
+                    `}
+                    aria-label={ariaLabel}
+                    aria-pressed={selected}
+                    role="radio"
+                >
+                    <svg 
+                        width="24" 
+                        height="24" 
+                        viewBox="0 0 40 40" 
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="drop-shadow-sm"
+                    >
+                        <circle 
+                            cx="20" 
+                            cy="20" 
+                            r="18" 
+                            fill="white" 
+                            stroke="#4a4a4a" 
+                            strokeWidth="1.5" 
+                        />
+                        <g transform="rotate(45 20 20)">
+                            <rect 
+                                x="8" 
+                                y="16.5" 
+                                width="20" 
+                                height="7" 
+                                fill={iconColor} 
+                                stroke="#4a4a4a" 
+                                strokeWidth="1.25" 
+                                rx="1.5" 
+                            />
+                            <path 
+                                d="M 28 16.5 L 32 18.5 L 32 23.5 L 28 25.5 Z" 
+                                fill={iconColor} 
+                                stroke="#4a4a4a" 
+                                strokeWidth="1.25" 
+                            />
+                            <path 
+                                d="M 32 19 L 35 20 L 35 22 L 32 23 Z" 
+                                fill={iconColor} 
+                                stroke="#4a4a4a" 
+                                strokeWidth="1.25" 
+                            />
+                        </g>
+                    </svg>
+                </button>
+            );
+           
+            const tools = [
+                { name: 'yellow', color: '#FBBF24', label: '노랑 형광펜' },
+                { name: 'red', color: '#F472B6', label: '빨강 형광펜' },
+                { name: 'green', color: '#4ADE80', label: '초록 형광펜' },
+            ];
+
+            return (
+                <div className="bg-white p-3 rounded-lg shadow-md border border-gray-200 hover:shadow-lg transition-shadow duration-300">
+                    <div 
+                        className="flex justify-center items-center gap-3"
+                        role="radiogroup"
+                        aria-label="하이라이트 도구 선택"
+                    >
+                            <button
+                                onClick={() => setCurrentTool('eraser')}
+                                className={`
+                                    w-6 h-6 flex items-center justify-center 
+                                    rounded-full transition-all duration-200
+                                    transform hover:scale-110 active:scale-95
+                                    border-2 
+                                    focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2
+                                    ${currentTool === 'eraser' 
+                                        ? 'ring-2 ring-offset-1 ring-blue-500 border-blue-500 bg-blue-50 scale-110' 
+                                        : 'border-gray-300 hover:border-gray-400'
+                                    }
+                                `}
+                                aria-label="지우개"
+                                aria-pressed={currentTool === 'eraser'}
+                                role="radio"
+                                title="하이라이트 지우기"
+                            >
+                                <svg 
+                                    className="w-4 h-4 text-gray-600" 
+                                    fill="none" 
+                                    stroke="currentColor" 
+                                    viewBox="0 0 24 24" 
+                                    xmlns="http://www.w3.org/2000/svg"
+                                >
+                                    <path 
+                                        strokeLinecap="round" 
+                                        strokeLinejoin="round" 
+                                        strokeWidth="2" 
+                                        d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3"
+                                    />
+                                </svg>
+                            </button>
+                           
+                            {tools.map(tool => (
+                                <HighlighterIcon
+                                    key={tool.name}
+                                    iconColor={tool.color}
+                                    selected={currentTool === tool.name}
+                                    onClick={() => setCurrentTool(tool.name)}
+                                    ariaLabel={tool.label}
+                                />
+                            ))}
+                    </div>
+                </div>
+            );
+        };
+
+        const ArticleTab = ({content, vocabAndGrammarList, highlightData, vocabMap, headerInfo}) => {
+            const { useState, useRef, useCallback, useEffect } = React;
+            const [activeWordId, setActiveWordId] = useState(null);
+            const [hoverPopupData, setHoverPopupData] = useState(null);
+            const [highlightedVocab, setHighlightedVocab] = useState(null);
+            const [translationsVisible, setTranslationsVisible] = useState({});
+            const [isVocabSidebarVisible, setIsVocabSidebarVisible] = useState(false);
+            const [isHighlighterVisible, setIsHighlighterVisible] = useState(false);
+            const [currentTool, setCurrentTool] = useState('yellow');
+            const [isPinned, setIsPinned] = useState(false);
+
+            const vocabRefs = useRef({});
+            const hoverTimeoutRef = useRef(null);
+            const articleRef = useRef(null);
+
+            // 하이라이터 기능 구현
+            useEffect(() => {
+                if (!articleRef.current) return;
+               
+                const handleMouseUp = () => {
+                    if (currentTool === 'eraser') return;
+                   
+                    const selection = window.getSelection();
+                    if (!selection || !selection.rangeCount || selection.isCollapsed) return;
+                   
+                    const range = selection.getRangeAt(0);
+                   
+                    if (!articleRef.current.contains(range.commonAncestorContainer)) {
+                        selection.removeAllRanges();
+                        return;
+                    }
+                   
+                    const highlightColors = {
+                        yellow: 'bg-yellow-300',
+                        red: 'bg-red-300',
+                        green: 'bg-green-300',
+                    };
+                   
+                    const highlightClass = `${highlightColors[currentTool] || 'bg-yellow-300'} bg-opacity-60 transition-colors duration-200 rounded-sm px-0.5`;
+                   
+                    try {
+                        const fragment = range.extractContents();
+                        const walker = document.createTreeWalker(
+                            fragment, 
+                            NodeFilter.SHOW_TEXT
+                        );
+                        const textNodes = [];
+                       
+                        while (walker.nextNode()) {
+                            if (walker.currentNode.nodeValue.trim() !== '') {
+                                textNodes.push(walker.currentNode);
+                            }
+                        }
+                       
+                        textNodes.forEach(node => {
+                            const mark = document.createElement('mark');
+                            mark.className = highlightClass;
+                            mark.style.transition = 'background-color 0.2s ease';
+                           
+                            node.parentNode.replaceChild(mark, node);
+                            mark.appendChild(node);
+                        });
+                        range.insertNode(fragment);
+                       
+                        const marks = articleRef.current.querySelectorAll('mark');
+                        marks.forEach(mark => {
+                            mark.style.animation = 'pulse 0.3s ease-in-out';
+                        });
+                       
+                    } catch (e) {
+                        console.error("Could not wrap selection.", e);
+                    } finally {
+                        selection.removeAllRanges();
+                    }
+                };
+               
+                const handleEraseClick = (e) => {
+                    if (currentTool !== 'eraser') return;
+                   
+                    let target = e.target;
+                   
+                    while(target && target !== articleRef.current) {
+                        if (target.tagName === 'MARK') {
+                            target.style.transition = 'opacity 0.2s ease';
+                            target.style.opacity = '0';
+                           
+                            setTimeout(() => {
+                                const parent = target.parentNode;
+                                while (target.firstChild) {
+                                    parent.insertBefore(target.firstChild, target);
+                                }
+                                parent.removeChild(target);
+                                parent.normalize();
+                            }, 200);
+                           
+                            break;
+                        }
+                        target = target.parentNode;
+                    }
+                };
+               
+                const articleElement = articleRef.current;
+               
+                articleElement.addEventListener('mouseup', handleMouseUp);
+                articleElement.addEventListener('click', handleEraseClick);
+               
+                articleElement.style.cursor = currentTool === 'eraser' ? 'cell' : 'text';
+                articleElement.style.userSelect = currentTool === 'eraser' ? 'none' : 'text';
+               
+                return () => {
+                    articleElement.removeEventListener('mouseup', handleMouseUp);
+                    articleElement.removeEventListener('click', handleEraseClick);
+                    articleElement.style.cursor = 'auto';
+                    articleElement.style.userSelect = 'auto';
+                };
+            }, [currentTool]);
+
+            const handleWordHover = useCallback((e, baseForm, paragraphId, index) => {
+                 if (isPinned) return; 
+
+                 e.stopPropagation();
+                 if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+                 const wordData = vocabMap.get(baseForm);
+                 if (wordData) {
+                     const rect = e.target.getBoundingClientRect();
+                     let x = rect.left; let y = rect.bottom + 5;
+                     const tooltipWidth = 320; if (x + tooltipWidth > window.innerWidth) { x = rect.right - tooltipWidth; if (x < 0) x = 10; }
+                     const tooltipHeight = 200; if (y + tooltipHeight > window.innerHeight + window.scrollY) { y = rect.top - tooltipHeight - 5; }
+                     
+                     setHoverPopupData({ data: wordData, position: { x, y }, showTranslation: false });
+                     setHighlightedVocab(wordData.term);
+                     
+                     const vocabElement = vocabRefs.current[wordData.term];
+                     if (vocabElement) { vocabElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }
+                 }
+            }, [vocabMap, isPinned]);
+           
+            const handleWordClick = useCallback((e, baseForm, paragraphId, index) => {
+                 e.stopPropagation();
+                 if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+                 const wordData = vocabMap.get(baseForm);
+                 if (wordData) {
+                     const uniqueWordId = `${paragraphId}-${index}-${baseForm}`;
+
+                     // If clicking the currently currently pinned word, unpin it
+                     if (isPinned && activeWordId === uniqueWordId) {
+                        setIsPinned(false);
+                        setActiveWordId(null);
+                        setHoverPopupData(null);
+                        setHighlightedVocab(null);
+                     } else {
+                        // Pin new word
+                        const rect = e.target.getBoundingClientRect();
+                        let x = rect.left; let y = rect.bottom + 5;
+                        const tooltipWidth = 320; if (x + tooltipWidth > window.innerWidth) { x = rect.right - tooltipWidth; if (x < 0) x = 10; }
+                        const tooltipHeight = 200; if (y + tooltipHeight > window.innerHeight + window.scrollY) { y = rect.top - tooltipHeight - 5; }
+                        
+                        setHoverPopupData({ data: wordData, position: { x, y }, showTranslation: true });
+                        setHighlightedVocab(wordData.term);
+                        setActiveWordId(uniqueWordId);
+                        setIsPinned(true);
+                        
+                        const vocabElement = vocabRefs.current[wordData.term];
+                        if (vocabElement) { vocabElement.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }
+                     }
+                 }
+            }, [vocabMap, isPinned, activeWordId]);
+           
+            const handleWordLeave = useCallback(() => { 
+                if (isPinned) return;
+                hoverTimeoutRef.current = setTimeout(() => { 
+                    setHoverPopupData(null); 
+                    setHighlightedVocab(null); 
+                }, 200); 
+            }, [isPinned]);
+
+            const toggleTranslation = (paragraphId) => setTranslationsVisible(prev => ({ ...prev, [paragraphId]: !prev[paragraphId] }));
+
+            const anySidebarVisible = isVocabSidebarVisible || isHighlighterVisible;
+
+            return (
+                <div className="flex flex-col md:flex-row gap-6 bg-white p-6 sm:p-8 rounded-lg shadow-md">
+                    {hoverPopupData && <HoverTooltip data={hoverPopupData.data} position={hoverPopupData.position} showTranslation={hoverPopupData.showTranslation} />}
+                   
+                    <main className={`${anySidebarVisible ? 'flex-grow' : 'w-full'}`}>
+                       
+                        {/* --- Subtitle and Source --- */}
+                        <div className="mb-6 mt-0 p-4 bg-green-50 border-l-4 border-green-500 relative top-0.5 rounded-r-lg">
+                            <h2 className="text-xl font-extrabold text-gray-900 mb-2">
+                                {headerInfo.title}
+                            </h2>
+                            <div className="flex flex-col gap-1">
+                                {headerInfo.sources.map((source, index) => (
+                                    <a key={index} href={source} target="_blank" rel="noopener noreferrer" className="text-sm text-blue-600 hover:underline hover:text-blue-800 flex items-center gap-1 truncate">
+                                        <LinkIcon className="w-3 h-3 flex-shrink-0"/> {source}
+                                    </a>
+                                ))}
+                            </div>
+                        </div>
+                        {/* --- End Subtitle and Source --- */}
+
+                        <div ref={articleRef} className="space-y-6">
+                            {content.map(paragraph => {
+                                const hasTranslation = !!paragraph.eng;
+
+                                return (
+                                    <div key={paragraph.id} className="leading-relaxed">
+                                        <p className="text-lg text-gray-800 leading-loose text-justify">
+                                            <HighlightedText 
+                                                text={paragraph.kor} 
+                                                highlightData={highlightData} 
+                                                onWordHover={handleWordHover} 
+                                                onWordLeave={handleWordLeave} 
+                                                onWordClick={handleWordClick} 
+                                                paragraphId={paragraph.id} 
+                                                activeWordId={activeWordId} 
+                                            />
+                                        </p>
+
+                                        {translationsVisible[paragraph.id] && hasTranslation && (
+                                            <p className="text-gray-600 text-base mt-2 italic bg-gray-50 p-2 rounded border-l-2 border-gray-300">{paragraph.eng}</p>
+                                        )}
+                                       
+                                        {hasTranslation && (
+                                            <div className="flex items-center gap-2 mt-2 no-print">
+                                                <button 
+                                                    onClick={() => toggleTranslation(paragraph.id)} 
+                                                    className="text-xs text-gray-600 bg-gray-100 hover:bg-gray-200 px-2 py-1 rounded-md transition font-medium"
+                                                >
+                                                    {translationsVisible[paragraph.id] ? '번역 숨기기' : '번역 (Eng)'}
+                                                </button>
+                                            </div>
+                                        )}
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </main>
+
+                    {/* === 사이드바 === */}
+                    <aside className={`vocab-sidebar no-print transition-all duration-300 ${anySidebarVisible ? 'w-full md:w-72 flex-shrink-0' : 'fixed bottom-4 right-4 z-50'}`}>
+                        <div className={anySidebarVisible ? 'sticky top-8 space-y-4' : 'space-y-2'}>
+                            {/* 하이라이터 펜 토글 및 컨텐츠 */}
+                            <div className="flex flex-row items-stretch gap-2">
+                                <label htmlFor="highlighter-toggle" className="flex-1 flex items-center justify-between cursor-pointer bg-white py-2 px-4 rounded-lg shadow-sm border border-gray-200 hover:bg-gray-50 transition-colors">
+                                    <span className="text-sm font-semibold text-gray-800 whitespace-nowrap flex items-center gap-2">🖍️ 하이라이트 펜</span>
+                                    <div className="relative">
+                                        <input 
+                                            type="checkbox" 
+                                            id="highlighter-toggle" 
+                                            className="sr-only" 
+                                            checked={isHighlighterVisible} 
+                                            onChange={() => setIsHighlighterVisible(!isHighlighterVisible)} 
+                                        />
+                                        <div className={`block w-10 rounded-full transition-colors ${isHighlighterVisible ? 'bg-blue-500' : 'bg-gray-300'}`} style={{ height: '20px' }}></div>
+                                        <div className={`dot absolute left-1 top-[2px] bg-white w-4 h-4 rounded-full transition-transform ${isHighlighterVisible ? 'transform translate-x-5' : ''}`}></div>
+                                    </div>
+                                </label>
+                            </div>
+                            {isHighlighterVisible && (
+                                <div className="mb-2">
+                                    <HighlighterPen currentTool={currentTool} setCurrentTool={setCurrentTool} />
+                                </div>
+                            )}
+
+                            {/* 핵심 어휘 토글 및 컨텐츠 */}
+                            <div className="flex flex-row items-stretch gap-2">
+                                <label htmlFor="vocab-toggle" className="flex-1 flex items-center justify-between cursor-pointer bg-white py-2 px-4 rounded-lg shadow-sm border border-gray-200 hover:bg-gray-50 transition-colors">
+                                    <span className="text-sm font-semibold text-gray-800 whitespace-nowrap flex items-center gap-2">📚 핵심 어휘</span>
+                                    <div className="relative">
+                                        <input 
+                                            type="checkbox" 
+                                            id="vocab-toggle" 
+                                            className="sr-only" 
+                                            checked={isVocabSidebarVisible} 
+                                            onChange={() => setIsVocabSidebarVisible(!isVocabSidebarVisible)} 
+                                        />
+                                        <div className={`block w-10 rounded-full transition-colors ${isVocabSidebarVisible ? 'bg-green-500' : 'bg-gray-300'}`} style={{ height: '20px' }}></div>
+                                        <div className={`dot absolute left-1 top-[2px] bg-white w-4 h-4 rounded-full transition-transform ${isVocabSidebarVisible ? 'transform translate-x-5' : ''}`}></div>
+                                    </div>
+                                </label>
+                            </div>
+                            {isVocabSidebarVisible && (
+                                <div className="w-full overflow-y-auto" style={{maxHeight: 'calc(100vh - 250px)'}}>
+                                    <div className="border rounded-lg bg-white p-2 shadow-lg">
+                                        <div className="space-y-1">
+                                        {vocabAndGrammarList.map(item => <VocabItem key={item.term} item={item} ref={el => vocabRefs.current[item.term] = el} isHighlighted={highlightedVocab === item.term} />)}
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </aside>
+                </div>
+            )
+        }
+
+        // --- [퀴즈&토론] 탭 관련 컴포넌트 ---
+        const SummaryQuiz = ({ quizData, index }) => {
+            const { useState, useCallback } = React;
+            const [userInput, setUserInput] = useState('');
+            const [result, setResult] = useState(null);
+            const [showHint, setShowHint] = useState(false);
+            const [showAnswer, setShowAnswer] = useState(false);
+            const [isTranslationVisible, setIsTranslationVisible] = useState(false);
+
+            const handleCheckAnswer = useCallback(() => { setResult(userInput.trim() === quizData.answer ? 'correct' : 'incorrect'); setShowAnswer(false); }, [userInput, quizData.answer]);
+            const handleShowAnswer = useCallback(() => { setShowAnswer(true); setUserInput(quizData.answer); setResult(null); setShowHint(false); }, [quizData.answer]);
+            const getBorderColor = () => { if (result === 'correct') return 'border-green-500'; if (result === 'incorrect') return 'border-red-500'; return 'border-gray-300 focus:border-blue-500'; };
+
+            // '정답 확인' 버튼 스타일
+            const getCheckButtonClass = () => {
+                let colorClass = "bg-blue-500 text-white hover:bg-blue-600"; // 기본 파란색
+                if (result === 'correct') {
+                    colorClass = "bg-green-500 text-white hover:bg-green-600"; // 정답: 녹색
+                } else if (result === 'incorrect') {
+                    colorClass = "bg-red-500 text-white hover:bg-red-600"; // 오답: 빨간색
+                }
+                // 공통 스타일(크기, 굵기, 둥근 모서리 등)을 여기에 합칩니다.
+                return `px-3 py-1 text-sm font-semibold rounded-md transition-colors ${colorClass}`;
+            };
+           
+            // 나머지 버튼 스타일 ("힌트", "번역", "정답")
+            const getUtilityButtonClass = (color) => {
+                const colors = {
+                    gray: "bg-gray-200 text-gray-700 hover:bg-gray-300",
+                    yellow: "bg-yellow-300 text-yellow-900 hover:bg-yellow-400",
+                };
+                // 공통 스타일을 여기에도 합칩니다.
+                return `px-3 py-1 text-sm font-semibold rounded-md transition-colors ${colors[color] || colors.gray}`;
+            };
+
+            return (
+                <div className="p-6 bg-white rounded-xl border border-gray-200 shadow-lg">
+                    <p className="text-lg text-gray-800 leading-relaxed mb-4">
+                        {index + 1}. {quizData.textParts[0]}
+                        <input type="text" value={showAnswer ? quizData.answer : userInput} onChange={(e) => { setUserInput(e.target.value); setResult(null); setShowAnswer(false); }} className={`mx-2 px-2 py-1 border-b-2 bg-gray-50 rounded-t-md transition-colors text-center font-bold text-lg ${getBorderColor()}`} style={{width: `${(quizData.answer.length * 1.6)}ch`, minWidth: '10ch'}} placeholder="    " />
+                        {quizData.textParts[1]}
+                    </p>
+                    {isTranslationVisible && quizData.textParts_eng && <p className="text-sm text-gray-500 italic mt-2">{quizData.textParts_eng[0]}<span className="font-bold text-gray-600">{result === 'correct' ? quizData.answer_eng : ' ______ '}</span>{quizData.textParts_eng[1]}</p>}
+                    {result && <div className={`mt-4 p-3 rounded-lg ${result === 'correct' ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800'}`}><p className="font-bold flex items-center gap-2"><ThumbsUp className={`w-5 h-5 ${result === 'incorrect' ? 'transform -scale-y-100' : ''}`} />{result === 'correct' ? '정답이에요!' : '다시 생각해 보세요.'}</p>{result === 'correct' && <p className="text-sm mt-1">{quizData.explanation}</p>}</div>}
+                    <div className="mt-4 flex items-center gap-2 flex-wrap">
+                        {/* "정답 확인" 버튼 */}
+                        <button 
+                            onClick={handleCheckAnswer} 
+                            className={getCheckButtonClass()} 
+                            disabled={!userInput}
+                        >
+                            정답 확인
+                        </button>
+                       
+                        {/* "힌트 보기" 버튼 */}
+                        <button 
+                            onClick={() => setShowHint(true)} 
+                            className={getUtilityButtonClass("yellow")}
+                        >
+                            힌트 보기
+                        </button>
+                       
+                        {/* "번역" 버튼 */}
+                        <button 
+                            onClick={() => setIsTranslationVisible(prev => !prev)} 
+                            className={getUtilityButtonClass("gray")}
+                        >
+                            {isTranslationVisible ? '번역 숨기기' : '번역 (Eng)'}
+                        </button>
+                       
+                        {/* "정답 보기" 버튼 */}
+                        <button 
+                            onClick={handleShowAnswer} 
+                            className={getUtilityButtonClass("gray")}
+                        >
+                            정답 보기
+                        </button>
+                    </div>
+                    {showHint && !result && <div className="mt-4 p-3 bg-yellow-50 text-yellow-800 rounded-lg"><p className="font-semibold text-sm">힌트: {quizData.hint}</p></div>}
+                </div>
+            );
+        };
+
+        const SummarySection = ({ summaries, initialChoices }) => {
+            const { useState, useCallback } = React;
+            const shuffle = useCallback((array) => { let currentIndex = array.length, randomIndex; while (currentIndex !== 0) { randomIndex = Math.floor(Math.random() * currentIndex); currentIndex--; [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]]; } return array; }, []);
+            const [answerChoices, setAnswerChoices] = useState(() => shuffle([...initialChoices]));
+
+            return (
+                <section>
+                    <div className="flex flex-col md:flex-row gap-8">
+                        <div className="md:w-48 flex-shrink-0">
+                            <div className="sticky top-8 p-4 bg-gray-100 rounded-lg border border-gray-200">
+                                <h3 className="text-lg font-bold text-center mb-4 text-gray-900">정답 목록</h3>
+                                <ul className="space-y-2">
+                                    {answerChoices.map((choice, index) => <li key={index} className="px-2 py-3 bg-white rounded-md shadow-sm text-center font-semibold text-gray-700">{choice}</li>)}
+                                </ul>
+                            </div>
+                        </div>
+                        <div className="flex-grow space-y-4">
+                            {summaries.map((quiz, index) => <SummaryQuiz key={quiz.id} quizData={quiz} index={index} onShuffle={() => setAnswerChoices(shuffle([...initialChoices]))}/>)}
+                        </div>
+                    </div>
+                </section>
+            );
+        };
+
+        const DiscussionSection = ({ questions }) => {
+            const { useState } = React;
+            const [translationsVisible, setTranslationsVisible] = useState({});
+            const [userQuestionAnswers, setUserQuestionAnswers] = useState({});
+            const toggleTranslation = (id) => setTranslationsVisible(prev => ({ ...prev, [id]: !prev[id] }));
+
+            return (
+                <div className="space-y-10">
+                    {questions.map((q) => (
+                        <div key={q.num} className="p-6 border rounded-xl bg-white shadow-lg">
+                            <p className="text-gray-900 text-xl font-bold">{q.num}. {q.kor}</p>
+                            {translationsVisible[`q-${q.num}`] && <p className="whitespace-pre-wrap text-gray-600 italic mt-1 text-base">{q.eng}</p>}
+                            <button onClick={() => toggleTranslation(`q-${q.num}`)} className="text-xs text-gray-800 bg-gray-200 hover:bg-gray-300 font-bold py-1 px-3 rounded-full transition duration-200 mt-2 mb-6">
+                                {translationsVisible[`q-${q.num}`] ? '번역 숨기기' : '번역 (Eng)'}
+                            </button>
+                            {q.vocab && q.vocab.length > 0 && (
+                                <div className="mt-4 space-y-4">
+                                    <h3 className="font-bold text-lg text-gray-800">📍핵심 표현</h3>
+                                    {q.vocab.map((v, i) => <div key={i} className="pl-4 border-l-2 border-gray-200 py-2"><p className="font-semibold text-green-700 text-lg">{v.term}: <span className="font-medium text-gray-700 text-base">{v.meaning}</span></p></div>)}
+                                </div>
+                            )}
+                        </div>
+                    ))}
+                </div>
+            );
+        };
+
+        const Tabs = ({ tabs }) => {
+            const { useState } = React;
+            const [activeTab, setActiveTab] = useState(0);
+            return (
+                <div>
+                    <div className="border-b border-gray-200 no-print">
+                        <nav className="-mb-px flex space-x-6 overflow-x-auto" aria-label="Tabs">
+                            {tabs.map((tab, index) => (
+                                <button key={tab.name} onClick={() => setActiveTab(index)} className={`${ index === activeTab ? 'border-green-500 text-green-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'} whitespace-nowrap py-4 px-3 border-b-2 font-medium text-sm sm:text-base transition-colors flex items-center gap-2`}>
+                                    {React.cloneElement(tab.icon, { className: 'w-[1.2em] h-[1.2em]' })} {tab.name}
+                                </button>
+                            ))}
+                        </nav>
+                    </div>
+                    <div className="pt-6">{tabs[activeTab].content}</div>
+                </div>
+            );
+        };
+
+        // --- 메인 App 컴포넌트 ---
+        const App = () => {
+            const { useState, useEffect, useMemo } = React;
+            const [containerWidth, setContainerWidth] = useState('30cm');
+
+            useEffect(()=>{
+                const handleResize = ()=>{
+                    const heightInPx = window.innerHeight;
+                    const widthInPx = window.innerWidth;
+                    let newContainerWidth = '30cm';
+
+                    if (widthInPx < 768) {
+                         newContainerWidth = '100%';
+                    } else {
+                        if (heightInPx < 832) {
+                            newContainerWidth = '100%';
+                        } else if (heightInPx < 907) {
+                            newContainerWidth = '22cm';
+                        } else if (heightInPx < 983) {
+                            newContainerWidth = '24cm';
+                        } else {
+                            newContainerWidth = '30cm';
+                        }
+                    }
+
+                    setContainerWidth(newContainerWidth);
+
+                    const baseWidthPx = 30 * 37.795; 
+                    let effectiveWidthPx;
+                    if (newContainerWidth === '100%') {
+                        effectiveWidthPx = widthInPx;
+                    } else {
+                        const cmValue = parseFloat(newContainerWidth);
+                        effectiveWidthPx = cmValue * 37.795;
+                    }
+                    if (newContainerWidth !== '30cm') {
+                        const scale = Math.min(1.0, effectiveWidthPx / baseWidthPx);
+                        const finalScale = Math.max(0.8, scale);
+                        document.documentElement.style.fontSize = `${16 * finalScale}px`;
+                    } else {
+                        document.documentElement.style.fontSize = '16px';
+                    }
+                };
+                window.addEventListener('resize', handleResize);
+                handleResize();
+                return () => window.removeEventListener('resize', handleResize);
+            }, []);
+
+            /* ===== 데이터 정의 (읽기 자료, 어휘, 퀴즈 등) ===== */
+            const { articleContent, interviewContent, vocabAndGrammarList, initialChoices, summaries, discussionQuestions, articleHeader, interviewHeader } = useMemo(() => {
+                const articleContent = [
+                    { id: 'p1', kor: '당신에게 재능이 있다면 그것을 얼마에 팔겠는가. 천원으로 물건이 아닌 재능을 사고판다는 ‘천원의 재능마켓’은 바로 그 질문에서 출발했다. 투데이신문은 3일 오후, 서울 마포구에서 열린 현장을 직접 찾았다.', eng: "If you had a talent, how much would you sell it for? The '1,000 Won Talent Market', where people buy and sell talent rather than goods for a thousand won, started with this very question. Today News visited the scene held in Mapo-gu, Seoul, on the afternoon of the 3rd." },
+                    { id: 'p2', kor: '비가 내리는 연휴임에도 행사가 열리는 넓은 공간 안에는 사람들의 열기로 가득했다. 입구에서 천원짜리 티켓 세 장을 구매해 들어서자 작은 박람회처럼 판매자와 구매자가 작은 책상을 사이에 두고 마주 앉아 이야기를 나누는 모습이 한눈에 들어왔다.', eng: "Despite the rain during the holiday, the spacious venue was filled with the heat of people. Upon purchasing three 1,000-won tickets at the entrance and stepping inside, the sight of sellers and buyers sitting face-to-face across small desks, engaging in conversation like a miniature expo, came into view at a glance." },
+                    { id: 'p3', kor: '어떤 재능이 판매되고 있나 둘러보던 중 모든 판매자의 책상 위에는 타이머가 놓여있다는 것을 알게 됐다. 운영팀들은 ‘시간 엄수’라는 메모를 들고 테이블과 테이블 사이를 누비며 판매자와 구매자를 살폈다. 재능을 사고파는 곳에서 ‘시간’이 중요한 이유를 물어보니 “각 재능이 10분 단위로 운영되기 때문에 한 타임의 시간이 길어지면 다음 구매자들이 오래 기다리게 될 수 있다”며 “단 몇 분의 지연도 전체 흐름에 영향을 주기 때문에 운영에 있어 시간 관리를 가장 중요하게 생각하고 있다”고 설명했다.', eng: "While looking around to see what talents were on sale, I noticed timers placed on every seller's desk. The operation team roamed between tables holding notes that read 'Punctuality,' checking on sellers and buyers. When asked why 'time' is important in a place where talent is traded, they explained, 'Since each talent operates in 10-minute units, if one session runs long, subsequent buyers might have to wait a long time. Even a few minutes of delay affects the entire flow, so we prioritize time management in our operations.'" },
+                    { id: 'p4', kor: '시범 운영을 거쳐 2회차를 맞이한 ‘천원의 재능마켓’은 지난번보다 규모가 한층 더 커졌다. 12개의 재능과 100명의 방문객이 참여한 1회차 마켓에 이어, 이번에는 18개의 재능이 모였고 사전 신청자만 300명에 달했다. 재능 종류도 더욱 다양해져 상담·예술·심리·체험 등 각자의 개성을 살린 프로그램들이 공간 곳곳을 채웠다.', eng: "The '1,000 Won Talent Market,' now in its second run after a pilot operation, has grown significantly in scale. Following the first market with 12 talents and 100 visitors, this time 18 talents gathered, and pre-applicants alone reached 300. The types of talents also became more diverse, filling the space with programs reflecting individual personalities such as counseling, art, psychology, and hands-on experiences." },
+                    { id: 'p5', kor: '다양하게 판매되고 있는 재능 중에서도 투명한 창문을 닦기 위한 도구와 각도, 세정법을 모두 알려준다는 ‘투명한 창문닦기 원포인트 레슨’, 머리를 땋아준다는 ‘꼼지락 미용실’, 나를 위한 칭찬과 책을 추천해준다는 ‘칭찬 책방’ 등 유쾌하고도 기발한 재능들이 눈길을 끌었다.', eng: "Among the diverse talents on sale, playful and inventive ones caught the eye, such as 'One-Point Lesson on Transparent Window Cleaning' which teaches tools, angles, and cleaning methods for wiping windows; 'Fidget Hair Salon' which braids hair; and 'Praise Bookstore' which offers praise and book recommendations just for you." },
+                    { id: 'p6', kor: '‘천원의 재능마켓’은 판매자가 티켓 금액의 전체를 정산받는 구조로 운영된다. 이를 통해 판매자는 단순히 수익을 얻는 데서 그치지 않고 자신의 재능 가치와 적정 가격, 판매 기준을 가늠해볼 수 있게 된다. 판매자는 운영팀의 직접 섭외 방식으로 이뤄졌다. 무형의 재능을 다루는 만큼 불편한 상황이 없도록 인성과 안정성 확보를 최우선 과제로 삼았다는 기획자의 설명이다.', eng: "The '1,000 Won Talent Market' operates on a structure where the seller receives the entire ticket amount. Through this, sellers don't just earn revenue but can also gauge the value of their talent, appropriate pricing, and sales standards. Sellers were recruited directly by the operation team. The planner explained that since they deal with intangible talents, securing character and stability was the top priority to prevent any uncomfortable situations." },
+                    { id: 'p7', kor: '다만 참여자와 방문객이 늘어남에 따라 향후에는 공개 모집 방식을 도입할 예정이라고 전했다. 단순 지원이 아닌 간단한 온라인 미팅 심사를 통해 소통 태도와 재능의 성격을 확인하는 절차를 마련해 운영 안정성을 유지하겠다는 계획이다.', eng: "However, they mentioned plans to introduce an open recruitment method in the future as the number of participants and visitors increases. They plan to maintain operational stability by establishing a procedure to verify communication attitudes and the nature of talents through simple online meeting screenings, rather than just simple applications." },
+                    { id: 'p8', kor: '‘졸음 유발 낭독소’를 운영하는 이연재 판매자는 과거 시각장애인 낭독 봉사 오디션에서 ‘목소리가 너무 졸려 낭독에 어울리지 않는다’는 평가를 받았던 경험을 떠올려 재능을 판매하게 됐다고 전했다. 이 판매자는 “마켓을 시작하기 전까지는 내 재능이 팔릴 수 있을까 걱정을 많이 했는데 다행히 재능을 궁금해해 주시는 분들이 많았다. 적은 돈이지만 이곳의 취지를 이해해주시고 와주셔서 오히려 응원과 용기를 얻게 됐다”고 덧붙였다.', eng: "Seller Lee Yeon-jae, who runs the 'Sleep-Inducing Reading Post,' shared that she decided to sell her talent recalling an experience where she was evaluated as 'not suitable for reading because her voice is too sleepy' at a past audition for reading volunteering for the visually impaired. This seller added, 'Before starting the market, I worried a lot about whether my talent would sell, but fortunately, many people were curious about it. Although it's a small amount of money, I gained support and courage from those who understood the purpose of this place and came to visit.'" },
+                    { id: 'p9', kor: 'SNS에서 ‘천원의 재능마켓’을 보고 왔다는 방문자 최씨는 “이런 형식의 마켓은 처음 봤다. 재능을 구매할 수 있다는 것이 신기해서 와보게 됐다”며 “크든 작든 누구나 재능을 가지고 있다는 메시지가 좋았다. 큰 기대 없이 왔는데 생각보다 진지하게 마음을 돌아보고 이야기할 수 있게 돼 신기했다”고 전했다. 최씨와 함께 온 김씨는 “천원이라는 금액이 너무 가볍게 느껴졌는데 막상 체험해보니 훨씬 큰 걸 얻고 가는 기분이다. 다음에는 구매자가 아닌 판매자로 나와보고 싶다고 생각했다”고 말했다.', eng: "Visitor Choi, who came after seeing the '1,000 Won Talent Market' on social media, said, 'I've never seen a market like this before. I came because it was fascinating that you could purchase talent,' adding, 'I liked the message that everyone has talent, whether big or small. I came without big expectations, but it was amazing to be able to look back on my mind and talk more seriously than I thought.' Kim, who came with Choi, said, 'The amount of 1,000 won felt too light, but after actually experiencing it, I feel like I'm taking away something much bigger. I thought I'd like to come out as a seller, not a buyer, next time.'" },
+                    { id: 'p10', kor: '‘천원의 재능마켓’은 ‘의미 있는 시도를 해보자’는 공감대 속에서 별도의 급여 없이 기획을 이어가고 있다. 운영비는 신청비 등 소액의 경비로 충당하고 부족한 부분은 직접 제작한 굿즈 판매나 협력 지원을 통해 메워왔다고 전했다. 프로젝트가 열리는 공간 섭외부터 홍보까지 모두 직접 해결해왔으며 장기적으로 지속 가능한 운영 구조를 마련하기 위해 다양한 방안을 고민 중이라고 밝혔다.', eng: "The '1,000 Won Talent Market' continues its planning without separate pay under the consensus of 'let's try something meaningful.' Operating costs are covered by small expenses such as application fees, and shortages have been filled through sales of self-produced goods or cooperative support. They revealed that they have handled everything directly, from renting the space where the project takes place to promotion, and are considering various ways to establish a sustainable operating structure in the long term." },
+                    { id: 'p11', kor: '10분 동안 천원으로 재능을 사고파는 이곳은 단순한 마켓이 아닌 ‘사람의 마음’을 거래하는 장이었다. 천원이라는 부담 없는 금액으로 사람들은 오히려 마음을 열고 재능을 나눴다.', eng: "This place, where talent is bought and sold for 1,000 won for 10 minutes, was not just a market but a venue for trading 'people's hearts.' With the burden-free amount of 1,000 won, people rather opened their hearts and shared their talents." }
+                ];
+
+                const interviewContent = [
+                    { id: 'i1', kor: 'Q. ‘천원의 재능마켓’을 시작하게 된 계기가 무엇인가요?', eng: "Q. What triggered the start of the '1,000 Won Talent Market'?" },
+                    { id: 'i2', kor: '이 기획은 프리랜서로 일하면서 느낀 어려움에서 시작됐었어요. 아이디어처럼 형태가 없는 재능은 얼마에 팔아야 할지 기준이 없어 고민이 많았는데 생각해보니 어릴 때부터 무언가를 직접 팔아본 경험이 한 번도 없었던 거예요. 미국 만화에서 아이들이 집 앞에서 레모네이드를 파는 모습을 떠올리며, 한국 사회를 살아가는 우리에겐 그런 경험이 부족하다는 것을 깨달았어요. 그래서 성인이라도 부담 없이 자신의 재능을 사고팔아볼 수 있는 공간이 필요하다고 생각하며 이 기획을 준비하게 됐어요.', eng: "This project started from the difficulties I felt while working as a freelancer. Like ideas, intangible talents have no standard for how much they should be sold for, so I worried a lot. Then I realized I had never personally sold anything since I was young. Thinking of scenes in American cartoons where children sell lemonade in front of their houses, I realized that we living in Korean society lack such experiences. So I prepared this project thinking that a space is needed where even adults can buy and sell their talents without burden." },
+                    { id: 'i3', kor: 'Q. 오천원, 만원도 아닌 ‘천원’에 파는 이유가 있나요?', eng: "Q. Is there a reason for selling at '1,000 won', not 5,000 or 10,000 won?" },
+                    { id: 'i4', kor: '처음엔 ‘재능마켓’이라 이름 붙였지만 ‘재능’이라는 단어가 사람들을 주눅 들게 한다는 걸 알게 됐어요. 누구나 작게나마 잘하는 게 있어요. 근데 대부분 ‘이게 팔릴까?’라고 생각하죠. 그래서 문턱을 아예 낮췄어요. ‘천 원이면 어때?’ 그 순간 이 아이디어가 시작됐어요. 누구나 용기 낼 수 있도록 가장 낮은 화폐 단위인 천원을 붙였고 ‘천원어치 재능은 누구에게나 있다’는 슬로건을 만들었어요. 천 원이면, 뭐라도 한번 해보고 싶잖아요.', eng: "At first, I named it 'Talent Market,' but I realized the word 'talent' intimidates people. Everyone has something they are good at, however small. But most think, 'Will this sell?' So I lowered the threshold completely. 'How about 1,000 won?' That's when this idea started. I attached 1,000 won, the lowest currency unit, so anyone could muster the courage, and created the slogan 'Everyone has 1,000 won worth of talent.' If it's 1,000 won, you want to try just about anything." },
+                    { id: 'i5', kor: '이 마켓에서 천 원은 단순한 가격이 아니에요. ‘값’이 아니라 ‘가치’의 단위를 새로 정하는 실험이에요. 재능을 돈으로 환산하면 끝이 없잖아요. 천 원이라는 상징적인 금액은 ‘돈보다 중요한 건 나누는 경험’이라는 메시지를 담고 있어요. 가치의 무게 중심을 돈에서 사람으로 옮기고 싶었어요. 참가자들은  고객의 피드백을 통해 자신의 재능 가치를 직접 확인해 볼 수 있어요. ', eng: "In this market, 1,000 won is not a simple price. It's an experiment to redefine the unit of 'value', not 'cost'. If you convert talent into money, there's no end to it. The symbolic amount of 1,000 won contains the message that 'what is more important than money is the experience of sharing.' I wanted to shift the center of gravity of value from money to people. Participants can directly check the value of their talent through customer feedback." },
+                    { id: 'i6', kor: 'Q. 기획자가 생각하는 재능의 정의는 무엇인가요?', eng: "Q. What is the planner's definition of talent?" },
+                    { id: 'i7', kor: '제 생각에 재능은 ‘완성된 능력이 아니라, 나누는 순간 비로소 빛나는 가능성’이에요. 많은 사람들이 자기 재능을 너무 작게 여겨요. 그런데 그걸 꺼내놓고 나눠보면, 누군가에게는 큰 위로가 되기도 하고, 또 다른 누군가에겐 새로운 시작이 되기도 해요. 그게 바로 재능이죠. 천원의 재능마켓은 이름 그대로 누구나 자신의 작은 재능을 1,000원에 나누는 시장이에요. 거창한 능력, 전문가 수준의 스킬이 아니어도 돼요. ', eng: "In my opinion, talent is 'not a completed ability, but a possibility that shines only when shared.' Many people consider their talents too small. But if you take it out and share it, it becomes a great comfort to someone, and a new beginning for another. That is exactly what talent is. The 1,000 Won Talent Market is, as the name suggests, a market where anyone shares their small talent for 1,000 won. It doesn't have to be a grandiose ability or expert-level skill." },
+                    { id: 'i8', kor: 'Q. 주로 어떤 사람이 재능을 팔거나 사기 위해 오나요?', eng: "Q. What kind of people mainly come to sell or buy talent?" },
+                    { id: 'i9', kor: '처음 기획할 때는 ‘언젠가 나도 내 재능을 팔아보고 싶다’는 잠재 판매자들이 주로 올 거라고 생각했어요. 그러나 실제로는 이 기획을 통해 무언가를 배우거나 변화를 기대하는 분들도 많이 찾아와주셨어요. ‘천원의 재능마켓’에는 작다고 여겨질 수 있는 재능을 통해 새로운 가능성을 경험하러 오는 사람들이 모이는 것 같아요.', eng: "When first planning, I thought potential sellers who thought 'someday I want to sell my talent too' would mainly come. However, in reality, many people who expected to learn something or change through this project also visited. It seems that people who come to experience new possibilities through talents that might be considered small gather at the '1,000 Won Talent Market'." },
+                    { id: 'i10', kor: '이전에 한번 참여해보고, 이 일이 꼭 필요하다고 느껴 운영까지 돕겠다고 자청한 분들이 있었어요. 마켓이 그 사람들의 삶에도 변화를 준 거죠. 마켓의 경험을 바탕으로 공방을 열거나 새로운 프로젝트를 시작하시는 분들도 있었어요. 이 작은 시장이 누군가에게는 커다란 전환점이 된 것이죠.', eng: "There were people who participated once before, felt this work was essential, and volunteered to help with operations. The market brought change to their lives as well. There were also people who opened workshops or started new projects based on their market experience. This small market became a significant turning point for some." },
+                    { id: 'i11', kor: 'Q. 앞으로의 계획이나 꿈이 있다면?', eng: "Q. Do you have any future plans or dreams?" },
+                    { id: 'i12', kor: '사실 이번 프로젝트는 내가 필요해서 만든 기획이라 언젠가는 직접 판매자로 앉아 ‘첫인상 말해주기’ 같은 재능을 팔아보고 싶어요. 지금은 운영을 맡고 있어서 직접 참여하지 못하고 있지만 시스템이 안정되고 자리를 잡으면 판매자로 참여해서 내 재능이 통할 수 있을지 시험해보고 싶어요. ', eng: "Actually, since this project was a plan I made because I needed it, someday I want to sit as a seller myself and sell a talent like 'Telling First Impressions.' I can't participate directly right now because I'm in charge of operations, but once the system stabilizes and settles down, I want to participate as a seller and test if my talent can work." },
+                    { id: 'i13', kor: '그리고 이 ‘천원의 재능마켓’이 이벤트성 행사로 남지 않았으면 해요. ‘천원의 재능마켓’이 앞으로 더 많은 사람들에게 닿고자 해요. 서울뿐 아니라 부산, 제주 같은 지역에서도 열어보고 싶어요. 나아가 온라인에서도 재능을 사고파는 운영안도 그리고 있어요. 어디에 살든, 어떤 상황이든 자신의 재능을 가볍게 시험해볼 수 있는 환경이 마련됐으면 해요. 궁극적으로는 누군가 진로를 고민할 때 집 앞 편의점에 들르듯 ‘재능 한 번 팔아볼까?’하며 자연스럽게 찾을 수 있는 상시적인 공간으로 자리 잡는 게 꿈이에요. 물론, 규모의 확장도 중요하지만 ‘첫 경험의 설렘’을 잃지 않는 것이 더 중요하다고 생각해요.', eng: "And I hope this '1,000 Won Talent Market' doesn't remain as a one-time event. The '1,000 Won Talent Market' wants to reach more people in the future. I want to open it not only in Seoul but also in regions like Busan and Jeju. Furthermore, I am drawing up an operation plan to buy and sell talents online. I hope an environment is created where anyone can lightly test their talent regardless of where they live or what situation they are in. Ultimately, my dream is for it to settle as a permanent space where someone worrying about their career can naturally find it, asking 'Shall I try selling my talent once?' just like stopping by a convenience store in front of their house. Of course, expanding the scale is important, but I think not losing the 'excitement of the first experience' is more important." }
+                ];
+               
+                const vocabAndGrammarList = [
+                    { term: '천원어치', mainDef: '천 원으로 살 수 있는 만큼.', subDefs: [{ subTerm: '• -어치', subDef: '어떤 돈으로 살 수 있는 만큼의 양.' }], variants: ['천원어치의', '천원어치'], translations: { en: { main: 'The amount you can buy with 1,000 won.', subs: [{ term: '• -어치', def: 'The quantity that can be purchased with a given amount of money.' }] } } },
+                    { term: '서울 마포구에서 열린 현장', mainDef: '서울 마포구에서 이 행사를 한 곳.', subDefs: [{ subTerm: '• 열리다', subDef: '행사나 모임을 하다.' }, { subTerm: '• 현장', subDef: '실제로 어떤 일이 일어나는 곳.' }], variants: ['서울 마포구에서 열린 현장', '현장', '현장을'], translations: { en: { main: 'The place in Mapo-gu, Seoul where this event was held.', subs: [{ term: '• 열리다', def: 'To hold an event or gathering.' }, { term: '• 현장', def: 'The actual place where something happens.' }] } } },
+                    { term: '연휴', mainDef: '이틀 이상 계속 쉬는 날.', variants: ['연휴', '연휴임에도'], translations: { en: { main: 'A period of two or more consecutive days off.' } } },
+                    { term: '열기로 가득하다', mainDef: '많은 사람들이 적극적으로 어떤 활동을 하려는 분위기이다.', subDefs: [{ subTerm: '• 열기', subDef: '사람들의 뜨겁고 신난 분위기.' }, { subTerm: '• 가득하다', subDef: '빈 곳이 없이 꽉 차 있다.' }], variants: ['열기로 가득했다', '열기로 가득하다', '열기'], translations: { en: { main: 'Describes an atmosphere where many people are eager and active.', subs: [{ term: '• 열기', def: 'A heated, excited mood among people.' }, { term: '• 가득하다', def: 'To be completely full with no empty space.' }] } } },
+                    { term: '운영', mainDef: '어떤 일이나 행사를 계획하고 진행하는 것.', subDefs: [{ subTerm: '• 운영팀', subDef: '행사를 진행하는 일을 하는 사람들.' }, { subTerm: '• 운영자', subDef: '어떤 일을 관리하고 진행하는 사람.' }, { subTerm: '• 운영비', subDef: '어떤 일을 하는 데 드는 돈.' }, { subTerm: '• 운영되다', subDef: '어떤 일이 진행되다.' }], variants: ['운영', '운영팀', '운영자', '운영비', '운영되다', '운영하는', '운영되기', '운영에', '운영까지', '운영을', '운영 안정성을', '운영 구조를', '운영안도'], translations: { en: { main: 'Planning and carrying out an activity or event.', subs: [{ term: '• 운영팀', def: 'The people who carry out the event.' }, { term: '• 운영자', def: 'A person who manages and runs something.' }, { term: '• 운영비', def: 'Money spent to conduct the work.' }, { term: '• 운영되다', def: 'For something to be operated or carried out.' }] } } },
+                    { term: '시간 엄수', mainDef: '정해진 시간을 정확하게 지키는 것.', subDefs: [{ subTerm: '• 엄수', subDef: '규칙이나 약속을 꼭 지키는 것.' }], variants: ['시간 엄수'], translations: { en: { main: 'Strictly keeping to the set time.', subs: [{ term: '• 엄수', def: 'Strict observance of rules or promises.' }] } } },
+                    { term: '누비다', mainDef: '여러 곳을 계속 돌아다니다.', variants: ['누비며', '누비다'], translations: { en: { main: 'To keep moving around to many places.' } } },
+                    { term: '지연', mainDef: '시간이 늦어지는 것.', variants: ['지연', '지연도'], translations: { en: { main: 'A situation where something happens later than scheduled.' } } },
+                    { term: '시범 운영', mainDef: '정식으로 하기 전에 한번 해 보는 것.', subDefs: [{ subTerm: '• 시범', subDef: '진짜 하기 전에 먼저 해 보는 것.' }], variants: ['시범 운영', '시범 운영을'], translations: { en: { main: 'Trying something once before doing it for real.', subs: [{ term: '• 시범', def: 'A preliminary trial before the real thing.' }] } } },
+                    { term: '2회차를 맞이하다', mainDef: '두 번째로 하게 되다.', subDefs: [{ subTerm: '• 회차', subDef: '몇 번째인지 세는 말.' }, { subTerm: '• 맞이하다', subDef: '어떤 때나 상황이 오다.' }], variants: ['2회차를 맞이한', '2회차를 맞이하다'], translations: { en: { main: 'To reach the second iteration.', subs: [{ term: '• 회차', def: 'A counter indicating which numbered round it is.' }, { term: '• 맞이하다', def: 'For a time or situation to arrive.' }] } } },
+                    { term: '사전 신청자', mainDef: '미리 "참가하고 싶어요"라고 말한 사람.', subDefs: [{ subTerm: '• 사전', subDef: '어떤 일이 있기 전에 미리.' }, { subTerm: '• 신청자', subDef: '"하고 싶어요"라고 말한 사람.' }], variants: ['사전 신청자', '사전 신청자만'], translations: { en: { main: 'A person who expressed in advance that they want to participate.', subs: [{ term: '• 사전', def: 'Before something happens; in advance.' }, { term: '• 신청자', def: 'A person who says they want to do something (an applicant).' }] } } },
+                    { term: '개성을 살리다', mainDef: '각자 다른 특별한 점을 잘 보이게 하다.', subDefs: [{ subTerm: '• 개성', subDef: '다른 사람과 다른 자기만의 특별한 점.' }, { subTerm: '• 살리다', subDef: '좋은 점이 잘 보이게 하다.' }], variants: ['개성을 살린', '개성을 살리다'], translations: { en: { main: 'To make each person’s unique traits stand out well.', subs: [{ term: '• 개성', def: 'One’s own special traits that differ from others.' }, { term: '• 살리다', def: 'To highlight and bring out the good points.' }] } } },
+                    { term: '투명하다', mainDef: '유리처럼 속이 다 보일 만큼 맑고 깨끗하다.', variants: ['투명한'], translations: { en: { main: 'So clear and clean that you can see through it like glass.' } } },
+                    { term: '각도', mainDef: '(창문을 닦을 때) 어떤 방향이나 위치.', variants: ['각도'], translations: { en: { main: 'A particular direction or position (e.g., when cleaning a window).' } } },
+                    { term: '세정법', mainDef: '더러운 것을 깨끗하게 씻는 방법.', subDefs: [{ subTerm: '• 세정', subDef: '더러운 것을 물이나 세제로 씻는 것.' }], variants: ['세정법'], translations: { en: { main: 'A method for washing something dirty clean.', subs: [{ term: '• 세정', def: 'Washing dirt with water or detergent.' }] } } },
+                    { term: '머리를 땋다', mainDef: '머리카락을 여러 줄로 나눠서 서로 엮다.', subDefs: [{ subTerm: '• 땋다', subDef: '머리카락이나 실을 여러 줄로 나눠서 서로 엮는 것.' }], variants: ['머리를 땋아준다', '머리를 땋다'], translations: { en: { main: 'To divide hair into several strands and weave them together.', subs: [{ term: '• 땋다', def: 'To separate into strands and weave together.' }] } } },
+                    { term: '꼼지락', mainDef: '작고 천천히 자꾸 움직이는 모양.', variants: ['꼼지락'], translations: { en: { main: 'A manner of small, slow, repeated movements.' } } },
+                    { term: '유쾌하다', mainDef: '기분이 좋고 즐겁다.', variants: ['유쾌하고도', '유쾌한', '유쾌하다'], translations: { en: { main: 'To feel pleasant and joyful.' } } },
+                    { term: '기발하다', mainDef: '생각이나 아이디어가 보통과 다르게 아주 새롭다.', variants: ['기발한', '기발하다'], translations: { en: { main: 'To be very new and different from the ordinary in idea.' } } },
+                    { term: '정산받다', mainDef: '(판매자가) 티켓 판매로 번 돈을 받다.', subDefs: [{ subTerm: '• 정산', subDef: '돈을 계산해서 정리하는 것.' }], variants: ['정산받는', '정산받다'], translations: { en: { main: 'For the seller to receive the money earned from ticket sales.', subs: [{ term: '• 정산', def: 'Calculating and organizing accounts.' }] } } },
+                    { term: '적정 가격', mainDef: '너무 비싸지도 싸지도 않은 알맞은 가격.', subDefs: [{ subTerm: '• 적정', subDef: '딱 알맞은 것.' }], variants: ['적정 가격', '적정 가격을'], translations: { en: { main: 'A price that is just right—neither too expensive nor too cheap.', subs: [{ term: '• 적정', def: 'Exactly appropriate or suitable.' }] } } },
+                    { term: '가늠해 보다', mainDef: '대충 어느 정도인지 생각해 보다.', subDefs: [{ subTerm: '• 가늠하다', subDef: '대충 어느 정도인지 헤아려 보다.' }], variants: ['가늠해볼', '가늠해 보다', '가늠할'], translations: { en: { main: 'To roughly consider the degree or amount of something.', subs: [{ term: '• 가늠하다', def: 'To roughly gauge or estimate.' }] } } },
+                    { term: '직접 섭외 방식', mainDef: '운영팀이 직접 사람을 찾아서 부탁하는 방법.', subDefs: [{ subTerm: '• 섭외', subDef: '어떤 일을 위해 사람을 찾아서 부탁하는 것.' }], variants: ['직접 섭외 방식', '섭외', '섭외부터'], translations: { en: { main: 'A method where the operations team directly finds people and asks them to join.', subs: [{ term: '• 섭외', def: 'Finding people and requesting their participation for a task.' }] } } },
+                    { term: '무형의 재능', mainDef: '손으로 만질 수 없는 재능.', subDefs: [{ subTerm: '• 무형', subDef: '모양이 없는 것.' }], variants: ['무형의 재능', '무형', '무형의'], translations: { en: { main: 'A talent that cannot be physically touched.', subs: [{ term: '• 무형', def: 'Something without tangible form.' }] } } },
+                    { term: '인성', mainDef: '사람의 성격이나 태도.', variants: ['인성', '인성과'], translations: { en: { main: 'A person’s character or attitude.' } } },
+                    { term: '최우선 과제로 삼다', mainDef: '여러 일 중에서 가장 먼저 하고 가장 중요하게 생각하다.', subDefs: [{ subTerm: '• 최우선', subDef: '가장 먼저, 가장 중요한 것.' }, { subTerm: '• 과제', subDef: '해야 할 일이나 문제.' }], variants: ['최우선 과제로 삼았다는', '최우선 과제로 삼다', '최우선'], translations: { en: { main: 'To treat something as the first and most important task among many.', subs: [{ term: '• 최우선', def: 'The foremost and most important thing.' }, { term: '• 과제', def: 'A task to be done or a problem to solve.' }] } } },
+                    { term: '기획', mainDef: '어떤 일을 하기 위해 미리 계획하는 것.', subDefs: [{ subTerm: '• 기획자', subDef: '프로젝트나 행사를 계획하는 사람.' }, { subTerm: '• 기획하다', subDef: '어떤 일을 계획하다.' }], variants: ['기획', '기획자', '기획한', '기획할', '기획은'], translations: { en: { main: 'Planning something in advance in order to carry it out.', subs: [{ term: '• 기획자', def: 'A person who plans a project or event.' }, { term: '• 기획하다', def: 'To make a plan for something.' }] } } },
+                    { term: '향후', mainDef: '앞으로, 나중에.', variants: ['향후에는', '향후'], translations: { en: { main: 'From now on or at a later time.' } } },
+                    { term: '공개 모집 방식', mainDef: '모든 사람에게 알려서 참가하고 싶은 사람을 받는 방법.', subDefs: [{ subTerm: '• 공개', subDef: '모든 사람에게 보이게 하는 것.' }, { subTerm: '• 모집', subDef: '사람을 모으는 것.' }], variants: ['공개 모집 방식', '공개 모집'], translations: { en: { main: 'A method that announces to everyone and accepts those who wish to join.', subs: [{ term: '• 공개', def: 'Making something visible to everyone.' }, { term: '• 모집', def: 'Gathering people together.' }] } } },
+                    { term: '심사', mainDef: '괜찮은지 아닌지 확인하고 평가하는 것.', variants: ['심사를', '심사'], translations: { en: { main: 'Examining and evaluating to decide whether it is acceptable.' } } },
+                    { term: '졸음 유발', mainDef: '잠이 오게 만드는 것.', subDefs: [{ subTerm: '• 유발', subDef: '어떤 일이 일어나게 하다.' }, { subTerm: '• 졸음', subDef: '잠이 오려는 느낌.' }], variants: ['졸음 유발', '졸음을 유발하는', '졸음'], translations: { en: { main: 'Something that causes sleepiness.', subs: [{ term: '• 유발', def: 'To bring about or cause something to happen.' }, { term: '• 졸음', def: 'The feeling of getting sleepy.' }] } } },
+                    { term: '낭독', mainDef: '글을 소리 내서 읽는 것.', subDefs: [{ subTerm: '• 낭독소', subDef: '책을 소리 내서 읽어주는 곳.' }, { subTerm: '• 낭독 봉사', subDef: '돈을 받지 않고 앞이 안 보이는 사람들에게 글을 읽어주는 활동.' }], variants: ['낭독', '낭독소', '낭독을', '낭독에', '낭독하다'], translations: { en: { main: 'Reading written text aloud.', subs: [{ term: '• 낭독소', def: 'A place where books are read aloud.' }, { term: '• 낭독 봉사', def: 'Volunteering to read for people with visual impairments without pay.' }] } } },
+                    { term: '시각장애인', mainDef: '눈이 안 보이거나 잘 안 보이는 사람.', variants: ['시각장애인'], translations: { en: { main: 'A person who is blind or has low vision.' } } },
+                    { term: '취지', mainDef: '어떤 일을 하려는 목적이나 뜻.', variants: ['취지', '취지를'], translations: { en: { main: 'The purpose or intention behind doing something.' } } },
+                    { term: '형식', mainDef: '어떤 것의 모양이나 방식.', variants: ['형식', '형식의'], translations: { en: { main: 'The shape or method of something.' } } },
+                    { term: '진지하게', mainDef: '장난이 아니라 정말 성실하게.', subDefs: [{ subTerm: '• 진지하다', subDef: '장난이 아니라 정말 성실한 것.' }], variants: ['진지하게', '진지한'], translations: { en: { main: 'Sincerely, not playfully; in a truly earnest manner.', subs: [{ term: '• 진지하다', def: 'To be serious and sincere, not joking.' }] } } },
+                    { term: '막상', mainDef: '생각과 다르게 실제로는.', variants: ['막상', '막상 체험해보니'], translations: { en: { main: 'In reality, contrary to what was expected.' } } },
+                    { term: '공감대', mainDef: '서로 같은 생각이나 느낌을 가지는 것.', variants: ['공감대', '공감대 속에서'], translations: { en: { main: 'Having shared thoughts or feelings in common.' } } },
+                    { term: '별도의 급여 없이', mainDef: '따로 돈을 받지 않고.', subDefs: [{ subTerm: '• 별도', subDef: '따로, 다르게.' }, { subTerm: '• 급여', subDef: '일한 대가로 받는 돈.' }], variants: ['별도의 급여 없이', '급여 없이'], translations: { en: { main: 'Without receiving separate pay.', subs: [{ term: '• 별도', def: 'Separate or different from the usual.' }, { term: '• 급여', def: 'Money paid in return for work (salary).' }] } } },
+                    { term: '소액의 경비', mainDef: '아주 적은 돈.', subDefs: [{ subTerm: '• 소액', subDef: '아주 적은 돈.' }, { subTerm: '• 경비', subDef: '어떤 일을 하는 데 쓰는 돈.' }], variants: ['소액의 경비', '소액의 경비로', '소액'], translations: { en: { main: 'A very small amount of expenses.', subs: [{ term: '• 소액', def: 'A very small amount of money.' }, { term: '• 경비', def: 'Money used to carry out a task (expenses).' }] } } },
+                    { term: '충당하다', mainDef: '필요한 돈이나 물건을 채우다.', variants: ['충당하고', '충당하다'], translations: { en: { main: 'To make up for or supply the necessary money or items.' } } },
+                    { term: '직접 제작한 굿즈 판매', mainDef: '자기가 만든 기념품을 파는 것.', subDefs: [{ subTerm: '• 굿즈', subDef: '어떤 행사나 브랜드의 기념품.' }, { subTerm: '• 제작', subDef: '물건을 만드는 것.' }], variants: ['직접 제작한 굿즈 판매', '굿즈 판매', '굿즈'], translations: { en: { main: 'Selling souvenirs that one has made oneself.', subs: [{ term: '• 굿즈', def: 'Souvenirs related to an event or brand.' }, { term: '• 제작', def: 'The act of making or producing items.' }] } } },
+                    { term: '협력 지원', mainDef: '다른 사람이나 회사가 함께 도와주는 것.', subDefs: [{ subTerm: '• 협력', subDef: '서로 함께 일하는 것.' }, { subTerm: '• 지원', subDef: '돕는 것.' }], variants: ['협력 지원', '협력 지원을', '협력'], translations: { en: { main: 'Help provided together by other people or organizations.', subs: [{ term: '• 협력', def: 'Working together with others.' }, { term: '• 지원', def: 'Providing assistance.' }] } } },
+                    { term: '메워 오다', mainDef: '부족한 것을 계속 채워 오다.', subDefs: [{ subTerm: '• 메우다', subDef: '빈 곳이나 부족한 것을 채우다.' }], variants: ['메워왔다고', '메워 오다', '메우다'], translations: { en: { main: 'To keep filling in what is lacking over time.', subs: [{ term: '• 메우다', def: 'To fill an empty or deficient part.' }] } } },
+                    { term: '공간 섭외', mainDef: '행사를 할 장소를 찾아서 계약하는 것.', variants: ['공간 섭외', '공간 섭외부터'], translations: { en: { main: 'Finding and securing a venue for an event.' } } },
+                    { term: '사람의 마음을 거래하는 장', mainDef: '물건이 아니라 사람의 마음과 재능을 나누는 곳.', subDefs: [{ subTerm: '• 장', subDef: '어떤 일이 일어나는 곳.' }, { subTerm: '• 거래', subDef: '물건을 사고파는 것.' }], variants: ['사람의 마음을 거래하는 장', '거래하는 장', '장'], translations: { en: { main: 'A place where people share hearts and talents instead of goods.', subs: [{ term: '• 장', def: 'A place where activities occur.' }, { term: '• 거래', def: 'Buying and selling; exchange.' }] } } },
+                    { term: '형태', mainDef: '어떤 것의 모양.', variants: ['형태', '형태가 없는'], translations: { en: { main: 'The shape or form of something.' } } },
+                    { term: '주눅 들게 하다', mainDef: '사람을 겁나게 하고 자신감을 없어지게 만들다.', subDefs: [{ subTerm: '• 주눅 들다', subDef: '겁이 나서 자신감이 없어지다.' }], variants: ['주눅 들게', '주눅 들다'], translations: { en: { main: 'To intimidate someone and take away their confidence.', subs: [{ term: '• 주눅 들다', def: 'To lose confidence out of fear.' }] } } },
+                    { term: '문턱을 낮추다', mainDef: '어려운 것을 쉽게 만들다.', subDefs: [{ subTerm: '• 문턱', subDef: '(비유) 어떤 일을 시작하기 어렵게 만드는 것.' }], variants: ['문턱을 아예 낮췄어요', '문턱을 낮추다'], translations: { en: { main: 'To make something difficult easier to start.', subs: [{ term: '• 문턱', def: 'A figurative barrier that makes starting something difficult.' }] } } },
+                    { term: '화폐 단위', mainDef: '돈을 세는 기준 (예: 원, 달러).', subDefs: [{ subTerm: '• 화폐', subDef: '물건을 살 때 쓰는 돈.' }], variants: ['화폐 단위', '화폐 단위인'], translations: { en: { main: 'The unit used to count money (e.g., won, dollar).', subs: [{ term: '• 화폐', def: 'Money used to buy things (currency).' }] } } },
+                    { term: '돈으로 환산하다', mainDef: '어떤 것의 가치를 돈으로 계산하다.', subDefs: [{ subTerm: '• 환산', subDef: '다른 것으로 바꿔서 계산하는 것.' }], variants: ['환산하면', '환산할', '돈으로 환산하다'], translations: { en: { main: 'To calculate the value of something in monetary terms.', subs: [{ term: '• 환산', def: 'Converting into another basis for calculation.' }] } } },
+                    { term: '상징적', mainDef: '어떤 의미를 나타내는.', subDefs: [{ subTerm: '• 상징', subDef: '어떤 뜻을 나타는 것.' }], variants: ['상징적', '상징적인'], translations: { en: { main: 'Expressing or representing a particular meaning.', subs: [{ term: '• 상징', def: 'Something that stands for a meaning (a symbol).' }] } } },
+                    { term: '무게 중심', mainDef: '(비유) 가장 중요하게 생각하는 것.', variants: ['무게 중심', '무게 중심을'], translations: { en: { main: 'Figuratively, what is regarded as the most important focal point.' } } },
+                    { term: '비로소', mainDef: '그때서야, 그때 처음으로.', variants: ['비로소'], translations: { en: { main: 'Only then; for the first time at that point.' } } },
+                    { term: '거창하다', mainDef: '크고 대단하다.', variants: ['거창한', '거창하다'], translations: { en: { main: 'To be large in scale and grand.' } } },
+                    { term: '자청하다', mainDef: '다른 사람이 시키지 않아도 스스로 하겠다고 말하다.', variants: ['자청한', '자청하다'], translations: { en: { main: 'To volunteer to do something without being told.' } } },
+                    { term: '공방', mainDef: '손으로 물건을 만드는 작업실.', variants: ['공방', '공방을'], translations: { en: { main: 'A workshop where items are made by hand.' } } },
+                    { term: '전환점', mainDef: '인생이나 상황이 크게 바뀌는 순간.', subDefs: [{ subTerm: '• 전환', subDef: '방향이나 상태를 바꾸는 것.' }], variants: ['전환점', '전환점이'], translations: { en: { main: 'A moment when life or a situation changes greatly.', subs: [{ term: '• 전환', def: 'A change in direction or state.' }] } } },
+                    { term: '이벤트성 행사', mainDef: '한번만 하고 끝나는 행사.', subDefs: [{ subTerm: '• 이벤트성', subDef: '한번만 하는 것.' }], variants: ['이벤트성 행사'], translations: { en: { main: 'An event that is held only once and then ends.', subs: [{ term: '• 이벤트성', def: 'The nature of being a one-time event.' }] } } },
+                    { term: '닿다', mainDef: '(메시지나 사람이) 어떤 곳에 가다.', variants: ['닿고자', '닿다'], translations: { en: { main: 'For a message or person to reach a place.' } } },
+                    { term: '운영안', mainDef: '어떻게 운영할지에 대한 계획.', subDefs: [{ subTerm: '• 안', subDef: '어떤 일을 위한 계획.' }], variants: ['운영안', '운영안도'], translations: { en: { main: 'A plan for how something will be operated.', subs: [{ term: '• 안', def: 'A plan or proposal for a task.' }] } } },
+                    { term: '궁극적으로', mainDef: '마지막에, 결국에는.', subDefs: [{ subTerm: '• 궁극적', subDef: '마지막의, 최종적인.' }], variants: ['궁극적으로', '궁극적으로는'], translations: { en: { main: 'In the end; ultimately.', subs: [{ term: '• 궁극적', def: 'Final or ultimate in nature.' }] } } },
+                    { term: '상시적', mainDef: '항상, 언제나.', subDefs: [{ subTerm: '• 상시', subDef: '항상, 언제나.' }], variants: ['상시적', '상시적인'], translations: { en: { main: 'Happening at all times on a continual basis.', subs: [{ term: '• 상시', def: 'Always; at any time.' }] } } },
+                    { term: '규모의 확장', mainDef: '크기를 더 크게 만드는 것.', subDefs: [{ subTerm: '• 규모', subDef: '크기나 범위.' }, { subTerm: '• 확장', subDef: '크기나 범위를 더 크게 하는 것.' }], variants: ['규모의 확장', '규모의 확장도'], translations: { en: { main: 'Making the size or scope larger.', subs: [{ term: '• 규모', def: 'Size or scope.' }, { term: '• 확장', def: 'The act of enlarging size or scope.' }] } } },
+                    { term: '설렘', mainDef: '기대되고 기뻐서 가슴이 두근거리는 느낌.', subDefs: [{ subTerm: '• 설레다', subDef: '기대되고 기뻐서 가슴이 두근거리다.' }], variants: ['설렘', '설렘을'], translations: { en: { main: 'A fluttering feeling of excitement and joy in anticipation.', subs: [{ term: '• 설레다', def: 'To have one’s heart flutter with excitement and joy.' }] } } }
+                ];
+               
+                const initialChoices = [
+                    '어치', '운영', '가늠해 보다', '무형', '기발하다', 
+                    '기획', '환산하다', '주눅 들다', '거창하다', '상시',
+                    '섭외', '닿다', '자청하다', '무게 중심'
+                ];
+               
+                const summaries = [
+                    { 
+                        id: 'summary1', 
+                        textParts: ['"천원의 재능마켓"은 "누구에게나 천원', '의 재능은 있다"는 생각에서 시작되었어요.'], 
+                        answer: '어치', 
+                        hint: '~만큼의 가치나 분량을 나타내는 단위예요.', 
+                        explanation: "맞아요. '천원어치의 재능'이라는 표현으로 누구나 작은 재능이 있다는 메시지를 전했어요.",
+                        textParts_eng: ["'The 1,000 Won Talent Market' started from the idea that 'everyone has at least 1,000 won ", " of talent.'"],
+                        answer_eng: 'worth'
+                    },
+                    { 
+                        id: 'summary2', 
+                        textParts: ['각 재능은 10분 단위로 ', '되기 때문에 시간 관리가 매우 중요해요.'], 
+                        answer: '운영', 
+                        hint: '어떤 일이나 조직을 지속적으로 진행하고 관리하는 것이에요.', 
+                        explanation: "정확해요. 시간 엄수가 전체 흐름에 영향을 주기 때문에 운영 시 시간 관리를 가장 중요하게 생각해요.",
+                        textParts_eng: ["Each talent is ", " in 10-minute units, so time management is very important."],
+                        answer_eng: 'operated'
+                    },
+                    { 
+                        id: 'summary3', 
+                        textParts: ['판매자는 티켓 금액 전체를 정산받으면서 자신의 재능 가치와 적정 가격을 ', ' 수 있어요.'], 
+                        answer: '가늠해 볼', 
+                        hint: '어떤 것의 정도나 수준을 짐작하거나 판단해 보는 것이에요. (동사 변형: -아/어 볼)', 
+                        explanation: "맞아요. 판매 경험을 통해 자신의 재능 가치를 가늠해볼 수 있게 됩니다.",
+                        textParts_eng: ["Sellers receive the full ticket amount and can ", " the value and appropriate price of their talents."],
+                        answer_eng: 'gauge'
+                    },
+                    { 
+                        id: 'summary4', 
+                        textParts: ['', '의 재능을 다루는 만큼 인성과 안정성 확보를 최우선 과제로 삼았어요.'], 
+                        answer: '무형', 
+                        hint: '눈에 보이지 않고 형태가 없는 것을 말해요.', 
+                        explanation: "정확해요. 형태가 없는 재능을 다루기 때문에 판매자 선정에 신중했어요.",
+                        textParts_eng: ["Since they deal with ", " talents, securing character and stability was the top priority."],
+                        answer_eng: 'intangible'
+                    },
+                    { 
+                        id: 'summary5', 
+                        textParts: ['"투명한 창문닦기 원포인트 레슨", "꼼지락 미용실" 등 유쾌하고도 ', ' 재능들이 눈길을 끌었어요.'], 
+                        answer: '기발한', 
+                        hint: '생각이나 아이디어가 참신하고 독특한 것이에요.', 
+                        explanation: "맞아요. 창의적이고 독특한 재능들이 마켓을 더욱 흥미롭게 만들었어요.",
+                        textParts_eng: ["Pleasant and ", " talents like 'One-point Window Cleaning Lesson' and 'Fidgety Hair Salon' caught people's attention."],
+                        answer_eng: 'ingenious'
+                    },
+                    { 
+                        id: 'summary6', 
+                        textParts: ['"천원의 재능마켓"은 "의미 있는 시도를 해보자"는 공감대 속에서 ', '을/를 이어가고 있어요.'], 
+                        answer: '기획', 
+                        hint: '일이나 행사를 계획하고 준비하는 것이에요.', 
+                        explanation: "정확해요. 별도의 급여 없이 의미 있는 기획을 지속하고 있어요.",
+                        textParts_eng: ["'The 1,000 Won Talent Market' continues its ", " with the consensus of 'let's try something meaningful.'"],
+                        answer_eng: 'planning'
+                    },
+                    { 
+                        id: 'summary7', 
+                        textParts: ['10분에 천원이면 시간당으로 ', ' 6천 원 정도가 돼요.'], 
+                        answer: '환산하면', 
+                        hint: '다른 단위나 기준으로 계산해서 바꾸는 것이에요. (동사 변형: -면)', 
+                        explanation: "맞아요. 10분당 천원을 시간 단위로 바꿔서 계산하면 그렇게 됩니다.",
+                        textParts_eng: ["If you ", " 1,000 won for 10 minutes into an hourly rate, it's about 6,000 won."],
+                        answer_eng: 'convert'
+                    },
+                    { 
+                        id: 'summary8', 
+                        textParts: ['"재능"이라는 단어가 사람들을 ', ' 한다는 걸 알게 됐어요.'], 
+                        answer: '주눅 들게', 
+                        hint: '자신감이 없어지고 기가 죽는 느낌이에요. (동사 변형: -게)', 
+                        explanation: "정확해요. 그래서 천원이라는 부담 없는 금액을 설정하게 되었어요.",
+                        textParts_eng: ["They realized that the word 'talent' makes people feel ", "."],
+                        answer_eng: 'intimidated'
+                    },
+                    { 
+                        id: 'summary9', 
+                        textParts: ['', ' 재능이 아니어도 누구나 작게나마 잘하는 게 있다는 메시지를 전해요.'], 
+                        answer: '거창한', 
+                        hint: '규모나 내용이 크고 대단한 것을 말해요.', 
+                        explanation: "맞아요. 작고 사소한 재능도 충분히 가치가 있다는 것을 보여줍니다.",
+                        textParts_eng: ["The message is that even if it's not a ", " talent, everyone has something they're good at."],
+                        answer_eng: 'grand'
+                    },
+                    { 
+                        id: 'summary10', 
+                        textParts: ['기획자의 꿈은 이 마켓이 이벤트로 남지 않고, 집 앞 편의점처럼 누구나 ', ' 으로 찾을 수 있는 공간이 되는 것이에요.'], 
+                        answer: '상시', 
+                        hint: '언제나, 늘.', 
+                        explanation: "맞아요. 궁극적으로는 서울뿐 아니라 부산, 제주, 그리고 온라인에서도 재능을 시험해볼 수 있는 환경을 꿈꾼다고 했어요.",
+                        textParts_eng: ["The planner's dream is for this market not to remain just an event, but to become a space that people can ", " visit, like a neighborhood convenience store."],
+                        answer_eng: 'regularly'
+                    }
+                ];
+               
+                const discussionQuestions = [
+                    { 
+                        num: 1, 
+                        kor: "재능은 무엇일까요? 완성된 능력이나 노력과는 어떻게 다를까요?", 
+                        eng: "What is talent? How is it different from completed ability or effort?", 
+                        vocab: [{ term: "완성된", meaning: "완전히 다 이루어진." }] 
+                    },
+                    { 
+                        num: 2, 
+                        kor: "기획자는 재능을 '나누는 순간 비로소 빛나는 가능성'이라고 정의했어요. 이 주장에 동의해요?", 
+                        eng: "The planner defined talent as 'possibility that finally shines the moment it is shared'. Do you agree with this claim?", 
+                        vocab: [{ term: "기획자", meaning: "어떤 일을 꾸미고 계획하는 사람." }, { term: "비로소 빛나는", meaning: "그제야 환하게 드러나는." }] 
+                    },
+                    { 
+                        num: 3, 
+                        kor: "‘누구에게나 재능은 있다'고 생각해요? 그런데 어떤 사람들은 왜 “저는 진짜 재능이 없는 것 같아요\"라고 말할까요?", 
+                        eng: "Do you think 'everyone has talent'? Then why do some people say \"I don't think I really have any talent\"?", 
+                        vocab: [{ term: "누구에게나", meaning: "어떤 사람이라도 예외 없이." }] 
+                    },
+                    { 
+                        num: 4, 
+                        kor: "어떤 재능은 돈이 되는 반면 다른 재능은 돈이 되지 않을까요? 그리고 재능이 돈이 되지 않으면, 그 재능이 버려진다고 생각해요?", 
+                        eng: "Why do some talents make money while others don't? And if a talent doesn't make money, do you think that talent is wasted?", 
+                        vocab: [{ term: "돈이 되다", meaning: "이익이 생기거나 수입이 되다." }] 
+                    },
+                    { 
+                        num: 5, 
+                        kor: "기획자는 무형의 재능을 얼마에 팔아야 할지 기준이 없어 고민했다고 했어요. 여러분도 자신의 재능을 가늠해 보기 어려운 적이 있었어요?", 
+                        eng: "The planner said they worried because there was no standard for how much to sell intangible talent for. Have you ever had trouble gauging your own talent?", 
+                        vocab: [{ term: "기획자", meaning: "일을 계획하는 사람." }, { term: "무형의 재능", meaning: "형체가 없는 재능." }, { term: "가늠해 보다", meaning: "어림잡아 헤아려 보다." }] 
+                    },
+                    { 
+                        num: 6, 
+                        kor: "천 원에 재능을 판다고 하면, 거창한 재능이 없다고 생각하는 사람들도 부담 없이 참여할 수 있다고 생각해요? 아니면 여전히 재능이라는 단어가 사람들을 주눅 들게 할까요?", 
+                        eng: "If talent is sold for 1,000 won, do you think people who don't think they have grand talents can participate without burden? Or will the word 'talent' still intimidate people?", 
+                        vocab: [{ term: "거창한", meaning: "무엇의 규모가 아주 큰." }, { term: "부담 없이", meaning: "마음에 짐이나 책임감을 느끼지 않고." }, { term: "주눅 들게 하다", meaning: "기를 펴지 못하고 움츠러들게 하다." }] 
+                    },
+                    { 
+                        num: 7, 
+                        kor: "이 마켓에서 고객들이 재능을 천 원에 구매한 후에 그 ‘값어치'를 다시 정해서 판매자에게 쪽지로 알려줘요. 왜 기획자는 재능을 돈으로 환산해 알려주는 규칙을 정해 놓았을까요? 이 규칙이 재능 마켓의 목적에 맞다고 생각해요? 그렇다면 그 이유는 뭐예요?", 
+                        eng: "In this market, after customers buy talent for 1,000 won, they re-determine its 'value' and let the seller know via a note. Why did the planner set a rule to convert talent into money and communicate it? Do you think this rule fits the purpose of the talent market? If so, why?", 
+                        vocab: [{ term: "값어치", meaning: "일정한 값에 해당하는 분량이나 가치." }, { term: "돈으로 환산하다", meaning: "가치를 돈의 액수로 바꾸어 계산하다." }, { term: "정해 놓다", meaning: "미리 결정하여 두다." }] 
+                    },
+                    { 
+                        num: 8, 
+                        kor: "기획자는 ‘천원의 재능마켓’이 '값'이 아니라 '가치'의 단위를 새로 정하는 실험이라고 했어요. 여기서 재능을 파는 사람들은 무슨 가치를 얻게 되는 것일까요? 자기 효능감일까요?", 
+                        eng: "The planner said the '1,000 Won Talent Market' is an experiment to redefine the unit of 'value', not 'cost'. What value do people selling talent here gain? Is it self-efficacy?", 
+                        vocab: [{ term: "가치의 단위", meaning: "값어치를 재는 기준." }, { term: "자기 효능감", meaning: "어떤 상황에서 적절한 행동을 할 수 있다는 기대와 신념." }] 
+                    },
+                    { 
+                        num: 9, 
+                        kor: "'천원의 재능마켓'이 이벤트성 행사가 아니라 상시적인 공간으로 또는 온라인으로 자리 잡을 수 있을까요? 만약 그렇다면, 처음 시작했을 때의 '열기'나 '설렘'을 계속 똑같이 전달할 수 있을까요?", 
+                        eng: "Can the '1,000 Won Talent Market' establish itself as a permanent space or online, rather than just an event? If so, can it continue to deliver the same 'heat' or 'excitement' as when it first started?", 
+                        vocab: [{ term: "이벤트성 행사", meaning: "특별한 목적을 위해 일시적으로 여는 모임." }, { term: "상시적인 공간", meaning: "항상 열려 있는 장소." }, { term: "열기", meaning: "뜨거운 기운이나 분위기." }, { term: "설렘", meaning: "마음이 가라앉지 않고 들떠서 두근거리는 느낌." }] 
+                    },
+                    { 
+                        num: 10, 
+                        kor: "만약 여러분의 나라에도 ‘천원의 재능마켓’이 있다면, 참여해 보고 싶어요? 어떤 재능을 팔아 보고 싶어요?", 
+                        eng: "If there were a '1,000 Won Talent Market' in your country, would you like to participate? What talent would you like to sell?", 
+                        vocab: [{ term: "팔아 보다", meaning: "파는 경험을 해 보다." }] 
+                    }
+                ];
+                
+                const articleHeader = {
+                    title: "[기사] 누구에게나 천원어치의 재능은 있다",
+                    sources: ["https://www.ibrandnews.com/news/articleView.html?idxno=10897"]
+                };
+
+                const interviewHeader = {
+                    title: "[인터뷰] ‘천원의 재능마켓’ 기획자 안다비",
+                    sources: [
+                        "https://www.ibrandnews.com/news/articleView.html?idxno=10897",
+                        "https://www.ntoday.co.kr/news/articleView.html?idxno=120172"
+                    ]
+                };
+
+                return { articleContent, interviewContent, vocabAndGrammarList, initialChoices, summaries, discussionQuestions, articleHeader, interviewHeader };
+            }, []);
+
+            const { highlightData, vocabMap } = useMemo(() => {
+                const vocabMap = new Map(vocabAndGrammarList.map(item => [item.term, item]));
+                const variantMap = new Map();
+                const allVariants = [];
+                vocabAndGrammarList.forEach(item => {
+                    if (item.variants) {
+                        item.variants.forEach(variant => {
+                            if (variant && typeof variant === 'string' && variant.trim().length > 0) {
+                                const trimmed = variant.trim();
+                                if (variantMap.has(trimmed)) {
+                                     console.warn(`[Duplicate Variant Warning] The variant "${trimmed}" is mapped to multiple terms. It was previously mapped to "${variantMap.get(trimmed)}" and will now be overwritten by "${item.term}".`);
+                                }
+                                variantMap.set(trimmed, item.term);
+                                allVariants.push(trimmed);
+                            }
+                        });
+                    }
+                });
+                allVariants.sort((a, b) => b.length - a.length);
+                const regexString = allVariants
+                    .map(variant => variant.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
+                    .join('|');
+                const regex = regexString ? new RegExp(`(${regexString})`, 'g') : null;
+                return {
+                    highlightData: { regex, variantMap },
+                    vocabMap
+                };
+            }, [vocabAndGrammarList]);
+
+
+            const tabs = useMemo(() => {
+                const baseTabs = [
+                    { name: '읽기 자료 (기사)', icon: <FileText />, content: <ArticleTab content={articleContent} vocabAndGrammarList={vocabAndGrammarList} highlightData={highlightData} vocabMap={vocabMap} headerInfo={articleHeader} /> },
+                    { name: '읽기 자료 (인터뷰)', icon: <Mic />, content: <ArticleTab content={interviewContent} vocabAndGrammarList={vocabAndGrammarList} highlightData={highlightData} vocabMap={vocabMap} headerInfo={interviewHeader} /> },
+                    {
+                        name: '핵심 어휘',
+                        icon: <List />,
+                        content: (
+                            <div className="bg-white p-6 sm:p-8 rounded-lg shadow-md">
+                                <h2 className="text-3xl font-extrabold text-gray-900 mb-8 flex items-center gap-3"><List className="w-8 h-8 text-green-600"/> 핵심 어휘</h2>
+                                <div className="w-full overflow-y-auto" style={{maxHeight: `calc(100vh - 200px)`}}>
+                                    <div className="border rounded-lg bg-white p-2 shadow-lg">
+                                        <div className="space-y-1">
+                                            {vocabAndGrammarList.map(item => <VocabItem key={item.term} item={item} />)}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )
+                    },
+                    { name: '내용 확인 퀴즈', icon: <BookOpen />, content: (<div className="bg-white p-6 sm:p-8 rounded-lg shadow-md"><h2 className="text-3xl font-extrabold text-gray-900 mb-8 flex items-center gap-3"><BookOpen className="w-8 h-8 text-green-600"/> 내용 확인 퀴즈</h2><SummarySection summaries={summaries} initialChoices={initialChoices} /></div>)},
+                    { name: '생각해 보기', icon: <MessageSquare />, content: (
+                        <div className="bg-white p-6 sm:p-8 rounded-lg shadow-md">
+                            <h2 className="text-3xl font-extrabold text-gray-900 mb-2 flex items-center gap-3"><MessageSquare className="w-8 h-8 text-green-600"/> 생각해 보기</h2>
+                            <p className="text-gray-600 mb-8 ml-11">
+                                AI Feedback 기능을 사용하려면 Gemini 링크를 이용하세요:<br/>
+                                <a href="https://gemini.google.com/share/0df0e744a920" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                                    https://gemini.google.com/share/0df0e744a920
+                                </a>
+                            </p>
+                            <DiscussionSection questions={discussionQuestions} />
+                        </div>
+                    ) }
+                ];
+                return baseTabs;
+            }, [articleContent, interviewContent, vocabAndGrammarList, summaries, discussionQuestions, highlightData, vocabMap, initialChoices, articleHeader, interviewHeader]);
+
+            return (
+                <div className="bg-gray-50 text-gray-800 p-4 sm:p-6 md:p-8">
+                    <div className="mx-auto transition-all duration-300" style={{ maxWidth: containerWidth }}>
+                        <header className="text-center mb-12">
+                            <h1 className="text-3xl sm:text-4xl md:text-5xl font-black text-gray-900 mb-2">천원의 재능마켓</h1>
+                            <p className="text-xl text-gray-500" style={{fontFamily: "'Nanum Gothic', sans-serif"}}>누구나 자신만의 쓸모를 발견할 수 있는 작은 마켓 이야기</p>
+                        </header>
+                        <Tabs tabs={tabs} />
+                    </div>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
