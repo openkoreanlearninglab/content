@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenKorean - 학습 자료 (Learning Content)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- 폰트 링크 -->
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=Jua&family=Noto+Sans+KR:wght@400;500;700;900&family=Sunflower:wght@300;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* Root Font Size Setting using clamp and vw */
+        html {
+            font-size: clamp(12px, 1vw, 16px);
+        }
+
+        /* NoonnuBasicGothic (기본 글꼴) */
+        @font-face {
+            font-family: 'NoonnuBasicGothic';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noon-2410@1.0/NoonnuBasicGothicRegular.woff2') format('woff2');
+            font-weight: normal;
+            font-display: swap;
+        }
+        body { font-family: 'NoonnuBasicGothic', sans-serif; background-color: #f9fafb; color: #334155; }
+        
+        /* 폰트 유틸리티 클래스 */
+        .font-basic { font-family: 'NoonnuBasicGothic', sans-serif; }
+        .font-jua { font-family: 'Jua', sans-serif; }
+        .font-noto { font-family: 'Noto Sans KR', sans-serif; }
+        .font-sunflower { font-family: 'Sunflower', sans-serif; }
+        
+        /* Cafe24 폰트 시리즈 */
+        @font-face { font-family: 'Cafe24SurroundAir'; src: url('https://gcore.jsdelivr.net/gh/projectnoonnu/noonfonts_2105_2@1.0/Cafe24SsurroundAir.woff') format('woff'); font-weight: normal; font-display: swap; }
+        .font-cafe24 { font-family: 'Cafe24SurroundAir', sans-serif; }
+
+        @font-face { font-family: 'Cafe24Surround'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2105_2@1.0/Cafe24Ssurround.woff') format('woff'); font-weight: normal; font-display: swap; }
+        .font-cafe24-surround { font-family: 'Cafe24Surround', sans-serif; }
+
+        @font-face { font-family: 'Cafe24Decoshadow'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2405-3@1.1/Cafe24Decoshadow.woff2') format('woff2'); font-weight: normal; font-display: swap; }
+        .font-cafe24-deco { font-family: 'Cafe24Decoshadow', sans-serif; }
+
+        @font-face { font-family: 'Cafe24Decoschool'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2405-3@1.1/Cafe24Decoschool.woff2') format('woff2'); font-weight: normal; font-display: swap; }
+        .font-cafe24-school { font-family: 'Cafe24Decoschool', sans-serif; }
+
+        @font-face { font-family: 'Cafe24Anemone'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/Cafe24Ohsquare.woff') format('woff'); font-weight: normal; font-display: swap; }
+        .font-cafe24-anemone { font-family: 'Cafe24Anemone', sans-serif; }
+
+        /* SchoolSafetyMustache (학교안심 콧수염) 추가 */
+        @font-face {
+            font-family: 'SchoolSafetyMustache';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2402_keris@1.0/TTHakgyoansimKossuyeomR.woff2') format('woff2');
+            font-weight: normal;
+            font-display: swap;
+        }
+        .font-school-mustache { font-family: 'SchoolSafetyMustache', sans-serif; }
+
+        @font-face { font-family: 'SchoolSafetyRoundedSmile'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-5@1.0/HakgyoansimDunggeunmisoTTF-R.woff2') format('woff2'); font-weight: normal; font-display: swap; }
+        @font-face { font-family: 'SchoolSafetyRoundedSmile'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-5@1.0/HakgyoansimDunggeunmisoTTF-B.woff2') format('woff2'); font-weight: 700; font-display: swap; }
+        .font-school-smile { font-family: 'SchoolSafetyRoundedSmile', sans-serif; }
+
+        @font-face { font-family: 'Juache'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_one@1.0/BMJUA.woff') format('woff'); font-weight: normal; font-display: swap; }
+        .font-juache { font-family: 'Juache', sans-serif; }
+
+        /* 스크롤바 */
+        ::-webkit-scrollbar { width: 0.375rem; height: 0.375rem; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 0.1875rem; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        /* 애니메이션 */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(0.625rem); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade-in { animation: fadeIn 0.3s ease-out forwards; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useMemo } = React;
+        const { createPortal } = ReactDOM;
+
+        // --- Data: Level Definitions & Styles ---
+        const LEVEL_DEFINITIONS = {
+            "ALL": { title: "All Learners", desc: "Content suitable for all levels." },
+            "A1": { title: "Novice", desc: "Can use and understand very simple everyday expressions." },
+            "A1+": { title: "Pre-Beginner", desc: "Still beginner, but can handle slightly more than A1." },
+            "A2": { title: "Beginner", desc: "Can understand frequently used sentences (family, shopping, work)." },
+            "A2+": { title: "Upper Beginner", desc: "Between A2 and B1. Can speak a bit more smoothly about daily life." },
+            "B1": { title: "Pre-Intermediate", desc: "Can understand the main points of clear standard speech." },
+            "B1+": { title: "Lower Intermediate", desc: "Stronger B1. More comfortable carrying conversations." },
+            "B2": { title: "Intermediate", desc: "Can understand the main ideas of complex texts." },
+            "B2+": { title: "Upper Intermediate", desc: "Near C1. Can argue a point logically." },
+            "C1": { title: "Advanced", desc: "Can understand long, demanding texts and implied meanings." },
+            "C1+": { title: "Upper Advanced", desc: "Very strong C1, approaching native-like flexibility." },
+            "C2": { title: "Proficient", desc: "Can understand virtually everything heard or read." }
+        };
+
+        const getLevelTheme = (level) => {
+            switch (level) {
+                case 'ALL': return 'slate';
+                case 'A1': case 'A1+': return 'lime';
+                case 'A2': case 'A2+': return 'green';
+                case 'B1': case 'B1+': return 'sky';
+                case 'B2': case 'B2+': return 'blue';
+                case 'C1': case 'C1+': case 'C2': return 'violet';
+                default: return 'green';
+            }
+        };
+
+        const LEVEL_STYLES = {
+            "ALL": "bg-slate-100 text-black border-slate-200",
+            "A1": "bg-lime-50 text-lime-600 border-lime-100", 
+            "A1+": "bg-lime-50 text-lime-600 border-lime-100", 
+            "A2": "bg-green-50 text-green-600 border-green-100",    
+            "A2+": "bg-green-50 text-green-600 border-green-100",    
+            "B1": "bg-sky-50 text-sky-600 border-sky-100",        
+            "B1+": "bg-sky-50 text-sky-600 border-sky-100",        
+            "B2": "bg-blue-50 text-blue-600 border-blue-100", 
+            "B2+": "bg-blue-50 text-blue-600 border-blue-100", 
+            "C1": "bg-violet-50 text-violet-600 border-violet-100", 
+            "C1+": "bg-violet-50 text-violet-600 border-violet-100", 
+            "C2": "bg-violet-50 text-violet-600 border-violet-100",        
+        };
+
+        // --- Icons ---
+        const HomeIcon = ({ className }) => (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={className}><rect x="2" y="3" width="20" height="14" rx="2" ry="2" /><path d="M8 21h8" /><path d="M12 17v4" /></svg>);
+        const ChevronLeft = ({ className }) => (<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="m15 18-6-6 6-6" /></svg>);
+        const ChevronRight = ({ className }) => (<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="m9 18 6-6-6-6" /></svg>);
+
+        // --- Component: Level Badge (Used in Cards) ---
+        // 1.4x Scaling for Main Content
+        const LevelBadge = ({ levelCode }) => {
+            const [isHovered, setIsHovered] = useState(false);
+            const info = LEVEL_DEFINITIONS[levelCode] || LEVEL_DEFINITIONS["A2+"];
+            
+            const getLevelStyle = (code) => {
+                if (LEVEL_STYLES[code]) return LEVEL_STYLES[code];
+                const base = code.substring(0, 2);
+                return LEVEL_STYLES[base] || "bg-gray-50 text-slate-600 border-gray-100";
+            };
+            
+            const badgeStyle = getLevelStyle(levelCode);
+
+            // Font size: 14px * 1.4 = 19.6px -> ~1.225rem
+            return (
+                <div 
+                    className="relative inline-flex items-center cursor-help z-50 shrink-0"
+                    onMouseEnter={() => setIsHovered(true)}
+                    onMouseLeave={() => setIsHovered(false)}
+                >
+                    <span className={`px-2 py-0.5 rounded text-[1.225rem] font-bold border uppercase tracking-wide shadow-sm font-sunflower ${badgeStyle}`}>
+                        {levelCode}
+                    </span>
+                    {isHovered && (
+                        <div className="absolute top-full left-0 mt-2 w-72 bg-slate-900/95 backdrop-blur text-white text-[1rem] rounded-xl p-4 shadow-xl z-[100] animate-fade-in text-left">
+                            <p className={`font-bold mb-1.5 text-[1.1rem] ${badgeStyle.split(' ')[1]}`}>{levelCode} – {info.title}</p>
+                            <p className="opacity-90 leading-relaxed font-medium">{info.desc}</p>
+                            <div className="absolute -top-1 left-4 w-2 h-2 bg-slate-900/95 rotate-45"></div>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        // --- Component: Category Badge ---
+        // 1.4x Scaling
+        const CategoryBadge = ({ tag, onClick, isSelected }) => {
+            // Font size: 14px * 1.4 = 19.6px -> 1.225rem
+            return (
+                <span 
+                    onClick={onClick}
+                    className={`inline-flex items-center px-2 py-0.5 rounded text-[1.225rem] font-bold border uppercase tracking-wide shadow-sm font-sunflower cursor-pointer transition-colors shrink-0
+                    ${isSelected 
+                        ? 'bg-slate-800 text-white border-slate-800' 
+                        : 'bg-white text-slate-500 border-slate-200 hover:border-slate-400 hover:text-slate-700'}`}
+                >
+                    {tag}
+                </span>
+            );
+        };
+
+        // --- Sidebar Component ---
+        const Sidebar = ({ activeTab, setActiveTab, isCollapsed, toggleSidebar, userLevel, themeColor }) => {
+            const menus = [
+                { id: 'home', levelCode: 'ALL', label: '전체 학습 자료', subLabel: 'All Learning Content' },
+                { id: 'B2', levelCode: 'B2', label: '중급 학습자', subLabel: 'Intermediate' },
+                { id: 'B2+', levelCode: 'B2+', label: '중급(상) 학습자', subLabel: 'Upper Intermediate' },
+                { id: 'C1', levelCode: 'C1', label: '고급 학습자', subLabel: 'Advanced' },
+                { id: 'C1+', levelCode: 'C1+', label: '고급(상) 학습자', subLabel: 'Upper Advanced' },
+                { id: 'C2', levelCode: 'C2', label: '최상급 학습자', subLabel: 'Proficient' },
+            ];
+            
+            const getLevelColor = (code) => {
+                if (LEVEL_STYLES[code]) return LEVEL_STYLES[code];
+                const base = code.substring(0, 2);
+                return LEVEL_STYLES[base] || "bg-gray-50 text-slate-600 border-gray-100";
+            };
+
+            const currentStyle = getLevelColor(userLevel);
+            const bgClass = currentStyle.split(' ')[0];
+            const textClass = currentStyle.split(' ')[1];
+
+            // Tooltip state
+            const [tooltip, setTooltip] = useState({ show: false, x: 0, y: 0, info: null });
+
+            const handleLevelTextEnter = (e) => {
+                const rect = e.target.getBoundingClientRect();
+                setTooltip({
+                    show: true,
+                    x: rect.right, 
+                    y: rect.top,
+                    info: LEVEL_DEFINITIONS[userLevel]
+                });
+            };
+
+            const handleLevelTextLeave = () => {
+                setTooltip(prev => ({ ...prev, show: false }));
+            };
+
+            const sidebarWidth = isCollapsed ? 'w-[5.5rem]' : 'w-[18.4rem]';
+            const logoSize = isCollapsed ? 'w-[3rem] h-[3rem]' : 'w-[4.31rem] h-[4.31rem]';
+
+            // Font Sizes (Rem)
+            const textTitle = isCollapsed ? 'text-[1.25rem]' : 'text-[1.44rem]';
+            const textSubtitle = isCollapsed ? 'text-[0.6875rem]' : 'text-[0.79rem]';
+            const textMenu = isCollapsed ? 'text-[1rem]' : 'text-[1.15rem]';
+            const textMenuSub = isCollapsed ? 'text-[0.625rem]' : 'text-[0.72rem]';
+            const boxSize = isCollapsed ? 'w-[2.5rem] h-[2.5rem]' : 'w-[2.875rem] h-[2.875rem]';
+            const boxText = isCollapsed ? 'text-[0.75rem]' : 'text-[0.86rem]';
+            const footerTextBig = isCollapsed ? 'text-[1rem]' : 'text-[1.15rem]';
+            const footerTextLabel = isCollapsed ? 'text-[0.875rem]' : 'text-[1.0rem]';
+            const footerTextSmall = isCollapsed ? 'text-[0.625rem]' : 'text-[0.72rem]';
+
+            return (
+                <aside className={`bg-white border-r border-gray-200 fixed h-full hidden md:flex flex-col z-50 transition-all duration-300 ease-in-out font-cafe24-anemone ${sidebarWidth}`}>
+                    <div className={`p-6 flex items-center gap-3 relative ${isCollapsed ? 'justify-center px-0' : ''}`}>
+                        <img 
+                            src="https://raw.githubusercontent.com/openkoreanlearninglab/hub/refs/heads/main/OpenKoreanLearningLab_Logo.jpeg" 
+                            alt="Logo" 
+                            className={`rounded-2xl shadow-lg shrink-0 transition-all duration-300 object-cover ${logoSize}`}
+                        />
+                        {!isCollapsed && (
+                            <div className="animate-fade-in overflow-hidden whitespace-nowrap flex flex-col justify-center">
+                                <span className={`font-extrabold leading-tight font-cafe24-deco ${textTitle} text-black`}>Open</span>
+                                <span className={`font-bold leading-tight font-school-mustache ${textSubtitle} ${textClass}`}>KoreanLearningLab</span>
+                            </div>
+                        )}
+                        <button 
+                            onClick={toggleSidebar}
+                            className="absolute -right-3 top-1/2 -translate-y-1/2 bg-white border border-gray-200 rounded-full p-1 shadow-sm text-slate-500 hover:text-slate-700 hover:bg-gray-50 transition-colors z-10"
+                        >
+                            {isCollapsed ? <ChevronRight className="w-3 h-3" /> : <ChevronLeft className="w-3 h-3" />}
+                        </button>
+                    </div>
+                    
+                    <nav className={`flex-1 space-y-3 mt-4 ${isCollapsed ? 'px-3' : 'px-3'}`}>
+                        {menus.map((menu) => {
+                            const isActive = activeTab === menu.id;
+                            const activeFontClass = isActive ? "font-cafe24-surround" : "font-cafe24";
+                            
+                            const levelStyleStr = LEVEL_STYLES[menu.levelCode];
+                            const parts = levelStyleStr.split(' ');
+                            const boxBg = parts[0];
+                            const boxBorder = parts[2];
+                            const boxTextClass = menu.levelCode === 'ALL' ? 'text-black' : parts[1];
+
+                            return (
+                                <button
+                                    key={menu.id}
+                                    onClick={() => {
+                                        setActiveTab(menu.id);
+                                        if (isCollapsed) toggleSidebar();
+                                    }}
+                                    onDoubleClick={toggleSidebar}
+                                    className={`w-full flex items-center transition-all duration-200 group relative ${
+                                        isCollapsed 
+                                        ? 'justify-center h-14 rounded-2xl' 
+                                        : 'gap-3 px-3 py-4 rounded-2xl'
+                                    } ${
+                                        isActive 
+                                        ? `bg-${themeColor}-50 text-${themeColor}-600` 
+                                        : 'text-slate-700 hover:bg-gray-50 hover:text-slate-900'
+                                    }`}
+                                >
+                                    {isActive && isCollapsed && (
+                                        <div className={`absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-${themeColor}-500 rounded-r-lg`}></div>
+                                    )}
+                                    {isActive && !isCollapsed && (
+                                        <div className={`absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-${themeColor}-500 rounded-r-lg`}></div>
+                                    )}
+                                    
+                                    <div className={`${boxSize} rounded-xl flex items-center justify-center border shrink-0 transition-transform duration-200 group-hover:scale-105 ${boxBg} ${boxBorder}`}>
+                                        <span className={`font-extrabold font-school-smile ${boxText} ${boxTextClass}`}>
+                                            {menu.levelCode}
+                                        </span>
+                                    </div>
+                                    
+                                    {!isCollapsed && (
+                                        <div className="flex flex-col items-start animate-fade-in overflow-hidden whitespace-nowrap">
+                                            <span className={`leading-tight transition-all ${textMenu} ${activeFontClass} ${
+                                                isActive 
+                                                ? `font-extrabold text-${themeColor}-600` 
+                                                : 'font-medium text-slate-700 group-hover:font-semibold group-hover:text-slate-900'
+                                            }`}>{menu.label}</span>
+                                            
+                                            {menu.subLabel && <span className={`${textMenuSub} font-normal text-slate-400 mt-0.5 leading-tight`}>{menu.subLabel}</span>}
+                                        </div>
+                                    )}
+                                    
+                                    {isCollapsed && (
+                                        <div className="absolute left-full ml-3 px-3 py-1.5 bg-slate-900 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50 shadow-xl flex flex-col items-start">
+                                            <span className="text-xs font-bold">{menu.label}</span>
+                                            {menu.subLabel && <span className="text-[10px] opacity-80">{menu.subLabel}</span>}
+                                            <div className="absolute top-1/2 -left-1 -translate-y-1/2 w-2 h-2 bg-slate-900 rotate-45"></div>
+                                        </div>
+                                    )}
+                                </button>
+                            );
+                        })}
+                    </nav>
+
+                    <div className="p-2 border-t border-gray-100">
+                        <div className={`flex items-center gap-3 p-2 rounded-xl transition-colors hover:bg-gray-50 cursor-pointer ${isCollapsed ? 'justify-center' : ''}`}>
+                            <div className={`w-[2.75rem] h-[2.75rem] rounded-xl flex items-center justify-center shrink-0 transition-colors duration-300 ${bgClass} border ${currentStyle.split(' ')[2]}`}>
+                                <span className={`${footerTextBig} font-extrabold font-school-smile ${userLevel === 'ALL' ? 'text-black' : currentStyle.replace('bg-', 'text-').replace('50', '600')}`}>{userLevel}</span>
+                            </div>
+                            {!isCollapsed && (
+                                <div className="animate-fade-in overflow-hidden whitespace-nowrap flex-1">
+                                    <p className={`${footerTextLabel} font-bold text-slate-900 mb-[1px] font-cafe24-anemone`}>학습자(Learner)</p>
+                                    <div className="mt-[1px]">
+                                        <span 
+                                            className={`block w-fit px-[2px] py-0.5 rounded ${footerTextSmall} font-semibold border uppercase tracking-wide shadow-sm text-left cursor-help font-cafe24-anemone ${currentStyle}`}
+                                            onMouseEnter={handleLevelTextEnter}
+                                            onMouseLeave={handleLevelTextLeave}
+                                        >
+                                            Level: {LEVEL_DEFINITIONS[userLevel].title}
+                                        </span>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    {tooltip.show && tooltip.info && createPortal(
+                        <div 
+                            className="fixed z-[9999] pointer-events-none animate-fade-in"
+                            style={{ left: tooltip.x, top: tooltip.y }}
+                        >
+                            <div className="relative bg-slate-900/95 backdrop-blur text-white text-[0.875rem] rounded-xl p-4 shadow-2xl transform -translate-y-full -translate-x-6 -mt-3 w-64 border border-slate-700/50">
+                                <p className={`font-bold mb-1.5 text-[1rem] text-${themeColor}-300`}>
+                                    {userLevel} – {tooltip.info.title}
+                                </p>
+                                <p className="opacity-90 leading-relaxed font-medium text-slate-200">
+                                    {tooltip.info.desc}
+                                </p>
+                                <div className="absolute -bottom-1.5 left-4 w-3 h-3 bg-slate-900/95 border-r border-b border-slate-700/50 rotate-45"></div>
+                            </div>
+                        </div>,
+                        document.body
+                    )}
+                </aside>
+            );
+        };
+
+        // --- View Components ---
+
+        const HomeView = ({ setActiveTab, themeColor, currentLevel }) => {
+            const [selectedTag, setSelectedTag] = useState("전체");
+
+            const levelTitles = {
+                "B2": "중급 수준 학습 자료",
+                "B2+": "중급(상) 수준 학습 자료",
+                "C1": "고급 수준 학습 자료",
+                "C1+": "고급(상) 수준 학습 자료",
+                "C2": "최상급 수준 학습 자료"
+            };
+
+            const levelSubtitles = {
+                "B2": "Intermediate Level Learning Content",
+                "B2+": "Upper Intermediate Level Learning Content",
+                "C1": "Advanced Level Learning Content",
+                "C1+": "Upper Advanced Level Learning Content",
+                "C2": "Proficient Level Learning Content"
+            };
+
+            // Processed Content Data
+            const materials = [
+                // --- GitHub Pages Links (New/Updated) ---
+                { 
+                    level: "B2+", 
+                    tags: ["문화"], 
+                    title: "한국 박물관 및 미술관 입장료 이야기", 
+                    link: "https://openkoreanlearninglab.github.io/content/b2plus-museum-admission.html" 
+                },
+                { 
+                    level: "B2+", 
+                    tags: ["문화", "생활"], 
+                    title: "술보다 대마 음료가 건강에 좋을까요?", 
+                    link: "https://openkoreanlearninglab.github.io/content/b2plus-cannabis-drink.html" 
+                },
+                { 
+                    level: "B2+", 
+                    tags: ["사회", "문화"], 
+                    title: "천원의 재능마켓", 
+                    link: "https://openkoreanlearninglab.github.io/content/b2plus-1000won-talent-market.html" 
+                },
+                // --- Existing Google Drive Links ---
+                { level: "B2", tags: ["경제"], title: "'R의 공포' 온다, 안 온다?", link: "https://drive.google.com/open?id=1w37B49qia-Ai3FnGqrhH3X4HJckuU8CVbdblvOkDTmI&usp=drive_copy" },
+                { level: "B2", tags: ["경제"], title: "\"안 쓰고 버틴다\"…MZ세대에 번지는 '무지출 챌린지'", link: "https://drive.google.com/open?id=1209FxSgzmTA_9xozEEHKFmtguH9-W4wi3r-0oiT08fU&usp=drive_copy" },
+                { level: "B2", tags: ["경제"], title: "미국 부자 박살 낸 주식 개미의 미친 매수 GameStop: Reddit vs Wall Street", link: "https://drive.google.com/open?id=1PwCLYQNhUXD0OppJG_cVJwn4Bsfl-e3n5dDv8Xg3Mo4&usp=drive_copy" },
+                { level: "B2", tags: ["경제"], title: "미국 부자 박살 낸 주식 개미의 미친 매수 GameStop: Reddit vs Wall Street", link: "https://drive.google.com/open?id=1gbllA4K2-Iaxp2sT3yzL6DtSYbXn6EMSJ5DTk-dq6rA&usp=drive_copy" },
+                { level: "B2", tags: ["경제"], title: "할인하는 물건 구매：돈 낭비 vs 합리적 소비", link: "https://drive.google.com/open?id=1kkJjJhEyeJuFGFDRhkyj_ckRlM4Zyec_u_J0aEclc8o&usp=drive_copy" },
+                { level: "B2", tags: ["경제", "문화"], title: "'주가 반토막' 넷플릭스가 진출한 의외의 사업", link: "https://drive.google.com/open?id=1QPUdOtefuvrczHWIXXrXBBbdi2aHH7YdHnuuxfAkEE0&usp=drive_copy" },
+                { level: "B2", tags: ["경제", "사회"], title: "전 세계는 ‘집값’과 전쟁 중…원인과 전망은?", link: "https://drive.google.com/open?id=1EEHwfv46-Ic0A1FwNHz446_jjsdVPoWYBm3GFcuMiY0&usp=drive_copy" },
+                { level: "B2", tags: ["과학"], title: "소행성 충돌 실험 - 지구 방어 실험 성공?", link: "https://drive.google.com/open?id=1qn61B4kJviMEF_-bhY8OKhNSEt-z28NrYR_R3-2hZPQ&usp=drive_copy" },
+                { level: "B2", tags: ["과학"], title: "일론 머스크의 상상은 현실이 된다?", link: "https://drive.google.com/open?id=1hXCeP9mhjsR3PT8IeSQpX3PEM2Ipz2BECrmOqEDzu_U&usp=drive_copy" },
+                { level: "B2", tags: ["과학"], title: "잠을 자야 하는 이유 - 잠을 자지 않았을 때, 우리의 몸에 어떤 일들이 발생할까요?", link: "https://drive.google.com/open?id=1zK-w8iIu2jYFAHOjnOHjWtazv25s2BEeaSDRdFiMgdE&usp=drive_copy" },
+                { level: "B2", tags: ["과학"], title: "mRNA 백신으로 세상을 구하다 - 2023년 노벨 생리의학상 수장자 카탈린 카리코", link: "https://drive.google.com/open?id=1lhLsqB7cklUOW2_vp_p7QFrJ4C5oKwmAvuEpnSC47rM&usp=drive_copy" },
+                { level: "B2", tags: ["과학", "건강"], title: "마법의 다이어트 약 - 다이어트 대신 병원?", link: "https://drive.google.com/open?id=1nWLGGDlN-zx_VFbONR8Nsx9YsFgi7Rbf20M5oJnlJac&usp=drive_copy" },
+                { level: "B2", tags: ["과학", "사회"], title: "나에게 가장 신기했던 기술은 무엇인가요?", link: "https://drive.google.com/open?id=1qYuICuV2N6VlIAQMGt_y6dc82NLTHmkYVQqE7A4_9BM&usp=drive_copy" },
+                { level: "B2", tags: ["기술"], title: "'클럽하우스(Clubhouse)' 도대체 뭐길래? [자막 & 같이 이야기 해 볼 주제들]", link: "https://drive.google.com/open?id=1jvph1C1zidWh84_vJnLt2aegExoBGmmPbz6T3bVe4Lw&usp=drive_copy" },
+                { level: "B2", tags: ["기술"], title: "스마트폰으로 사진 잘 찍는 꿀팁! - 똥손 친구에서 알려주세요.", link: "https://drive.google.com/open?id=1F-3HQa5OdoIYBdYJHfJ6UsfQhEf6EmzdacVZ7cmLaD0&usp=drive_copy" },
+                { level: "B2", tags: ["기술"], title: "틱톡(Tik Tok)이 인기있는 이유", link: "https://drive.google.com/open?id=1WD_dnzdFGYRI_tnaj_Ls3ImC9nFX2k6W3Fw8AYSANoo&usp=drive_copy" },
+                { level: "B2", tags: ["문학"], title: "📓 소설 <저주 토끼> - \"저주에 쓰이는 물건일수록 예쁘게 만들어야 한단다\"", link: "https://drive.google.com/open?id=1P7v1hkGsXBo49sNLIpDOZ_z85si2JW9A8Iq24d2mYD4&usp=drive_copy" },
+                { level: "B2", tags: ["문화"], title: "\"최소한의 일만 하기\"‥MZ 세대 '조용한 사직' 열풍", link: "https://drive.google.com/open?id=1V67qWX8Du6TQY11AGy1tg0B6N3v17iau_vXej2Ca0zA&usp=drive_copy" },
+                { level: "B2", tags: ["문화"], title: "'오마카세!' 대체 어떤 요리일까요. - 오늘 뭐 먹지?", link: "https://drive.google.com/open?id=1hmjy_rnpcPB8pJRDnZbx0ShkZAp_NSmzh-comgWR9fM&usp=drive_copy" },
+                { level: "B2", tags: ["문화"], title: "\"가을 타다\", 무슨 의미일까요？", link: "https://drive.google.com/open?id=1-tIHi_wPCfWF-WYm2DWqublcX5AXIfTly_8zLMESygk&usp=drive_copy" },
+                { level: "B2", tags: ["문화"], title: "\"따로 또 함께\" - 코리빙 하우스", link: "https://drive.google.com/open?id=1lTUpHqfXoX6_b5l7I2e9tF2eFM0dzn_Ax1cyKQ20X4M&usp=drive_copy" },
+                { level: "B2", tags: ["문화"], title: "<솔로지옥> 리뷰 - 과몰입 리액션 모음", link: "https://drive.google.com/open?id=1Cuw8a1OifvFCw1nEdRFKwurphvKWOQRjbwWjXpYoHPQ&usp=drive_copy" },
+                { level: "B2", tags: ["문화"], title: "<스트릿 우먼 파이터> 댄서 노제(본명: 노지혜) 사과문", link: "https://drive.google.com/open?id=1sj-s03xjF6J79wkX9KY31iH3I2IySbm-_248xQozyTQ&usp=drive_copy" },
+                { level: "B2", tags: ["문화"], title: "100만 원 짜리 VVIP 한식당 과연 진짜일까?", link: "https://drive.google.com/open?id=1vVERuR7XQw13Nav7sXjq7zBt08KWYrO23KXlX75YzCE&usp=drive_copy" },
+                { level: "B2", tags: ["문화"], title: "가을이 독서의 계절이 된 이유", link: "https://drive.google.com/open?id=1CB6S7naeK3usRCNS7dhn_YDyGBLJU0q3zGByccVdBtQ&usp=drive_copy" },
+                { level: "B2", tags: ["문화"], title: "관용어(Idiom) & 속담(Common Sayings or Proverbs): 📌비벼 볼만하다. from \"소도 언덕이 있어야 비빈다\"", link: "https://drive.google.com/open?id=19Z9-yVPiKimbiFdagmGMe_eY3ZYYgo06uNFKE0vMFyE&usp=drive_copy" },
+                { level: "B2", tags: ["문화"], title: "나만 알고 싶은 꼭 사야할 가성비 와인 #조세호의 와인바🍷", link: "https://drive.google.com/open?id=1T6nKCQYhcVzDbJzUS_l2BA0iBS8W4XPGu_0pZJzYUOQ&usp=drive_copy" },
+                { level: "B2", tags: ["문화"], title: "나의 퍼스널 컬러는 무엇인가요? - 퍼스널컬러 자가진단", link: "https://drive.google.com/open?id=13d5MroJdOamJYpi-EmB2XQRAbkuXNNji0ocydA6sNYs&usp=drive_copy" },
+                { level: "B2", tags: ["문화"], title: "남녀 사이 친구 - 깻잎 논쟁 & 카풀 논쟁", link: "https://drive.google.com/open?id=1qfamWbJgkoNt5VOFl9H9Ysxaw33IGIg4mU0LsQsiZQg&usp=drive_copy" },
+                { level: "B2", tags: ["문화"], title: "넷플릭스 <솔로지옥> 출연자 프리지아(본명: 송지아) 사과문", link: "https://drive.google.com/open?id=1WVLJolOBRsadwE3GWYJ_Ro1xqqWI1reqU2K78l6yg10&usp=drive_copy" },
+                { level: "B2", tags: ["문화"], title: "등산할 때 필요한 아이템은 무엇일까요? - 배우 이시영이 소개해주는 그녀의 찐템.", link: "https://drive.google.com/open?id=1H5N4qDWaM5hfScYOmEdWMXxlF9r9l5-ucfu0ZUT4m54&usp=drive_copy" },
+                { level: "B2", tags: ["문화"], title: "르르르 꼰대 성향 검사 - https://www.lllkkdti.com", link: "https://drive.google.com/open?id=1eKqIzf4Nxa3il1Ly2IHXDGolTEgqqzA2ltogH-2b3RA&usp=drive_copy" },
+                { level: "B2", tags: ["문화"], title: "명품 브랜드에서 카페, 레스토랑을 만드는 이유는 무엇일까요? - 밥 먹으러 구찌, 커피 마시러 디올", link: "https://drive.google.com/open?id=1h_V-di-6XKNvN8lvWHi0w14LSdV7gAn-JO4COBXAmDs&usp=drive_copy" },
+                { level: "B2", tags: ["문화"], title: "명품이란 무엇일까요? - 프랑스 명품 브랜드 스토리", link: "https://drive.google.com/open?id=11iG2ILkX_gk6Avjj-GrXPluhTXl2CC31ZlXAsMe2aTk&usp=drive_copy" },
+                { level: "B2", tags: ["문화"], title: "알콜 0.5% 술이 잘 팔리는 이유는? - Z세대가 바꾸고 있는 음주 문화", link: "https://drive.google.com/open?id=1cMCsKSumtAsXxqDMZ5pPT3AHOhlJKQ1hJ-iS2BcHh7g&usp=drive_copy" },
+                { level: "B2", tags: ["문화"], title: "어떻게 하면 부자가 될 수 있을까요? #유퀴즈온더블럭", link: "https://drive.google.com/open?id=146SOl3QjTIdx3PBAI7v3IECHpStiGw3z6ScSAZy1uN0&usp=drive_copy" },
+                { level: "B2", tags: ["문화"], title: "영화 〈중경삼림〉을 통해 볼 수 있는 90년대 홍콩의 모습", link: "https://drive.google.com/open?id=1DuG1fo92F4r7x4PUX__9e0bLDQGPSO8KW7uZToUgAqM&usp=drive_copy" },
+                { level: "B2", tags: ["문화"], title: "영화 속 고정관념: ‘영화 속 여성은 수동적이다?’ (Gender Stereotype in movies: Women are passive?)", link: "https://drive.google.com/open?id=1sZ2gaA0bjURWU0q8F9AckHTW5jmDa75mZ0pzgSvHb8o&usp=drive_copy" },
+                { level: "B2", tags: ["문화"], title: "영화, 어떻게 볼까? - 기생충", link: "https://drive.google.com/open?id=1ir83IzilrVKlJCk5qcEML4ac5MmvjjCDPXlcdww1t4A&usp=drive_copy" },
+                { level: "B2", tags: ["문화"], title: "영화, 어떻게 볼까? - 영화 평론가 이동진이 알려주는 영화 보는 방법", link: "https://drive.google.com/open?id=1bn5anP-m6sb3MioeuNBHtR6ceEr5IP55m_ra7KQpWgI&usp=drive_copy" },
+                { level: "B2", tags: ["문화"], title: "영화, 어떻게 볼까? - 영화에서 캐릭터들의 옷이 중요할까요?", link: "https://drive.google.com/open?id=1KHuSKpL8lAvhACNjoHNmoGkzB7AG_9EnhJOq_uSu__A&usp=drive_copy" },
+                { level: "B2", tags: ["문화"], title: "예술과 디자인의 차이", link: "https://drive.google.com/open?id=1CdN9VM4_U5nn7sP1t3DwCjZb4AfB4My0I5D2DJIvui8&usp=drive_copy" },
+                { level: "B2", tags: ["문화"], title: "왜 반말하세요：학교 선생님한테 반말하면 어떻게 될까?", link: "https://drive.google.com/open?id=1Zc8sfCYWVN87312ETlcF0HkSFCw4NrEAzmFWUHgK_iI&usp=drive_copy" },
+                { level: "B2", tags: ["문화"], title: "우연히 아는 사람 또는 오래된 친구를 마주쳤을 때, 어떻게 행동해요?", link: "https://drive.google.com/open?id=1jbAh-HcvZJH683-5c5Mdk8uJN--PnAYeNzTFWn-E2Pc&usp=drive_copy" },
+                { level: "B2", tags: ["문화"], title: "이 시대 최대의 난제 '강아지 파 VS 고양이 파'", link: "https://drive.google.com/open?id=1IbezoeRcl5itP7Od6UODkBjLxZoDO3j-FfR1Sa3Sqrw&usp=drive_copy" },
+                { level: "B2", tags: ["문화"], title: "집에서 반려식물을 키우는 방법 플랜테리어planterior", link: "https://drive.google.com/open?id=1_lEnNTtYnLPFG8KZOJeVhxsry39IM2rT1XeKXwcpEYg&usp=drive_copy" },
+                { level: "B2", tags: ["문화"], title: "찐친 연애상담 해준 적이 있나요? - 전소민 박성훈의 '찐친' 연애 상담소.", link: "https://drive.google.com/open?id=1G0h94FSHYcrRwfugeFZplJHKhYETX4evi61Ng_CD0RU&usp=drive_copy" },
+                { level: "B2", tags: ["문화"], title: "친구와 밥먹다 '꼭' 싸우게 되는 피할 수 없는 '음식 취향' 논쟁 - “부먹 vs 찍먹”", link: "https://drive.google.com/open?id=1H4sX-PBfDQY9MVPzbgAzSxCDkeFjHPnojjm3tuA8MwU&usp=drive_copy" },
+                { level: "B2", tags: ["문화"], title: "커피 이야기 - 사실적 읽기 연습", link: "https://drive.google.com/open?id=1OHh1oA3DiSc08biO_815U1Fjo7Xq1Wr7yhogL6C8rUo&usp=drive_copy" },
+                { level: "B2", tags: ["문화"], title: "포카리스웨트가 광고에 CG를 안 쓰는 이유", link: "https://drive.google.com/open?id=1sYjXCv9z8IrzqzvbKGy15kRz0C14MslorWpO6yIqRG4&usp=drive_copy" },
+                { level: "B2", tags: ["문화"], title: "한국 관객, 영화 ‘바비’ 외면한 이유?", link: "https://drive.google.com/open?id=1DvHwxSaX62T06s9o5hjUuh_C4j7bAVa7Rd-NpvUM8CQ&usp=drive_copy" },
+                { level: "B2", tags: ["문화"], title: "한국에서 골프를 치기 위해 얼마가 필요할까요?", link: "https://drive.google.com/open?id=12OaVGHTNuDof8LFoz1eD_tAPZNVR0PXI36pCTljb0do&usp=drive_copy" },
+                { level: "B2", tags: ["문화"], title: "한국에서 농담하면 안 되는 주제 - 가족, \"가족은 건드리지 마\"", link: "https://drive.google.com/open?id=1kDzLaawlKQjTjtf4RD7mAtpQA36rSARFtBAuzViGb74&usp=drive_copy" },
+                { level: "B2", tags: ["문화"], title: "한국에서 MZ세대는 왜 90년대 홍콩영화를 좋아할까요? -<중경삼림 重慶森林 Chungking Express >", link: "https://drive.google.com/open?id=1sAHbDhVOqfCL1HDnoOeHhXHgTA4Itb1BsFYcCPzBI9U&usp=drive_copy" },
+                { level: "B2", tags: ["문화"], title: "한국인 먹는 마늘 양을 보고 외국사람들이 놀라는 이유", link: "https://drive.google.com/open?id=1gk91BpRyRXZzdrLHkBNsuWERuj9EbNlLo1Z95hcnCJs&usp=drive_copy" },
+                { level: "B2", tags: ["문화"], title: "MZ세대 '조용한 사직' 열풍…\"직장과 거리두기 중\"", link: "https://drive.google.com/open?id=15NVpZXsn08MJGdsY2MlJ2o8pvx5dzIpwK3iO4oFMY7o&usp=drive_copy" },
+                { level: "B2", tags: ["문화"], title: "MZ세대의 식물 키우기 - 반려식물을 위한 호텔도 있다구요?", link: "https://drive.google.com/open?id=1TpgDRn4WnEbOGtuExNYd2WrqnpDLIP31rBpqmmH-Wb8&usp=drive_copy" },
+                { level: "B2", tags: ["문화", "과학"], title: "만족감을 얻는 방법 - 집사부 멤버들, 정재승 ‘첫 초밥’ 논문에 신기함 가득!.mp4", link: "https://drive.google.com/open?id=1g1ijKSzCuFyJ3nYBafUjpRHRXDlhuRJS" },
+                { level: "B2", tags: ["문화", "과학"], title: "만족감을 얻는 방법: 맛있는 음식 먼저 먹는다 VS 나중에 먹는다", link: "https://drive.google.com/open?id=1zoNMHfll9EjR_PVPBvHwOprA-556Dd6nC6TeSVIT7ec&usp=drive_copy" },
+                { level: "B2", tags: ["문화", "기술"], title: "보정 없는 ‘셀카’ 올릴 용기가 있어요? - “비리얼 할 시간(Time to BeReal)”", link: "https://drive.google.com/open?id=10yxrURkokfH1cytC1wE6hVXL-P217tToK96h5Zsg3qY&usp=drive_copy" },
+                { level: "B2", tags: ["문화", "사회"], title: "한국식 나이가 사라지면 무슨 문제가 생길까요?", link: "https://drive.google.com/open?id=1opXfXPxQcH1M8OIxDTtddxKTKDy7q67fKyuoBus8NpI&usp=drive_copy" },
+                { level: "B2", tags: ["문화", "언어"], title: "심심한 사과? 난 하나도 안 심심한데?", link: "https://drive.google.com/open?id=1DB_4DzJCXsEZX9xeFinUxo67EJLO2bbMf41DZ41EbPk&usp=drive_copy" },
+                { level: "B2", tags: ["문화", "에세이"], title: "<여행의 이유> - 상처를 몽땅 흡수한 물건들로부터 달아나기", link: "https://drive.google.com/open?id=1b746v40QNju0R58gcF6l64_kJTA2mgh0hftW_CtmMR8&usp=drive_copy" },
+                { level: "B2", tags: ["문화", "여행"], title: "여행의 기억을 오래도록 간직하는 방법? - 경험을 언어화하는 “글그림”", link: "https://drive.google.com/open?id=1pePryvzdbfj5fMO_q7bHf-klsSO5pREE3UjkmFp03BM&usp=drive_copy" },
+                { level: "B2", tags: ["문화", "여행"], title: "한국에서 여행하기 좋은곳 Best 3 - 여름에 여행하는 것을 좋아해요? 겨울에 여행하는 것을 좋아해요?", link: "https://drive.google.com/open?id=1agkCD2qbmTGqAXZ1Boo_k079vx2-0QGbDsgSaAr_NE4&usp=drive_copy" },
+                { level: "B2", tags: ["문화", "일상"], title: "스케치 코미디 - “부먹 vs 찍먹”", link: "https://drive.google.com/open?id=1b3KXDjmecUpggu_vKY_ScLG8EEZL5TCdrYPRrovHRMw&usp=drive_copy" },
+                { level: "B2", tags: ["문화", "일상"], title: "어떤 여행을 좋아하나요? 자유여행 vs.패키지 여행", link: "https://drive.google.com/open?id=1ldNt9WC-MYIYZPYpxTzzxsmDbMjdyMOI-tI-Cg1r_HI&usp=drive_copy" },
+                { level: "B2", tags: ["문화", "환경"], title: "뉴스：한국산 커피 & 와인 - 기후변화", link: "https://drive.google.com/open?id=1rgKFN5ZBGqnpvt-FyiJh7ABBus93yvrOH-Nmp6Uw9GA&usp=drive_copy" },
+                { level: "B2", tags: ["사회"], title: "“콜 포비아\" & “토크 포비아\" - 말보다 글… 대화 피하는 이유", link: "https://drive.google.com/open?id=10rw0JY2W_cdtRwKSrDeMRvdy-61HKBQWPo2jrcN-nzo&usp=drive_copy" },
+                { level: "B2", tags: ["사회"], title: "<외계통신: 급진적 페미니즘을 둘러싼 캐나다vs독일 기자의 설전! >", link: "https://drive.google.com/open?id=1ZqP5ovQpYxINl5VYdUAWJ-kb3YdQCugyGwURt2eQI7E&usp=drive_copy" },
+                { level: "B2", tags: ["사회"], title: "2030세대 76%, \"나는 N포세대\"…가장 먼저 포기 '연애'", link: "https://drive.google.com/open?id=1hvBhieMae5NPrAwlGfjjJiI57IDeuO4kCvxWh-FfP3k&usp=drive_copy" },
+                { level: "B2", tags: ["사회"], title: "건강을 해치는 운동과 다이어트? - “바디프로필(BodyProfile)” 촬영은 어떤 문제점이 있을까요?", link: "https://drive.google.com/open?id=1Td7pkQwvScUC61q-WPXFseL55WAF620F-Yr49dWdlVg&usp=drive_copy" },
+                { level: "B2", tags: ["사회"], title: "공항계의 옥천Hub? 주인 잃은 가방이 하루에 7천개", link: "https://drive.google.com/open?id=18S7EWqUH4yn2JfqYXE4nZLgFvAVLfL7VWiZFoQ_mIVw&usp=drive_copy" },
+                { level: "B2", tags: ["사회"], title: "뉴스：죽음 앞둔 의학자의 ‘감사 작별 편지’", link: "https://drive.google.com/open?id=1HkGS27xdMM78ZZ6awRym2OQYbfGAXMkfxZls-3V32sE&usp=drive_copy" },
+                { level: "B2", tags: ["사회"], title: "매일 새벽 4시 30분에 하루를 시작하는 변호사 - #미라클 모닝 #자기관리 끝판왕", link: "https://drive.google.com/open?id=11j8FVOjBSu1NgQWuIdMCl647Qn-764vVAHmwJxBbWyM&usp=drive_copy" },
+                { level: "B2", tags: ["사회"], title: "옛날 서른은 요즘 마흔, 나이에 0.8 곱하는 게 요즘 나이계산법", link: "https://drive.google.com/open?id=1Yr5xRQJJmPtVZ9iGLzw4UUS9hEK1mN-ylOJVJnUJuMg&usp=drive_copy" },
+                { level: "B2", tags: ["사회"], title: "오늘은 짠순이/짠돌이, 내일은 플렉스 - 무지출 챌린지", link: "https://drive.google.com/open?id=15xTQPGAuy9Nx7gpEOOVr-oFAdCFQPudFTEE1BRShvrk&usp=drive_copy" },
+                { level: "B2", tags: ["사회"], title: "왜 한국에 외국어 간판이 많을까? [자막 & 같이 이야기 해 볼 주제들]", link: "https://drive.google.com/open?id=1bPBXyOIOvJR5qCZr_EatK42GUD6YcGufYWBbSqn7tzU&usp=drive_copy" },
+                { level: "B2", tags: ["사회"], title: "외국 공항 근황: 몸은 왔는데요, 짐은 안 왔습니다(?)", link: "https://drive.google.com/open?id=1-MLw_ZJN4c2wOTJ1VhEDEu9Lga-BgZ8vlp16xZVRya4&usp=drive_copy" },
+                { level: "B2", tags: ["사회"], title: "점심메뉴 고르기도 어려운 우유부단한 사람들 - 결정장애, 선택장애, 햄릿 증후군(Hamlet Syndrome)", link: "https://drive.google.com/open?id=1npUYTrdLH4e2Z21_XiZ7NNDJpmeKghBeVQQO-rjmjY8&usp=drive_copy" },
+                { level: "B2", tags: ["사회"], title: "한국인이 귀화 시험 보면 벌어지는 일", link: "https://drive.google.com/open?id=18SlstqqnqjlHm41OVcpantXV8EC88fDbSoze_XjMLnw&usp=drive_copy" },
+                { level: "B2", tags: ["사회"], title: "MBTI 결과 믿을 수 있을까요? 16Personalities 모두 가짜?", link: "https://drive.google.com/open?id=1aGPOp72XIQsqmFq3HbSYkVJ9gdePNKm2LEF9EyAGfvE&usp=drive_copy" },
+                { level: "B2", tags: ["사회", "기술"], title: "카카오 톡이 멈추자 일상이 멈췄다", link: "https://drive.google.com/open?id=1HXpsJHJquR6fY03Rns52trsEJ7PWYCXHx5i8JLaoVN8&usp=drive_copy" },
+                { level: "B2", tags: ["사회", "심리"], title: "정체성의 심리학, 영화 <뷰티 인사이드> 나를 나로 결정하는 것은 무엇일까요?", link: "https://drive.google.com/open?id=11vD6bod3HpCuQz7MCzJj3GMJZdfUTX8_eYTXKJ51gkc&usp=drive_copy" },
+                { level: "B2", tags: ["사회", "심리"], title: "MBTI 16가지 유형 한눈에 보기 (SP, SJ, NT, NF)", link: "https://drive.google.com/open?id=1eYYONg9Rw_r40ZU9ZJXAqnNpzsXRVxlNVv6-svgmVH4&usp=drive_copy" },
+                { level: "B2", tags: ["사회", "환경"], title: "업사이클링 - 패션도 관심 있고 환경에도 관심 있으면 이건 어때?", link: "https://drive.google.com/open?id=1_Uw6b3rXzGmv4kgA6y9HQmECMaXMHpgDP3xCstg9oxI&usp=drive_copy" },
+                { level: "B2", tags: ["사회", "환경"], title: "패스트패션의 두 얼굴 (Two Faces of Fast Fashion) - 환경 파괴하는 패스트 패션", link: "https://drive.google.com/open?id=19Ow8pXD4Z6aNFEEHQh1ubjz2fECZp9WSDnvZ0Sjqp9Q&usp=drive_copy" },
+                { level: "B2", tags: ["사회"], title: "우리나라…없어질 수도? - 출산율 역대 최저! 인구절벽 가속화", link: "https://drive.google.com/open?id=1v8KCO3IaN3C0-zx9wdRKf9M8cxBRK8h0fss0AlQztiQ&usp=drive_copy" },
+                { level: "B2", tags: ["생활", "건강"], title: "<저속노화 식사법>: \"밥만 바꿔도 느리게 나이들 수 있습니다\"", link: "https://drive.google.com/open?id=1ykdppVDRYV3Y-d4WKnGlOHKG33dZ7VccwLiPjIWd6ag&usp=drive_copy" },
+                { level: "B2", tags: ["스포츠"], title: "1년 테니스 해보니 알겠다 — 사람들이 왜 빠지는지, 아니 왜 미치는지.", link: "https://drive.google.com/open?id=10pupctsR_kZRSIKrPZ-kEQzqivi_aNQUA0Baql88_lM&usp=drive_copy" },
+                { level: "B2", tags: ["스포츠"], title: "노박 코비치가 테니스 고트(G.O.A.T)가 될 수 없는 이유 - 테니스 실력도 중요하지만 선수의 인성도 중요하기 때문에.", link: "https://drive.google.com/open?id=12fxAky--foFeB156fc30NXNwIidJbw4JYh7xSU7dLSE&usp=drive_copy" },
+                { level: "B2", tags: ["언어"], title: "표준어는 바른 말, 사투리는 틀린 말? - 서울 사투리가 있을까요?", link: "https://drive.google.com/open?id=1oHehxb1raIxaGHyv278cRm8YiO47fnbT0gvdjxfIBYc&usp=drive_copy" },
+                { level: "B2", tags: ["언어"], title: "받아쓰기 - 퀴즈.mp4", link: "https://drive.google.com/open?id=1qCVpUeqhPdpPuiGM_d7F0gaKVhqYHsPx" },
+                { level: "B2", tags: ["언어"], title: "받아쓰기 - 퀴즈.pdf", link: "https://drive.google.com/open?id=1tnN2QaZ6Tju2Q2jypPmRzOxXUEj0FP4e" },
+                { level: "B2", tags: ["언어"], title: "받아쓰기 - 한국 13년차 외국인 vs 13살 초등학생 한국어, 누가 이길까요?", link: "https://drive.google.com/open?id=1_jA-VmL3_VK964UlfiqupImQJPAYn3R5b5uvSD9Kx4Q&usp=drive_copy" },
+                { level: "B2", tags: ["언어"], title: "외국어 공부 어떻게 해야 할까요? - 한국어 실력을 키우는 방법", link: "https://drive.google.com/open?id=1PMowmYqd2nWu5kF4Gl1SwXhsUcu4eCN8r90CKRpRU50&usp=drive_copy" },
+                { level: "B2", tags: ["언어"], title: "외래어 없이 순수한 한국어만 사용해야 할까요?", link: "https://drive.google.com/open?id=1CBQ2rbFbkon_sDIdvrD1jip1vIdHRmO1K-uASPw0IBU&usp=drive_copy" },
+                { level: "B2", tags: ["언어", "과학"], title: "글자에 오류가 있어도 읽을 수 있을까요? - EBS다큐멘터리 \"책맹인류\"", link: "https://drive.google.com/open?id=16WnH6gRDEdNKQSoox8YjnHact_eh2xrv_bElzK2Y394&usp=drive_copy" },
+                { level: "B2", tags: ["예능"], title: "[더 지니어스] 5:5로 해당하는 명제를 만들어라!", link: "https://drive.google.com/open?id=1h9Yw5uKgOl3XoqotfkeG24dZthPNBhsUeorwvXEu_l0&usp=drive_copy" },
+                { level: "B2", tags: ["인문"], title: "평범한 우리가 만들어갔던 일상의 기적 - 기념일과 선물", link: "https://drive.google.com/open?id=1OJnZmwQiYxALzkeVyNBGt8wKzvCLcpI-X2b0zy6N_4s&usp=drive_copy" },
+                { level: "B2", tags: ["정치"], title: "팔레스타인과 이스라엘의 갈등", link: "https://drive.google.com/open?id=1W_e-DnI9Dxi6LFWjKES_zfOz7yoJeK2J5tWOUy2gLV8&usp=drive_copy" },
+                { level: "B2", tags: ["표현"], title: "섬세한 언어의 중요성 - \"짜증나다\"는 무슨 뜻일까요.mp4", link: "https://drive.google.com/open?id=1oi4q-rD0puhItjMjAFfTK69Z5gzZiwEp" },
+                { level: "B2", tags: ["문화"], title: "원하는 대로 살고 싶다면 '박스'를 탈출하라", link: "https://drive.google.com/open?id=1xUsP-VYV8SghuZ4dFzrs31H1vKpvGoIhRqvpYLYa4qA&usp=drive_copy" },
+                { level: "B2", tags: ["문화"], title: "종이책의 미래(종이책 vs. 전자책?)_by_Sangbin", link: "https://drive.google.com/open?id=1_iPuhA_6qU21Z9jmbcFgcH-RNFgzKNx8Oa8lZ2nI5B8&usp=drive_copy" },
+                { level: "B2", tags: ["역사"], title: "창작물의 재미를 위해서 역사 왜곡 이해할 수 있다 vs 없다_by_Sangbin", link: "https://drive.google.com/open?id=1x8DgWWRCMP72dLq2mPN45K6VAYGI7XXwSj73YjUmzSA&usp=drive_copy" },
+                { level: "B2+", tags: ["사회"], title: "🎬인생 드라마 〈나의 아저씨〉: 좋은 어른이란?", link: "https://drive.google.com/open?id=10GPixD8jk4Nse27Ag9tmhvR_TDlzQFxGYs5dArVgBh4&usp=drive_copy" },
+                { level: "B2+", tags: ["경영"], title: "무제한 휴가, 득인가 실인가 - 넷플릭스가 무제한으로 주는 이유", link: "https://drive.google.com/open?id=1j_DTXl39q0Kq7W3yQ0FxN-wTOtGt2TYoWbF5qvJy4Ac&usp=drive_copy" },
+                { level: "B2+", tags: ["경제"], title: "돈, 드라마를 만나다 - <오징어 게임> 상우, 어쩌다 60억 빚이 생겼나", link: "https://drive.google.com/open?id=1WeKztVW7tRayzBGTnR-9XgxzxNyJ8_f54TsqzdQBn18&usp=drive_copy" },
+                { level: "B2+", tags: ["경제"], title: "아시아의 빌 게이츠? 워렌 버핏?: 미래를 내다보는 투자자 손정의", link: "https://drive.google.com/open?id=1ykzmgWgKgmeN_n1Imx1quv9KMWlxVal5nj4xuQknZLc&usp=drive_copy" },
+                { level: "B2+", tags: ["경제", "사회"], title: "'임차인 천국' 비엔나의 비결...“고품질 반값 사회주택”", link: "https://drive.google.com/open?id=1GLoxUvSLYNnzic0TRS2TcDtcm3cm9Jb6wa9glGy6E5I&usp=drive_copy" },
+                { level: "B2+", tags: ["경제", "사회"], title: "높은 집값을 해결하기 위한 방법은 무엇일까요? - 베를린 시의 “도이치보넨 몰수 운동”", link: "https://drive.google.com/open?id=1rP-rskLwr9Xmb16pfCQ6sKmOR6w-eH4FC5iCH2BT7GI&usp=drive_copy" },
+                { level: "B2+", tags: ["과학"], title: "인간의 뇌는 쉽게 조종당하도록 설계되어 있다? - 일상 속 뇌 조종을 피하는 방법! (뇌과학, 가스라이팅, 가짜뉴스)", link: "https://drive.google.com/open?id=1UsCXIyrkivIf8r0aMVtpMGdIeTT8zFRVI1KDBqjXGh0&usp=drive_copy" },
+                { level: "B2+", tags: ["과학", "기술"], title: "인공지능 챗봇, ChatGPT - 사람보다 시험을 잘 볼 수 있을까요?", link: "https://drive.google.com/open?id=1eiVxVsac80FK4UoGK45tCQzqtzEi7WJ0HFP9hP3ULn0&usp=drive_copy" },
+                { level: "B2+", tags: ["국제", "정치"], title: "중동에서 영향력 커지는 중국", link: "https://drive.google.com/open?id=1MrQVoPnaFmmyU3-OwMuAznUWBsaBvR7ZalxzCsmro5o&usp=drive_copy" },
+                { level: "B2+", tags: ["국제", "정치"], title: "팔레스타인과 이스라엘의 갈등", link: "https://drive.google.com/open?id=1yK0AVJjSwCk2cRHPSVX0cNgnrFOIfyA6rovJkcWLk7s&usp=drive_copy" },
+                { level: "B2+", tags: ["기술"], title: "메타버스에서 땅을 사고 싶어요? - 가상부동산 투자", link: "https://drive.google.com/open?id=1xDn1-M1xreId045XKoruXPPjIDRXO66L8rCVmKXLpis&usp=drive_copy" },
+                { level: "B2+", tags: ["문화"], title: "\"가을 탄다\", 무슨 의미일까요？", link: "https://drive.google.com/open?id=1JpM7kQHlbxTcAhUDltBHkbGt_c78BAg9Jp_sCwj7QrY&usp=drive_copy" },
+                { level: "B2+", tags: ["문화"], title: "골프에 빠진 2030세대", link: "https://drive.google.com/open?id=1JzF_kxpMN6TB2dmYq7TKHWqWL-XmOXGBYqPfEFKxkSI&usp=drive_copy" },
+                { level: "B2+", tags: ["문화"], title: "꼰대 VS MZ, 세대 갈등 극복 가능해? - 회식부터 출근 시간까지 서로 힘든 젋은 꼰대와 요즘 MZ!", link: "https://drive.google.com/open?id=1OXA5gH8RUOYwZYNi9ZVeddoJMcB1pwNC32ElSUQkvQs&usp=drive_copy" },
+                { level: "B2+", tags: ["문화"], title: "받은 만큼만 일한다? 미국 '조용한 사직' 신드롬 이유는", link: "https://drive.google.com/open?id=1QDXn4MxIeV56akrYaKZW7dwc0SKvgRuLTGIfa1OmafY&usp=drive_copy" },
+                { level: "B2+", tags: ["문화"], title: "새해목표, 작심삼일로 실패하는 이유와 해결책은!?", link: "https://drive.google.com/open?id=1DfurGU7rYFunLQppdKOzs5oR1vlKuzOvx6yeynYMmz0&usp=drive_copy" },
+                { level: "B2+", tags: ["문화"], title: "스타벅스는 왜 한국에서 인기가 많을까? - 한국에만 있는 스타벅스 문화", link: "https://drive.google.com/open?id=1rYGYmtMvQyFrrWVl3_IH0wXnupLNNMLRy0QKqz8XOew&usp=drive_copy" },
+                { level: "B2+", tags: ["문화"], title: "왜 가을을 독서의 계절이라고 하는 걸까", link: "https://drive.google.com/open?id=1ZK9pwB5cuKJPEIy6i3Jy9P5wPOdVBPWTABGAoiy_-_c&usp=drive_copy" },
+                { level: "B2+", tags: ["문화"], title: "쿨병은 무엇일까요? - 쿨한 척하며 막말하는 사람 대처법", link: "https://drive.google.com/open?id=1GZLPgmc4gwCjfNYM2XLE5R5QBN0uDjttvdkHTG8qdSA&usp=drive_copy" },
+                { level: "B2+", tags: ["문화"], title: "현직 변호사가 말하는 <이상한 변호사 우영우>와 실제 재판의 차이점", link: "https://drive.google.com/open?id=1iMFAtLIC8k8sxU_7yUHuOi6dH2k_CxYwCYJQsDbAQQI&usp=drive_copy" },
+                { level: "B2+", tags: ["사회"], title: "미국에선 '틱톡'이 아마존보다 책을 더 잘 판다?", link: "https://drive.google.com/open?id=1JInMjJgyFXkNfzMTlwlpu57OhqAsNMJ7z-LIi0QBAZ8&usp=drive_copy" },
+                { level: "B2+", tags: ["사회"], title: "오늘만 사는 욜로족 VS 아끼고 아끼는 파이어족!", link: "https://drive.google.com/open?id=1_veanWiIrmp2Bss2FtSkNwECquNWWLUrFkEmtwrLCV4&usp=drive_copy" },
+                { level: "B2+", tags: ["사회"], title: "왜 한국에서 젊은 사람들이 결혼을 하지 않으려고 할까요? - 결혼을 반드시 해야할까요?", link: "https://drive.google.com/open?id=1xV1erhTG_XYXN823MOW0nBxjWV93Cpqfm8x9cQEE3Ck&usp=drive_copy" },
+                { level: "B2+", tags: ["사회"], title: "혹시 전화 통화가 두려워요? 직접 음식 주문이 어려워요? - “콜 포비아\" & “토크 포비아\"", link: "https://drive.google.com/open?id=16amZ3rzuQPPEjCzkgfXz3vkYd6g_jSuWEWirHfm9YX0&usp=drive_copy" },
+                { level: "B2+", tags: ["사회"], title: "NEW 핫플의 공식 한국의 브루클린 ‘성수동’ - 한국의 브루클린 ‘성수동’", link: "https://drive.google.com/open?id=1uRy0Peo9L-Wc7Fcqh8ALcZ1hGihgYmWmIFJmINmbN5w&usp=drive_copy" },
+                { level: "B2+", tags: ["사회", "기술"], title: "카카오 멈추자 일상이 멈췄다 - 거대 플랫폼 의존 사회 돌아봐야", link: "https://drive.google.com/open?id=1aa9AE3cFtRdlvd1339RRTPNCRflp8ngBu-6eQzRwFlU&usp=drive_copy" },
+                { level: "B2+", tags: ["심리"], title: "취미는 꼭 있어야만 할까요", link: "https://drive.google.com/open?id=1W0ASaowFN7bItG0QXxp-tGMiq847fBDO" },
+                { level: "B2+", tags: ["심리"], title: "취미는 꼭 있어야만 할까요?", link: "https://drive.google.com/open?id=1YRPh0xmrUsNcyq33aPlOE3v-SeTkTtgRad1EzRsCi4s&usp=drive_copy" },
+                { level: "B2+", tags: ["언어"], title: "글을 빠르게 읽는 것과 글의 내용을 깊이 있게 이해하는 것 사이에 어떤 관계가 있을까요?", link: "https://drive.google.com/open?id=1w9KMPTr0G_NAdQvTvb_xHwV3Qh0E8LSQ0c0dhp9lr_Y&usp=drive_copy" },
+                { level: "B2+", tags: ["언어"], title: "“감사하다”와 “고맙다” - <우리말 어감사전： 말의 속뜻을 잘 이해하고 표현하는 법> (안상순, 2021)", link: "https://drive.google.com/open?id=1stN4KBd9q_D7zVYUbesAibvig8gpI6PiBY6fRy1H9Xs&usp=drive_copy" },
+                { level: "B2+", tags: ["언어"], title: "“세상”과 “세계”- <우리말 어감사전： 말의 속뜻을 잘 이해하고 표현하는 법> (안상순, 2021)", link: "https://drive.google.com/open?id=1_NZeTXCitsSNkdYrehAy6rcM_iJTpjo7bmBx-ND9Z5M&usp=drive_copy" },
+                { level: "B2+", tags: ["여행"], title: "사람들은 왜 여행을 할까요_여행이 본능인 이유.mp4", link: "https://drive.google.com/open?id=16GhcuYvJx9WcOaGweWhZaO5oTZ_BVIjI" },
+                { level: "B2+", tags: ["여행"], title: "사람들은 왜 여행을 할까요_여행이 필요한 이유.mp4", link: "https://drive.google.com/open?id=1h81B7nJGPlrWLTmR0iAjP0_f2rNWlIr8" },
+                { level: "B2+", tags: ["여행"], title: "사람들은 왜 여행을 할까요?", link: "https://drive.google.com/open?id=1y9zmowFfd_Ojn7wfNxEoevV9vxzdzUUqzOS4DqCfKsk&usp=drive_copy" },
+                { level: "B2+", tags: ["예술"], title: "'건축은 과학적? 예술적?", link: "https://drive.google.com/open?id=10buUeO6ZN1IRKVLWT9yJl0SjgznhIWc_DxpPj5yB6Kw&usp=drive_copy" },
+                { level: "C1", tags: ["경제"], title: "가격 인상 대신 용량 줄이기…기업들 '슈링크플레이션' 확산", link: "https://drive.google.com/open?id=14rc5UPVRZosqXdoYfyi6e-44T4VqBqYBhsaW3kpaDhU&usp=drive_copy" },
+                { level: "C1", tags: ["경제"], title: "구독경제는 무엇일까요? - 소유보다는 경험, 구독하며 산다", link: "https://drive.google.com/open?id=1NpvaxGjWKrG8TYf4tKJk02hcASPjvQqmIkTXCUE1kGo&usp=drive_copy" },
+                { level: "C1", tags: ["경제"], title: "성장주와 가치주, 어디에 투자하시겠습니까? - 테슬라 주식 vs. 제너널모터스(GM) 주식", link: "https://drive.google.com/open?id=1xAWCcNe9z9PTPdjoroY2C7Azea4krVqFLGHIeOUd4Is&usp=drive_copy" },
+                { level: "C1", tags: ["경제"], title: "투자의 정석은 ‘분산투자’, 정말 그럴까? - 포트폴리오 이론 vs. 워렌 버핏", link: "https://drive.google.com/open?id=12XNtDdqlkEML1Xa7xudpfnu3L-AkNpbqpK7IYp7aKsY&usp=drive_copy" },
+                { level: "C1", tags: ["과학"], title: "지하도시: 인류의 미래일까요?", link: "https://drive.google.com/open?id=1-27hdgNyttYluxz7NQFmqF87ku7KRNk_FvM1zUOKdu4&usp=drive_copy" },
+                { level: "C1", tags: ["과학"], title: "탄소중립에 원자력 발전이 도움이 된다?", link: "https://drive.google.com/open?id=1018Rx5QJA7mfOesdc3vyZG2rGrpc-S-2zW0hnigDLhs&usp=drive_copy" },
+                { level: "C1", tags: ["과학"], title: "ADHD가 있는 사람들은 정상일까요? 비정상일까요?", link: "https://drive.google.com/open?id=1ldWQjz3wDxbJy5U1FsP3alb1NgeCI0A2XTi6gkvtGUQ&usp=drive_copy" },
+                { level: "C1", tags: ["과학", "기술"], title: "가까운 미래에 AI가 인간 의사를 대체할까? - 여러분은 AI에게 정신과 치료를 받으실 수 있나요?!", link: "https://drive.google.com/open?id=10UaIJJmUUKSWclI_3K9lzOEGiRKMGF7GuoaAyEfKfkI&usp=drive_copy" },
+                { level: "C1", tags: ["과학", "기술"], title: "AI, 인간의 친구가 될 수 있을까? - 존재감 굳혀가는 ‘가상 인간", link: "https://drive.google.com/open?id=1kx76ELz8QVnTvJO3u8wCLEi2a6trRff4aMFsQeLv7sA&usp=drive_copy" },
+                { level: "C1", tags: ["과학", "사회"], title: "과연 실험실에서 만든 고기, \"배양육\"이 동물을 통해 얻는 고기를 대체할 수 있을까요?", link: "https://drive.google.com/open?id=1rCHaBlVqa40SmAb40Ijnmko8nk75KxlaHSvdF9tzJK4&usp=drive_copy" },
+                { level: "C1", tags: ["문법"], title: "ㄹ지+알다/모르다 & 줄+알다/모르다", link: "https://drive.google.com/open?id=1LSPlhtp-rGMlU73K6e838mcfSLiGHU2PJl6aTj7laxE&usp=drive_copy" },
+                { level: "C1", tags: ["문학"], title: "쉽게 씌어진 시 - 윤동주 (1942년 6월 3일)", link: "https://drive.google.com/open?id=1tzd4iyjKlp02cacbgVwiMdGTVnc4JfvmxcvB8uy12MY&usp=drive_copy" },
+                { level: "C1", tags: ["문화"], title: "<여행의 이유> - 상처를 몽땅 흡수한 물건들로부터 달아나기", link: "https://drive.google.com/open?id=1mTkzJRzA1W0QiAKjXS8lOj8KpeWSjaADcVWbcrkEK2o&usp=drive_copy" },
+                { level: "C1", tags: ["문화"], title: "인터뷰도 스포츠의 일부일까? 인터뷰를 '안 해도 될 권리' 묻는 스포츠 선수들", link: "https://drive.google.com/open?id=1AW1Q53bHIvJwxyax7MjxraPiVLd3VtrcMWa0uETwvg8&usp=drive_copy" },
+                { level: "C1", tags: ["문화"], title: "한국 대중문화 역사_Part.1_1980대, “홍콩 영화”의 유행", link: "https://drive.google.com/open?id=1GU1eX81NuZSCzzvjstslJANKQN0gLehW020GXucx2_g&usp=drive_copy" },
+                { level: "C1", tags: ["문화"], title: "한국 대중문화 역사_Part.2_1998년, “일본 대중문화” 개방", link: "https://drive.google.com/open?id=1wOh_PlAQp394gChrkNlXCoQmhIMazUeK_W2KVlxOyLI&usp=drive_copy" },
+                { level: "C1", tags: ["문화"], title: "한국 대중문화 역사_Part.3 2000년대, “미국 문화” 열풍", link: "https://drive.google.com/open?id=16dn9smbt4XJ0tfJWDPA3KNraPUTmKUHz7k3utQA5Ju4&usp=drive_copy" },
+                { level: "C1", tags: ["문화"], title: "한국 대중문화 역사_Part.4_한류의 시작 및 확산1.(아시아) - 확산2.(미국 및 유럽...전세계???)", link: "https://drive.google.com/open?id=1VLx_c2N8yNLspO4mzNMzC2CIDC_STYAng5mVUD5jRzI&usp=drive_copy" },
+                { level: "C1", tags: ["문화"], title: "The Gamer - 더 게이머_한국게임의 역사_by_Sangbin", link: "https://drive.google.com/open?id=1AKodICoM2ZXlOH2JR1rimv6vpTPua61BegY_RXahQ5M&usp=drive_copy" },
+                { level: "C1", tags: ["문화"], title: "“원조는 한국” 주장 나오는 세계적 신조어···‘조용한 사직’을 아시나요?", link: "https://drive.google.com/open?id=1GDnwUWs4-DxHUa53ct1spaxTsriWT-uqL70ZLoWSQIU&usp=drive_copy" },
+                { level: "C1", tags: ["사회"], title: "노동시간 유연화 논쟁: 일주일에 3일만 일할 수 있을까?", link: "https://drive.google.com/open?id=1tfHtwxupat5F7EtFXyaN2rduDPWXLRQ3-SPwam3m5tc&usp=drive_copy" },
+                { level: "C1", tags: ["사회"], title: "가짜 노동: 나는 의미 있는 일을 하고 있을까?", link: "https://drive.google.com/open?id=16f2fccuBy40mWzxjQ3bOu-Xjer0fdxdNyA8DrUv0d-w&usp=drive_copy" },
+                { level: "C1", tags: ["사회"], title: "나는 중산층인가요? - 나라별 중산층 기준 (한국, 프랑스, 영국, 미국)", link: "https://drive.google.com/open?id=1ibIFhvmj7SKGaRaC4RrVKYV1IGCGSjgZTlN2KrssMmg&usp=drive_copy" },
+                { level: "C1", tags: ["사회"], title: "돈으로 시간을 살 수 있을까 - 줄서기.mp4", link: "https://drive.google.com/open?id=1VtTZY4bw-EpoghZ0EqKO08tahYVAbzrj" },
+                { level: "C1", tags: ["사회"], title: "돈으로 시간을 살 수 있을까? - 자본주의 논리는 어디까지 허용될 수 있을까?", link: "https://drive.google.com/open?id=1uAomOTRPlWDQD9N5_90ILhNAO03dpcfMmdFd4KBwXwg&usp=drive_copy" },
+                { level: "C1", tags: ["사회"], title: "돈으로 시간을 살 수 있을까. -암표.mp4", link: "https://drive.google.com/open?id=1uJFegAGebwpnhKN14f4Opuxtl63m7sGf" },
+                { level: "C1", tags: ["사회"], title: "의사 파업 : 왜 의사들은 의사 숫자를 늘리는 것에 반대할까요?", link: "https://drive.google.com/open?id=1G4Xwsrs7ni8oWdYzi24HxuOQ0mrC9GktZNdDoLJU9XM&usp=drive_copy" },
+                { level: "C1", tags: ["사회"], title: "죽음을 선택할 권리 Feat. “올리버 색스” 교수의 죽음을 받아들이는 방법", link: "https://drive.google.com/open?id=1Hi-FxYG_qFNUORKyO1s6xPThLc34u4gaYl-9O-_hAWY&usp=drive_copy" },
+                { level: "C1", tags: ["사회"], title: "죽음을 선택할 권리 Feat. “올리버 색스” 교수의 죽음을 받아들이는 방법.pdf", link: "https://drive.google.com/open?id=17ZPOjWdFYgjpG6_aqVBvkGXpAu6pya8e" },
+                { level: "C1", tags: ["사회"], title: "중국의 내권 세대 - 열심히 일해도 성공 못한다' 중국 청년들의 번아웃", link: "https://drive.google.com/open?id=1OHxjBSrSrYaiLK58w5WNm8NkKLNfbCEx1pglWHMvIYM&usp=drive_copy" },
+                { level: "C1", tags: ["사회"], title: "한중일 출신이 구글에서 CEO가 못 되는 이유 - 권위에 순종적인 문화 vs 대나무 천장", link: "https://drive.google.com/open?id=1T7TflpJkaWDK9c5e1dHeTTZ793e4Jr3bJARU3ZdNmrU&usp=drive_copy" },
+                { level: "C1", tags: ["사회", "경제"], title: "전 세계에서 왜 집값이 천정부지로 치솟을까요? - 집값 잡기 위해서 어떤 노력이 필요할까요?", link: "https://drive.google.com/open?id=1Z_Wft1geb7Gv_ejYOU6--xDgKlLJ7KhvB84zSoRyKsM&usp=drive_copy" },
+                { level: "C1", tags: ["사회", "과학"], title: "로봇에도 인권이 있을까?", link: "https://drive.google.com/open?id=1iiLokuf48w_KqOHPqrRSuQwLSGuJIOJVQO9JoZEq1ow&usp=drive_copy" },
+                { level: "C1", tags: ["사회", "기술"], title: "카카오톡이 멈추자 벌어진 일 - 마비된 대한민국", link: "https://drive.google.com/open?id=15pN9vmLDk_0Wxjz0CyEYdAMBPGoDDDSa70fRM3zBtcg&usp=drive_copy" },
+                { level: "C1", tags: ["사회", "문화"], title: "읽을 책, 볼 영상이 쌓인 당신에게", link: "https://drive.google.com/open?id=1m81U2wNQ6S5kg9UmF9QhWswJ39wxccULZgyHFnOa6PA&usp=drive_copy" },
+                { level: "C1", tags: ["사회", "문화"], title: "장애 없는 여행은 가능할까? - 장애인 여행 관련업계 \"복지 넘어 관광산업 측면서 고려해야\"", link: "https://drive.google.com/open?id=1VQxayu3cMHhYz2qvKidKNuXrWAbcrrlgLeo14vT7mOg&usp=drive_copy" },
+                { level: "C1", tags: ["사회", "환경"], title: "명작에 수프를 뒤집어씌우는 사람들 — 환경 운동가인가 ？ 테러리스트인가 ？", link: "https://drive.google.com/open?id=1uveDBLGxMfmgTS0pxuc7kuCg2QbgAspV4Hw5xgsrIpw&usp=drive_copy" },
+                { level: "C1", tags: ["수학", "사회"], title: "알고보면 완전 소중한 수학 - 어떻게 배우고 평가해야 할까요?", link: "https://drive.google.com/open?id=1JgSOji6eJSeak8GkUVQSle5VvmayBUg8i4jT6bLzPYc&usp=drive_copy" },
+                { level: "C1", tags: ["수학", "사회"], title: "알고보면 완전 소중한 수학 - 어떻게 배우고 평가해야 할까요? - 차이나는 클라스(231회 JTBC)", link: "https://drive.google.com/open?id=1wFUafrC_c7abM-_FiT5CFHD9HFNsQ_jN" },
+                { level: "C1", tags: ["심리", "사회"], title: "어떻게 빼앗긴 집중력을 되찾을 수 있을까요?", link: "https://drive.google.com/open?id=1mQaD5QwXjqw1aJW6GW1pymCdn1ryWNRdLDFR-Vs1wug&usp=drive_copy" },
+                { level: "C1", tags: ["심리", "언어"], title: "사람들이 욕을 하는 이유는 무엇일까?", link: "https://drive.google.com/open?id=1y7zYy6NL7zkD_SukH2TllLRBnURrO-N-IUhjptm-Jsg&usp=drive_copy" },
+                { level: "C1", tags: ["심리", "언어"], title: "우리는 \"🐶개소리\"가 만연한 사회에 살고 있을까요? - <개소리에 대하여>", link: "https://drive.google.com/open?id=1LHTzl1d1kQzY_HIbxQLPsIJxpdI6gkUmQbble1hdaxY&usp=drive_copy" },
+                { level: "C1", tags: ["언어"], title: "알아두면 유용한 단어: 위신", link: "https://drive.google.com/open?id=1Qve4xLqv7TrXOoMNeFVVrJV5Ed_KpPsfLH4okbXe7hg&usp=drive_copy" },
+                { level: "C1", tags: ["언어"], title: "“세상”과 “세계”- <우리말 어감사전： 말의 속뜻을 잘 이해하고 표현하는 법> (안상순, 2021)", link: "https://drive.google.com/open?id=11uAlT_BhVIQKazS8Q0eLqdjGp-hPHGasYb57Ca3l7bg&usp=drive_copy" },
+                { level: "C1", tags: ["언어"], title: "“올바른 우리말”이 존재할까요?만약 있다면, 누가 어떤 방법으로 “올바르다”를 결정할까요?", link: "https://drive.google.com/open?id=1TNoQxkGBlMK_4sCHQnMNQdjGoP0yrIV7L_ppri6S-V8&usp=drive_copy" },
+                { level: "C1", tags: ["언어"], title: "소설 <책상은 책상이다> - 나 혼자만 쓰는 언어를 만들 수 있을까", link: "https://drive.google.com/open?id=17VzO5adLAldPmEK0OYgh7g6HIItt96OyhL_9M7ujkHU&usp=drive_copy" },
+                { level: "C1", tags: ["역사"], title: "강제 징용.pdf", link: "https://drive.google.com/open?id=1JFcLtCp8PiOoXqTWEqFpSTlYCjQY3kJw" },
+                { level: "C1", tags: ["역사"], title: "식민지 근대화론.pdf", link: "https://drive.google.com/open?id=1K-dfa_HIncP326zJjpY2XeEXXccAcTwf" },
+                { level: "C1", tags: ["역사"], title: "한일 협정.pdf", link: "https://drive.google.com/open?id=1r_sc1xfHp2GK1kK2TYdQOjF4uDRRA2Ci" },
+                { level: "C1", tags: ["예술"], title: "'공간의 중요성: 어떤 집에서 구조의 집에서 살고 싶나요?", link: "https://drive.google.com/open?id=122jau2TXKmEawWQYgMMExnAfOt3FKSrPmFqcUj2LpJI&usp=drive_copy" },
+                { level: "C1", tags: ["음식", "문화"], title: "<흑백요리사>를 통해 살펴보는 요리의 정체성", link: "https://drive.google.com/open?id=14PPeomZx5POXvoSIACEi4Fq31PV4NX8wLuxK2PS2HLk&usp=drive_copy" },
+                { level: "C1", tags: ["인문"], title: "유튜브도 독서다?", link: "https://drive.google.com/open?id=1m0JBe7jbtLJyGsMtG4jNWk8sijVJt-YvnzNGhxacZdM&usp=drive_copy" },
+                { level: "C1", tags: ["정치"], title: "“보편적 기본소득”이란 무엇일까요? - 한국은 세계 최초의 모든 사람에게 기본소득을 제공할 수 있을까요?", link: "https://drive.google.com/open?id=1aS-eDT7kv9yUOVUHnE_kLG_ai7DzuSDwp_8J5xx2WRw&usp=drive_copy" },
+                { level: "C1", tags: ["정치"], title: "국가는 어떻게 만들어지는가", link: "https://drive.google.com/open?id=1x3jIgWVE52TCXhYszYw3s5uPEC-FSu6VxJhu-rIx5Go&usp=drive_copy" },
+                { level: "C1", tags: ["정치", "법"], title: "\"낙태법(abortion laws)\" - 미국의 낙태법 폐기는 한국의 낙태법에 어떤 영향을 미칠까?", link: "https://drive.google.com/open?id=1pXkZq5vT6S9gFK1YmbjFKrA2PCq4wXxoSNjKl2amAFo&usp=drive_copy" },
+                { level: "C1", tags: ["정치", "법"], title: "언론중재법 필요할까요? 언론의 자유 vs 가짜뉴스 방지", link: "https://drive.google.com/open?id=19TJf1i8Ul-EIxNKzRouJRO_WtjLOxpikXj8VTxK7uBU&usp=drive_copy" },
+                { level: "C1+", tags: ["건강", "사회"], title: "가속 노화: 무엇이 현대인들을 더 빨리 늙게 만들고 있을까?", link: "https://drive.google.com/open?id=1MskwJVV_IuP2vbfOcL4kf_Pyk20DDbpadFkLsPZthLA&usp=drive_copy" },
+                { level: "C1+", tags: ["경제", "사회"], title: "1997년 외환 위기는 한국 사회를 어떻게 바꿨을까요? - IMF 사태 20년 후, 한국 사회를 돌아보다", link: "https://drive.google.com/open?id=1GbgZt7hckFUN8z-uOpMuhoe1jblqFda70xjR5bMM3Pk&usp=drive_copy" },
+                { level: "C1+", tags: ["과학"], title: "유전자가 사회를 지배할까?", link: "https://drive.google.com/open?id=1cQ71Hg1NwV5bAElQX4RZjd3MYGQBFwACpmrnC4LPaJo&usp=drive_copy" },
+                { level: "C1+", tags: ["과학", "사회"], title: "실험실에 만든 고기, 배양육이 세상을 바꿀 수 있을까?", link: "https://drive.google.com/open?id=10kxwuRZSbvzWD2L03Kkx3f1HuJV-Q-5MnYs81FhBi08&usp=drive_copy" },
+                { level: "C1+", tags: ["문화"], title: "사라진 단일 대중문화(monoculture): 세계화에 맞선 문화 다원주의의 승리?", link: "https://drive.google.com/open?id=1qOkNGbmvJ5cPyYXKmTE6Qk0xZm_NroGvFm_alMorH64&usp=drive_copy" },
+                { level: "C1+", tags: ["문화"], title: "표절의 기준은 무엇일까요?", link: "https://drive.google.com/open?id=19Lx3mb9ukh38Hej2ZZ3MGL_2Z3O3LjLjRROa0YF-SW8&usp=drive_copy" },
+                { level: "C1+", tags: ["문화", "사회"], title: "“회귀, 빙의, 환생” 이야기가 인기 있는 이유", link: "https://drive.google.com/open?id=1TP8gaz1_yc8HfgRITqXkA1sBohBhbPOz_oFYk7mPxhY&usp=drive_copy" },
+                { level: "C1+", tags: ["문화", "언어"], title: "\"심심한 사과\"에 \"안 심심해\" 발끈...문제는 '문해력'이 아니다", link: "https://drive.google.com/open?id=1TGYQQLzJ-JfNVRU6gz4bmB6KA0ZwFT9RqEs8WKq4zgE&usp=drive_copy" },
+                { level: "C1+", tags: ["사회"], title: "야망계급: 비과시적 소비의 부상과 새로운 계급의 탄생", link: "https://drive.google.com/open?id=1c_mWLcX6xVSkZ89LUFeESSjif9AlwhleSqTXhqKiS-E&usp=drive_copy" },
+                { level: "C1+", tags: ["사회"], title: "왜 사람들은 질문을 할까요? 그리고 어떻게 해야 질문을 잘하는 것일까요?", link: "https://drive.google.com/open?id=1zetFHf4LVuUX42kkIBZDp4HwaJpV-hAPoKZlbHOuEEs&usp=drive_copy" },
+                { level: "C1+", tags: ["사회", "언어"], title: "경청: 타인과 사회적으로 연결되는 시작점", link: "https://drive.google.com/open?id=1CpmTQcrCuqzrZaLplfwR8oEKToBrNyxp7jzGUxyskyk&usp=drive_copy" },
+                { level: "C1+", tags: ["심리", "철학"], title: "취미란 무엇인가 - 취미의 조건", link: "https://drive.google.com/open?id=1Y3-Edrks-9fOmHgkrvSFM__xEO7lGOIm6av8Ir3U4ac&usp=drive_copy" },
+                { level: "C1+", tags: ["언어"], title: "“감사하다”와 “고맙다” - <우리말 어감사전： 말의 속뜻을 잘 이해하고 표현하는 법> (안상순, 2021)", link: "https://drive.google.com/open?id=1HYhWpHSPI_AIiKwnS4v0nLHcYMLX24VUFH28XiCpVng&usp=drive_copy" },
+                { level: "C1+", tags: ["언어"], title: "번역 논란 - The Vegetarian의 오역사례.pdf", link: "https://drive.google.com/open?id=1cqbJ05z3I6FydlNYADgjP2613SyTp3pn" },
+                { level: "C1+", tags: ["언어"], title: "번역 논란: 맨부커 수상은 한글 원본 『채식주의자』의 승리가 아니라 영어판 『Vegetarian』의 승리?", link: "https://drive.google.com/open?id=1bBC65m9clgrLBa278xNVUyZh9-MsaQAp8I9cge7Zj-4&usp=drive_copy" },
+                { level: "C1+", tags: ["언어", "사회"], title: "읽는 것은 멋지다: 텍스트힙(Text Hip)", link: "https://drive.google.com/open?id=17GpPRWzH6bDuSR7YHaFNVhISocDh7R1V4j6AjYfealM&usp=drive_copy" },
+                { level: "C1+", tags: ["예술"], title: "AI가 쓴 소설도 예술 작품이 될 수 있을까?", link: "https://drive.google.com/open?id=17Vwk40UYzDYU-KXqL-bUVNpUY0fzbKa8ndqREbWEoqw&usp=drive_copy" },
+                { level: "C1+", tags: ["예술"], title: "AI가 쓴 소설도 예술 작품이 될 수 있을까?의 사본", link: "https://drive.google.com/open?id=1qVqh4boOn621kY1Es3yQtSwgVPOI3nr7SfIFA9mb8bY&usp=drive_copy" },
+                { level: "C1+", tags: ["인문", "철학"], title: "‘아는 척’ 교양 : 3분 인문학의 시대", link: "https://drive.google.com/open?id=1AfIxGHZjGZ3_rB0-mcVC6RyrMyQDLM0pQERmWMkVJfY&usp=drive_copy" },
+                { level: "C1+", tags: ["철학"], title: "정체성과 변화: 테세우스의 배 문제", link: "https://drive.google.com/open?id=19w89vxB9FYJLe9EFIW3iJJFM1aJdZZ0GUZNQgCpA5UE&usp=drive_copy" },
+                { level: "C1+", tags: ["철학", "윤리"], title: "크리스마스 철학 101： 산타는 누가 착한 아이인지 어떻게 알까？.pdf", link: "https://drive.google.com/open?id=1hG3KOuknKmMOkwUuy86BnL0AiCZi6MR3" },
+                { level: "C2", tags: ["과학"], title: "2020년 노벨 물리학상: 블랙홀의 존재 어떻게 밝혀졌는가?", link: "https://drive.google.com/open?id=1gUaTKBYoJcvyRDBhbb4Colqtc-7RH-lnvcChRXGtmi0&usp=drive_copy" },
+                { level: "C2", tags: ["과학"], title: "감정은 타고나는 것일까? 만들어지는 것일까?", link: "https://drive.google.com/open?id=1BV7vTrfM6Sa_rTIENWyu6iBJsM6yAuM3WZp41SXv_3I&usp=drive_copy" },
+                { level: "C2", tags: ["과학"], title: "대학에서 실패한 과학자, mRNA 백신으로 세상을 구하다 - 2023년 노벨 생리의학상 수장자 카탈린 카리코", link: "https://drive.google.com/open?id=1drYEBV02065B6OLtjqIHxcZC3Ml1ETWySt2l7RLxATQ&usp=drive_copy" },
+                { level: "C2", tags: ["과학"], title: "인공지능(AI)은 우리의 삶을 위협하는가? 우리의 삶에 도움이 되는가?", link: "https://drive.google.com/open?id=1k_BMbsgdnoet5Bs8NV8lAZfK1SkyMtu4Kx_88zZfcOo&usp=drive_copy" },
+                { level: "C2", tags: ["과학"], title: "잠을 자야 하는 이유 - 잠을 자지 않았을 때, 우리의 몸에 어떤 일들이 발생할까요?", link: "https://drive.google.com/open?id=1FxTp-q2JDNiT-RQ0Y5t66uHIRZoMK7mto_miZ_B7T0U&usp=drive_copy" },
+                { level: "C2", tags: ["과학", "철학"], title: "과학과 은유, 생산적 활용과 위험", link: "https://drive.google.com/open?id=1TYsKDatbowL8vGUm6ANPBBNuAWc9ws48zkm1IN1xok8&usp=drive_copy" },
+                { level: "C2", tags: ["과학", "철학"], title: "ADHD에 대한 논쟁 - “정상”과 “비정상\"의 경계는 어떻게 형성될까요?", link: "https://drive.google.com/open?id=1W5rUykUampyxxedALZkNiZcxyeT9XR_Vhzl9KfNGONU&usp=drive_copy" },
+                { level: "C2", tags: ["과학", "철학"], title: "인본주의 과학: 과학, 철학을 만나다 - 장하석 교수", link: "https://drive.google.com/open?id=1lT-WYIgMiw9zouBPKtrJgabo3I5pcqRgoUBkDFvgP7E&usp=drive_copy" },
+                { level: "C2", tags: ["국제관계"], title: "미국과 중국 사이의 한국 - \"강대국 각축전에서 한국이 살아남을 길은\"", link: "https://drive.google.com/open?id=1JwZHGdB5wdlk_m9hXxLB5CamyRbyYrEkGSlW3ijtpTk&usp=drive_copy" },
+                { level: "C2", tags: ["국제관계"], title: "미국과 중국 사이의 한국_\"신냉전\"", link: "https://drive.google.com/open?id=1i2fBll_7P2N96RP6VnjiNaZsQTAo3wkTROw-_4J4nQQ&usp=drive_copy" },
+                { level: "C2", tags: ["국제관계"], title: "미국이 떠난 아프가니스탄에서 어떤 상황이 전개될까요?", link: "https://drive.google.com/open?id=1yxISHuubWxDKtmj1t4d-UNB4AVxVIqgGaeMNEj5fraY&usp=drive_copy" },
+                { level: "C2", tags: ["문학", "사회"], title: "소설 <82년생 김지영>로 본 한국 사회", link: "https://drive.google.com/open?id=1fpkuAsBklc2ACXbfNlwC_mCsmkc0PNQyvnD2afoZcG8&usp=drive_copy" },
+                { level: "C2", tags: ["문학", "사회"], title: "한국인의 발견 - 소설 <고등어>에 속에 나타난 한국인의 정체성", link: "https://drive.google.com/open?id=1PXCG2cK-22wAOvuqqkqycUvPmNKetqphAX_swLdZNwE&usp=drive_copy" },
+                { level: "C2", tags: ["문화"], title: "영화 <미나리>를 통해 본 한국인의 미국 이민 역사 - <미나리>는 미국 영화인가? 한국영화 인가?", link: "https://drive.google.com/open?id=1_ijD703tIgvVSlEj7xKn04X966VfS6OD3Y8tJe03NcU&usp=drive_copy" },
+                { level: "C2", tags: ["문화"], title: "창작물의 재미를 위해서 역사 왜곡 이해할 수 있다 vs 없다", link: "https://drive.google.com/open?id=1xP447gGLnMFEDGLJjYMDkeShYONkZm5tHyF9lyRFm4I&usp=drive_copy" },
+                { level: "C2", tags: ["문화"], title: "채식주의(Vegetarianism)는 개인적 기호인가? 아니면, 사회적 도덕인가?", link: "https://drive.google.com/open?id=1pPpVox1XOd4FEkcK7jnGRhHjh9K15-pEadkD7TeOwTs&usp=drive_copy" },
+                { level: "C2", tags: ["문화"], title: "책의 운명: 독자의 미래 - 지금 무슨 책을 선택했나요?", link: "https://drive.google.com/open?id=10qTHMgLMqN6j1hHIkGZ3bgkHNduj4KzKZ7abKIUz0lw&usp=drive_copy" },
+                { level: "C2", tags: ["문화"], title: "책의 운명: 종이책의 미래(종이책 vs. 전자책?)_by_Sangbin", link: "https://drive.google.com/open?id=1fR6MW5BhyHacm4GkLA8WUwsHDbOrJMum6WNl033e_Kc&usp=drive_copy" },
+                { level: "C2", tags: ["사회"], title: "난민 반대와 래디컬 페미니즘", link: "https://drive.google.com/open?id=17NHk4XY_NfzfStyuH8_dv0X3wpc-Uh4_7V1CjOjzEnM&usp=drive_copy" },
+                { level: "C2", tags: ["사회"], title: "“데이터가 증거가 되기까지”: 사회 현상은 어떤 방법으로 연구되어야 할까?", link: "https://drive.google.com/open?id=1PDce2OME5CLmT6izfYd3p6ZBL2wl4Y9ZPn74wn6aozk&usp=drive_copy" },
+                { level: "C2", tags: ["사회"], title: "능력주의의 함정(Meritocracy Trap): \"상위 1% 부자는 행복할까?\" _by_Sangbin", link: "https://drive.google.com/open?id=112_1gH_q40e_riFpbheKvI6RECk6lOxNBloVEqhuO-k&usp=drive_copy" },
+                { level: "C2", tags: ["사회"], title: "대한민국 = 서울 공화국? : 지방 인구 흡수해 점차 확장되는 서울 초집중화 현상", link: "https://drive.google.com/open?id=1N5Q69HFd_Tq5XSXwLolxzEY3DCeNs9pPQyo0SIyn_-o&usp=drive_copy" },
+                { level: "C2", tags: ["사회"], title: "도시 주거문화 비교: 덴마크 협동조합주택과 한국 아파트", link: "https://drive.google.com/open?id=1BBSItH7KLGcxtKCud5b9bQU6r9J_13Sm88Yvz8BIplc&usp=drive_copy" },
+                { level: "C2", tags: ["사회"], title: "디지털 성범죄와 미투 운동의 영향 - 20대 여자 현상", link: "https://drive.google.com/open?id=15LERRntA-FwfOfnU2wrWcIL4iPw-Ww-Gn_DECJwHAB4&usp=drive_copy" },
+                { level: "C2", tags: ["사회"], title: "맹자 - 인간의 본성은 착하다.", link: "https://drive.google.com/open?id=1Iuo2ND9MgaMnAHmMTYE0__IFP4XnfzuVFMXt_-KfmZc&usp=drive_copy" },
+                { level: "C2", tags: ["사회"], title: "문화자본: 취향의 차이가 사회적 신분을 결정한다?", link: "https://drive.google.com/open?id=101ZzHJIv099PHEiHqEqABpA9ABD5sOX5VD0BqN2G3Qc&usp=drive_copy" },
+                { level: "C2", tags: ["사회"], title: "밀레니얼 세대： 희망을 잃고 있는 중국, 희망을 잃어버린 한국, 희망이 사라진 일본", link: "https://drive.google.com/open?id=1_sZR5Gzohl7ZMgVnued-zDid0aN6FUeOtIO3HuqrHuE&usp=drive_copy" },
+                { level: "C2", tags: ["사회"], title: "불특정 다수를 공격하는 \"이상동기 범죄\"은 사회에 대한 테러일까요?", link: "https://drive.google.com/open?id=1GfxCjRGDAJyZR9zpqAxwV1xm2_RVzmGp-Pag1jnV-p4&usp=drive_copy" },
+                { level: "C2", tags: ["사회"], title: "비판적 읽기(Critical Review)_‘현대판 귀족’ 메리토크라트의 배타적 특권 (르몽드디플로마티크)", link: "https://drive.google.com/open?id=12YO8kjppL8BeVnveh6wTT-QKg0dvkLsuRQcHUnt_nLU&usp=drive_copy" },
+                { level: "C2", tags: ["사회"], title: "사회적 자본: 함께 사회를 만드는 힘", link: "https://drive.google.com/open?id=1xqvTiGvb9TePfIN2yJa7wTwVMMAkQp3PngC0Ire3nSY&usp=drive_copy" },
+                { level: "C2", tags: ["사회"], title: "수능 시험은 무엇이고, 왜 만들어졌을까? - 수능에 담긴 학교교육과 공정 배분의 의미", link: "https://drive.google.com/open?id=1x2MndNrtqsrvc0JIP5FMdi8ciDtvE8SYbjXY_IT4KH4&usp=drive_copy" },
+                { level: "C2", tags: ["사회"], title: "언어가 달라지면 생각이 달라질까?", link: "https://drive.google.com/open?id=1DPdAxqlMb7qp-BKY5B5uYpjFZLsV5IyXMa_cZIyxVQ4&usp=drive_copy" },
+                { level: "C2", tags: ["사회"], title: "코로나 이후 한국 Part.1__코로나19 이후 갈림길, ‘공화국이냐, 자본국이냐’_", link: "https://drive.google.com/open?id=1NP-imraT-iJ-0nOf54I0GcffMPTJeAtS8YrJK2-0e90&usp=drive_copy" },
+                { level: "C2", tags: ["사회"], title: "코로나 이후 한국 Part.1_\"코로나19 이후 갈림길, ‘공화국이냐, 자본국이냐’\"", link: "https://drive.google.com/open?id=1E3NZfixLk_XkctUTIcQvnzN4g-lgdHEUDASN7i0ES4c&usp=drive_copy" },
+                { level: "C2", tags: ["사회"], title: "코로나 이후 한국 Part.2__코로나19가 드러낸 ‘한국인의 세계’- 의외의 응답 편_", link: "https://drive.google.com/open?id=1eBw3Lau0SpRoRYjkY7kGlxYpzMZyRXFKYLR08eCnflU&usp=drive_copy" },
+                { level: "C2", tags: ["사회"], title: "코로나 이후 한국 Part.2_\"코로나19가 드러낸 ‘한국인의 세계’- 의외의 응답 편\"", link: "https://drive.google.com/open?id=1Y_GgDhcxiMhawxky6UP4UggEQZ5HdEHiPpap8i6slnY&usp=drive_copy" },
+                { level: "C2", tags: ["사회"], title: "코로나 이후 한국 Part.3__코로나19가 드러낸 ‘한국인의 세계’- 갈림길에 선 한국 편_", link: "https://drive.google.com/open?id=1yvipx-J_f4_ySlcFFHzu_CBdIFHty50e_vgKqvOKwqA&usp=drive_copy" },
+                { level: "C2", tags: ["사회"], title: "코로나 이후 한국 Part.3_\"코로나19가 드러낸 ‘한국인의 세계’- 갈림길에 선 한국 편\"", link: "https://drive.google.com/open?id=1fiURcQlkxpbbD1suvMM2sC8DouzJNFelLNUiy1SqDtI&usp=drive_copy" },
+                { level: "C2", tags: ["사회"], title: "코로나 이후 한국 Part.4__코로나19가 드러낸 ‘한국인의 세계’- ‘모두를 위한 자유’ 편_", link: "https://drive.google.com/open?id=1Zkonuu3kaBKwC5a_fXZg9Yn5PQjRWoNSxKAW-2suAgY&usp=drive_copy" },
+                { level: "C2", tags: ["사회"], title: "코로나 이후 한국 Part.4_\"코로나19가 드러낸 ‘한국인의 세계’- ‘모두를 위한 자유’ 편\"", link: "https://drive.google.com/open?id=1sIYYwmz_ipVF4f7qx2L9bb_l6dJceEUO1WmnquD29n4&usp=drive_copy" },
+                { level: "C2", tags: ["사회"], title: "타인의 고통과 공감 - 재해를 겪고 있거나 역사적 아픔이 있는 곳에 여행을 가도 괜찮을까?", link: "https://drive.google.com/open?id=1Nfjqp_NELoZGGHag0jb1B4B9gIbqnC6ZMum5q1t_hDY&usp=drive_copy" },
+                { level: "C2", tags: ["사회"], title: "평판 전쟁: 나락의 일상화, 일상의 나락화", link: "https://drive.google.com/open?id=1elTUh-tADaX2EaHGUKNJyP2ZEcTJ1pH7OukJ9AhoFTM&usp=drive_copy" },
+                { level: "C2", tags: ["사회"], title: "한국에서 힙합은 어떻게 인기를 얻게 되었을까요? - 사람들이 쇼미더머니에 열광하는 이유", link: "https://drive.google.com/open?id=1Ck6xdl2YZzUxzAOX3bK3Zp7JP-QRrOp7xIB8nRnZRUg&usp=drive_copy" },
+                { level: "C2", tags: ["사회"], title: "한국인의 자격, 귀화 시험 — 직접 풀어보니, 한국인도 틀립니다.pdf", link: "https://drive.google.com/open?id=1pI2QOqv0plm0S7nmwURD_PPuWZGs6YME" },
+                { level: "C2", tags: ["사회", "문학"], title: "한국인의 정체성: <우리들의 일그러진 영웅>과 <우상의 눈물>을 통해 살펴보는 1980년대", link: "https://drive.google.com/open?id=1Q0mB01ITvya0aCXgoffg2MiGHp3UK2CAVM8RSjPGNOE&usp=drive_copy" },
+                { level: "C2", tags: ["사회", "문화"], title: "<당신들의 대한민국> - 전근대적이고 권위주의적인 한국 사회", link: "https://drive.google.com/open?id=10yEq4clpew1E2Bs3Fzpz0ucJHsFe7-p7jwyvlqDF12c&usp=drive_copy" },
+                { level: "C2", tags: ["사회", "법"], title: "모두가 군대에 가는 \"징병제\" vs. 직업으로 군대에 가는 \"모병제\"", link: "https://drive.google.com/open?id=1DOoJb3Rrg7K0KC5A0TgSPyHfFb1x6xZYJejqm8fCIok&usp=drive_copy" },
+                { level: "C2", tags: ["스포츠", "철학"], title: "춤도 스포츠? 뇌 운동도 스포츠? - 스포츠란 무엇일까?", link: "https://drive.google.com/open?id=1WD0dmw1tg-7OFiihVzkPo0Bay5NSEppdoZMR_V2cXIg&usp=drive_copy" },
+                { level: "C2", tags: ["심리"], title: "직관과 직감: 언제 따라야 할까요? 그리고 어디까지 믿을 수 있을까요?", link: "https://drive.google.com/open?id=14DEo0x3ZEFqj5CTbpAT_oy6SW0LLQwBw5YKbF-rDkpw&usp=drive_copy" },
+                { level: "C2", tags: ["언어"], title: "‘사투리’의 탄생 - 서울 사투리가 있을까요?", link: "https://drive.google.com/open?id=1Uw2Anb3acykQWgVe-kN_t8FMMKGA2uJwz9U9afbUasA&usp=drive_copy" },
+                { level: "C2", tags: ["언어"], title: "“국가가 정한 말 아니면 틀렸다니” 표준어 없애는 거 어때요?", link: "https://drive.google.com/open?id=1TfBc-4GznpExHh_ADOC9jpQ09OFgxEzcOkYEPJ2Y9LM&usp=drive_copy" },
+                { level: "C2", tags: ["언어"], title: "Society는 어떻게 그리고 왜 “사회(社會)”로 번역되었을까요? - 개념 번역의 역사", link: "https://drive.google.com/open?id=17rxcs70uDuA60qXznAWxds1oXOYkD2TGE_5oED9kI4o&usp=drive_copy" },
+                { level: "C2", tags: ["언어", "과학"], title: "글자에 오류가 있어도 읽을 수 있을까요? - EBS다큐멘터리 \"책맹인류\"", link: "https://drive.google.com/open?id=1Q82dVzNk4rlMW8FMiAbQJl3u9uW53a_6K6tQww6MSnw&usp=drive_copy" },
+                { level: "C2", tags: ["언어", "철학"], title: "지루함이란 무엇일까?", link: "https://drive.google.com/open?id=1c8xO_94F86boeEHFUJmbvJLxymwP8deg-ghScXvlB9w&usp=drive_copy" },
+                { level: "C2", tags: ["역사"], title: "백 투 더 퓨쳐 : 정말로 새로운 시대인가?", link: "https://drive.google.com/open?id=1yc75Dq5CynluVaOpiQiQo6eL0NQuOpMFTObmt0sqNu8&usp=drive_copy" },
+                { level: "C2", tags: ["역사", "국제관계"], title: "혼란의 한일관계 - 강제동원 문제의 주요 쟁점", link: "https://drive.google.com/open?id=1fi-rnZDsMnUaB8p8jS3wnGIxe4Ta9S0V9A5-iVtC9qs&usp=drive_copy" },
+                { level: "C2", tags: ["역사"], title: "농업혁명은 인류에게 “역사상 최대의 사기” 또는 “역사상 최악의 실수\"일까? - 사피엔스(유발 하라리, 2015)", link: "https://drive.google.com/open?id=1nDysLaUz3t7P2yItueTC3XQUS75gGJMBfA6gUUVpQkE&usp=drive_copy" },
+                { level: "C2", tags: ["영화", "철학"], title: "박찬욱 감독의 복수 3부작을 통해 살펴보는 '복수'의 의미", link: "https://drive.google.com/open?id=1G8QI3S8t-_ivVcDNaHTr7U3ObjoJLqqNwGxmKiFCf9E&usp=drive_copy" },
+                { level: "C2", tags: ["인문"], title: "무소유(無所有, simatiga) - 법정(法頂) 스님", link: "https://drive.google.com/open?id=1h39ygnoizqxMdWRdxVIhWhGz19S1Vuyj4FqMHeqAYrc&usp=drive_copy" },
+                { level: "C2", tags: ["인문", "철학"], title: "자유의지와 결정론에 대한 고찰", link: "https://drive.google.com/open?id=1Ki-fa1K9ffu27j1A8MCUDp7ky-B0QKNVe3frAxjwDIc&usp=drive_copy" },
+                { level: "C2", tags: ["인문학", "철학"], title: "흔들리지 않는 마음 - 아파테이아(apatheia) & 부동심(不動心)", link: "https://drive.google.com/open?id=1QPxvpNit8hpzojZe4OX2CitJHj3QLj15DyS9coA2KAg&usp=drive_copy" },
+                { level: "C2", tags: ["정치"], title: "\"소수집단 우대 정책\"은 폐지되어야 할까요? 유지되어야 할까요?", link: "https://drive.google.com/open?id=1siLQ6k4sX6chTANTjRO7NM2TUHMBzMYa1v8HtJ0Bj0A&usp=drive_copy" },
+                { level: "C2", tags: ["정치"], title: "한국 정당의 후보 공천에서 나타나는 문제점", link: "https://drive.google.com/open?id=1rhYprUabOdjILDAaiPNqjgsdiCmZ70er5e-HWLoKsuM&usp=drive_copy" },
+                { level: "C2", tags: ["정치"], title: "Z세대 남자들: 그들은 왜 자신들이 차별 받고 있다고 생각할까요?", link: "https://drive.google.com/open?id=1b9QM5A-L1zFfUgk--7BwQ9pMW0Y63uHyQZkBH_JKR_M&usp=drive_copy" },
+                { level: "C2", tags: ["정치", "법"], title: "한국에서 낙태죄 불법인가? 합법인가? - 2019년 낙태죄 헌법불합치 판결 이후", link: "https://drive.google.com/open?id=1dEXiWPpuLnoZQ_8PuMW1mKi5vbXj7QYJWdBMR_iXMnw&usp=drive_copy" },
+                { level: "C2", tags: ["정치", "사회"], title: "북한 이탈 주민의 정체성", link: "https://drive.google.com/open?id=1PN6lqGr2G9dFeAtGi85WwBGfIW9Uk8Q1h8Mr-u-5HpQ&usp=drive_copy" },
+                { level: "C2", tags: ["정치", "철학"], title: "민족주의는 무엇일까요?", link: "https://drive.google.com/open?id=1faF0N-kEg0tycSdT3dcYnnRRXQPyVPGKErx-bpxe1Kw&usp=drive_copy" },
+                { level: "C2", tags: ["철학"], title: "<피로사회> - 면역학에서 신경증으로 패러다임의 전환", link: "https://drive.google.com/open?id=1IxMLe0W0yznTTWoReid6zTaygi7j0BOhKX3xmaB1C5w&usp=drive_copy" },
+                { level: "C2", tags: ["철학"], title: "맹자 - 마음(心) : 도덕적 자유의 의지", link: "https://drive.google.com/open?id=1VWGo8V-vtHLIaEkQOyppI70En2BUUJAYGVkF2pQa6G8&usp=drive_copy" },
+                { level: "C2", tags: ["철학"], title: "맹자와 아리스토텔레스 비교 - 맹자의 덕과 덕 윤리학", link: "https://drive.google.com/open?id=1DQ3O7Uho0EtkeVNAVanMtCZJekUgZk0AA0L8SsEqQpo&usp=drive_copy" },
+                { level: "C2", tags: ["철학"], title: "부끄러움에 대한 이해: 수치심과 염치는 어떻게 다를까요?", link: "https://drive.google.com/open?id=1w_E0MVH7c350N6O9c_0BHsNwGkLwirv6K7WDfSHeJr4&usp=drive_copy" },
+                { level: "C2", tags: ["철학"], title: "사단칠정 논쟁- 인간의 본성은 선한가 악한가?", link: "https://drive.google.com/open?id=1dezqn5JOsSKpIz9_YDlp_fOJmwRXxj-oUbShTjMYN7w&usp=drive_copy" },
+                { level: "C2", tags: ["철학"], title: "오직 이성만으로 도덕적 선과 악을 구별할 수 있을까? - 데이비드 흄(David Hume )", link: "https://drive.google.com/open?id=1ZnCen6dN88cDMjEK0yad34M1-NxG2HyH6ahpBgrW5OE&usp=drive_copy" },
+                { level: "C2", tags: ["철학"], title: "존 스튜어트 밀 «자유론»", link: "https://drive.google.com/open?id=1HK0MK3RLgUghzKaRymbTXcJajK0QBxF0VeNFI-04enU&usp=drive_copy" },
+                { level: "C2", tags: ["철학"], title: "타인의 도덕적 잘못을 심판해야 할까요?", link: "https://drive.google.com/open?id=1ZVK1QITTWTudvDwC3dm8-yWIW8-kiatisQJFHzr4vis&usp=drive_copy" },
+                { level: "C2", tags: ["철학", "과학"], title: "📚 단 한 번의 앎혁명", link: "https://drive.google.com/open?id=1ISxowjHOeoDNEKiBqMK8gWdr7R92KjSZn3OY9FswpWo&usp=drive_copy" },
+                { level: "C2", tags: ["철학", "과학"], title: "과학과 철학 그리고 언어 - 철학으로 보는 과학", link: "https://drive.google.com/open?id=1NDDNBUuj2RRPPBOrwpSV3gWTRrbMG5QhHyxTSv_ENKQ&usp=drive_copy" },
+                { level: "C2", tags: ["철학", "과학"], title: "시간에 대한 태도와 무시제적 시간 이론", link: "https://drive.google.com/open?id=1yX5y4-ugi7mewufTKc8LRIRDaBcVgq6UybVSBe_XzsE&usp=drive_copy" },
+                { level: "C2", tags: ["철학", "교육"], title: "<메논>과 <무지한 스승>을 통해 알아보는 배움의 정의: 설명 없이 배울 수 있을까?", link: "https://drive.google.com/open?id=1ZKkboh1LzYDRC3HW1--1zcfWmpcTEVQ8RmCjURXuIXM&usp=drive_copy" },
+                { level: "C2", tags: ["철학", "언어"], title: "말할 수 없는 것은 침묵해야 한다 : 언어와 삶", link: "https://drive.google.com/open?id=14rzpxQAEauYPqTUUD91io6gqhxgMpYedlrdBcD7xJx0&usp=drive_copy" },
+                { level: "C2", tags: ["철학", "언어"], title: "표상과 현상은 무엇일까요?", link: "https://drive.google.com/open?id=1e2mKtmrd3gN2EIVVQ4oWjC3c4PHYJHZqyY5DAHKkAOU&usp=drive_copy" },
+                { level: "C2", tags: ["철학", "언어", "역사"], title: "<역사를 읽는 방법> - 1장 서론：그들의 방식으로 바라보기", link: "https://drive.google.com/open?id=1bWysDNo3szA9MIWAv0Ud-oPGGG3ovkop6YMa4pnTLLU&usp=drive_copy" }
+            ];
+
+            const allTags = useMemo(() => {
+                const tags = new Set(["전체"]);
+                materials.forEach(item => {
+                    if (currentLevel !== 'home' && item.level !== currentLevel) return;
+                    if (item.tags) item.tags.forEach(t => tags.add(t));
+                });
+                return Array.from(tags);
+            }, [materials, currentLevel]);
+
+            const filteredMaterials = useMemo(() => {
+                let result = materials;
+                if (currentLevel !== 'home') {
+                    result = result.filter(item => item.level === currentLevel);
+                }
+                if (selectedTag !== "전체") {
+                    result = result.filter(item => item.tags && item.tags.includes(selectedTag));
+                }
+                return result;
+            }, [selectedTag, materials, currentLevel]);
+
+            useEffect(() => {
+                setSelectedTag("전체");
+            }, [currentLevel]);
+
+            const pageTitle = currentLevel === 'home' ? '전체 학습 자료' : (levelTitles[currentLevel] || `Level ${currentLevel} 학습 자료`);
+            const pageSubtitle = currentLevel === 'home' ? 'All Learning Content' : (levelSubtitles[currentLevel] || `Learning Content for ${currentLevel}`);
+
+            return (
+                <div className="space-y-12 animate-fade-in max-w-fit mx-auto pt-8">
+                    <div className="space-y-4 text-center md:text-left">
+                        <div className="flex items-center gap-2 justify-center md:justify-start">
+                            <span className={`px-2.5 py-1.5 bg-${themeColor}-100 text-${themeColor}-700 text-[1.05rem] font-extrabold rounded-md tracking-wider font-juache`}>ARCHIVE</span>
+                        </div>
+                        <h1 className="text-[3.15rem] leading-tight font-black text-slate-900 tracking-tight font-cafe24-surround">{pageTitle}</h1>
+                        <p className="text-slate-500 text-[1.575rem] font-cafe24-surround">{pageSubtitle}</p>
+                    </div>
+
+                    {/* Filter Buttons */}
+                    <div className="flex flex-wrap gap-3 justify-center md:justify-start">
+                        {allTags.map(tag => (
+                            <button
+                                key={tag}
+                                onClick={() => setSelectedTag(tag)}
+                                className={`px-6 py-3 rounded-2xl text-[1.4rem] font-bold transition-all duration-200 font-cafe24-surround
+                                    ${selectedTag === tag 
+                                        ? `bg-slate-900 text-white shadow-md transform scale-105` 
+                                        : 'bg-white text-slate-500 border border-slate-200 hover:bg-slate-50 hover:text-slate-800'}`}
+                            >
+                                {tag}
+                            </button>
+                        ))}
+                    </div>
+
+                    <div className="grid grid-cols-1 gap-6">
+                        {filteredMaterials.map((item, index) => (
+                            <a 
+                                key={index}
+                                href={item.link}
+                                className="group block bg-white rounded-3xl border border-gray-100 p-7 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
+                            >
+                                <div className="flex flex-col md:flex-row md:items-center gap-6">
+                                    <div className="flex flex-wrap items-center gap-3">
+                                        <LevelBadge levelCode={item.level} />
+                                        {item.tags && item.tags.map(tag => (
+                                            <CategoryBadge 
+                                                key={tag} 
+                                                tag={tag} 
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+                                                    setSelectedTag(tag);
+                                                }}
+                                                isSelected={selectedTag === tag}
+                                            />
+                                        ))}
+                                    </div>
+                                    <h3 className="text-[1.75rem] font-bold text-slate-800 group-hover:text-blue-600 transition-colors font-cafe24-surround leading-tight flex-1">
+                                        {item.title}
+                                    </h3>
+                                    <div className="ml-auto opacity-0 group-hover:opacity-100 transition-opacity text-blue-500 hidden md:block">
+                                        <span className="text-[2rem]">→</span>
+                                    </div>
+                                </div>
+                            </a>
+                        ))}
+                        {filteredMaterials.length === 0 && (
+                            <div className="text-center py-12 text-slate-400 text-[1.4rem] font-cafe24-anemone bg-white rounded-3xl border border-dashed border-gray-200">
+                                해당 레벨/카테고리에 자료가 없습니다.
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="text-center text-slate-400 text-[1.05rem] mt-16 font-cafe24-anemone">
+                        <p>© Open Korean Learning Lab. All rights reserved.</p>
+                    </div>
+                </div>
+            );
+        };
+
+        const App = () => {
+            const [activeTab, setActiveTab] = useState('home');
+            const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+            const [userLevel, setUserLevel] = useState("ALL"); 
+            
+            const themeColor = useMemo(() => getLevelTheme(userLevel), [userLevel]);
+
+            const mainPaddingClass = useMemo(() => {
+                return 'p-[1.25rem]';
+            }, [activeTab]);
+
+            useEffect(() => {
+                const handleResize = () => {
+                    if (window.innerWidth < 1024) {
+                        setIsSidebarCollapsed(true);
+                    } else {
+                        setIsSidebarCollapsed(false);
+                    }
+                };
+                window.addEventListener('resize', handleResize);
+                handleResize(); 
+                return () => window.removeEventListener('resize', handleResize);
+            }, []);
+
+            const toggleSidebar = () => {
+                setIsSidebarCollapsed(!isSidebarCollapsed);
+            };
+
+            const renderContent = () => {
+                return <HomeView setActiveTab={setActiveTab} themeColor={themeColor} currentLevel={activeTab} />;
+            };
+
+            const marginClass = isSidebarCollapsed ? 'md:ml-[5.5rem]' : 'md:ml-[18.4rem]';
+
+            return (
+                <div className="flex min-h-screen bg-[#f9fafb]">
+                    <Sidebar 
+                        activeTab={activeTab} 
+                        setActiveTab={setActiveTab} 
+                        isCollapsed={isSidebarCollapsed} 
+                        toggleSidebar={toggleSidebar}
+                        userLevel={userLevel}
+                        themeColor={themeColor}
+                    />
+                    <div className={`flex-1 flex flex-col transition-all duration-300 ease-in-out ${marginClass}`}>
+                        <main className={`flex-1 ${mainPaddingClass} overflow-y-auto flex flex-col`}>{renderContent()}</main>
+                    </div>
+                    <nav className="md:hidden fixed bottom-0 w-full bg-white border-t border-gray-200 flex justify-around p-3 z-50">
+                        {['home'].map(t=><button key={t} onClick={()=>setActiveTab(t)} className={`p-2 rounded-lg ${activeTab===t ? `text-${themeColor}-600 bg-${themeColor}-50` : 'text-slate-400'}`}>{t==='home'?<HomeIcon className="w-6 h-6"/>:null}</button>)}
+                    </nav>
+                </div>
+            );
+        };
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
