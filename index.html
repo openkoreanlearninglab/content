@@ -122,17 +122,17 @@
 
         const LEVEL_STYLES = {
             "ALL": "bg-slate-50 text-black border-slate-200 shadow-sm",
-            "A1": "bg-lime-50 text-lime-600 border-lime-100", 
-            "A1+": "bg-lime-50 text-lime-600 border-lime-100", 
-            "A2": "bg-green-50 text-green-600 border-green-100",    
-            "A2+": "bg-green-50 text-green-600 border-green-100",    
-            "B1": "bg-sky-50 text-sky-600 border-sky-100",        
-            "B1+": "bg-sky-50 text-sky-600 border-sky-100",        
-            "B2": "bg-blue-50 text-blue-600 border-blue-100", 
-            "B2+": "bg-blue-50 text-blue-600 border-blue-100", 
-            "C1": "bg-violet-50 text-violet-600 border-violet-100", 
-            "C1+": "bg-violet-50 text-violet-600 border-violet-100", 
-            "C2": "bg-violet-50 text-violet-600 border-violet-100",        
+            "A1": "bg-lime-50 text-lime-600 border-lime-100 shadow-sm", 
+            "A1+": "bg-lime-50 text-lime-600 border-lime-100 shadow-sm", 
+            "A2": "bg-green-50 text-green-600 border-green-100 shadow-sm",    
+            "A2+": "bg-green-50 text-green-600 border-green-100 shadow-sm",    
+            "B1": "bg-sky-50 text-sky-600 border-sky-100 shadow-sm",        
+            "B1+": "bg-sky-50 text-sky-600 border-sky-100 shadow-sm",        
+            "B2": "bg-blue-50 text-blue-600 border-blue-100 shadow-sm", 
+            "B2+": "bg-blue-50 text-blue-600 border-blue-100 shadow-sm", 
+            "C1": "bg-violet-50 text-violet-600 border-violet-100 shadow-sm", 
+            "C1+": "bg-violet-50 text-violet-600 border-violet-100 shadow-sm", 
+            "C2": "bg-violet-50 text-violet-600 border-violet-100 shadow-sm",        
         };
 
         // --- Icons ---
@@ -147,13 +147,7 @@
             const [isHovered, setIsHovered] = useState(false);
             const info = LEVEL_DEFINITIONS[levelCode] || LEVEL_DEFINITIONS["A2+"];
             
-            const getLevelStyle = (code) => {
-                if (LEVEL_STYLES[code]) return LEVEL_STYLES[code];
-                const base = code.substring(0, 2);
-                return LEVEL_STYLES[base] || "bg-gray-50 text-slate-600 border-gray-100";
-            };
-            
-            const badgeStyle = getLevelStyle(levelCode);
+            const badgeStyle = LEVEL_STYLES[levelCode] || "bg-gray-50 text-slate-600 border-gray-100";
 
             return (
                 <div 
@@ -161,7 +155,7 @@
                     onMouseEnter={() => setIsHovered(true)}
                     onMouseLeave={() => setIsHovered(false)}
                 >
-                    <span className={`px-2 py-0.5 rounded text-[1.225rem] font-bold border uppercase tracking-wide shadow-sm font-basic ${badgeStyle}`}>
+                    <span className={`px-2 py-0.5 rounded text-[1.225rem] font-bold border uppercase tracking-wide font-basic ${badgeStyle}`}>
                         {levelCode}
                     </span>
                     {isHovered && (
@@ -201,7 +195,6 @@
                 { id: 'C2', levelCode: 'C2', label: '최상급 학습자', subLabel: 'Proficient' },
             ];
             
-            // Tooltip state
             const [tooltip, setTooltip] = useState({ show: false, x: 0, y: 0, info: null });
 
             const handleLevelTextEnter = (e) => {
@@ -403,35 +396,17 @@
                 "C2": "Proficient Level Learning Content"
             };
 
-            // Processed Content Data
             const materials = [
-                // --- GitHub Pages Links (New/Updated) ---
-                { 
-                    level: "B2+", 
-                    tags: ["문화"], 
-                    title: "한국 박물관 및 미술관 입장료 이야기", 
-                    link: "https://openkoreanlearninglab.github.io/content/b2plus-museum-admission.html" 
-                },
-                { 
-                    level: "B2+", 
-                    tags: ["문화", "생활"], 
-                    title: "술보다 대마 음료가 건강에 좋을까요?", 
-                    link: "https://openkoreanlearninglab.github.io/content/b2plus-cannabis-drink.html" 
-                },
-                { 
-                    level: "B2+", 
-                    tags: ["사회", "문화"], 
-                    title: "천원의 재능마켓", 
-                    link: "https://openkoreanlearninglab.github.io/content/b2plus-1000won-talent-market.html" 
-                },
-                // --- Existing Google Drive Links ---
+                { level: "B2+", tags: ["문화"], title: "한국 박물관 및 미술관 입장료 이야기", link: "b2plus-museum-admission.html" },
+                { level: "B2+", tags: ["문화", "생활"], title: "술보다 대마 음료가 건강에 좋을까요?", link: "b2plus-cannabis-drink.html" },
+                { level: "B2+", tags: ["사회", "문화"], title: "천원의 재능마켓", link: "b2plus-1000won-talent-market.html" },
                 { level: "B2", tags: ["경제", "사회"], title: "전 세계는 ‘집값’과 전쟁 중…원인과 전망은?", link: "https://drive.google.com/open?id=1EEHwfv46-Ic0A1FwNHz446_jjsdVPoWYBm3GFcuMiY0&usp=drive_copy" },
                 { level: "B2", tags: ["과학"], title: "소행성 충돌 실험 - 지구 방어 실험 성공?", link: "https://drive.google.com/open?id=1qn61B4kJviMEF_-bhY8OKhNSEt-z28NrYR_R3-2hZPQ&usp=drive_copy" },
                 { level: "B2", tags: ["과학"], title: "잠을 자야 하는 이유 - 잠을 자지 않았을 때, 우리의 몸에 어떤 일들이 발생할까요?", link: "https://drive.google.com/open?id=1zK-w8iIu2jYFAHOjnOHjWtazv25s2BEeaSDRdFiMgdE&usp=drive_copy" },
                 { level: "B2", tags: ["과학"], title: "mRNA 백신으로 세상을 구하다 - 2023년 노벨 생리의학상 수장자 카탈린 카리코", link: "https://drive.google.com/open?id=1lhLsqB7cklUOW2_vp_p7QFrJ4C5oKwmAvuEpnSC47rM&usp=drive_copy" },
                 { level: "B2", tags: ["과학", "건강"], title: "마법의 다이어트 약 - 다이어트 대신 병원?", link: "https://drive.google.com/open?id=1nWLGGDlN-zx_VFbONR8Nsx9YsFgi7Rbf20M5oJnlJac&usp=drive_copy" },
                 { level: "B2", tags: ["과학", "사회"], title: "나에게 가장 신기했던 기술은 무엇인가요?", link: "https://drive.google.com/open?id=1qYuICuV2N6VlIAQMGt_y6dc82NLTHmkYVQqE7A4_9BM&usp=drive_copy" },
-                { level: "B2", tags: ["기술"], title: "스마트폰으로 사진 잘 찍는 꿀팁! - 똥손 친구에서 알려주세요.", link: "https://drive.google.com/open?id=1F-3HQa5OdoIYBdYJHfJ6UsfQhEf6EmzdacVZ7cmLaD0&usp=drive_copy" },
+                { level: "B2", tags: ["기술"], title: "스마트폰으로 사진 잘 찍는꿀팁! - 똥손 친구에서 알려주세요.", link: "https://drive.google.com/open?id=1F-3HQa5OdoIYBdYJHfJ6UsfQhEf6EmzdacVZ7cmLaD0&usp=drive_copy" },
                 { level: "B2", tags: ["문학"], title: "📓 소설 <저주 토끼> - \"저주에 쓰이는 물건일수록 예쁘게 만들어야 한단다\"", link: "https://drive.google.com/open?id=1P7v1hkGsXBo49sNLIpDOZ_z85si2JW9A8Iq24d2mYD4&usp=drive_copy" },
                 { level: "B2", tags: ["문화"], title: "'오마카세!' 대체 어떤 요리일까요. - 오늘 뭐 먹지?", link: "https://drive.google.com/open?id=1hmjy_rnpcPB8pJRDnZbx0ShkZAp_NSmzh-comgWR9fM&usp=drive_copy" },
                 { level: "B2", tags: ["문화"], title: "\"가을 타다\", 무슨 의미일까요？", link: "https://drive.google.com/open?id=1-tIHi_wPCfWF-WYm2DWqublcX5AXIfTly_8zLMESygk&usp=drive_copy" },
@@ -613,7 +588,7 @@
                 { level: "C2", tags: ["과학"], title: "2020년 노벨 물리학상: 블랙홀의 존재 어떻게 밝혀졌는가?", link: "https://drive.google.com/open?id=1gUaTKBYoJcvyRDBhbb4Colqtc-7RH-lnvcChRXGtmi0&usp=drive_copy" },
                 { level: "C2", tags: ["과학"], title: "감정은 타고나는 것일까? 만들어지는 것일까?", link: "https://drive.google.com/open?id=1BV7vTrfM6Sa_rTIENWyu6iBJsM6yAuM3WZp41SXv_3I&usp=drive_copy" },
                 { level: "C2", tags: ["과학"], title: "대학에서 실패한 과학자, mRNA 백신으로 세상을 구하다 - 2023년 노벨 생리의학상 수장자 카탈린 카리코", link: "https://drive.google.com/open?id=1drYEBV02065B6OLtjqIHxcZC3Ml1ETWySt2l7RLxATQ&usp=drive_copy" },
-                { level: "C2", tags: ["과학"], title: "인공지능(AI)은 우리의 삶을 위협하는가? 우리의 삶에 도움이 되는가?", link: "https://drive.google.com/open?id=1k_BMbsgdnoet5Bs8NV8lAZfK1SkyMtu4Kx_88zZfcOo&usp=drive_copy" },
+                { level: "C2", tags: ["과학"], title: "인공지능(AI)은 우리의 삶을 위협하는가? 우리의 삶에 도움이 되는가?", link: "https://drive.google.com/open?id=1k_BMbsgdnoet5Bs8NV8lAZK1SkyMtu4Kx_88zZfcOo&usp=drive_copy" },
                 { level: "C2", tags: ["과학"], title: "잠을 자야 하는 이유 - 잠을 자지 않았을 때, 우리의 몸에 어떤 일들이 발생할까요?", link: "https://drive.google.com/open?id=1FxTp-q2JDNiT-RQ0Y5t66uHIRZoMK7mto_miZ_B7T0U&usp=drive_copy" },
                 { level: "C2", tags: ["과학", "철학"], title: "과학과 은유, 생산적 활용과 위험", link: "https://drive.google.com/open?id=1TYsKDatbowL8vGUm6ANPBBNuAWc9ws48zkm1IN1xok8&usp=drive_copy" },
                 { level: "C2", tags: ["과학", "철학"], title: "ADHD에 대한 논쟁 - “정상”과 “비정상\"의 경계는 어떻게 형성될까요?", link: "https://drive.google.com/open?id=1W5rUykUampyxxedALZkNiZcxyeT9XR_Vhzl9KfNGONU&usp=drive_copy" },
@@ -705,18 +680,12 @@
 
             const filteredMaterials = useMemo(() => {
                 let result = materials;
-
-                // 1. Filter by Level
                 if (currentLevel !== 'home') {
                     result = result.filter(item => item.level === currentLevel);
                 }
-
-                // 2. Filter by Tag
                 if (selectedTag !== "전체") {
                     result = result.filter(item => item.tags && item.tags.includes(selectedTag));
                 }
-
-                // 3. Search Filter
                 if (searchQuery) {
                     const q = searchQuery.toLowerCase();
                     result = result.filter(item => 
@@ -724,29 +693,29 @@
                         (item.tags && item.tags.some(t => t.toLowerCase().includes(q)))
                     );
                 }
-
                 return result;
             }, [selectedTag, materials, currentLevel, searchQuery]);
 
             useEffect(() => {
                 setSelectedTag("전체");
-                setSearchQuery(""); // Reset search on level change
+                setSearchQuery(""); 
             }, [currentLevel]);
 
             const pageTitle = currentLevel === 'home' ? '전체 학습 자료' : (levelTitles[currentLevel] || `Level ${currentLevel} 학습 자료`);
             const pageSubtitle = currentLevel === 'home' ? 'All Learning Content' : (levelSubtitles[currentLevel] || `Learning Content for ${currentLevel}`);
 
             return (
-                <div className="space-y-12 animate-fade-in max-w-fit mx-auto pt-8">
+                <div className="space-y-12 animate-fade-in max-w-7xl mx-auto pt-8">
                     <div className="space-y-4 text-center md:text-left">
+                        {/* Dynamic Level Badge replaces static ARCHIVE */}
                         <div className="flex items-center gap-2 justify-center md:justify-start">
-                            <span className="px-3 py-1 bg-white border border-slate-200 text-slate-500 text-[1.05rem] rounded-lg tracking-wider shadow-sm font-juache">ARCHIVE</span>
+                            <LevelBadge levelCode={currentLevel === 'home' ? 'ALL' : currentLevel} />
                         </div>
                         <h1 className="text-[3.15rem] leading-tight font-black text-slate-900 tracking-tight font-cafe24-surround">{pageTitle}</h1>
                         <p className="text-slate-500 text-[1.575rem] font-cafe24-surround">{pageSubtitle}</p>
                     </div>
 
-                    {/* Search Bar - Instant Search above Filters */}
+                    {/* Search Bar */}
                     <div className="relative w-full md:w-[30rem]">
                         <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
                             <SearchIcon className="w-5 h-5" />
@@ -759,10 +728,7 @@
                             className={`w-full pl-12 pr-12 py-3.5 rounded-2xl border border-slate-200 bg-white text-slate-800 text-[1.1rem] placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-${themeColor}-500 focus:border-transparent transition-all shadow-sm font-basic`}
                         />
                         {searchQuery && (
-                            <button 
-                                onClick={() => setSearchQuery("")}
-                                className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 rounded-full hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors"
-                            >
+                            <button onClick={() => setSearchQuery("")} className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 rounded-full hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors">
                                 <XIcon className="w-5 h-5" />
                             </button>
                         )}
@@ -793,11 +759,7 @@
                                 hoverColorClass = 'group-hover:text-blue-600';
                             } else {
                                 const itemTheme = getLevelTheme(item.level);
-                                if (itemTheme === 'slate') {
-                                    hoverColorClass = 'group-hover:text-black';
-                                } else {
-                                    hoverColorClass = `group-hover:text-${itemTheme}-600`;
-                                }
+                                hoverColorClass = itemTheme === 'slate' ? 'group-hover:text-black' : `group-hover:text-${itemTheme}-600`;
                             }
 
                             return (
@@ -831,21 +793,6 @@
                                 </a>
                             );
                         })}
-                        {filteredMaterials.length === 0 && (
-                            <div className="text-center py-16 flex flex-col items-center justify-center gap-4 bg-white rounded-3xl border border-dashed border-gray-200">
-                                <span className="text-slate-400 text-[1.4rem] font-cafe24-anemone">
-                                    {searchQuery ? `"${searchQuery}"에 대한 검색 결과가 없습니다.` : "해당 레벨/카테고리에 자료가 없습니다."}
-                                </span>
-                                {searchQuery && (
-                                    <button 
-                                        onClick={() => setSearchQuery("")}
-                                        className={`px-5 py-2.5 bg-${themeColor}-50 text-${themeColor}-600 rounded-xl font-bold font-cafe24 hover:bg-${themeColor}-100 transition-colors`}
-                                    >
-                                        검색어 초기화
-                                    </button>
-                                )}
-                            </div>
-                        )}
                     </div>
 
                     <div className="text-center text-slate-400 text-[1.05rem] mt-16 font-cafe24-anemone">
@@ -858,37 +805,17 @@
         const App = () => {
             const [activeTab, setActiveTab] = useState('home');
             const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-            
             const userLevel = activeTab === 'home' ? 'ALL' : activeTab;
-            
             const themeColor = useMemo(() => getLevelTheme(userLevel), [userLevel]);
-
-            const mainPaddingClass = useMemo(() => {
-                return 'p-[1.25rem]';
-            }, [activeTab]);
 
             useEffect(() => {
                 const handleResize = () => {
-                    if (window.innerWidth < 1024) {
-                        setIsSidebarCollapsed(true);
-                    } else {
-                        setIsSidebarCollapsed(false);
-                    }
+                    setIsSidebarCollapsed(window.innerWidth < 1024);
                 };
                 window.addEventListener('resize', handleResize);
                 handleResize(); 
                 return () => window.removeEventListener('resize', handleResize);
             }, []);
-
-            const toggleSidebar = () => {
-                setIsSidebarCollapsed(!isSidebarCollapsed);
-            };
-
-            const renderContent = () => {
-                return <HomeView setActiveTab={setActiveTab} themeColor={themeColor} currentLevel={activeTab} />;
-            };
-
-            const marginClass = isSidebarCollapsed ? 'md:ml-[5.5rem]' : 'md:ml-[18.4rem]';
 
             return (
                 <div className="flex min-h-screen bg-[#f9fafb]">
@@ -896,16 +823,15 @@
                         activeTab={activeTab} 
                         setActiveTab={setActiveTab} 
                         isCollapsed={isSidebarCollapsed} 
-                        toggleSidebar={toggleSidebar}
+                        toggleSidebar={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
                         userLevel={userLevel}
                         themeColor={themeColor}
                     />
-                    <div className={`flex-1 flex flex-col transition-all duration-300 ease-in-out ${marginClass}`}>
-                        <main className={`flex-1 ${mainPaddingClass} overflow-y-auto flex flex-col`}>{renderContent()}</main>
+                    <div className={`flex-1 flex flex-col transition-all duration-300 ease-in-out ${isSidebarCollapsed ? 'md:ml-[5.5rem]' : 'md:ml-[18.4rem]'}`}>
+                        <main className="flex-1 p-[1.25rem] overflow-y-auto flex flex-col">
+                            <HomeView setActiveTab={setActiveTab} themeColor={themeColor} currentLevel={activeTab} />
+                        </main>
                     </div>
-                    <nav className="md:hidden fixed bottom-0 w-full bg-white border-t border-gray-200 flex justify-around p-3 z-50">
-                        {['home'].map(t=><button key={t} onClick={()=>setActiveTab(t)} className={`p-2 rounded-lg ${activeTab===t ? `text-${themeColor}-600 bg-${themeColor}-50` : 'text-slate-400'}`}>{t==='home'?<HomeIcon className="w-6 h-6"/>:null}</button>)}
-                    </nav>
                 </div>
             );
         };
