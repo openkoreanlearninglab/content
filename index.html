@@ -49,7 +49,7 @@
         @font-face { font-family: 'Cafe24Anemone'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/Cafe24Ohsquare.woff') format('woff'); font-weight: normal; font-display: swap; }
         .font-cafe24-anemone { font-family: 'Cafe24Anemone', sans-serif; }
 
-        /* SchoolSafetyMustache (학교안심 콧수염) 추가 */
+        /* SchoolSafetyMustache (학교안심 콧수염) */
         @font-face {
             font-family: 'SchoolSafetyMustache';
             src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2402_keris@1.0/TTHakgyoansimKossuyeomR.woff2') format('woff2');
@@ -57,6 +57,15 @@
             font-display: swap;
         }
         .font-school-mustache { font-family: 'SchoolSafetyMustache', sans-serif; }
+
+        /* SchoolSafetyOcarina (학교안심 오카리나) - 제목용 */
+        @font-face {
+            font-family: 'SchoolSafetyOcarina';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2511-1@1.0/HakgyoansimOcarinaR.woff2') format('woff2');
+            font-weight: normal;
+            font-display: swap;
+        }
+        .font-ocarina { font-family: 'SchoolSafetyOcarina', sans-serif; }
 
         @font-face { font-family: 'SchoolSafetyRoundedSmile'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-5@1.0/HakgyoansimDunggeunmisoTTF-R.woff2') format('woff2'); font-weight: normal; font-display: swap; }
         @font-face { font-family: 'SchoolSafetyRoundedSmile'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-5@1.0/HakgyoansimDunggeunmisoTTF-B.woff2') format('woff2'); font-weight: 700; font-display: swap; }
@@ -112,7 +121,7 @@
         };
 
         const LEVEL_STYLES = {
-            "ALL": "bg-slate-100 text-black border-slate-200",
+            "ALL": "bg-slate-50 text-black border-slate-200 shadow-sm",
             "A1": "bg-lime-50 text-lime-600 border-lime-100", 
             "A1+": "bg-lime-50 text-lime-600 border-lime-100", 
             "A2": "bg-green-50 text-green-600 border-green-100",    
@@ -130,9 +139,10 @@
         const HomeIcon = ({ className }) => (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={className}><rect x="2" y="3" width="20" height="14" rx="2" ry="2" /><path d="M8 21h8" /><path d="M12 17v4" /></svg>);
         const ChevronLeft = ({ className }) => (<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="m15 18-6-6 6-6" /></svg>);
         const ChevronRight = ({ className }) => (<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="m9 18 6-6-6-6" /></svg>);
+        const SearchIcon = ({ className }) => (<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>);
+        const XIcon = ({ className }) => (<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>);
 
-        // --- Component: Level Badge (Used in Cards) ---
-        // 1.4x Scaling for Main Content
+        // --- Component: Level Badge ---
         const LevelBadge = ({ levelCode }) => {
             const [isHovered, setIsHovered] = useState(false);
             const info = LEVEL_DEFINITIONS[levelCode] || LEVEL_DEFINITIONS["A2+"];
@@ -145,14 +155,13 @@
             
             const badgeStyle = getLevelStyle(levelCode);
 
-            // Font size: 14px * 1.4 = 19.6px -> ~1.225rem
             return (
                 <div 
                     className="relative inline-flex items-center cursor-help z-50 shrink-0"
                     onMouseEnter={() => setIsHovered(true)}
                     onMouseLeave={() => setIsHovered(false)}
                 >
-                    <span className={`px-2 py-0.5 rounded text-[1.225rem] font-bold border uppercase tracking-wide shadow-sm font-sunflower ${badgeStyle}`}>
+                    <span className={`px-2 py-0.5 rounded text-[1.225rem] font-bold border uppercase tracking-wide shadow-sm font-basic ${badgeStyle}`}>
                         {levelCode}
                     </span>
                     {isHovered && (
@@ -167,13 +176,11 @@
         };
 
         // --- Component: Category Badge ---
-        // 1.4x Scaling
         const CategoryBadge = ({ tag, onClick, isSelected }) => {
-            // Font size: 14px * 1.4 = 19.6px -> 1.225rem
             return (
                 <span 
                     onClick={onClick}
-                    className={`inline-flex items-center px-2 py-0.5 rounded text-[1.225rem] font-bold border uppercase tracking-wide shadow-sm font-sunflower cursor-pointer transition-colors shrink-0
+                    className={`inline-flex items-center px-2 py-0.5 rounded text-[1.225rem] font-bold border uppercase tracking-wide shadow-sm font-basic cursor-pointer transition-colors shrink-0
                     ${isSelected 
                         ? 'bg-slate-800 text-white border-slate-800' 
                         : 'bg-white text-slate-500 border-slate-200 hover:border-slate-400 hover:text-slate-700'}`}
@@ -194,16 +201,6 @@
                 { id: 'C2', levelCode: 'C2', label: '최상급 학습자', subLabel: 'Proficient' },
             ];
             
-            const getLevelColor = (code) => {
-                if (LEVEL_STYLES[code]) return LEVEL_STYLES[code];
-                const base = code.substring(0, 2);
-                return LEVEL_STYLES[base] || "bg-gray-50 text-slate-600 border-gray-100";
-            };
-
-            const currentStyle = getLevelColor(userLevel);
-            const bgClass = currentStyle.split(' ')[0];
-            const textClass = currentStyle.split(' ')[1];
-
             // Tooltip state
             const [tooltip, setTooltip] = useState({ show: false, x: 0, y: 0, info: null });
 
@@ -224,7 +221,6 @@
             const sidebarWidth = isCollapsed ? 'w-[5.5rem]' : 'w-[18.4rem]';
             const logoSize = isCollapsed ? 'w-[3rem] h-[3rem]' : 'w-[4.31rem] h-[4.31rem]';
 
-            // Font Sizes (Rem)
             const textTitle = isCollapsed ? 'text-[1.25rem]' : 'text-[1.44rem]';
             const textSubtitle = isCollapsed ? 'text-[0.6875rem]' : 'text-[0.79rem]';
             const textMenu = isCollapsed ? 'text-[1rem]' : 'text-[1.15rem]';
@@ -234,6 +230,10 @@
             const footerTextBig = isCollapsed ? 'text-[1rem]' : 'text-[1.15rem]';
             const footerTextLabel = isCollapsed ? 'text-[0.875rem]' : 'text-[1.0rem]';
             const footerTextSmall = isCollapsed ? 'text-[0.625rem]' : 'text-[0.72rem]';
+
+            const currentStyle = LEVEL_STYLES[userLevel] ? LEVEL_STYLES[userLevel] : LEVEL_STYLES["ALL"];
+            const bgClass = currentStyle.split(' ')[0];
+            const textClass = currentStyle.split(' ')[1];
 
             return (
                 <aside className={`bg-white border-r border-gray-200 fixed h-full hidden md:flex flex-col z-50 transition-all duration-300 ease-in-out font-cafe24-anemone ${sidebarWidth}`}>
@@ -246,7 +246,7 @@
                         {!isCollapsed && (
                             <div className="animate-fade-in overflow-hidden whitespace-nowrap flex flex-col justify-center">
                                 <span className={`font-extrabold leading-tight font-cafe24-deco ${textTitle} text-black`}>Open</span>
-                                <span className={`font-bold leading-tight font-school-mustache ${textSubtitle} ${textClass}`}>KoreanLearningLab</span>
+                                <span className={`font-bold leading-tight font-school-mustache ${textSubtitle} text-${themeColor}-600`}>KoreanLearningLab</span>
                             </div>
                         )}
                         <button 
@@ -262,11 +262,30 @@
                             const isActive = activeTab === menu.id;
                             const activeFontClass = isActive ? "font-cafe24-surround" : "font-cafe24";
                             
+                            const itemTheme = getLevelTheme(menu.levelCode);
                             const levelStyleStr = LEVEL_STYLES[menu.levelCode];
                             const parts = levelStyleStr.split(' ');
                             const boxBg = parts[0];
                             const boxBorder = parts[2];
                             const boxTextClass = menu.levelCode === 'ALL' ? 'text-black' : parts[1];
+
+                            let buttonBgClass = '';
+                            let buttonTextClass = '';
+                            let indicatorBgClass = '';
+                            
+                            if (isActive) {
+                                if (menu.id === 'home') {
+                                    buttonBgClass = 'bg-slate-50';
+                                    buttonTextClass = 'text-black';
+                                    indicatorBgClass = 'bg-black';
+                                } else {
+                                    buttonBgClass = `bg-${itemTheme}-50`;
+                                    buttonTextClass = `text-${itemTheme}-600`;
+                                    indicatorBgClass = `bg-${itemTheme}-500`;
+                                }
+                            } else {
+                                buttonTextClass = 'text-slate-700 hover:bg-gray-50 hover:text-slate-900';
+                            }
 
                             return (
                                 <button
@@ -280,17 +299,13 @@
                                         isCollapsed 
                                         ? 'justify-center h-14 rounded-2xl' 
                                         : 'gap-3 px-3 py-4 rounded-2xl'
-                                    } ${
-                                        isActive 
-                                        ? `bg-${themeColor}-50 text-${themeColor}-600` 
-                                        : 'text-slate-700 hover:bg-gray-50 hover:text-slate-900'
-                                    }`}
+                                    } ${isActive ? buttonBgClass : ''} ${buttonTextClass}`}
                                 >
                                     {isActive && isCollapsed && (
-                                        <div className={`absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-${themeColor}-500 rounded-r-lg`}></div>
+                                        <div className={`absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 ${indicatorBgClass} rounded-r-lg`}></div>
                                     )}
                                     {isActive && !isCollapsed && (
-                                        <div className={`absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-${themeColor}-500 rounded-r-lg`}></div>
+                                        <div className={`absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 ${indicatorBgClass} rounded-r-lg`}></div>
                                     )}
                                     
                                     <div className={`${boxSize} rounded-xl flex items-center justify-center border shrink-0 transition-transform duration-200 group-hover:scale-105 ${boxBg} ${boxBorder}`}>
@@ -303,11 +318,11 @@
                                         <div className="flex flex-col items-start animate-fade-in overflow-hidden whitespace-nowrap">
                                             <span className={`leading-tight transition-all ${textMenu} ${activeFontClass} ${
                                                 isActive 
-                                                ? `font-extrabold text-${themeColor}-600` 
+                                                ? `font-extrabold ${buttonTextClass}` 
                                                 : 'font-medium text-slate-700 group-hover:font-semibold group-hover:text-slate-900'
                                             }`}>{menu.label}</span>
                                             
-                                            {menu.subLabel && <span className={`${textMenuSub} font-normal text-slate-400 mt-0.5 leading-tight`}>{menu.subLabel}</span>}
+                                            {menu.subLabel && <span className={`${textMenuSub} font-cafe24 font-normal text-slate-400 mt-0.5 leading-tight`}>{menu.subLabel}</span>}
                                         </div>
                                     )}
                                     
@@ -370,6 +385,7 @@
 
         const HomeView = ({ setActiveTab, themeColor, currentLevel }) => {
             const [selectedTag, setSelectedTag] = useState("전체");
+            const [searchQuery, setSearchQuery] = useState("");
 
             const levelTitles = {
                 "B2": "중급 수준 학습 자료",
@@ -409,38 +425,24 @@
                     link: "https://openkoreanlearninglab.github.io/content/b2plus-1000won-talent-market.html" 
                 },
                 // --- Existing Google Drive Links ---
-                { level: "B2", tags: ["경제"], title: "'R의 공포' 온다, 안 온다?", link: "https://drive.google.com/open?id=1w37B49qia-Ai3FnGqrhH3X4HJckuU8CVbdblvOkDTmI&usp=drive_copy" },
-                { level: "B2", tags: ["경제"], title: "\"안 쓰고 버틴다\"…MZ세대에 번지는 '무지출 챌린지'", link: "https://drive.google.com/open?id=1209FxSgzmTA_9xozEEHKFmtguH9-W4wi3r-0oiT08fU&usp=drive_copy" },
-                { level: "B2", tags: ["경제"], title: "미국 부자 박살 낸 주식 개미의 미친 매수 GameStop: Reddit vs Wall Street", link: "https://drive.google.com/open?id=1PwCLYQNhUXD0OppJG_cVJwn4Bsfl-e3n5dDv8Xg3Mo4&usp=drive_copy" },
-                { level: "B2", tags: ["경제"], title: "미국 부자 박살 낸 주식 개미의 미친 매수 GameStop: Reddit vs Wall Street", link: "https://drive.google.com/open?id=1gbllA4K2-Iaxp2sT3yzL6DtSYbXn6EMSJ5DTk-dq6rA&usp=drive_copy" },
-                { level: "B2", tags: ["경제"], title: "할인하는 물건 구매：돈 낭비 vs 합리적 소비", link: "https://drive.google.com/open?id=1kkJjJhEyeJuFGFDRhkyj_ckRlM4Zyec_u_J0aEclc8o&usp=drive_copy" },
-                { level: "B2", tags: ["경제", "문화"], title: "'주가 반토막' 넷플릭스가 진출한 의외의 사업", link: "https://drive.google.com/open?id=1QPUdOtefuvrczHWIXXrXBBbdi2aHH7YdHnuuxfAkEE0&usp=drive_copy" },
                 { level: "B2", tags: ["경제", "사회"], title: "전 세계는 ‘집값’과 전쟁 중…원인과 전망은?", link: "https://drive.google.com/open?id=1EEHwfv46-Ic0A1FwNHz446_jjsdVPoWYBm3GFcuMiY0&usp=drive_copy" },
                 { level: "B2", tags: ["과학"], title: "소행성 충돌 실험 - 지구 방어 실험 성공?", link: "https://drive.google.com/open?id=1qn61B4kJviMEF_-bhY8OKhNSEt-z28NrYR_R3-2hZPQ&usp=drive_copy" },
-                { level: "B2", tags: ["과학"], title: "일론 머스크의 상상은 현실이 된다?", link: "https://drive.google.com/open?id=1hXCeP9mhjsR3PT8IeSQpX3PEM2Ipz2BECrmOqEDzu_U&usp=drive_copy" },
                 { level: "B2", tags: ["과학"], title: "잠을 자야 하는 이유 - 잠을 자지 않았을 때, 우리의 몸에 어떤 일들이 발생할까요?", link: "https://drive.google.com/open?id=1zK-w8iIu2jYFAHOjnOHjWtazv25s2BEeaSDRdFiMgdE&usp=drive_copy" },
                 { level: "B2", tags: ["과학"], title: "mRNA 백신으로 세상을 구하다 - 2023년 노벨 생리의학상 수장자 카탈린 카리코", link: "https://drive.google.com/open?id=1lhLsqB7cklUOW2_vp_p7QFrJ4C5oKwmAvuEpnSC47rM&usp=drive_copy" },
                 { level: "B2", tags: ["과학", "건강"], title: "마법의 다이어트 약 - 다이어트 대신 병원?", link: "https://drive.google.com/open?id=1nWLGGDlN-zx_VFbONR8Nsx9YsFgi7Rbf20M5oJnlJac&usp=drive_copy" },
                 { level: "B2", tags: ["과학", "사회"], title: "나에게 가장 신기했던 기술은 무엇인가요?", link: "https://drive.google.com/open?id=1qYuICuV2N6VlIAQMGt_y6dc82NLTHmkYVQqE7A4_9BM&usp=drive_copy" },
-                { level: "B2", tags: ["기술"], title: "'클럽하우스(Clubhouse)' 도대체 뭐길래? [자막 & 같이 이야기 해 볼 주제들]", link: "https://drive.google.com/open?id=1jvph1C1zidWh84_vJnLt2aegExoBGmmPbz6T3bVe4Lw&usp=drive_copy" },
                 { level: "B2", tags: ["기술"], title: "스마트폰으로 사진 잘 찍는 꿀팁! - 똥손 친구에서 알려주세요.", link: "https://drive.google.com/open?id=1F-3HQa5OdoIYBdYJHfJ6UsfQhEf6EmzdacVZ7cmLaD0&usp=drive_copy" },
-                { level: "B2", tags: ["기술"], title: "틱톡(Tik Tok)이 인기있는 이유", link: "https://drive.google.com/open?id=1WD_dnzdFGYRI_tnaj_Ls3ImC9nFX2k6W3Fw8AYSANoo&usp=drive_copy" },
                 { level: "B2", tags: ["문학"], title: "📓 소설 <저주 토끼> - \"저주에 쓰이는 물건일수록 예쁘게 만들어야 한단다\"", link: "https://drive.google.com/open?id=1P7v1hkGsXBo49sNLIpDOZ_z85si2JW9A8Iq24d2mYD4&usp=drive_copy" },
-                { level: "B2", tags: ["문화"], title: "\"최소한의 일만 하기\"‥MZ 세대 '조용한 사직' 열풍", link: "https://drive.google.com/open?id=1V67qWX8Du6TQY11AGy1tg0B6N3v17iau_vXej2Ca0zA&usp=drive_copy" },
                 { level: "B2", tags: ["문화"], title: "'오마카세!' 대체 어떤 요리일까요. - 오늘 뭐 먹지?", link: "https://drive.google.com/open?id=1hmjy_rnpcPB8pJRDnZbx0ShkZAp_NSmzh-comgWR9fM&usp=drive_copy" },
                 { level: "B2", tags: ["문화"], title: "\"가을 타다\", 무슨 의미일까요？", link: "https://drive.google.com/open?id=1-tIHi_wPCfWF-WYm2DWqublcX5AXIfTly_8zLMESygk&usp=drive_copy" },
                 { level: "B2", tags: ["문화"], title: "\"따로 또 함께\" - 코리빙 하우스", link: "https://drive.google.com/open?id=1lTUpHqfXoX6_b5l7I2e9tF2eFM0dzn_Ax1cyKQ20X4M&usp=drive_copy" },
                 { level: "B2", tags: ["문화"], title: "<솔로지옥> 리뷰 - 과몰입 리액션 모음", link: "https://drive.google.com/open?id=1Cuw8a1OifvFCw1nEdRFKwurphvKWOQRjbwWjXpYoHPQ&usp=drive_copy" },
-                { level: "B2", tags: ["문화"], title: "<스트릿 우먼 파이터> 댄서 노제(본명: 노지혜) 사과문", link: "https://drive.google.com/open?id=1sj-s03xjF6J79wkX9KY31iH3I2IySbm-_248xQozyTQ&usp=drive_copy" },
                 { level: "B2", tags: ["문화"], title: "100만 원 짜리 VVIP 한식당 과연 진짜일까?", link: "https://drive.google.com/open?id=1vVERuR7XQw13Nav7sXjq7zBt08KWYrO23KXlX75YzCE&usp=drive_copy" },
                 { level: "B2", tags: ["문화"], title: "가을이 독서의 계절이 된 이유", link: "https://drive.google.com/open?id=1CB6S7naeK3usRCNS7dhn_YDyGBLJU0q3zGByccVdBtQ&usp=drive_copy" },
-                { level: "B2", tags: ["문화"], title: "관용어(Idiom) & 속담(Common Sayings or Proverbs): 📌비벼 볼만하다. from \"소도 언덕이 있어야 비빈다\"", link: "https://drive.google.com/open?id=19Z9-yVPiKimbiFdagmGMe_eY3ZYYgo06uNFKE0vMFyE&usp=drive_copy" },
                 { level: "B2", tags: ["문화"], title: "나만 알고 싶은 꼭 사야할 가성비 와인 #조세호의 와인바🍷", link: "https://drive.google.com/open?id=1T6nKCQYhcVzDbJzUS_l2BA0iBS8W4XPGu_0pZJzYUOQ&usp=drive_copy" },
                 { level: "B2", tags: ["문화"], title: "나의 퍼스널 컬러는 무엇인가요? - 퍼스널컬러 자가진단", link: "https://drive.google.com/open?id=13d5MroJdOamJYpi-EmB2XQRAbkuXNNji0ocydA6sNYs&usp=drive_copy" },
                 { level: "B2", tags: ["문화"], title: "남녀 사이 친구 - 깻잎 논쟁 & 카풀 논쟁", link: "https://drive.google.com/open?id=1qfamWbJgkoNt5VOFl9H9Ysxaw33IGIg4mU0LsQsiZQg&usp=drive_copy" },
-                { level: "B2", tags: ["문화"], title: "넷플릭스 <솔로지옥> 출연자 프리지아(본명: 송지아) 사과문", link: "https://drive.google.com/open?id=1WVLJolOBRsadwE3GWYJ_Ro1xqqWI1reqU2K78l6yg10&usp=drive_copy" },
                 { level: "B2", tags: ["문화"], title: "등산할 때 필요한 아이템은 무엇일까요? - 배우 이시영이 소개해주는 그녀의 찐템.", link: "https://drive.google.com/open?id=1H5N4qDWaM5hfScYOmEdWMXxlF9r9l5-ucfu0ZUT4m54&usp=drive_copy" },
-                { level: "B2", tags: ["문화"], title: "르르르 꼰대 성향 검사 - https://www.lllkkdti.com", link: "https://drive.google.com/open?id=1eKqIzf4Nxa3il1Ly2IHXDGolTEgqqzA2ltogH-2b3RA&usp=drive_copy" },
                 { level: "B2", tags: ["문화"], title: "명품 브랜드에서 카페, 레스토랑을 만드는 이유는 무엇일까요? - 밥 먹으러 구찌, 커피 마시러 디올", link: "https://drive.google.com/open?id=1h_V-di-6XKNvN8lvWHi0w14LSdV7gAn-JO4COBXAmDs&usp=drive_copy" },
                 { level: "B2", tags: ["문화"], title: "명품이란 무엇일까요? - 프랑스 명품 브랜드 스토리", link: "https://drive.google.com/open?id=11iG2ILkX_gk6Avjj-GrXPluhTXl2CC31ZlXAsMe2aTk&usp=drive_copy" },
                 { level: "B2", tags: ["문화"], title: "알콜 0.5% 술이 잘 팔리는 이유는? - Z세대가 바꾸고 있는 음주 문화", link: "https://drive.google.com/open?id=1cMCsKSumtAsXxqDMZ5pPT3AHOhlJKQ1hJ-iS2BcHh7g&usp=drive_copy" },
@@ -450,44 +452,30 @@
                 { level: "B2", tags: ["문화"], title: "영화, 어떻게 볼까? - 기생충", link: "https://drive.google.com/open?id=1ir83IzilrVKlJCk5qcEML4ac5MmvjjCDPXlcdww1t4A&usp=drive_copy" },
                 { level: "B2", tags: ["문화"], title: "영화, 어떻게 볼까? - 영화 평론가 이동진이 알려주는 영화 보는 방법", link: "https://drive.google.com/open?id=1bn5anP-m6sb3MioeuNBHtR6ceEr5IP55m_ra7KQpWgI&usp=drive_copy" },
                 { level: "B2", tags: ["문화"], title: "영화, 어떻게 볼까? - 영화에서 캐릭터들의 옷이 중요할까요?", link: "https://drive.google.com/open?id=1KHuSKpL8lAvhACNjoHNmoGkzB7AG_9EnhJOq_uSu__A&usp=drive_copy" },
-                { level: "B2", tags: ["문화"], title: "예술과 디자인의 차이", link: "https://drive.google.com/open?id=1CdN9VM4_U5nn7sP1t3DwCjZb4AfB4My0I5D2DJIvui8&usp=drive_copy" },
                 { level: "B2", tags: ["문화"], title: "왜 반말하세요：학교 선생님한테 반말하면 어떻게 될까?", link: "https://drive.google.com/open?id=1Zc8sfCYWVN87312ETlcF0HkSFCw4NrEAzmFWUHgK_iI&usp=drive_copy" },
-                { level: "B2", tags: ["문화"], title: "우연히 아는 사람 또는 오래된 친구를 마주쳤을 때, 어떻게 행동해요?", link: "https://drive.google.com/open?id=1jbAh-HcvZJH683-5c5Mdk8uJN--PnAYeNzTFWn-E2Pc&usp=drive_copy" },
                 { level: "B2", tags: ["문화"], title: "이 시대 최대의 난제 '강아지 파 VS 고양이 파'", link: "https://drive.google.com/open?id=1IbezoeRcl5itP7Od6UODkBjLxZoDO3j-FfR1Sa3Sqrw&usp=drive_copy" },
                 { level: "B2", tags: ["문화"], title: "집에서 반려식물을 키우는 방법 플랜테리어planterior", link: "https://drive.google.com/open?id=1_lEnNTtYnLPFG8KZOJeVhxsry39IM2rT1XeKXwcpEYg&usp=drive_copy" },
                 { level: "B2", tags: ["문화"], title: "찐친 연애상담 해준 적이 있나요? - 전소민 박성훈의 '찐친' 연애 상담소.", link: "https://drive.google.com/open?id=1G0h94FSHYcrRwfugeFZplJHKhYETX4evi61Ng_CD0RU&usp=drive_copy" },
                 { level: "B2", tags: ["문화"], title: "친구와 밥먹다 '꼭' 싸우게 되는 피할 수 없는 '음식 취향' 논쟁 - “부먹 vs 찍먹”", link: "https://drive.google.com/open?id=1H4sX-PBfDQY9MVPzbgAzSxCDkeFjHPnojjm3tuA8MwU&usp=drive_copy" },
                 { level: "B2", tags: ["문화"], title: "커피 이야기 - 사실적 읽기 연습", link: "https://drive.google.com/open?id=1OHh1oA3DiSc08biO_815U1Fjo7Xq1Wr7yhogL6C8rUo&usp=drive_copy" },
-                { level: "B2", tags: ["문화"], title: "포카리스웨트가 광고에 CG를 안 쓰는 이유", link: "https://drive.google.com/open?id=1sYjXCv9z8IrzqzvbKGy15kRz0C14MslorWpO6yIqRG4&usp=drive_copy" },
                 { level: "B2", tags: ["문화"], title: "한국 관객, 영화 ‘바비’ 외면한 이유?", link: "https://drive.google.com/open?id=1DvHwxSaX62T06s9o5hjUuh_C4j7bAVa7Rd-NpvUM8CQ&usp=drive_copy" },
-                { level: "B2", tags: ["문화"], title: "한국에서 골프를 치기 위해 얼마가 필요할까요?", link: "https://drive.google.com/open?id=12OaVGHTNuDof8LFoz1eD_tAPZNVR0PXI36pCTljb0do&usp=drive_copy" },
                 { level: "B2", tags: ["문화"], title: "한국에서 농담하면 안 되는 주제 - 가족, \"가족은 건드리지 마\"", link: "https://drive.google.com/open?id=1kDzLaawlKQjTjtf4RD7mAtpQA36rSARFtBAuzViGb74&usp=drive_copy" },
                 { level: "B2", tags: ["문화"], title: "한국에서 MZ세대는 왜 90년대 홍콩영화를 좋아할까요? -<중경삼림 重慶森林 Chungking Express >", link: "https://drive.google.com/open?id=1sAHbDhVOqfCL1HDnoOeHhXHgTA4Itb1BsFYcCPzBI9U&usp=drive_copy" },
                 { level: "B2", tags: ["문화"], title: "한국인 먹는 마늘 양을 보고 외국사람들이 놀라는 이유", link: "https://drive.google.com/open?id=1gk91BpRyRXZzdrLHkBNsuWERuj9EbNlLo1Z95hcnCJs&usp=drive_copy" },
-                { level: "B2", tags: ["문화"], title: "MZ세대 '조용한 사직' 열풍…\"직장과 거리두기 중\"", link: "https://drive.google.com/open?id=15NVpZXsn08MJGdsY2MlJ2o8pvx5dzIpwK3iO4oFMY7o&usp=drive_copy" },
                 { level: "B2", tags: ["문화"], title: "MZ세대의 식물 키우기 - 반려식물을 위한 호텔도 있다구요?", link: "https://drive.google.com/open?id=1TpgDRn4WnEbOGtuExNYd2WrqnpDLIP31rBpqmmH-Wb8&usp=drive_copy" },
                 { level: "B2", tags: ["문화", "과학"], title: "만족감을 얻는 방법 - 집사부 멤버들, 정재승 ‘첫 초밥’ 논문에 신기함 가득!.mp4", link: "https://drive.google.com/open?id=1g1ijKSzCuFyJ3nYBafUjpRHRXDlhuRJS" },
                 { level: "B2", tags: ["문화", "과학"], title: "만족감을 얻는 방법: 맛있는 음식 먼저 먹는다 VS 나중에 먹는다", link: "https://drive.google.com/open?id=1zoNMHfll9EjR_PVPBvHwOprA-556Dd6nC6TeSVIT7ec&usp=drive_copy" },
                 { level: "B2", tags: ["문화", "기술"], title: "보정 없는 ‘셀카’ 올릴 용기가 있어요? - “비리얼 할 시간(Time to BeReal)”", link: "https://drive.google.com/open?id=10yxrURkokfH1cytC1wE6hVXL-P217tToK96h5Zsg3qY&usp=drive_copy" },
-                { level: "B2", tags: ["문화", "사회"], title: "한국식 나이가 사라지면 무슨 문제가 생길까요?", link: "https://drive.google.com/open?id=1opXfXPxQcH1M8OIxDTtddxKTKDy7q67fKyuoBus8NpI&usp=drive_copy" },
                 { level: "B2", tags: ["문화", "언어"], title: "심심한 사과? 난 하나도 안 심심한데?", link: "https://drive.google.com/open?id=1DB_4DzJCXsEZX9xeFinUxo67EJLO2bbMf41DZ41EbPk&usp=drive_copy" },
                 { level: "B2", tags: ["문화", "에세이"], title: "<여행의 이유> - 상처를 몽땅 흡수한 물건들로부터 달아나기", link: "https://drive.google.com/open?id=1b746v40QNju0R58gcF6l64_kJTA2mgh0hftW_CtmMR8&usp=drive_copy" },
                 { level: "B2", tags: ["문화", "여행"], title: "여행의 기억을 오래도록 간직하는 방법? - 경험을 언어화하는 “글그림”", link: "https://drive.google.com/open?id=1pePryvzdbfj5fMO_q7bHf-klsSO5pREE3UjkmFp03BM&usp=drive_copy" },
                 { level: "B2", tags: ["문화", "여행"], title: "한국에서 여행하기 좋은곳 Best 3 - 여름에 여행하는 것을 좋아해요? 겨울에 여행하는 것을 좋아해요?", link: "https://drive.google.com/open?id=1agkCD2qbmTGqAXZ1Boo_k079vx2-0QGbDsgSaAr_NE4&usp=drive_copy" },
                 { level: "B2", tags: ["문화", "일상"], title: "스케치 코미디 - “부먹 vs 찍먹”", link: "https://drive.google.com/open?id=1b3KXDjmecUpggu_vKY_ScLG8EEZL5TCdrYPRrovHRMw&usp=drive_copy" },
                 { level: "B2", tags: ["문화", "일상"], title: "어떤 여행을 좋아하나요? 자유여행 vs.패키지 여행", link: "https://drive.google.com/open?id=1ldNt9WC-MYIYZPYpxTzzxsmDbMjdyMOI-tI-Cg1r_HI&usp=drive_copy" },
-                { level: "B2", tags: ["문화", "환경"], title: "뉴스：한국산 커피 & 와인 - 기후변화", link: "https://drive.google.com/open?id=1rgKFN5ZBGqnpvt-FyiJh7ABBus93yvrOH-Nmp6Uw9GA&usp=drive_copy" },
                 { level: "B2", tags: ["사회"], title: "“콜 포비아\" & “토크 포비아\" - 말보다 글… 대화 피하는 이유", link: "https://drive.google.com/open?id=10rw0JY2W_cdtRwKSrDeMRvdy-61HKBQWPo2jrcN-nzo&usp=drive_copy" },
-                { level: "B2", tags: ["사회"], title: "<외계통신: 급진적 페미니즘을 둘러싼 캐나다vs독일 기자의 설전! >", link: "https://drive.google.com/open?id=1ZqP5ovQpYxINl5VYdUAWJ-kb3YdQCugyGwURt2eQI7E&usp=drive_copy" },
-                { level: "B2", tags: ["사회"], title: "2030세대 76%, \"나는 N포세대\"…가장 먼저 포기 '연애'", link: "https://drive.google.com/open?id=1hvBhieMae5NPrAwlGfjjJiI57IDeuO4kCvxWh-FfP3k&usp=drive_copy" },
-                { level: "B2", tags: ["사회"], title: "건강을 해치는 운동과 다이어트? - “바디프로필(BodyProfile)” 촬영은 어떤 문제점이 있을까요?", link: "https://drive.google.com/open?id=1Td7pkQwvScUC61q-WPXFseL55WAF620F-Yr49dWdlVg&usp=drive_copy" },
-                { level: "B2", tags: ["사회"], title: "공항계의 옥천Hub? 주인 잃은 가방이 하루에 7천개", link: "https://drive.google.com/open?id=18S7EWqUH4yn2JfqYXE4nZLgFvAVLfL7VWiZFoQ_mIVw&usp=drive_copy" },
-                { level: "B2", tags: ["사회"], title: "뉴스：죽음 앞둔 의학자의 ‘감사 작별 편지’", link: "https://drive.google.com/open?id=1HkGS27xdMM78ZZ6awRym2OQYbfGAXMkfxZls-3V32sE&usp=drive_copy" },
                 { level: "B2", tags: ["사회"], title: "매일 새벽 4시 30분에 하루를 시작하는 변호사 - #미라클 모닝 #자기관리 끝판왕", link: "https://drive.google.com/open?id=11j8FVOjBSu1NgQWuIdMCl647Qn-764vVAHmwJxBbWyM&usp=drive_copy" },
                 { level: "B2", tags: ["사회"], title: "옛날 서른은 요즘 마흔, 나이에 0.8 곱하는 게 요즘 나이계산법", link: "https://drive.google.com/open?id=1Yr5xRQJJmPtVZ9iGLzw4UUS9hEK1mN-ylOJVJnUJuMg&usp=drive_copy" },
                 { level: "B2", tags: ["사회"], title: "오늘은 짠순이/짠돌이, 내일은 플렉스 - 무지출 챌린지", link: "https://drive.google.com/open?id=15xTQPGAuy9Nx7gpEOOVr-oFAdCFQPudFTEE1BRShvrk&usp=drive_copy" },
-                { level: "B2", tags: ["사회"], title: "왜 한국에 외국어 간판이 많을까? [자막 & 같이 이야기 해 볼 주제들]", link: "https://drive.google.com/open?id=1bPBXyOIOvJR5qCZr_EatK42GUD6YcGufYWBbSqn7tzU&usp=drive_copy" },
-                { level: "B2", tags: ["사회"], title: "외국 공항 근황: 몸은 왔는데요, 짐은 안 왔습니다(?)", link: "https://drive.google.com/open?id=1-MLw_ZJN4c2wOTJ1VhEDEu9Lga-BgZ8vlp16xZVRya4&usp=drive_copy" },
                 { level: "B2", tags: ["사회"], title: "점심메뉴 고르기도 어려운 우유부단한 사람들 - 결정장애, 선택장애, 햄릿 증후군(Hamlet Syndrome)", link: "https://drive.google.com/open?id=1npUYTrdLH4e2Z21_XiZ7NNDJpmeKghBeVQQO-rjmjY8&usp=drive_copy" },
                 { level: "B2", tags: ["사회"], title: "한국인이 귀화 시험 보면 벌어지는 일", link: "https://drive.google.com/open?id=18SlstqqnqjlHm41OVcpantXV8EC88fDbSoze_XjMLnw&usp=drive_copy" },
                 { level: "B2", tags: ["사회"], title: "MBTI 결과 믿을 수 있을까요? 16Personalities 모두 가짜?", link: "https://drive.google.com/open?id=1aGPOp72XIQsqmFq3HbSYkVJ9gdePNKm2LEF9EyAGfvE&usp=drive_copy" },
@@ -526,9 +514,7 @@
                 { level: "B2+", tags: ["국제", "정치"], title: "팔레스타인과 이스라엘의 갈등", link: "https://drive.google.com/open?id=1yK0AVJjSwCk2cRHPSVX0cNgnrFOIfyA6rovJkcWLk7s&usp=drive_copy" },
                 { level: "B2+", tags: ["기술"], title: "메타버스에서 땅을 사고 싶어요? - 가상부동산 투자", link: "https://drive.google.com/open?id=1xDn1-M1xreId045XKoruXPPjIDRXO66L8rCVmKXLpis&usp=drive_copy" },
                 { level: "B2+", tags: ["문화"], title: "\"가을 탄다\", 무슨 의미일까요？", link: "https://drive.google.com/open?id=1JpM7kQHlbxTcAhUDltBHkbGt_c78BAg9Jp_sCwj7QrY&usp=drive_copy" },
-                { level: "B2+", tags: ["문화"], title: "골프에 빠진 2030세대", link: "https://drive.google.com/open?id=1JzF_kxpMN6TB2dmYq7TKHWqWL-XmOXGBYqPfEFKxkSI&usp=drive_copy" },
                 { level: "B2+", tags: ["문화"], title: "꼰대 VS MZ, 세대 갈등 극복 가능해? - 회식부터 출근 시간까지 서로 힘든 젋은 꼰대와 요즘 MZ!", link: "https://drive.google.com/open?id=1OXA5gH8RUOYwZYNi9ZVeddoJMcB1pwNC32ElSUQkvQs&usp=drive_copy" },
-                { level: "B2+", tags: ["문화"], title: "받은 만큼만 일한다? 미국 '조용한 사직' 신드롬 이유는", link: "https://drive.google.com/open?id=1QDXn4MxIeV56akrYaKZW7dwc0SKvgRuLTGIfa1OmafY&usp=drive_copy" },
                 { level: "B2+", tags: ["문화"], title: "새해목표, 작심삼일로 실패하는 이유와 해결책은!?", link: "https://drive.google.com/open?id=1DfurGU7rYFunLQppdKOzs5oR1vlKuzOvx6yeynYMmz0&usp=drive_copy" },
                 { level: "B2+", tags: ["문화"], title: "스타벅스는 왜 한국에서 인기가 많을까? - 한국에만 있는 스타벅스 문화", link: "https://drive.google.com/open?id=1rYGYmtMvQyFrrWVl3_IH0wXnupLNNMLRy0QKqz8XOew&usp=drive_copy" },
                 { level: "B2+", tags: ["문화"], title: "왜 가을을 독서의 계절이라고 하는 걸까", link: "https://drive.google.com/open?id=1ZK9pwB5cuKJPEIy6i3Jy9P5wPOdVBPWTABGAoiy_-_c&usp=drive_copy" },
@@ -549,7 +535,6 @@
                 { level: "B2+", tags: ["여행"], title: "사람들은 왜 여행을 할까요_여행이 필요한 이유.mp4", link: "https://drive.google.com/open?id=1h81B7nJGPlrWLTmR0iAjP0_f2rNWlIr8" },
                 { level: "B2+", tags: ["여행"], title: "사람들은 왜 여행을 할까요?", link: "https://drive.google.com/open?id=1y9zmowFfd_Ojn7wfNxEoevV9vxzdzUUqzOS4DqCfKsk&usp=drive_copy" },
                 { level: "B2+", tags: ["예술"], title: "'건축은 과학적? 예술적?", link: "https://drive.google.com/open?id=10buUeO6ZN1IRKVLWT9yJl0SjgznhIWc_DxpPj5yB6Kw&usp=drive_copy" },
-                { level: "C1", tags: ["경제"], title: "가격 인상 대신 용량 줄이기…기업들 '슈링크플레이션' 확산", link: "https://drive.google.com/open?id=14rc5UPVRZosqXdoYfyi6e-44T4VqBqYBhsaW3kpaDhU&usp=drive_copy" },
                 { level: "C1", tags: ["경제"], title: "구독경제는 무엇일까요? - 소유보다는 경험, 구독하며 산다", link: "https://drive.google.com/open?id=1NpvaxGjWKrG8TYf4tKJk02hcASPjvQqmIkTXCUE1kGo&usp=drive_copy" },
                 { level: "C1", tags: ["경제"], title: "성장주와 가치주, 어디에 투자하시겠습니까? - 테슬라 주식 vs. 제너널모터스(GM) 주식", link: "https://drive.google.com/open?id=1xAWCcNe9z9PTPdjoroY2C7Azea4krVqFLGHIeOUd4Is&usp=drive_copy" },
                 { level: "C1", tags: ["경제"], title: "투자의 정석은 ‘분산투자’, 정말 그럴까? - 포트폴리오 이론 vs. 워렌 버핏", link: "https://drive.google.com/open?id=12XNtDdqlkEML1Xa7xudpfnu3L-AkNpbqpK7IYp7aKsY&usp=drive_copy" },
@@ -559,7 +544,6 @@
                 { level: "C1", tags: ["과학", "기술"], title: "가까운 미래에 AI가 인간 의사를 대체할까? - 여러분은 AI에게 정신과 치료를 받으실 수 있나요?!", link: "https://drive.google.com/open?id=10UaIJJmUUKSWclI_3K9lzOEGiRKMGF7GuoaAyEfKfkI&usp=drive_copy" },
                 { level: "C1", tags: ["과학", "기술"], title: "AI, 인간의 친구가 될 수 있을까? - 존재감 굳혀가는 ‘가상 인간", link: "https://drive.google.com/open?id=1kx76ELz8QVnTvJO3u8wCLEi2a6trRff4aMFsQeLv7sA&usp=drive_copy" },
                 { level: "C1", tags: ["과학", "사회"], title: "과연 실험실에서 만든 고기, \"배양육\"이 동물을 통해 얻는 고기를 대체할 수 있을까요?", link: "https://drive.google.com/open?id=1rCHaBlVqa40SmAb40Ijnmko8nk75KxlaHSvdF9tzJK4&usp=drive_copy" },
-                { level: "C1", tags: ["문법"], title: "ㄹ지+알다/모르다 & 줄+알다/모르다", link: "https://drive.google.com/open?id=1LSPlhtp-rGMlU73K6e838mcfSLiGHU2PJl6aTj7laxE&usp=drive_copy" },
                 { level: "C1", tags: ["문학"], title: "쉽게 씌어진 시 - 윤동주 (1942년 6월 3일)", link: "https://drive.google.com/open?id=1tzd4iyjKlp02cacbgVwiMdGTVnc4JfvmxcvB8uy12MY&usp=drive_copy" },
                 { level: "C1", tags: ["문화"], title: "<여행의 이유> - 상처를 몽땅 흡수한 물건들로부터 달아나기", link: "https://drive.google.com/open?id=1mTkzJRzA1W0QiAKjXS8lOj8KpeWSjaADcVWbcrkEK2o&usp=drive_copy" },
                 { level: "C1", tags: ["문화"], title: "인터뷰도 스포츠의 일부일까? 인터뷰를 '안 해도 될 권리' 묻는 스포츠 선수들", link: "https://drive.google.com/open?id=1AW1Q53bHIvJwxyax7MjxraPiVLd3VtrcMWa0uETwvg8&usp=drive_copy" },
@@ -721,17 +705,32 @@
 
             const filteredMaterials = useMemo(() => {
                 let result = materials;
+
+                // 1. Filter by Level
                 if (currentLevel !== 'home') {
                     result = result.filter(item => item.level === currentLevel);
                 }
+
+                // 2. Filter by Tag
                 if (selectedTag !== "전체") {
                     result = result.filter(item => item.tags && item.tags.includes(selectedTag));
                 }
+
+                // 3. Search Filter
+                if (searchQuery) {
+                    const q = searchQuery.toLowerCase();
+                    result = result.filter(item => 
+                        item.title.toLowerCase().includes(q) || 
+                        (item.tags && item.tags.some(t => t.toLowerCase().includes(q)))
+                    );
+                }
+
                 return result;
-            }, [selectedTag, materials, currentLevel]);
+            }, [selectedTag, materials, currentLevel, searchQuery]);
 
             useEffect(() => {
                 setSelectedTag("전체");
+                setSearchQuery(""); // Reset search on level change
             }, [currentLevel]);
 
             const pageTitle = currentLevel === 'home' ? '전체 학습 자료' : (levelTitles[currentLevel] || `Level ${currentLevel} 학습 자료`);
@@ -741,10 +740,32 @@
                 <div className="space-y-12 animate-fade-in max-w-fit mx-auto pt-8">
                     <div className="space-y-4 text-center md:text-left">
                         <div className="flex items-center gap-2 justify-center md:justify-start">
-                            <span className={`px-2.5 py-1.5 bg-${themeColor}-100 text-${themeColor}-700 text-[1.05rem] font-extrabold rounded-md tracking-wider font-juache`}>ARCHIVE</span>
+                            <span className="px-3 py-1 bg-white border border-slate-200 text-slate-500 text-[1.05rem] rounded-lg tracking-wider shadow-sm font-juache">ARCHIVE</span>
                         </div>
                         <h1 className="text-[3.15rem] leading-tight font-black text-slate-900 tracking-tight font-cafe24-surround">{pageTitle}</h1>
                         <p className="text-slate-500 text-[1.575rem] font-cafe24-surround">{pageSubtitle}</p>
+                    </div>
+
+                    {/* Search Bar - Instant Search above Filters */}
+                    <div className="relative w-full md:w-[30rem]">
+                        <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
+                            <SearchIcon className="w-5 h-5" />
+                        </div>
+                        <input 
+                            type="text" 
+                            placeholder="제목 또는 태그로 검색..." 
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            className={`w-full pl-12 pr-12 py-3.5 rounded-2xl border border-slate-200 bg-white text-slate-800 text-[1.1rem] placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-${themeColor}-500 focus:border-transparent transition-all shadow-sm font-basic`}
+                        />
+                        {searchQuery && (
+                            <button 
+                                onClick={() => setSearchQuery("")}
+                                className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 rounded-full hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors"
+                            >
+                                <XIcon className="w-5 h-5" />
+                            </button>
+                        )}
                     </div>
 
                     {/* Filter Buttons */}
@@ -753,10 +774,10 @@
                             <button
                                 key={tag}
                                 onClick={() => setSelectedTag(tag)}
-                                className={`px-6 py-3 rounded-2xl text-[1.4rem] font-bold transition-all duration-200 font-cafe24-surround
+                                className={`px-6 py-3 rounded-2xl text-[1.4rem] font-bold transition-all duration-200
                                     ${selectedTag === tag 
-                                        ? `bg-slate-900 text-white shadow-md transform scale-105` 
-                                        : 'bg-white text-slate-500 border border-slate-200 hover:bg-slate-50 hover:text-slate-800'}`}
+                                        ? `bg-slate-900 text-white shadow-md transform scale-105 font-cafe24-surround` 
+                                        : 'bg-white text-slate-500 border border-slate-200 hover:bg-slate-50 hover:text-slate-800 font-cafe24'}`}
                             >
                                 {tag}
                             </button>
@@ -764,39 +785,65 @@
                     </div>
 
                     <div className="grid grid-cols-1 gap-6">
-                        {filteredMaterials.map((item, index) => (
-                            <a 
-                                key={index}
-                                href={item.link}
-                                className="group block bg-white rounded-3xl border border-gray-100 p-7 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
-                            >
-                                <div className="flex flex-col md:flex-row md:items-center gap-6">
-                                    <div className="flex flex-wrap items-center gap-3">
-                                        <LevelBadge levelCode={item.level} />
-                                        {item.tags && item.tags.map(tag => (
-                                            <CategoryBadge 
-                                                key={tag} 
-                                                tag={tag} 
-                                                onClick={(e) => {
-                                                    e.preventDefault();
-                                                    setSelectedTag(tag);
-                                                }}
-                                                isSelected={selectedTag === tag}
-                                            />
-                                        ))}
+                        {filteredMaterials.map((item, index) => {
+                            let hoverColorClass = '';
+                            if (['C1', 'C1+', 'C2'].includes(item.level)) {
+                                hoverColorClass = 'group-hover:text-violet-600';
+                            } else if (['B2', 'B2+'].includes(item.level)) {
+                                hoverColorClass = 'group-hover:text-blue-600';
+                            } else {
+                                const itemTheme = getLevelTheme(item.level);
+                                if (itemTheme === 'slate') {
+                                    hoverColorClass = 'group-hover:text-black';
+                                } else {
+                                    hoverColorClass = `group-hover:text-${itemTheme}-600`;
+                                }
+                            }
+
+                            return (
+                                <a 
+                                    key={index}
+                                    href={item.link}
+                                    className="group block bg-white rounded-3xl border border-gray-100 p-7 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
+                                >
+                                    <div className="flex flex-col md:flex-row md:items-center gap-6">
+                                        <div className="flex flex-wrap items-center gap-3">
+                                            <LevelBadge levelCode={item.level} />
+                                            {item.tags && item.tags.map(tag => (
+                                                <CategoryBadge 
+                                                    key={tag} 
+                                                    tag={tag} 
+                                                    onClick={(e) => {
+                                                        e.preventDefault();
+                                                        setSelectedTag(tag);
+                                                    }}
+                                                    isSelected={selectedTag === tag}
+                                                />
+                                            ))}
+                                        </div>
+                                        <h3 className={`text-[1.75rem] font-bold text-slate-800 transition-colors font-ocarina leading-tight flex-1 group-hover:font-black ${hoverColorClass}`}>
+                                            {item.title}
+                                        </h3>
+                                        <div className={`ml-auto opacity-0 group-hover:opacity-100 transition-opacity hidden md:block ${hoverColorClass}`}>
+                                            <span className="text-[2rem]">→</span>
+                                        </div>
                                     </div>
-                                    <h3 className="text-[1.75rem] font-bold text-slate-800 group-hover:text-blue-600 transition-colors font-cafe24-surround leading-tight flex-1">
-                                        {item.title}
-                                    </h3>
-                                    <div className="ml-auto opacity-0 group-hover:opacity-100 transition-opacity text-blue-500 hidden md:block">
-                                        <span className="text-[2rem]">→</span>
-                                    </div>
-                                </div>
-                            </a>
-                        ))}
+                                </a>
+                            );
+                        })}
                         {filteredMaterials.length === 0 && (
-                            <div className="text-center py-12 text-slate-400 text-[1.4rem] font-cafe24-anemone bg-white rounded-3xl border border-dashed border-gray-200">
-                                해당 레벨/카테고리에 자료가 없습니다.
+                            <div className="text-center py-16 flex flex-col items-center justify-center gap-4 bg-white rounded-3xl border border-dashed border-gray-200">
+                                <span className="text-slate-400 text-[1.4rem] font-cafe24-anemone">
+                                    {searchQuery ? `"${searchQuery}"에 대한 검색 결과가 없습니다.` : "해당 레벨/카테고리에 자료가 없습니다."}
+                                </span>
+                                {searchQuery && (
+                                    <button 
+                                        onClick={() => setSearchQuery("")}
+                                        className={`px-5 py-2.5 bg-${themeColor}-50 text-${themeColor}-600 rounded-xl font-bold font-cafe24 hover:bg-${themeColor}-100 transition-colors`}
+                                    >
+                                        검색어 초기화
+                                    </button>
+                                )}
                             </div>
                         )}
                     </div>
@@ -811,7 +858,8 @@
         const App = () => {
             const [activeTab, setActiveTab] = useState('home');
             const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-            const [userLevel, setUserLevel] = useState("ALL"); 
+            
+            const userLevel = activeTab === 'home' ? 'ALL' : activeTab;
             
             const themeColor = useMemo(() => getLevelTheme(userLevel), [userLevel]);
 
