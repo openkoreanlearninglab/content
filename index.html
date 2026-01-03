@@ -239,7 +239,7 @@
                         {!isCollapsed && (
                             <div className="animate-fade-in overflow-hidden whitespace-nowrap flex flex-col justify-center">
                                 <span className={`font-extrabold leading-tight font-cafe24-deco ${textTitle} text-black`}>Open</span>
-                                <span className={`font-bold leading-tight font-school-mustache ${textSubtitle} text-${themeColor}-600`}>KoreanLearningLab</span>
+                                <span className={`leading-tight font-school-mustache ${textSubtitle} ${userLevel === 'ALL' ? 'text-black font-black' : `text-${themeColor}-600 font-bold`}`}>KoreanLearningLab</span>
                             </div>
                         )}
                         <button 
@@ -500,7 +500,7 @@
                 { level: "B2+", tags: ["사회"], title: "왜 한국에서 젊은 사람들이 결혼을 하지 않으려고 할까요? - 결혼을 반드시 해야할까요?", link: "https://drive.google.com/open?id=1xV1erhTG_XYXN823MOW0nBxjWV93Cpqfm8x9cQEE3Ck&usp=drive_copy" },
                 { level: "B2+", tags: ["사회"], title: "혹시 전화 통화가 두려워요? 직접 음식 주문이 어려워요? - “콜 포비아\" & “토크 포비아\"", link: "https://drive.google.com/open?id=16amZ3rzuQPPEjCzkgfXz3vkYd6g_jSuWEWirHfm9YX0&usp=drive_copy" },
                 { level: "B2+", tags: ["사회"], title: "NEW 핫플의 공식 한국의 브루클린 ‘성수동’ - 한국의 브루클린 ‘성수동’", link: "https://drive.google.com/open?id=1uRy0Peo9L-Wc7Fcqh8ALcZ1hGihgYmWmIFJmINmbN5w&usp=drive_copy" },
-                { level: "B2+", tags: ["사회", "기술"], title: "카카오 멈추자 일상이 멈췄다 - 거대 플랫폼 의존 사회 돌아봐야", link: "https://drive.google.com/open?id=1aa9AE3cFtRdlvd1339RRTPNCRflp8ngBu-6eQzRwFlU&usp=drive_copy" },
+                { level: "B2+", tags: ["사회"], title: "카카오 멈추자 일상이 멈췄다 - 거대 플랫폼 의존 사회 돌아봐야", link: "https://drive.google.com/open?id=1aa9AE3cFtRdlvd1339RRTPNCRflp8ngBu-6eQzRwFlU&usp=drive_copy" },
                 { level: "B2+", tags: ["심리"], title: "취미는 꼭 있어야만 할까요", link: "https://drive.google.com/open?id=1W0ASaowFN7bItG0QXxp-tGMiq847fBDO" },
                 { level: "B2+", tags: ["심리"], title: "취미는 꼭 있어야만 할까요?", link: "https://drive.google.com/open?id=1YRPh0xmrUsNcyq33aPlOE3v-SeTkTtgRad1EzRsCi4s&usp=drive_copy" },
                 { level: "B2+", tags: ["언어"], title: "글을 빠르게 읽는 것과 글의 내용을 깊이 있게 이해하는 것 사이에 어떤 관계가 있을까요?", link: "https://drive.google.com/open?id=1w9KMPTr0G_NAdQvTvb_xHwV3Qh0E8LSQ0c0dhp9lr_Y&usp=drive_copy" },
@@ -715,7 +715,8 @@
                     <div className="space-y-4 text-center md:text-left">
                         {/* Modified Header Badge: Juache, Rounded-lg, Shadow-sm, White Card Style */}
                         <div className="flex items-center gap-2 justify-center md:justify-start">
-                            <span className="px-3 py-1 bg-white border border-slate-200 text-slate-500 text-[1.05rem] rounded-lg tracking-wider shadow-sm font-juache">
+                            {/* Updated text color to slate-950 for all levels */}
+                            <span className={`px-3 py-1 bg-white border border-slate-200 text-[1.05rem] rounded-lg tracking-wider shadow-sm font-juache text-slate-950 ${currentLevel === 'home' || currentLevel === 'ALL' ? 'font-black' : ''}`}>
                                 {getPageBadgeText(currentLevel)}
                             </span>
                         </div>
