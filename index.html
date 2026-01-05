@@ -379,6 +379,9 @@
         const HomeView = ({ setActiveTab, themeColor, currentLevel }) => {
             const [selectedTag, setSelectedTag] = useState("전체");
             const [searchQuery, setSearchQuery] = useState("");
+            
+            // State for '최신' tooltip
+            const [latestTooltip, setLatestTooltip] = useState({ show: false, x: 0, y: 0 });
 
             const levelTitles = {
                 "B2": "중급 수준 학습 자료",
@@ -455,7 +458,7 @@
                 { level: "B2", tags: ["사회"], title: "한국인이 귀화 시험 보면 벌어지는 일", link: "https://drive.google.com/open?id=18SlstqqnqjlHm41OVcpantXV8EC88fDbSoze_XjMLnw&usp=drive_copy" },
                 { level: "B2", tags: ["사회"], title: "MBTI 결과 믿을 수 있을까요? 16Personalities 모두 가짜?", link: "https://drive.google.com/open?id=1aGPOp72XIQsqmFq3HbSYkVJ9gdePNKm2LEF9EyAGfvE&usp=drive_copy" },
                 { level: "B2", tags: ["사회"], title: "카카오 톡이 멈추자 일상이 멈췄다", link: "https://drive.google.com/open?id=1HXpsJHJquR6fY03Rns52trsEJ7PWYCXHx5i8JLaoVN8&usp=drive_copy" },
-                { level: "B2", tags: ["사회", "심리"], title: "정체성의 심리학, 영화 <뷰티 인사이드> 나를 나로 결정하는 것은 무엇일까요?", link: "https://drive.google.com/open?id=11vD6bod3HpCuQz7MCzJj3GMJZdfUTX8_eYTXKJ51gkc&usp=drive_copy" },
+                { level: "B2", tags: ["사회"], title: "심리", title: "정체성의 심리학, 영화 <뷰티 인사이드> 나를 나로 결정하는 것은 무엇일까요?", link: "https://drive.google.com/open?id=11vD6bod3HpCuQz7MCzJj3GMJZdfUTX8_eYTXKJ51gkc&usp=drive_copy" },
                 { level: "B2", tags: ["사회", "심리"], title: "MBTI 16가지 유형 한눈에 보기 (SP, SJ, NT, NF)", link: "https://drive.google.com/open?id=1eYYONg9Rw_r40ZU9ZJXAqnNpzsXRVxlNVv6-svgmVH4&usp=drive_copy" },
                 { level: "B2", tags: ["사회", "환경"], title: "업사이클링 - 패션도 관심 있고 환경에도 관심 있으면 이건 어때?", link: "https://drive.google.com/open?id=1_Uw6b3rXzGmv4kgA6y9HQmECMaXMHpgDP3xCstg9oxI&usp=drive_copy" },
                 { level: "B2", tags: ["사회", "환경"], title: "패스트패션의 두 얼굴 (Two Faces of Fast Fashion) - 환경 파괴하는 패스트 패션", link: "https://drive.google.com/open?id=19Ow8pXD4Z6aNFEEHQh1ubjz2fECZp9WSDnvZ0Sjqp9Q&usp=drive_copy" },
@@ -500,7 +503,7 @@
                 { level: "B2+", tags: ["사회"], title: "왜 한국에서 젊은 사람들이 결혼을 하지 않으려고 할까요? - 결혼을 반드시 해야할까요?", link: "https://drive.google.com/open?id=1xV1erhTG_XYXN823MOW0nBxjWV93Cpqfm8x9cQEE3Ck&usp=drive_copy" },
                 { level: "B2+", tags: ["사회"], title: "혹시 전화 통화가 두려워요? 직접 음식 주문이 어려워요? - “콜 포비아\" & “토크 포비아\"", link: "https://drive.google.com/open?id=16amZ3rzuQPPEjCzkgfXz3vkYd6g_jSuWEWirHfm9YX0&usp=drive_copy" },
                 { level: "B2+", tags: ["사회"], title: "NEW 핫플의 공식 한국의 브루클린 ‘성수동’ - 한국의 브루클린 ‘성수동’", link: "https://drive.google.com/open?id=1uRy0Peo9L-Wc7Fcqh8ALcZ1hGihgYmWmIFJmINmbN5w&usp=drive_copy" },
-                { level: "B2+", tags: ["사회"], title: "카카오 멈추자 일상이 멈췄다 - 거대 플랫폼 의존 사회 돌아봐야", link: "https://drive.google.com/open?id=1aa9AE3cFtRdlvd1339RRTPNCRflp8ngBu-6eQzRwFlU&usp=drive_copy" },
+                { level: "B2+", tags: ["사회", "기술"], title: "카카오 멈추자 일상이 멈췄다 - 거대 플랫폼 의존 사회 돌아봐야", link: "https://drive.google.com/open?id=1aa9AE3cFtRdlvd1339RRTPNCRflp8ngBu-6eQzRwFlU&usp=drive_copy" },
                 { level: "B2+", tags: ["심리"], title: "취미는 꼭 있어야만 할까요", link: "https://drive.google.com/open?id=1W0ASaowFN7bItG0QXxp-tGMiq847fBDO" },
                 { level: "B2+", tags: ["심리"], title: "취미는 꼭 있어야만 할까요?", link: "https://drive.google.com/open?id=1YRPh0xmrUsNcyq33aPlOE3v-SeTkTtgRad1EzRsCi4s&usp=drive_copy" },
                 { level: "B2+", tags: ["언어"], title: "글을 빠르게 읽는 것과 글의 내용을 깊이 있게 이해하는 것 사이에 어떤 관계가 있을까요?", link: "https://drive.google.com/open?id=1w9KMPTr0G_NAdQvTvb_xHwV3Qh0E8LSQ0c0dhp9lr_Y&usp=drive_copy" },
@@ -581,6 +584,7 @@
                 { level: "C1+", tags: ["언어"], title: "번역 논란: 맨부커 수상은 한글 원본 『채식주의자』의 승리가 아니라 영어판 『Vegetarian』의 승리?", link: "https://drive.google.com/open?id=1bBC65m9clgrLBa278xNVUyZh9-MsaQAp8I9cge7Zj-4&usp=drive_copy" },
                 { level: "C1+", tags: ["언어", "사회"], title: "읽는 것은 멋지다: 텍스트힙(Text Hip)", link: "https://drive.google.com/open?id=17GpPRWzH6bDuSR7YHaFNVhISocDh7R1V4j6AjYfealM&usp=drive_copy" },
                 { level: "C1+", tags: ["예술"], title: "AI가 쓴 소설도 예술 작품이 될 수 있을까?", link: "https://drive.google.com/open?id=17Vwk40UYzDYU-KXqL-bUVNpUY0fzbKa8ndqREbWEoqw&usp=drive_copy" },
+                { level: "C1+", tags: ["예술"], title: "AI가 쓴 소설도 예술 작품이 될 수 있을까?의 사본", link: "https://drive.google.com/open?id=1qVqh4boOn621kY1Es3yQtSwgVPOI3nr7SfIFA9mb8bY&usp=drive_copy" },
                 { level: "C1+", tags: ["인문", "철학"], title: "‘아는 척’ 교양 : 3분 인문학의 시대", link: "https://drive.google.com/open?id=1AfIxGHZjGZ3_rB0-mcVC6RyrMyQDLM0pQERmWMkVJfY&usp=drive_copy" },
                 { level: "C1+", tags: ["철학"], title: "정체성과 변화: 테세우스의 배 문제", link: "https://drive.google.com/open?id=19w89vxB9FYJLe9EFIW3iJJFM1aJdZZ0GUZNQgCpA5UE&usp=drive_copy" },
                 { level: "C1+", tags: ["철학", "윤리"], title: "크리스마스 철학 101： 산타는 누가 착한 아이인지 어떻게 알까？.pdf", link: "https://drive.google.com/open?id=1hG3KOuknKmMOkwUuy86BnL0AiCZi6MR3" },
@@ -669,7 +673,7 @@
             ];
 
             const allTags = useMemo(() => {
-                const tags = new Set(["전체"]);
+                const tags = new Set(["전체", "최신"]);
                 materials.forEach(item => {
                     if (currentLevel !== 'home' && item.level !== currentLevel) return;
                     if (item.tags) item.tags.forEach(t => tags.add(t));
@@ -679,12 +683,19 @@
 
             const filteredMaterials = useMemo(() => {
                 let result = materials;
+                
+                // 1. Level Filter
                 if (currentLevel !== 'home') {
                     result = result.filter(item => item.level === currentLevel);
                 }
-                if (selectedTag !== "전체") {
+
+                // 2. Tag Filter
+                if (selectedTag === "최신") {
+                    result = result.slice(0, 5); // Take top 5 of current view
+                } else if (selectedTag !== "전체") {
                     result = result.filter(item => item.tags && item.tags.includes(selectedTag));
                 }
+
                 if (searchQuery) {
                     const q = searchQuery.toLowerCase();
                     result = result.filter(item => 
@@ -748,6 +759,22 @@
                             <button
                                 key={tag}
                                 onClick={() => setSelectedTag(tag)}
+                                onMouseEnter={(e) => {
+                                    if (tag === '최신') {
+                                        const rect = e.target.getBoundingClientRect();
+                                        // Position tooltip below the button
+                                        setLatestTooltip({ 
+                                            show: true, 
+                                            x: rect.left + rect.width / 2, 
+                                            y: rect.bottom + 10 
+                                        });
+                                    }
+                                }}
+                                onMouseLeave={() => {
+                                    if (tag === '최신') {
+                                        setLatestTooltip(prev => ({ ...prev, show: false }));
+                                    }
+                                }}
                                 className={`px-6 py-3 rounded-2xl text-[1.4rem] font-bold transition-all duration-200
                                     ${selectedTag === tag 
                                         ? `bg-slate-900 text-white shadow-md transform scale-105 font-cafe24-surround` 
@@ -757,6 +784,20 @@
                             </button>
                         ))}
                     </div>
+
+                    {/* Tooltip Portal for '최신' button */}
+                    {latestTooltip.show && createPortal(
+                        <div 
+                            className="fixed z-[100] pointer-events-none animate-fade-in"
+                            style={{ left: latestTooltip.x, top: latestTooltip.y }}
+                        >
+                            <div className="relative bg-slate-900/95 backdrop-blur text-white text-[0.9rem] rounded-xl px-4 py-2.5 shadow-xl transform -translate-x-1/2 border border-slate-700/50 font-medium whitespace-nowrap">
+                                최근에 업데이트된 학습자료 5개
+                                <div className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-slate-900/95 border-t border-l border-slate-700/50 rotate-45"></div>
+                            </div>
+                        </div>,
+                        document.body
+                    )}
 
                     <div className="grid grid-cols-1 gap-6">
                         {filteredMaterials.map((item, index) => {
