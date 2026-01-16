@@ -1,0 +1,2389 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenKorean - 우리는 왜 “같아요”라고 할까?</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- 폰트 링크 -->
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=Jua&family=Noto+Sans+KR:wght@400;500;700;900&family=Sunflower:wght@300;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* Root Font Size with clamp() for fluid scaling */
+        html {
+            font-size: clamp(12px, 1vw, 16px);
+        }
+
+        /* 기본 글꼴 설정: NanumSquareRound */
+        @font-face {
+            font-family: 'NanumSquareRound';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_two@1.0/NanumSquareRound.woff') format('woff');
+            font-weight: normal;
+            font-display: swap;
+        }
+
+        /* 타이틀 글꼴: Cafe24Surround */
+        @font-face {
+            font-family: 'Cafe24Surround';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2105_2@1.0/Cafe24Ssurround.woff') format('woff');
+            font-weight: normal;
+            font-display: swap;
+        }
+
+        /* 로고(Open): Cafe24Decoshadow */
+        @font-face {
+            font-family: 'Cafe24Decoshadow';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2405-3@1.1/Cafe24Decoshadow.woff2') format('woff2');
+            font-weight: normal;
+            font-display: swap;
+        }
+
+        /* 로고(KoreanLearningLab): SchoolSafetyMustache */
+        @font-face {
+            font-family: 'SchoolSafetyMustache';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2402_keris@1.0/TTHakgyoansimKossuyeomR.woff2') format('woff2');
+            font-weight: normal;
+            font-display: swap;
+        }
+
+        /* 사이드바 기본, 번역 버튼: Cafe24SurroundAir */
+        @font-face {
+            font-family: 'Cafe24SsurroundAir';
+            src: url('https://gcore.jsdelivr.net/gh/projectnoonnu/noonfonts_2105_2@1.0/Cafe24SsurroundAir.woff') format('woff');
+            font-weight: normal;
+            font-display: swap;
+        }
+
+        /* 프로필 텍스트: Cafe24Anemone */
+        @font-face {
+            font-family: 'Cafe24Anemone';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/Cafe24Ohsquare.woff') format('woff');
+            font-weight: normal;
+            font-display: swap;
+        }
+
+        /* 레벨 박스 텍스트: SchoolSafetyRoundedSmile */
+        @font-face {
+            font-family: 'SchoolSafetyRoundedSmile';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-5@1.0/HakgyoansimDunggeunmisoTTF-R.woff2') format('woff2');
+            font-weight: normal;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'SchoolSafetyRoundedSmile';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-5@1.0/HakgyoansimDunggeunmisoTTF-B.woff2') format('woff2');
+            font-weight: 700;
+            font-display: swap;
+        }
+
+        /* 시리즈 제목 (이전): Juache */
+        @font-face {
+            font-family: 'Juache';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_one@1.0/BMJUA.woff') format('woff');
+            font-weight: normal;
+            font-display: swap;
+        }
+
+        /* 카테고리 태그 (NEW): SchoolSafeVaultingBox */
+        @font-face {
+            font-family: 'SchoolSafeVaultingBox';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2402_keris@1.0/TTHakgyoansimTtwimteulR.woff2') format('woff2');
+            font-weight: normal;
+            font-display: swap;
+        }
+
+        /* 카드 내부 숫자, 카테고리 태그, 시리즈 제목, 예문(한국어): SchoolSafeBoardMarker */
+        @font-face {
+            font-family: 'SchoolSafeBoardMarker';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2511-1@1.0/HakgyoansimBoadmarkerR.woff2') format('woff2');
+            font-weight: normal;
+            font-display: swap;
+        }
+
+        /* SchoolSafetyOcarina (단어) */
+        @font-face {
+            font-family: 'SchoolSafetyOcarina';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2511-1@1.0/HakgyoansimOcarinaR.woff2') format('woff2');
+            font-weight: normal;
+            font-display: swap;
+        }
+        
+        /* SchoolSafetyPictureDiary (주요 뜻) */
+        @font-face {
+            font-family: 'SchoolSafetyPictureDiary';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-5@1.0/HakgyoansimGeurimilgiTTF-R.woff2') format('woff2');
+            font-weight: normal;
+            font-display: swap;
+        }
+
+        /* Cafe24Gowoonbam (번역) */
+        @font-face {
+            font-family: 'Cafe24Gowoonbam';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_twelve@1.1/Cafe24Oneprettynight.woff') format('woff');
+            font-weight: normal;
+            font-display: swap;
+        }
+
+        /* SchoolSafetyFreeTime (관련어, 서브텀) */
+        @font-face {
+            font-family: 'SchoolSafetyFreeTime';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2508-2@1.0/HakgyoansimJayusiganR.woff2') format('woff2');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        /* SchoolSafeDictation (관련어 뜻, 서브데프) */
+        @font-face {
+            font-family: 'SchoolSafeDictation';
+            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-5@1.0/HakgyoansimBadasseugiTTF-L.woff2') format('woff2');
+            font-weight: normal;
+            font-display: swap;
+        }
+
+        /* 유틸리티 클래스 */
+        body { font-family: 'NanumSquareRound', sans-serif; background-color: #f9fafb; }
+        .font-basic { font-family: 'NanumSquareRound', sans-serif; }
+        .font-surround { font-family: 'Cafe24Surround', sans-serif; }
+        .font-decoshadow { font-family: 'Cafe24Decoshadow', cursive; }
+        .font-mustache { font-family: 'SchoolSafetyMustache', cursive; } 
+        .font-surround-air { font-family: 'Cafe24SsurroundAir', sans-serif; }
+        .font-anemone { font-family: 'Cafe24Anemone', sans-serif; }
+        .font-school-safe { font-family: 'SchoolSafetyRoundedSmile', sans-serif; }
+        .font-juache { font-family: 'Juache', sans-serif; }
+        .font-vaulting { font-family: 'SchoolSafeVaultingBox', cursive; }
+        .font-nanum { font-family: 'NanumSquareRound', sans-serif; }
+        .font-cafe24 { font-family: 'Cafe24SsurroundAir', sans-serif; }
+        
+        /* New Font Utilities */
+        .font-marker { font-family: 'SchoolSafeBoardMarker', sans-serif; }
+        .font-ocarina { font-family: 'SchoolSafetyOcarina', sans-serif; }
+        .font-diary { font-family: 'SchoolSafetyPictureDiary', sans-serif; }
+        .font-gowoon { font-family: 'Cafe24Gowoonbam', sans-serif; }
+        .font-free { font-family: 'SchoolSafetyFreeTime', cursive; }
+        .font-dictation { font-family: 'SchoolSafeDictation', sans-serif; }
+
+        /* 스크롤바 커스텀 */
+        ::-webkit-scrollbar { width: 0.375rem; height: 0.375rem; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 0.1875rem; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        /* 애니메이션 */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(0.625rem); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade-in { animation: fadeIn 0.3s ease-out forwards; }
+
+        /* Range Slider Custom Style */
+        input[type=range] {
+            -webkit-appearance: none;
+            background: transparent;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 1rem;
+            width: 1rem;
+            border-radius: 50%;
+            background: var(--thumb-color, #22c55e); 
+            cursor: pointer;
+            margin-top: -0.375rem;
+            border: 0.125rem solid white;
+            box-shadow: 0 0.0625rem 0.1875rem rgba(0,0,0,0.2);
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 0.25rem;
+            cursor: pointer;
+            background: #e2e8f0;
+            border-radius: 0.125rem;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef, useMemo, useCallback } = React;
+        const { createPortal } = ReactDOM;
+
+        // --- Data: Level Definitions & Styles ---
+        const LEVEL_DEFINITIONS = {
+            "A1": { title: "Novice", desc: "Can use and understand very simple everyday expressions. Can introduce themselves, ask and answer basic questions (name, age, where they live, etc.)." },
+            "A1+": { title: "Pre-Beginner", desc: "Still beginner, but can handle slightly more than A1: simple short conversations about familiar topics if the other person speaks slowly and clearly." },
+            "A2": { title: "Beginner", desc: "Can understand frequently used sentences (family, shopping, work, hobbies). Can handle simple routine tasks and short social exchanges." },
+            "A2+": { title: "Upper Beginner", desc: "Between A2 and B1. Can speak a bit more smoothly about daily life, give simple opinions, and manage short conversations with some support." },
+            "B1": { title: "Pre-Intermediate", desc: "Can understand the main points of clear standard speech or texts on familiar topics (school, work, leisure). Can describe experiences, plans, and briefly explain opinions." },
+            "B1+": { title: "Lower Intermediate", desc: "Stronger B1. More comfortable carrying conversations, handling some unexpected situations, and linking ideas more coherently, but still with gaps." },
+            "B2": { title: "Intermediate", desc: "Can understand the main ideas of complex texts, interact quite fluently with natives, and produce clear, detailed speech and writing on many topics." },
+            "B2+": { title: "Upper Intermediate", desc: "Near C1. Can argue a point logically, follow more abstract discussions, and use a wide range of vocabulary with fewer mistakes, though not fully “advanced”." },
+            "C1": { title: "Advanced", desc: "Can understand long, demanding texts and implied meanings; express ideas fluently and spontaneously; use language flexibly in academic, professional, and social settings." },
+            "C1+": { title: "Upper Advanced", desc: "Very strong C1, approaching native-like flexibility. Still occasional non-native patterns, but can operate comfortably in almost all situations." },
+            "C2": { title: "Proficient", desc: "Can understand virtually everything heard or read; express themselves very precisely, subtly, and naturally, even in complex, nuanced situations." }
+        };
+
+        const getLevelTheme = (level) => {
+            const code = level.substring(0, 2);
+            if (code === 'A1') return 'lime';
+            if (code === 'A2') return 'green';
+            if (code === 'B1') return 'sky';
+            if (code === 'B2') return 'blue';
+            if (code === 'C1') return 'violet';
+            if (code === 'C2') return 'violet';
+            return 'lime';
+        };
+
+        const LEVEL_STYLES = {
+            "A1": "bg-lime-50 text-lime-600 border-lime-100", 
+            "A1+": "bg-lime-50 text-lime-600 border-lime-100", 
+            "A2": "bg-green-50 text-green-600 border-green-100",      
+            "A2+": "bg-green-50 text-green-600 border-green-100",      
+            "B1": "bg-sky-50 text-sky-600 border-sky-100",           
+            "B1+": "bg-sky-50 text-sky-600 border-sky-100",           
+            "B2": "bg-blue-50 text-blue-600 border-blue-100", 
+            "B2+": "bg-blue-50 text-blue-600 border-blue-100", 
+            "C1": "bg-violet-50 text-violet-600 border-violet-100", 
+            "C1+": "bg-violet-50 text-violet-600 border-violet-100", 
+            "C2": "bg-violet-50 text-violet-600 border-violet-100",           
+        };
+
+        const LEVEL_THEMES = {
+            "A1": { bg: "bg-lime-50", text: "text-lime-600", hoverText: "group-hover:text-lime-600", border: "border-lime-100", ring: "ring-lime-200", iconBg: "bg-lime-100", activeText: "text-lime-600", activeBg: "bg-lime-100", activeBorder: "border-lime-500", highlightBg: "bg-lime-100", highlightText: "text-lime-700", highlightBorder: "border-lime-500", solidBg: "bg-lime-500", darkText: "text-lime-900", subText: "text-lime-700", hoverBg: "hover:bg-lime-50", hoverBorder: "hover:border-lime-400", hex: "#65a30d", boxBorder: "border-lime-100" },
+            "A1+": { bg: "bg-lime-50", text: "text-lime-600", hoverText: "group-hover:text-lime-600", border: "border-lime-100", ring: "ring-lime-200", iconBg: "bg-lime-100", activeText: "text-lime-600", activeBg: "bg-lime-100", activeBorder: "border-lime-500", highlightBg: "bg-lime-100", highlightText: "text-lime-700", highlightBorder: "border-lime-500", solidBg: "bg-lime-500", darkText: "text-lime-900", subText: "text-lime-700", hoverBg: "hover:bg-lime-50", hoverBorder: "hover:border-lime-400", hex: "#65a30d", boxBorder: "border-lime-100" },
+            "A2": { bg: "bg-green-50", text: "text-green-600", hoverText: "group-hover:text-green-600", border: "border-green-100", ring: "ring-green-200", iconBg: "bg-green-100", activeText: "text-green-600", activeBg: "bg-green-100", activeBorder: "border-green-500", highlightBg: "bg-green-100", highlightText: "text-green-700", highlightBorder: "border-green-500", solidBg: "bg-green-500", darkText: "text-green-900", subText: "text-green-700", hoverBg: "hover:bg-green-50", hoverBorder: "hover:border-green-400", hex: "#16a34a", boxBorder: "border-green-100" },
+            "A2+": { bg: "bg-green-50", text: "text-green-600", hoverText: "group-hover:text-green-600", border: "border-green-100", ring: "ring-green-200", iconBg: "bg-green-100", activeText: "text-green-600", activeBg: "bg-green-100", activeBorder: "border-green-500", highlightBg: "bg-green-100", highlightText: "text-green-700", highlightBorder: "border-green-500", solidBg: "bg-green-500", darkText: "text-green-900", subText: "text-green-700", hoverBg: "hover:bg-green-50", hoverBorder: "hover:border-green-400", hex: "#16a34a", boxBorder: "border-green-100" },
+            "B1": { bg: "bg-sky-50", text: "text-sky-600", hoverText: "group-hover:text-sky-600", border: "border-sky-100", ring: "ring-sky-200", iconBg: "bg-sky-100", activeText: "text-sky-600", activeBg: "bg-sky-100", activeBorder: "border-sky-500", highlightBg: "bg-sky-100", highlightText: "text-sky-700", highlightBorder: "border-sky-500", solidBg: "bg-sky-500", darkText: "text-sky-900", subText: "text-sky-700", hoverBg: "hover:bg-sky-50", hoverBorder: "hover:border-sky-400", hex: "#0ea5e9", boxBorder: "border-sky-100" },
+            "B1+": { bg: "bg-sky-50", text: "text-sky-600", hoverText: "group-hover:text-sky-600", border: "border-sky-100", ring: "ring-sky-200", iconBg: "bg-sky-100", activeText: "text-sky-600", activeBg: "bg-sky-100", activeBorder: "border-sky-500", highlightBg: "bg-sky-100", highlightText: "text-sky-700", highlightBorder: "border-sky-500", solidBg: "bg-sky-500", darkText: "text-sky-900", subText: "text-sky-700", hoverBg: "hover:bg-sky-50", hoverBorder: "hover:border-sky-400", hex: "#0ea5e9", boxBorder: "border-sky-100" },
+            "B2": { bg: "bg-blue-50", text: "text-blue-600", hoverText: "group-hover:text-blue-600", border: "border-blue-100", ring: "ring-blue-200", iconBg: "bg-blue-100", activeText: "text-blue-600", activeBg: "bg-blue-100", activeBorder: "border-blue-600", highlightBg: "bg-blue-200", highlightText: "text-blue-800", highlightBorder: "border-blue-600", solidBg: "bg-blue-600", darkText: "text-blue-950", subText: "text-blue-800", hoverBg: "hover:bg-blue-100", hoverBorder: "hover:border-blue-500", hex: "#2563eb", boxBorder: "border-blue-100" },
+            "B2+": { bg: "bg-blue-50", text: "text-blue-600", hoverText: "group-hover:text-blue-600", border: "border-blue-100", ring: "ring-blue-200", iconBg: "bg-blue-100", activeText: "text-blue-600", activeBg: "bg-blue-100", activeBorder: "border-blue-600", highlightBg: "bg-blue-200", highlightText: "text-blue-800", highlightBorder: "border-blue-600", solidBg: "bg-blue-600", darkText: "text-blue-950", subText: "text-blue-800", hoverBg: "hover:bg-blue-100", hoverBorder: "hover:border-blue-500", hex: "#2563eb", boxBorder: "border-blue-100" },
+            "C1": { bg: "bg-violet-50", text: "text-violet-600", hoverText: "group-hover:text-violet-600", border: "border-violet-100", ring: "ring-violet-200", iconBg: "bg-violet-100", activeText: "text-violet-600", activeBg: "bg-violet-100", activeBorder: "border-violet-500", highlightBg: "bg-violet-100", highlightText: "text-violet-700", highlightBorder: "border-violet-500", solidBg: "bg-violet-500", darkText: "text-violet-900", subText: "text-violet-700", hoverBg: "hover:bg-violet-50", hoverBorder: "hover:border-violet-400", hex: "#7c3aed", boxBorder: "border-violet-100" },
+            "C1+": { bg: "bg-violet-50", text: "text-violet-600", hoverText: "group-hover:text-violet-600", border: "border-violet-100", ring: "ring-violet-200", iconBg: "bg-violet-100", activeText: "text-violet-600", activeBg: "bg-violet-100", activeBorder: "border-violet-500", highlightBg: "bg-violet-100", highlightText: "text-violet-700", highlightBorder: "border-violet-500", solidBg: "bg-violet-500", darkText: "text-violet-900", subText: "text-violet-700", hoverBg: "hover:bg-violet-50", hoverBorder: "hover:border-violet-400", hex: "#7c3aed", boxBorder: "border-violet-100" },
+            "C2": { bg: "bg-violet-50", text: "text-violet-600", hoverText: "group-hover:text-violet-600", border: "border-violet-100", ring: "ring-violet-200", iconBg: "bg-violet-100", activeText: "text-violet-600", activeBg: "bg-violet-100", activeBorder: "border-violet-700", highlightBg: "bg-violet-200", highlightText: "text-violet-900", highlightBorder: "border-violet-700", solidBg: "bg-violet-700", darkText: "text-violet-950", subText: "text-violet-800", hoverBg: "hover:bg-violet-100", hoverBorder: "hover:border-violet-500", hex: "#7c3aed", boxBorder: "border-violet-100" },
+        };
+
+        const LEVEL_OPTIONS = ["A1", "A1+", "A2", "A2+", "B1", "B1+", "B2", "B2+", "C1", "C1+", "C2"];
+
+        // --- Icons ---
+        const HomeIcon = ({ className }) => (
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={className}>
+                <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
+                <path d="M8 21h8" />
+                <path d="M12 17v4" />
+            </svg>
+        );
+        
+        const LearnIcon = ({ className, filled }) => (
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={className}>
+                <rect x="2" y="4" width="20" height="16" rx="4" fill={filled ? "currentColor" : "none"} />
+                <polygon points="10 8 16 12 10 16 10 8" stroke={filled ? "#fff" : "currentColor"} fill={filled ? "#fff" : "none"} />
+            </svg>
+        );
+        const VocabIcon = ({ className }) => (
+            <svg viewBox="0 0 24 24" fill="none" className={className}>
+                <path d="M3.5 12.5 12.5 3.5h6a2 2 0 0 1 2 2v6l-9 9a2 2 0 0 1-2.8 0l-5.2-5.2a2 2 0 0 1 0-2.8Z" stroke="currentColor" strokeWidth="1.8"/>
+                <path d="M16.5 7.5h.01" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round"/>
+            </svg>
+        );
+        const QuizIcon = ({ className }) => (
+            <svg viewBox="0 0 24 24" fill="none" className={className}>
+                <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" strokeWidth="1.8"/>
+                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M12 17h.01" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+        );
+        const DiscussIcon = ({ className }) => (
+            <svg viewBox="0 0 24 24" fill="none" className={className}>
+                <path d="M3 6a3 3 0 0 1 3-3h12a3 3 0 0 1 3 3v8a3 3 0 0 1-3 3h-2v3l-4.5-3H6a3 3 0 0 1-3-3V6Z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round"/>
+                <path d="M7 8h10M7 12h7" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+            </svg>
+        );
+        const LineIcon = ({ d, className }) => (<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d={d} /></svg>);
+        const PlayIconLine = (props) => <LineIcon {...props} d="M5 3l14 9-14 9V3z" />;
+        
+        const OpenBookSolidIcon = ({ className }) => (
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={className}>
+                <path d="M2 6 C2 3 8 2 12 6 C16 2 22 3 22 6 V20 C22 17 16 16 12 20 C8 16 2 17 2 20 Z" />
+                <path d="M12 6 V20" />
+                <path d="M4.5 15 L7 9 L9.5 15" strokeWidth="1.5" />
+                <path d="M5.5 13 H8.5" strokeWidth="1.5" />
+                <path d="M15 10 H19" strokeWidth="1.5" />
+                <path d="M15 13 H19" strokeWidth="1.5" />
+                <path d="M15 16 H18" strokeWidth="1.5" />
+            </svg>
+        );
+        
+        const TranslateIcon = ({ className }) => (
+            <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
+                <path d="M12.87 15.07l-2.54-2.51.03-.03A17.52 17.52 0 0014.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.09-.02.67-.02zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z" />
+            </svg>
+        );
+
+        const ExternalLinkIcon = ({ className }) => (
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                <polyline points="15 3 21 3 21 9" />
+                <line x1="10" y1="14" x2="21" y2="3" />
+            </svg>
+        );
+
+        const ChevronLeft = ({ className }) => <LineIcon d="m15 18-6-6 6-6" className={className}/>;
+        const ChevronRight = ({ className }) => <LineIcon d="m9 18 6-6-6-6" className={className}/>;
+        const SpeedSolidIcon = ({ className }) => (<svg viewBox="0 0 24 24" fill="currentColor" className={className}><path d="M20.38 8.57l-1.23 1.85a8 8 0 0 1-.22 7.58H5.07A8 8 0 0 1 15.58 6.85l1.85-1.23A10 10 0 0 0 3.35 19a2 2 0 0 0 1.72 1h13.85a2 2 0 0 0 1.74-1 10 10 0 0 0-.27-10.44z"/><path d="M10.59 15.41a2 2 0 0 0 2.83 0l5.66-8.49-8.49 5.66a2 2 0 0 0 0 2.83z"/></svg>);
+        const SparklesIcon = ({ className }) => (<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className={className}><path d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 00-1.423 1.423z" /></svg>);
+
+        // --- Common Components ---
+        
+        // Standardized Translate Button
+        const TranslateButton = ({ onClick, isShowing, className = "" }) => (
+            <button 
+                onClick={(e) => { e.stopPropagation(); onClick(e); }}
+                className={`flex items-center gap-1 text-[8px] font-normal text-gray-400 hover:text-gray-600 font-cafe24 bg-transparent transition-colors cursor-pointer border-none p-0 ${className}`}
+            >
+                <TranslateIcon className="w-3 h-3" />
+                {isShowing ? '번역 숨기기' : '번역 (English)'}
+            </button>
+        );
+
+        // --- Component: Level Badge ---
+        const LevelBadge = ({ levelCode }) => {
+            const [isHovered, setIsHovered] = useState(false);
+            const info = LEVEL_DEFINITIONS[levelCode] || LEVEL_DEFINITIONS["A2+"];
+            
+            const getLevelStyle = (code) => {
+                if (LEVEL_STYLES[code]) return LEVEL_STYLES[code];
+                const base = code.substring(0, 2);
+                return LEVEL_STYLES[base] || "bg-gray-50 text-gray-600 border-gray-100";
+            };
+            
+            const badgeStyle = getLevelStyle(levelCode);
+
+            return (
+                <div 
+                    className="relative inline-flex items-center cursor-help z-50"
+                    onMouseEnter={() => setIsHovered(true)}
+                    onMouseLeave={() => setIsHovered(false)}
+                >
+                    <span className={`px-2 py-0.5 rounded text-[10px] font-bold border uppercase tracking-wide shadow-sm font-sunflower ${badgeStyle}`}>
+                        Level: {info.title}
+                    </span>
+                    {isHovered && (
+                        <div className="absolute top-full left-0 mt-2 w-64 bg-gray-900/95 backdrop-blur text-white text-xs rounded-xl p-4 shadow-xl z-[100] animate-fade-in text-left">
+                            <p className={`font-bold mb-1.5 text-sm ${badgeStyle.split(' ')[1]}`}>{levelCode} – {info.title}</p>
+                            <p className="opacity-90 leading-relaxed font-medium">{info.desc}</p>
+                            <div className="absolute -top-1 left-4 w-2 h-2 bg-gray-900/95 rotate-45"></div>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        const VOCAB_DATA = [
+                { 
+                    term: '사물', 
+                    mainDef: '세상에 있는 모든 일(사事)이나 물건(물物)', 
+                    translations: { en: { term: 'objects', mainDef: 'all things or objects in the world.' } },
+                    examples: [{ kor: "방 안의 여러 사물들을 살펴봤어요.", eng: "i looked at various objects in the room." }, { kor: "‘같다’는 두 사물이 비슷할 때 써요.", eng: "'alike' is used when two objects are similar." }],
+                    variants: ['사물', '사물이']
+                },
+                { 
+                    term: '동일하다', 
+                    mainDef: '두 개가 서로 완전히 하나(일一)처럼 똑같다(동同)', 
+                    translations: { en: { term: 'to be identical', mainDef: 'for two things to be completely the same as if they are one.' } },
+                    examples: [{ kor: "그와 나는 이름이 동일하다.", eng: "he and i have the same name." }, { kor: "두 그림은 거의 동일해 보여요.", eng: "the two paintings look almost identical." }],
+                    variants: ['동일하거나', '동일하다']
+                },
+                { 
+                    term: '유사함', 
+                    mainDef: '서로 성질이 비슷한(유類) 모양(사似)', 
+                    translations: { en: { term: 'similarity', mainDef: 'having shapes or properties that are similar to each other.' } },
+                    examples: [{ kor: "이 두 노래는 유사함이 많아요.", eng: "these two songs have many similarities." }, { kor: "작은 유사함조차 놓치지 마세요.", eng: "don't miss even a small similarity." }],
+                    variants: ['유사함을', '유사함']
+                },
+                { 
+                    term: '추측', 
+                    mainDef: '어떤 사실을 보고 미루어(추推) 짐작하여 재다(측測)', 
+                    translations: { en: { term: 'guess', mainDef: 'judging or guessing something based on certain facts.' } },
+                    examples: [{ kor: "그것은 단지 나의 추측일 뿐이야.", eng: "that is just my guess." }, { kor: "추측 대신 확신이 필요해요.", eng: "i need certainty instead of a guess." }],
+                    variants: ['추측이나', '추측']
+                },
+                { 
+                    term: '불확실함', 
+                    mainDef: '확실하지(확실) 아니한(불不) 상태', 
+                    translations: { en: { term: 'uncertainty', mainDef: 'a state of not being certain or sure.' } },
+                    examples: [{ kor: "미래의 불확실함 때문에 걱정돼요.", eng: "i'm worried because of the uncertainty of the future." }, { kor: "불확실함을 나타낼 때 ‘같아요’를 써요.", eng: "we use 'seems like' when expressing uncertainty." }],
+                    variants: ['불확실함을', '불확실함']
+                },
+                { 
+                    term: '말끝', 
+                    mainDef: '말이나 문장의 마지막 부분', 
+                    translations: { en: { term: 'end of a sentence', mainDef: 'the very last part of a spoken sentence.' } },
+                    examples: [{ kor: "그는 말끝을 흐리며 대답했어요.", eng: "he answered by trailing off at the end." }, { kor: "말끝에 ‘같아요’를 붙이는 버릇이 있어요.", eng: "i have a habit of adding 'seems like' at the end of sentences." }],
+                    variants: ['말끝에', '말끝']
+                },
+                { 
+                    term: '-조차', 
+                    mainDef: '이미 포함된 것 외에 가장 기본적인 것까지 포함함을 나타내는 말', 
+                    translations: { en: { term: 'even', mainDef: 'a word indicating that even the most basic thing is included.' } },
+                    examples: [{ kor: "이름조차 기억이 안 나요.", eng: "i can't even remember the name." }, { kor: "작은 선택조차 힘들 때가 있어요.", eng: "there are times when even small choices are hard." }],
+                    variants: ['감정조차', '선택조차', '-조차']
+                },
+                { 
+                    term: '진열하다', 
+                    mainDef: '물건을 늘어놓아(열列) 보여주다(진陳)', 
+                    translations: { en: { term: 'to display', mainDef: 'to arrange things in a line to show them.' } },
+                    examples: [{ kor: "가게 주인이 사과를 진열했다.", eng: "the shop owner displayed the apples." }, { kor: "예쁜 옷들을 창가에 진열했어요.", eng: "i displayed pretty clothes by the window." }],
+                    variants: ['진열한', '진열하다']
+                },
+                { 
+                    term: '매대', 
+                    mainDef: '물건을 파는(매賣) 장소에 놓인 판(대臺)', 
+                    translations: { en: { term: 'display stand', mainDef: 'a stand or shelf where goods are sold.' } },
+                    examples: [{ kor: "잼 매대에 사람들이 모였어요.", eng: "people gathered at the jam display stand." }, { kor: "인기 상품을 매대 앞쪽으로 옮겼다.", eng: "i moved the popular items to the front of the display stand." }],
+                    variants: ['매대', '매대에서']
+                },
+                { 
+                    term: '선택 과부하', 
+                    mainDef: '고르는(선택) 것이 너무 많아서 짐무게(부하)가 넘치는(과) 상태', 
+                    subDefs: [{ subTerm: '• 과부하에 걸리다', subDef: '처리할 수 있는 양보다 훨씬 많은 일 때문에 힘들어지다' }],
+                    translations: { 
+                        en: { 
+                            term: 'choice overload', 
+                            mainDef: 'a state of difficulty in choosing due to too many options.',
+                            subDefs: [{ term: 'overload', def: 'to be stressed by too much work or info.' }]
+                        } 
+                    },
+                    examples: [{ kor: "메뉴가 너무 많으면 선택 과부하가 와요.", eng: "if there are too many menus, choice overload occurs." }, { kor: "정보 과부하에 걸리지 않게 조심하세요.", eng: "be careful not to suffer from information overload." }],
+                    variants: ['선택 과부하에', '과부하에 걸리는']
+                },
+                { 
+                    term: '강박', 
+                    mainDef: '어떤 일을 꼭 해야 한다고 강하게(강强) 자기를 누르는(박迫) 마음', 
+                    translations: { en: { term: 'obsession', mainDef: 'a feeling of strongly pressing oneself to do something.' } },
+                    examples: [{ kor: "완벽해야 한다는 강박을 버리세요.", eng: "let go of the obsession to be perfect." }, { kor: "그는 청소에 대한 강박이 있다.", eng: "he has an obsession with cleaning." }],
+                    variants: ['강박', '강박 때문이다']
+                },
+                { 
+                    term: '인지하다', 
+                    mainDef: '어떤 사실을 분명하게 알고(인認) 깨닫다(지知)', 
+                    translations: { en: { term: 'to perceive', mainDef: 'to clearly know and realize a certain fact.' } },
+                    examples: [{ kor: "실수를 인지하는 순간 얼굴이 빨개졌다.", eng: "the moment i perceived my mistake, my face turned red." }, { kor: "위험을 인지하고 대피했다.", eng: "i perceived the danger and evacuated." }],
+                    variants: ['인지하는', '인지하다']
+                },
+                { 
+                    term: '분비', 
+                    mainDef: '몸 안에서 물질을 만들어 밖으로 내보내는 것(분分)', 
+                    translations: { en: { term: 'secretion', mainDef: 'making substances inside the body and sending them out.' } },
+                    examples: [{ kor: "운동을 하면 호르몬 분비가 잘 돼요.", eng: "hormones are secreted well when you exercise." }, { kor: "침의 분비가 늘어났다.", eng: "the secretion of saliva increased." }],
+                    variants: ['분비가', '분비']
+                },
+                { 
+                    term: '불쾌감', 
+                    mainDef: '기분이 상쾌하지(쾌快) 않고 좋지 않은(불不) 느낌(감感)', 
+                    translations: { en: { term: 'unpleasantness', mainDef: 'a feeling that is not pleasant or good.' } },
+                    examples: [{ kor: "그의 말은 사람들에게 불쾌감을 주었다.", eng: "his words gave people a sense of unpleasantness." }, { kor: "불쾌감을 피하려고 노력했어요.", eng: "i tried to avoid the unpleasant feeling." }],
+                    variants: ['불쾌감으로', '불쾌감']
+                },
+                { 
+                    term: '어쩌지', 
+                    mainDef: '어떻게 하면 좋을지 걱정할 때 하는 말', 
+                    translations: { en: { term: 'what should i do', mainDef: 'an expression used when worrying about what to do.' } },
+                    examples: [{ kor: "비가 오는데 우산이 없으면 어쩌지?", eng: "what should i do if it rains and i don't have an umbrella?" }, { kor: "틀리면 어쩌지 걱정하지 마세요.", eng: "don't worry about what to do if you're wrong." }],
+                    variants: ['어쩌지']
+                },
+                { 
+                    term: '확신', 
+                    mainDef: '틀림없다고 확실히(확確) 믿는(신信) 마음', 
+                    translations: { en: { term: 'conviction', mainDef: 'a mind that believes something is certainly true.' } },
+                    examples: [{ kor: "나는 성공할 거라는 확신이 있어.", eng: "i have a conviction that i will succeed." }, { kor: "확신 대신 의심이 들기 시작했다.", eng: "doubt began to arise instead of conviction." }],
+                    variants: ['확신', '확신을', '확신 대신']
+                },
+                { 
+                    term: '여지를 남기다', 
+                    mainDef: '남은(여餘) 땅(지地)이나 공간, 즉 다른 가능성을 남겨 두다', 
+                    translations: { en: { term: 'to leave room', mainDef: 'to leave space or ground, meaning leaving other possibilities open.' } },
+                    examples: [{ kor: "그는 대화에 여지를 남겼다.", eng: "he left some room in the conversation." }, { kor: "확실한 답 대신 여지를 남겼어요.", eng: "i left room instead of a definite answer." }],
+                    variants: ['여지를 남기는', '여지를 남기다']
+                },
+                { 
+                    term: '결정 회피', 
+                    mainDef: '결정을 내리지 않고 마주치지 않게 피함(회피)', 
+                    subDefs: [{ subTerm: '• 회피', subDef: '어떤 일을 마주하지 않고 피하다(회回)' }],
+                    translations: { 
+                        en: { 
+                            term: 'decision avoidance', 
+                            mainDef: 'avoiding the act of making a decision.',
+                            subDefs: [{ term: 'avoidance', def: 'avoiding facing a task.' }]
+                        } 
+                    },
+                    examples: [{ kor: "그의 태도는 결정 회피에 가깝다.", eng: "his attitude is close to decision avoidance." }, { kor: "문제를 회피한다고 해결되지는 않아요.", eng: "avoiding the problem doesn't solve it." }],
+                    variants: ['결정 회피의', '회피']
+                },
+                { 
+                    term: '자기 보호', 
+                    mainDef: '자기(자기自己) 스스로를 지키고(보保) 돕는(호護) 것', 
+                    translations: { en: { term: 'self-protection', mainDef: 'protecting and helping oneself.' } },
+                    examples: [{ kor: "이것은 최소한의 자기 보호를 위한 거예요.", eng: "this is for minimum self-protection." }, { kor: "자기 보호를 위해 거짓말을 했다.", eng: "i lied for self-protection." }],
+                    variants: ['자기 보호의', '자기 보호']
+                },
+                { 
+                    term: '전통적으로', 
+                    mainDef: '옛날부터 전해(전傳) 내려오는 계통(통統)대로', 
+                    translations: { en: { term: 'traditionally', mainDef: 'according to the system passed down from ancient times.' } },
+                    examples: [{ kor: "한국 사회는 전통적으로 예의를 중시한다.", eng: "korean society traditionally values manners." }, { kor: "전통적으로 내려오는 노래를 불렀다.", eng: "i sang a song that has been passed down traditionally." }],
+                    variants: ['전통적으로']
+                },
+                { 
+                    term: '고맥락', 
+                    mainDef: '말의 앞뒤 흐름(맥락)이 아주 깊고 높은(고高) 것', 
+                    translations: { en: { term: 'high context', mainDef: 'a communication style where the context and flow are deep and important.' } },
+                    examples: [{ kor: "고맥락 문화에서는 분위기가 중요해요.", eng: "in a high-context culture, the atmosphere is important." }, { kor: "고맥락으로 소통하면 말이 짧아질 수 있다.", eng: "communicating in high context can make speech shorter." }],
+                    variants: ['고맥락', '고맥락으로', '고맥락 문화']
+                },
+                { 
+                    term: '소통하다', 
+                    mainDef: '막힘없이 서로의 생각이 잘 통하다(통通)', 
+                    translations: { en: { term: 'to communicate', mainDef: 'for thoughts to flow between people without blockage.' } },
+                    examples: [{ kor: "우리는 진심으로 소통하고 싶어요.", eng: "we want to communicate sincerely." }, { kor: "사람들과 소통하는 법을 배웠다.", eng: "i learned how to communicate with people." }],
+                    variants: ['소통하는', '소통하다']
+                },
+                { 
+                    term: '-만큼', 
+                    mainDef: '앞의 내용과 비슷한 정도로', 
+                    translations: { en: { term: 'as much as', mainDef: 'to a degree similar to the preceding content.' } },
+                    examples: [{ kor: "나도 너만큼 그 영화를 좋아해.", eng: "i like that movie as much as you do." }, { kor: "노력한 만큼 결과가 나올 거예요.", eng: "results will come out as much as you've worked." }],
+                    variants: ['순간만큼은', '-만큼']
+                },
+                { 
+                    term: '모호함', 
+                    mainDef: '분명하지 않고 흐릿함', 
+                    translations: { en: { term: 'ambiguity', mainDef: 'the state of not being clear and being blurry.' } },
+                    examples: [{ kor: "그녀의 태도는 모호함이 있었다.", eng: "there was ambiguity in her attitude." }, { kor: "모호함보다 확신을 전하세요.", eng: "convey certainty rather than ambiguity." }],
+                    variants: ['모호함보다', '모호함']
+                },
+                { 
+                    term: '저맥락', 
+                    mainDef: '상황보다 말의 뜻을 직접적으로 낮게(저低) 표현하는 방식', 
+                    translations: { en: { term: 'low context', mainDef: 'a style of expressing meaning directly rather than through situation.' } },
+                    examples: [{ kor: "저맥락 문화에서는 사실이 중요해요.", eng: "facts are important in a low-context culture." }, { kor: "직설적인 말은 저맥락 소통의 특징이다.", eng: "direct speech is a feature of low-context communication." }],
+                    variants: ['저맥락', '저맥락 문화']
+                },
+                { 
+                    term: '뜻을 전하다', 
+                    mainDef: '자신의 생각이나 마음을 다른 사람에게 알리다', 
+                    translations: { en: { term: 'to convey a meaning', mainDef: 'to let others know one\'s thoughts or feelings.' } },
+                    examples: [{ kor: "편지를 통해 진심 어린 뜻을 전했다.", eng: "i conveyed my sincere meaning through a letter." }, { kor: "정확하게 뜻을 전하는 것이 중요해요.", eng: "it's important to convey the meaning accurately." }],
+                    variants: ['뜻을 전하는', '뜻을 전하다']
+                },
+                { 
+                    term: '단정적', 
+                    mainDef: '확실하게 결론을 끊어서(단斷) 정하는(정定) 것', 
+                    translations: { en: { term: 'assertive', mainDef: 'cutting off doubt and setting a firm conclusion.' } },
+                    examples: [{ kor: "너무 단정적인 말은 무례할 수 있다.", eng: "being too assertive in speech can be rude." }, { kor: "그는 단정적으로 ‘아니’라고 말했다.", eng: "he said 'no' assertively." }],
+                    variants: ['단정적인', '단정적']
+                },
+                { 
+                    term: '무례', 
+                    mainDef: '예의(례禮)가 없는(무無) 것', 
+                    translations: { en: { term: 'rudeness', mainDef: 'the state of having no manners.' } },
+                    examples: [{ kor: "어른에게 반말을 하는 것은 무례다.", eng: "using casual speech with an adult is rudeness." }, { kor: "그의 무례한 행동에 화가 났다.", eng: "i was angry at his rude behavior." }],
+                    variants: ['무례로', '무례']
+                },
+                { 
+                    term: '공손 전략', 
+                    mainDef: '예의 바르고(공손恭遜) 목적을 이루기 위한 계획(전략戰略)', 
+                    subDefs: [{ subTerm: '• 공손', subDef: '말이나 태도가 아주 예의 바르고 착함' }, { subTerm: '• 전략', subDef: '싸움에서 이기기 위한 큰 계획' }],
+                    translations: { 
+                        en: { 
+                            term: 'politeness strategy', 
+                            mainDef: 'a plan to be polite and achieve a goal.',
+                            subDefs: [{ term: 'politeness', def: 'being polite.' }, { term: 'strategy', def: 'a big plan to win.' }]
+                        } 
+                    },
+                    examples: [{ kor: "우리는 대화할 때 공손 전략을 써요.", eng: "we use politeness strategies when talking." }, { kor: "공손한 태도가 사람의 마음을 연다.", eng: "a polite attitude opens people's hearts." }],
+                    variants: ['공손 전략을', '공손', '전략']
+                },
+                { 
+                    term: '관계를 유지하다', 
+                    mainDef: '서로의 사이(관계關係)를 계속 지켜(유지維持) 나가다', 
+                    translations: { en: { term: 'to maintain a relationship', mainDef: 'to keep guarding the relationship between each other.' } },
+                    examples: [{ kor: "좋은 관계를 유지하는 것이 힘들어요.", eng: "it's hard to maintain a good relationship." }, { kor: "비결은 서로 소통하며 관계를 유지하는 것이다.", eng: "the secret is maintaining the relationship by communicating." }],
+                    variants: ['관계를 유지하는', '관계를 유지하다']
+                },
+                { 
+                    term: '완충', 
+                    mainDef: '부딪히는 힘을 늦추어(완緩) 부드럽게 만드는 것(충衝)', 
+                    translations: { en: { term: 'buffer', mainDef: 'making something soft by slowing down the impact force.' } },
+                    examples: [{ kor: "이 말은 대화에서 완충 역할을 해요.", eng: "these words play a buffer role in conversation." }, { kor: "충격을 줄이기 위해 완충재를 넣었다.", eng: "i put in buffer materials to reduce the shock." }],
+                    variants: ['완충의', '완충']
+                },
+                { 
+                    term: '답을 내리다', 
+                    mainDef: '결정을 해서 대답을 정하다', 
+                    translations: { en: { term: 'to give an answer', mainDef: 'to make a decision and set the answer.' } },
+                    examples: [{ kor: "서둘러 답을 내리기 어렵네요.", eng: "it's hard to give an answer in a hurry." }, { kor: "스스로 고민하고 답을 내려야 해요.", eng: "you must think for yourself and give an answer." }],
+                    variants: ['답을 내리기', '답을 내리다']
+                },
+                { 
+                    term: '리스크 관리', 
+                    mainDef: '생길 수 있는 위험을 미리 살피고 조절하는 일', 
+                    translations: { en: { term: 'risk management', mainDef: 'checking and adjusting risks that might occur in advance.' } },
+                    examples: [{ kor: "같아요’는 일종의 리스크 관리의 언어다.", eng: "'seems like' is a kind of risk management language." }, { kor: "안전 사고를 막기 위해 리스크 관리가 필요하다.", eng: "risk management is needed to prevent safety accidents." }],
+                    variants: ['리스크 관리의', '리스크 관리']
+                },
+                { 
+                    term: '측정하다', 
+                    mainDef: '도구를 사용해 크기나 양을 재다(측測)', 
+                    translations: { en: { term: 'to measure', mainDef: 'to use tools to measure size or quantity.' } },
+                    examples: [{ kor: "만족도와 시간의 관계를 측정했어요.", eng: "we measured the relationship between satisfaction and time." }, { kor: "운동장 길이를 정확히 측정했다.", eng: "i measured the length of the playground accurately." }],
+                    variants: ['측정한', '측정하다']
+                },
+                { 
+                    term: '망설이다', 
+                    mainDef: '어떻게 할지 몰라 결정하지 못하고 머뭇거리다', 
+                    translations: { en: { term: 'to hesitate', mainDef: 'to falter and be unable to decide what to do.' } },
+                    examples: [{ kor: "그는 대답을 망설이다 결국 고개를 저었다.", eng: "he hesitated to answer and eventually shook his head." }, { kor: "망설이지 말고 도전해 보세요.", eng: "don't hesitate and give it a try." }],
+                    variants: ['망설인', '망설이다']
+                },
+                { 
+                    term: '감지하다', 
+                    mainDef: '느낌(감感)으로 어떤 것을 알아차리다(지知)', 
+                    translations: { en: { term: 'to sense', mainDef: 'to notice or feel something through senses.' } },
+                    examples: [{ kor: "뇌가 갈등을 감지하는 순간 피로해져요.", eng: "the moment the brain senses conflict, it becomes tired." }, { kor: "어둠 속에서 움직임을 감지했다.", eng: "i sensed movement in the dark." }],
+                    variants: ['감지하는', '감지하다']
+                },
+                { 
+                    term: '영역', 
+                    mainDef: '활동이나 힘이 미치는 일정한 범위(역域)', 
+                    translations: { en: { term: 'territory/domain', mainDef: 'a certain scope where activity or power reaches.' } },
+                    examples: [{ kor: "그것은 전문가의 영역입니다.", eng: "that is the domain of experts." }, { kor: "뇌의 특정 영역이 반응했다.", eng: "a specific area of the brain reacted." }],
+                    variants: ['영역이', '영역']
+                },
+                { 
+                    term: '활발히', 
+                    mainDef: '기운차고 활기차게 움직이는(활活) 모양', 
+                    translations: { en: { term: 'actively', mainDef: 'moving with liveliness and vigor.' } },
+                    examples: [{ kor: "뇌의 영역이 활발히 반응했어요.", eng: "the brain's regions reacted actively." }, { kor: "동아리 활동을 활발히 하고 있다.", eng: "i am participating actively in club activities." }],
+                    variants: ['활발히']
+                },
+                { 
+                    term: '여지', 
+                    mainDef: '남은(여餘) 땅(지地)이나 공간, 또는 가능성', 
+                    translations: { en: { term: 'room/possibility', mainDef: 'remaining ground, space, or possibility.' } },
+                    examples: [{ kor: "실수할 여지가 조금도 없어요.", eng: "there is no room for error at all." }, { kor: "여지를 두는 말은 부드럽게 들려요.", eng: "words that leave room sound soft." }],
+                    variants: ['여지는', '여지']
+                },
+                { 
+                    term: '최선', 
+                    mainDef: '가장(최最) 좋은(선善) 정성이나 방법', 
+                    translations: { en: { term: 'best', mainDef: 'the most good method or effort.' } },
+                    examples: [{ kor: "나는 오늘 최선을 다했다.", eng: "i did my best today." }, { kor: "최선인 답을 찾으려고 노력했어요.", eng: "i tried to find the best answer." }],
+                    variants: ['최선인', '최선']
+                },
+                { 
+                    term: '착각하다', 
+                    mainDef: '사실과 다르게 잘못 보고(착錯) 느끼다(각覺)', 
+                    translations: { en: { term: 'to be mistaken', mainDef: 'to see or feel something wrongly, differently from the truth.' } },
+                    examples: [{ kor: "친구를 동생으로 착각했어요.", eng: "i mistook my friend for my younger brother." }, { kor: "우리는 정답이라고 착각하는 걸까?", eng: "are we mistaken that it is the right answer?" }],
+                    variants: ['착각하는', '착각하다']
+                }
+        ];
+        
+        const QUIZ_LIST = [
+            { 
+                id: 1, 
+                textParts: ["'같아요'는 원래 동일함을 뜻하지만, 어느새 ", "을/를 나타내는 뜻으로 말끝에 따라붙게 되었어요."], 
+                answer: '불확실함', 
+                hint: '어떤 것이 확실하지 않은 상태를 말해요.', 
+                explanation: "맞아요. 기분이 좋다면서도 '좋은 것 같아요'라고 말하는 것은 불확실함을 담고 있습니다.",
+                textParts_eng: ["'Gattayo' originally means identical, but it has now come to follow words to indicate ", "."],
+                answer_eng: 'uncertainty'
+            },
+            { 
+                id: 2, 
+                textParts: ["우리가 모든 선택을 100% 완벽하게 하려고 노력하는 이유는 마음속에 있는 ", " 때문이에요."], 
+                answer: '강박', 
+                hint: '어떤 생각이나 행동을 꼭 해야만 할 것 같은 심리적 압박을 말해요.', 
+                explanation: "맞아요. 완벽한 선택을 하려는 마음이 오히려 선택을 더 힘들게 만듭니다.",
+                textParts_eng: ["The reason we try to make every choice 100% perfectly is because of the ", " in our hearts."],
+                answer_eng: 'compulsion'
+            },
+            { 
+                id: 3, 
+                textParts: ["틀리면 어쩌나 하는 불안함 때문에 우리는 ", " 대신 '같아요'를 사용해 빠져나갈 구멍을 만들어요."], 
+                answer: '확신', 
+                hint: '틀림없이 그렇다고 굳게 믿는 것을 말해요.', 
+                explanation: "맞아요. 자신의 발언에 책임을 져야 하는 확신 대신 모호함을 선택하는 것이죠.",
+                textParts_eng: ["Due to the anxiety of being wrong, we use 'Gattayo' to create an escape route instead of ", "."],
+                answer_eng: 'certainty'
+            },
+            { 
+                id: 4, 
+                textParts: ["'같아요'라고 말하는 것은 결정을 미루는 행위이자, 상대방에게 ", " 전략이기도 해요."], 
+                answer: '여지를 남기는', 
+                hint: '나중에 다른 말을 할 수 있는 틈이나 가능성을 두는 것이에요. (변형: 현재형 동사를 형용사처럼 뒤에 오는 명사를 꾸며주는 관형사 어미)', 
+                explanation: "맞아요. 확정 짓지 않고 여지를 남김으로써 심리적 안전장치를 마련하는 것입니다.",
+                textParts_eng: ["Saying 'Gattayo' is an act of delaying a decision and a strategy to ", " for the other person."],
+                answer_eng: 'leave room'
+            },
+            { 
+                id: 5, 
+                textParts: ["잘못된 선택에 대한 불쾌함을 피하기 위해 우리는 확정적인 표현을 ", "하는 언어 습관을 갖게 되었어요."], 
+                answer: '회피', 
+                hint: '어떤 일이나 상황을 피해서 벗어나는 것이에요.', 
+                explanation: "맞아요. 뇌는 잘못된 선택을 인지할 때 도파민 분비가 줄어들기 때문에 그 불쾌함을 피하려 합니다.",
+                textParts_eng: ["To avoid the discomfort of a wrong choice, we have developed a linguistic habit of ", "ing definitive expressions."],
+                answer_eng: 'avoid'
+            },
+            { 
+                id: 6, 
+                textParts: ["한국 사회는 직접적인 말보다 분위기와 감정으로 소통하는 '", "' 문화의 특성을 보입니다."], 
+                answer: '고맥락', 
+                hint: '언어 자체보다 상황이나 맥락이 중요한 소통 방식을 말해요.', 
+                explanation: "맞아요. 문화인류학자 에드워드 홀은 한국을 고맥락 문화로 설명했습니다.",
+                textParts_eng: ["Korean society exhibits characteristics of a '", "' culture, where communication happens through atmosphere and emotion rather than direct words."],
+                answer_eng: 'high-context'
+            },
+            { 
+                id: 7, 
+                textParts: ["서구의 저맥락 문화와 달리, 한국에서는 말보다 눈치나 분위기로 ", " 방식이 익숙해요."], 
+                answer: '뜻을 전하는', 
+                hint: '자신의 마음이나 의미를 상대방에게 알리는 것이에요. (변형: 현재형 동사를 형용사처럼 뒤에 오는 명사를 꾸며주는 관형사 어미)', 
+                explanation: "맞아요. 직접적인 단어보다 관계의 흐름 속에서 의미를 읽어내는 것이 중요합니다.",
+                textParts_eng: ["Unlike Western low-context cultures, Korea is accustomed to ", "ing meaning through social cues or atmosphere."],
+                answer_eng: 'convey'
+            },
+            { 
+                id: 8, 
+                textParts: ["고맥락 문화권에서 자신의 의견을 너무 강하게 말하는 단정적인 말투는 때로 ", "(으)로 받아들여질 수 있어요."], 
+                answer: '무례', 
+                hint: '예의가 없는 것을 말해요.', 
+                explanation: "맞아요. 너무 확실하게 말하는 것이 상대를 배려하지 않는 것처럼 느껴지는 문화적 배경이 있습니다.",
+                textParts_eng: ["In high-context cultures, a definitive tone of speaking too strongly can sometimes be perceived as ", "."],
+                answer_eng: 'rudeness'
+            },
+            { 
+                id: 9, 
+                textParts: ["부드러운 표현을 사용하는 것은 타인과의 관계를 유지하기 위한 '", "' 전략의 일환이기도 합니다."], 
+                answer: '공손', 
+                hint: '말이나 행동이 정중하고 예의가 바른 것을 말해요.', 
+                explanation: "맞아요. 관계 유지를 위해 표현의 수위를 낮추는 공손 전략입니다.",
+                textParts_eng: ["Using soft expressions is also part of a '", "' strategy to maintain relationships with others."],
+                answer_eng: 'politeness'
+            },
+            { 
+                id: 10, 
+                textParts: ["하지만 사실 '같아요'는 ", "인 답이 아니라, 단지 불안을 잠시 피하는 여지일 뿐이에요."], 
+                answer: '단정적', 
+                hint: '딱 잘라 판단하거나 결정하는 성격을 말해요.', 
+                explanation: "맞아요. 완벽한 정답은 없는데도 우리는 단정적으로 말하는 것을 두려워하곤 합니다.",
+                textParts_eng: ["But in fact, 'Gattayo' is not a ", " answer, but merely room to temporarily avoid anxiety."],
+                answer_eng: 'definitive'
+            }
+        ];
+
+        const ANSWER_CHOICES = [
+            '불확실함', '강박', '확신', '여지를 남기는', '회피', 
+            '고맥락', '뜻을 전하는', '무례', '공손', '단정적',
+            '선택 과부하', '망설이다', '저맥락', '완충'
+        ];
+
+        // [New Data] Discuss Questions Data
+        const DISCUSS_DATA = [
+            {
+                id: 1,
+                questionKor: "여러분도 일상생활에서 '같아요'라는 표현을 자주 사용해요?",
+                questionEng: "Do you also use the expression 'seems like' often in your daily life?",
+                vocab: [
+                    { term: "일상생활", def: "평소의 생활." },
+                    { term: "표현", def: "생각이나 느낌을 언어나 몸짓으로 나타냄." }
+                ]
+            },
+            {
+                id: 2,
+                questionKor: "왜 어떤 사람들은 ‘비가 이미 오고 있는 상황’처럼 분명한 사실에 대해서도 “비가 오는 것 같아요”라는 추측의 표현을 사용할까요?",
+                questionEng: "Why do some people use speculative expressions like 'It seems to be raining' even for clear facts like 'It is already raining'?",
+                vocab: [
+                    { term: "분명한 사실", def: "의심할 여지 없이 확실한 실제 일." },
+                    { term: "추측", def: "미루어 생각하여 헤아림." }
+                ]
+            },
+            {
+                id: 3,
+                questionKor: "‘같아요’는 어떤 상황에 써야 적절할까요? 그리고 어떤 상황에 쓰지 말아야 할까요?",
+                questionEng: "In what situations is it appropriate to use 'seems like'? And when should it not be used?",
+                vocab: [
+                    { term: "적절하다", def: "상황에 꼭 알맞다." }
+                ]
+            },
+            {
+                id: 4,
+                questionKor: "'같아요’가 확신 대신 여지를 남기는 ‘결정 회피’의 언어라는 주장에 동의해요? 아니면 오히려 확신이 없는 상황에서 결정을 내리는 방법일까요?",
+                questionEng: "Do you agree that 'seems like' is a language of 'decision avoidance' that leaves room instead of certainty? Or is it rather a way to make decisions when you lack confidence?",
+                vocab: [
+                    { term: "확신", def: "굳게 믿음." },
+                    { term: "여지를 남기다", def: "다른 가능성이나 생각할 자리를 두다." },
+                    { term: "결정 회피", def: "결정을 내리는 것을 피함." }
+                ]
+            },
+            {
+                id: 5,
+                questionKor: "'같아요’가 잘못된 선택에 대한 불쾌함을 피하려는 자기 보호의 언어라는 주장에 동의해요? 그렇다면, 이게 틀릴 가능성을 줄이기 위한 합리적 선택일까요, 아니면 자기 발언에 대한 책임 회피일까요?",
+                questionEng: "Do you agree that 'seems like' is a language of self-protection to avoid the discomfort of wrong choices? If so, is this a rational choice to reduce the risk of being wrong, or an evasion of responsibility for your own words?",
+                vocab: [
+                    { term: "불쾌함", def: "기분이 좋지 않고 마음에 들지 않음." },
+                    { term: "자기 보호", def: "위험이나 곤란으로부터 자신을 지킴." },
+                    { term: "합리적 선택", def: "이치에 맞는 논리적으로 타당한 선택." },
+                    { term: "자기 발언", def: "자신이 한 말." },
+                    { term: "책임 회피", def: "맡아서 해야 할 임무나 의무를 피함." }
+                ]
+            },
+            {
+                id: 6,
+                questionKor: "선택을 하는 모든 상황에서 사람들은 ‘틀리면 어쩌지?’라는 불안한 마음을 느낄까요? 아니면 특정 상황에서만 잘못된 선택으로 인한 불쾌감을 느낄까요?",
+                questionEng: "Do people feel anxiety about being wrong in all choice situations? Or do they feel dissatisfaction from wrong choices only in specific situations?",
+                vocab: [
+                    { term: "불쾌감", def: "기분이 좋지 않은 느낌." }
+                ]
+            },
+            {
+                id: 7,
+                questionKor: "현대 사회가 빠르게 변하기 때문에 '자신의 의견이 틀릴지도 모른다'는 불안감이 커졌다고 생각해요? 정말 과거보다 불안감이 증가했을까요? 아니면 불안감은 시대가 아니라 개인 성격에 달린 문제일까요?",
+                questionEng: "Do you think anxiety about 'being wrong' has grown because modern society changes fast? Has anxiety really increased compared to the past? Or does it depend more on individual personality?",
+                vocab: [
+                    { term: "불안감", def: "마음이 편하지 않고 조마조마한 느낌." }
+                ]
+            },
+            {
+                id: 8,
+                questionKor: "자신의 감정을 명확하게 표현하지 못하는 이유는 무엇일까요? 그리고 마음을 표현할 때는 모호함보다 확신을 전달하는 게 더 좋은 방법이라고 생각해요?",
+                questionEng: "Why can't people express their emotions clearly? And do you think conveying certainty rather than ambiguity is better when expressing feelings?",
+                vocab: [
+                    { term: "모호함", def: "흐릿하여 분명하지 않음." },
+                    { term: "확신", def: "굳게 믿는 마음." }
+                ]
+            },
+            {
+                id: 9,
+                questionKor: "‘같아요’의 모호함은 실수를 줄여주는 대신 결정의 피로를 키우기도 한다는 주장에 동의해요? 아니면 ‘같아요’는 단순히 언어 습관일 뿐이라서 자주 사용해도 문제없을까요?",
+                questionEng: "Do you agree that the ambiguity of 'seems like' increases decision fatigue instead of reducing mistakes? Or is 'seems like' just a speech habit, so using it often is not a problem?",
+                vocab: [
+                    { term: "모호함", def: "흐릿하여 분명하지 않음." },
+                    { term: "언어 습관", def: "오랫동안 굳어진 말하기 버릇." }
+                ]
+            },
+            {
+                id: 10,
+                questionKor: "한국 사회에서는 같은 표현이라도 상황과 관계 맥락에 따라 다르게 해석될 수 있는 고맥락적 소통 경향이 비교적 흔해, 단정적인 표현이 무례하게 받아들여질 여지가 있어요. 그래서 오해를 줄이기 위해 사람들은 ‘같아요’처럼 완곡한 표현을 자주 사용하는 경향이 있는데, 여러분의 나라에서도 공손 전략으로 '같아요' 같은 표현을 사용해요?",
+                questionEng: "In Korean society, high-context communication is common, so assertive expressions can be perceived as rude. Therefore, people often use indirect expressions like 'seems like' to avoid misunderstandings. Do you use similar expressions as a politeness strategy in your country?",
+                vocab: [
+                    { term: "고맥락적 소통", def: "말보다 상황이나 맥락에 의존하여 의사를 전달하는 방식." },
+                    { term: "무례하게 받아들여지다", def: "예의가 없다고 여겨지다." },
+                    { term: "완곡한 표현", def: "상대의 기분이 상하지 않게 부드럽게 돌려 말함." },
+                    { term: "공손 전략", def: "상대방을 배려하며 정중하게 대화하는 방법." }
+                ]
+            }
+        ];
+
+        const SCRIPT_DATA = [
+            { id: 's1', speaker: 'EBS', kor: '지금 밖에 비 오나요?', time: [0.367, 3.570], eng: "Is it raining outside right now?" },
+            { id: 's2', speaker: 'EBS', kor: '네, 비 오는 것 같아요.', time: [7.808, 10.978], eng: "Yes, it seems like it's raining." },
+            { id: 's3', speaker: 'EBS', kor: '같아요???', time: [10.978, 14.615], eng: "Seems like???" },
+            { id: 's4', speaker: 'EBS', kor: '이미 비가 오고 있는데', time: [14.982, 17.718], eng: "It's already raining," },
+            { id: 's5', speaker: 'EBS', kor: '우리는 왜 ‘비가 와요’ 대신', time: [17.751, 20.420], eng: "why do we say" },
+            { id: 's6', speaker: 'EBS', kor: '‘비가 오는 것 같아요’라고 말할까?', time: [20.454, 22.856], eng: "'it seems like it's raining' instead of 'it's raining'?" },
+            { id: 's7', speaker: 'EBS', kor: '‘같다’: 두 사물이 동일하거나 유사함을 나타내는 단어.', time: [30.831, 37.371], eng: "'Gatda': A word indicating that two objects are identical or similar." },
+            { id: 's8', speaker: 'EBS', kor: '그런데', time: [37.771, 39.339], eng: "However," },
+            { id: 's9', speaker: 'EBS', kor: '‘좋은 것 같아요.’', time: [39.673, 42.409], eng: "'It seems good.'" },
+            { id: 's10', speaker: 'EBS', kor: '‘괜찮은 것 같아요.’', time: [42.442, 45.212], eng: "'It seems okay.'" },
+            { id: 's11', speaker: 'EBS', kor: '‘맞는 것 같아요.’', time: [45.245, 48.215], eng: "'It seems correct.'" },
+            { id: 's12', speaker: 'EBS', kor: '추측이나 불확실함을 나타내는 뜻으로 언제부턴가 말끝에 따라붙는 ‘같아요’.', time: [50.017, 55.389], eng: "'Gatayou' attaches to the end of sentences to indicate guess or uncertainty." },
+            { id: 's13', speaker: 'EBS', kor: '‘기분이 좋아.’ → ‘기분이 좋은 것 같아.’', time: [55.789, 61.962], eng: "'I feel good.' → 'I feel like I feel good.'" },
+            { id: 's14', speaker: 'EBS', kor: '‘기뻐요.’ → ‘기쁜 것 같아요.’', time: [62.362, 68.502], eng: "'I'm happy.' → 'I think I'm happy.'" },
+            { id: 's15', speaker: 'EBS', kor: '자신의 감정조차 명확하게 표현하지 못하고,', time: [68.936, 71.738], eng: "Unable to clearly express even one's own feelings," },
+            { id: 's16', speaker: 'EBS', kor: '‘같다’라고 말하는 사람들.', time: [71.772, 75.075], eng: "people who say 'it seems like'." },
+            { id: 's17', speaker: 'EBS', kor: '미국 식료품점에서 진행한 실험', time: [76.043, 81.682], eng: "An experiment conducted in an American grocery store." },
+            { id: 's18', speaker: 'EBS', kor: '24가지 종류의 잼을 진열한 매대', time: [82.082, 84.785], eng: "A shelf displaying 24 kinds of jam." },
+            { id: 's19', speaker: 'EBS', kor: 'VS. 6가지 종류의 잼만 진열한 매대.', time: [84.818, 88.288], eng: "VS. A shelf displaying only 6 kinds of jam." },
+            { id: 's20', speaker: 'EBS', kor: '어디에서 잼이 더 많이 팔릴까?', time: [88.855, 92.759], eng: "Where would more jam be sold?" },
+            { id: 's21', speaker: 'EBS', kor: '6가지 잼을 진열한 매대에서 10배 이상 판매가 많았다.', time: [93.460, 99.366], eng: "Sales were more than 10 times higher at the shelf with 6 kinds of jam." },
+            { id: 's22', speaker: 'EBS', kor: '선택지가 많을수록 ‘선택 과부하’에 걸리는 사람들.', time: [99.766, 104.938], eng: "People suffer from 'choice overload' as options increase." },
+            { id: 's23', speaker: 'EBS', kor: '“나의 선택이 100% 완벽해야 한다는 강박 때문이다.”', time: [105.372, 112.446], eng: "\"It's because of the obsession that my choice must be 100% perfect.\"" },
+            { id: 's24', speaker: 'EBS', kor: '결정을 잘못 내렸다고 인지하는 순간,', time: [113.180, 115.015], eng: "The moment you realize you made the wrong decision," },
+            { id: 's25', speaker: 'EBS', kor: '[ 도파민 → 행복감을 느끼는 호르몬 ]의 분비가 감소하는 뇌.', time: [116.984, 120.087], eng: "the brain reduces the secretion of [Dopamine -> Happiness hormone]." },
+            { id: 's26', speaker: 'EBS', kor: '잘못된 선택은 ‘불쾌감’으로 연결되고,', time: [120.854, 123.957], eng: "Wrong choices lead to 'displeasure'," },
+            { id: 's27', speaker: 'EBS', kor: '다음 결정을 더 어렵게 만든다.', time: [123.991, 127.661], eng: "making the next decision more difficult." },
+            { id: 's28', speaker: 'EBS', kor: '‘틀리면 어쩌지?’', time: [128.095, 130.697], eng: "'What if I'm wrong?'" },
+            { id: 's29', speaker: 'EBS', kor: '작은 선택조차 불안한 마음.', time: [130.731, 133.233], eng: "Anxious even about small choices." },
+            { id: 's30', speaker: 'EBS', kor: '그 불쾌함을 피하려', time: [133.633, 135.369], eng: "To avoid that displeasure," },
+            { id: 's31', speaker: 'EBS', kor: '확신 대신 여지를 남기는', time: [136.203, 138.472], eng: "leaving room instead of certainty," },
+            { id: 's32', speaker: 'EBS', kor: '‘결정 회피’의 언어.', time: [138.505, 140.807], eng: "the language of 'decision avoidance'." },
+            { id: 's33', speaker: 'EBS', kor: '그런데 한국 사회에서 ‘같아요’는', time: [143.744, 146.046], eng: "However, in Korean society, 'Gatayou' is" },
+            { id: 's34', speaker: 'EBS', kor: '관계의 언어이자 자기 보호의 언어다?', time: [146.079, 150.917], eng: "a language of relationship and self-protection?" },
+            { id: 's35', speaker: 'EBS', kor: '전통적으로 "고맥락"으로 소통하는 한국 사회..', time: [151.451, 156.490], eng: "Korean society traditionally communicates in 'High Context'." },
+            { id: 's36', speaker: 'EBS', kor: '말로 직접 표현하는 저맥락 문화와 달리,', time: [156.923, 161.061], eng: "Unlike low-context cultures that express directly with words," },
+            { id: 's37', speaker: 'EBS', kor: '말보다 분위기와 감정, 관계의 흐름으로 뜻을 전하는 고맥락 문화.', time: [161.561, 167.567], eng: "High-context culture conveys meaning through atmosphere, emotion, and flow of relationships." },
+            { id: 's38', speaker: 'EBS', kor: '이런 환경에서 단정적인 말은', time: [167.968, 170.170], eng: "In this environment, assertive speech" },
+            { id: 's39', speaker: 'EBS', kor: '때때로 무례로 인식된다.', time: [170.203, 173.073], eng: "is sometimes perceived as rude." },
+            { id: 's40', speaker: 'EBS', kor: '‘좋아요’보다 ‘좋은 것 같아요’가', time: [173.440, 178.378], eng: "'It seems good' rather than 'It is good'" },
+            { id: 's41', speaker: 'EBS', kor: '덜 단정적이고 부드럽게 들리는 상황.', time: [178.412, 181.014], eng: "sounds less assertive and softer." },
+            { id: 's42', speaker: 'EBS', kor: '공손 전략을 통해', time: [181.348, 184.885], eng: "Through politeness strategies," },
+            { id: 's43', speaker: 'EBS', kor: '관계를 유지하는 완충의 언어가 된다.', time: [184.918, 188.588], eng: "it becomes a buffer language that maintains relationships." },
+            { id: 's44', speaker: 'EBS', kor: '그리고, 모든 것이 빠르게 변하고,', time: [191.191, 194.428], eng: "And, everything changes fast," },
+            { id: 's45', speaker: 'EBS', kor: '확실한 답을 내리기 어려운 위험 사회에서', time: [194.461, 197.731], eng: "in a risk society where it's hard to give a definite answer," },
+            { id: 's46', speaker: 'EBS', kor: '‘자신의 의견이 틀릴지도 모른다’', time: [197.764, 200.333], eng: "'My opinion might be wrong'" },
+            { id: 's47', speaker: 'EBS', kor: '리스크 관리의 언어인 ‘같아요’.', time: [200.367, 205.072], eng: "'Gatayou', the language of risk management." },
+            { id: 's48', speaker: 'EBS', kor: '하지만 여러 개의 선택 과제를 제시한 뒤,', time: [207.374, 210.911], eng: "However, after presenting multiple choice tasks," },
+            { id: 's49', speaker: 'EBS', kor: '결정에 걸리는 시간과 만족도의 관계를 측정한 결과,', time: [210.944, 215.916], eng: "measuring the relationship between decision time and satisfaction," },
+            { id: 's50', speaker: 'EBS', kor: '결정을 오래 망설인 사람일수록', time: [215.949, 218.852], eng: "the longer people hesitated to decide," },
+            { id: 's51', speaker: 'EBS', kor: '갈등을 감지하는 뇌의 영역이 활발히 반응해', time: [218.853, 222.489], eng: "the brain area detecting conflict reacted actively," },
+            { id: 's52', speaker: 'EBS', kor: '‘뇌는 더 피로해지고, 만족감은 낮아졌다.’', time: [222.889, 229.062], eng: "'The brain became more tired, and satisfaction lowered.'" },
+            { id: 's53', speaker: 'EBS', kor: '‘같아요’가 남긴 여지는 우리를 지켜주기도 하지만,', time: [229.096, 233.033], eng: "The room left by 'Gatayou' protects us," },
+            { id: 's54', speaker: 'EBS', kor: '때로는 더 불안하게도 만든다는 사실.', time: [233.333, 235.969], eng: "but sometimes it makes us more anxious." },
+            { id: 's55', speaker: 'EBS', kor: '‘최선인 답은 있을 수 있어도', time: [236.336, 239.139], eng: "'There may be a best answer," },
+            { id: 's56', speaker: 'EBS', kor: '100% 완벽한 정답은 없다.’', time: [239.172, 242.542], eng: "but there is no 100% perfect answer.'" },
+            { id: 's57', speaker: 'EBS', kor: '우리는 ‘같아요’라는 말을', time: [242.576, 244.377], eng: "Are we mistaking 'Gatayou'" },
+            { id: 's58', speaker: 'EBS', kor: "'결정을 회피하는, 가장 완벽한 답'이라고", time: [244.411, 246.113], eng: "as 'the most perfect answer avoiding decision'?" },
+            { id: 's59', speaker: 'EBS', kor: '착각하는 건 아닐까?', time: [246.146, 249.116], eng: "Are we mistaking it?" },
+            { id: 's60', speaker: 'EBS', kor: '‘맛있는 것 같아’ → ‘맛있어’', time: [249.149, 255.522], eng: "'It seems delicious' → 'It's delicious'" },
+            { id: 's61', speaker: 'EBS', kor: '‘기쁜 것 같아’ → ‘기뻐’', time: [255.555, 261.928], eng: "'It seems happy' → 'I'm happy'" },
+            { id: 's62', speaker: 'EBS', kor: '‘사랑하는 것 같아’ → ‘사랑해’', time: [261.962, 268.335], eng: "'It seems I love you' → 'I love you'" },
+            { id: 's63', speaker: 'EBS', kor: '최소한, 마음을 표현하는 순간만큼은 모호함보다 확신을 전해보면 어떨까?', time: [268.368, 274.908], eng: "At least when expressing feelings, how about conveying certainty rather than ambiguity?" },
+            { id: 's64', speaker: 'EBS', kor: '확신과 여지 사이, 그 좁은 틈에서', time: [274.941, 279.579], eng: "Between certainty and room, in that narrow gap," },
+            { id: 's65', speaker: 'EBS', kor: '우리는 오늘도 흔들리며 살아가고 있다.', time: [279.613, 284.251], eng: "we are living while swaying today." }
+        ];
+
+        // --- Sidebar Component ---
+        const Sidebar = ({ activeTab, setActiveTab, isCollapsed, toggleSidebar, userLevel, themeColor }) => {
+            const menus = [
+                { id: 'home', label: '시작 페이지', subLabel: 'Home Page', icon: HomeIcon },
+                { id: 'learn', label: '동영상 자료', subLabel: 'Video Resources', icon: LearnIcon },
+                { id: 'vocab', label: '핵심 어휘', subLabel: 'Key Vocabulary', icon: VocabIcon },
+                { id: 'quiz', label: '내용 확인 퀴즈', subLabel: 'Comprehension Quiz', icon: QuizIcon },
+                { id: 'discuss', label: '생각해 보기', subLabel: 'Food For Thought', icon: DiscussIcon },
+            ];
+
+            const [tooltip, setTooltip] = useState({ show: false, x: 0, y: 0, info: null });
+            const currentStyle = LEVEL_STYLES[userLevel] || LEVEL_STYLES["A2+"];
+            const textClass = currentStyle.split(' ')[1];
+            const theme = LEVEL_THEMES[userLevel] || LEVEL_THEMES["A2+"];
+            const activeTextColor = theme.activeText;
+
+            // [Modified] Sidebar Scaling
+            const sidebarScale = isCollapsed ? '1.0rem' : '1.15rem';
+
+            const handleLevelTextEnter = (e) => {
+                const rect = e.target.getBoundingClientRect();
+                setTooltip({
+                    show: true,
+                    x: rect.right,
+                    y: rect.top,
+                    info: LEVEL_DEFINITIONS[userLevel]
+                });
+            };
+
+            const handleLevelTextLeave = () => {
+                setTooltip(prev => ({ ...prev, show: false }));
+            };
+
+            return (
+                <>
+                <aside 
+                    className={`bg-white border-r border-slate-200 fixed h-full hidden md:flex flex-col z-50 transition-all duration-300 ease-in-out font-basic ${isCollapsed ? 'w-[5.5rem]' : 'w-64'}`}
+                    style={{ fontSize: sidebarScale }} 
+                >
+                    <div className={`p-6 flex items-center gap-3 relative ${isCollapsed ? 'justify-center px-0' : ''}`}>
+                        <img 
+                            src="https://raw.githubusercontent.com/openkoreanlearninglab/hub/refs/heads/main/OpenKoreanLearningLab_Logo.jpeg" 
+                            alt="Logo" 
+                            className={`rounded-2xl shadow-lg shrink-0 transition-all duration-300 object-cover ${isCollapsed ? 'w-[3rem] h-[3rem]' : 'w-[3.75rem] h-[3.75rem]'}`}
+                        />
+                        {!isCollapsed && (
+                            <div className="animate-fade-in overflow-hidden whitespace-nowrap flex flex-col justify-center">
+                                <span className="font-normal text-[1.25em] text-black leading-tight font-decoshadow">Open</span>
+                                <span className={`font-normal text-[0.6875em] leading-tight font-mustache ${textClass}`}>KoreanLearningLab</span>
+                            </div>
+                        )}
+                        <button 
+                            onClick={toggleSidebar}
+                            className="absolute -right-3 top-1/2 -translate-y-1/2 bg-white border border-slate-200 rounded-full p-1 shadow-sm text-slate-500 hover:text-slate-700 hover:bg-slate-50 transition-colors z-10"
+                        >
+                            {isCollapsed ? <ChevronRight className="w-3 h-3" /> : <ChevronLeft className="w-3 h-3" />}
+                        </button>
+                    </div>
+                    
+                    <nav className={`flex-1 space-y-3 mt-4 ${isCollapsed ? 'px-3' : 'px-4'}`}>
+                        {menus.map((menu) => {
+                            const IconComp = menu.icon;
+                            const isActive = activeTab === menu.id;
+                            
+                            return (
+                                <button
+                                    key={menu.id}
+                                    onClick={() => setActiveTab(menu.id)}
+                                    onDoubleClick={(e) => {
+                                        e.preventDefault();
+                                        toggleSidebar();
+                                    }}
+                                    className={`w-full flex items-center transition-all duration-200 group relative py-4 px-3 rounded-2xl ${
+                                        isCollapsed 
+                                        ? 'justify-center h-14' 
+                                        : 'gap-3'
+                                    } ${
+                                        isActive 
+                                        ? `bg-${themeColor}-50`
+                                        : 'hover:bg-slate-50'
+                                    }`}
+                                >
+                                    {isActive && isCollapsed && (
+                                        <div className={`absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-${themeColor}-500 rounded-r-lg`}></div>
+                                    )}
+                                    {isActive && !isCollapsed && (
+                                        <div className={`absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-${themeColor}-500 rounded-r-lg`}></div>
+                                    )}
+                                    
+                                    <IconComp 
+                                        className={`shrink-0 transition-all duration-200 ${isCollapsed ? 'w-8 h-8' : 'w-7 h-7'} ${isActive ? `text-${themeColor}-600` : 'text-slate-400 group-hover:text-slate-500'}`} 
+                                        filled={isActive}
+                                    />
+                                    
+                                    {!isCollapsed && (
+                                        <div className="flex flex-col items-start animate-fade-in overflow-hidden whitespace-nowrap">
+                                            <span className={`text-[1.125em] leading-tight ${
+                                                isActive 
+                                                ? `font-extrabold ${activeTextColor} font-surround` 
+                                                : 'font-medium text-slate-700 group-hover:font-semibold group-hover:text-slate-900'
+                                            }`}>
+                                                {menu.label}
+                                            </span>
+                                        </div>
+                                    )}
+                                    
+                                    {isCollapsed && (
+                                        <div className="absolute left-full ml-3 px-3 py-1.5 bg-slate-900 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50 shadow-xl flex flex-col items-start font-basic">
+                                            <span className="text-xs font-bold">{menu.label}</span>
+                                            <div className="absolute top-1/2 -left-1 -translate-y-1/2 w-2 h-2 bg-slate-900 rotate-45"></div>
+                                        </div>
+                                    )}
+                                </button>
+                            );
+                        })}
+                    </nav>
+
+                    <div className="p-4 border-t border-slate-100">
+                        <div className={`flex items-center gap-3 p-2 rounded-xl transition-colors hover:bg-slate-50 cursor-pointer ${isCollapsed ? 'justify-center' : ''}`}>
+                            <div className={`w-[2.75rem] h-[2.75rem] rounded-xl flex items-center justify-center shrink-0 transition-colors duration-300 ${theme.bg} border ${theme.boxBorder}`}>
+                                <span className={`text-[1em] font-extrabold ${theme.activeText} font-school-safe`}>{userLevel}</span>
+                            </div>
+                            {!isCollapsed && (
+                                <div className="animate-fade-in overflow-hidden whitespace-nowrap flex-1">
+                                    <p className="text-[0.875em] font-bold text-slate-900 mb-[1px] font-basic">학습자</p>
+                                    <div className="mt-[1px]">
+                                        <span 
+                                            className={`block w-fit px-[2px] py-0.5 rounded text-[0.5625em] font-semibold uppercase tracking-wide text-left cursor-help font-basic border ${theme.border} ${theme.activeText} ${theme.bg}`}
+                                            onMouseEnter={handleLevelTextEnter}
+                                            onMouseLeave={handleLevelTextLeave}
+                                        >
+                                            Level: {LEVEL_DEFINITIONS[userLevel].title}
+                                        </span>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </aside>
+                
+                {tooltip.show && tooltip.info && createPortal(
+                    <div 
+                        className="fixed z-[9999] animate-fade-in pointer-events-none"
+                        style={{ 
+                            left: tooltip.x, 
+                            top: tooltip.y 
+                        }}
+                    >
+                        <div className="relative bg-slate-900/95 backdrop-blur text-white text-xs rounded-xl p-4 shadow-2xl transform -translate-y-full -translate-x-6 -mt-3 w-64 border border-slate-700/50">
+                            <p className={`font-bold mb-1.5 text-sm ${theme.activeText.replace('text-', 'text-').replace('600', '300')}`}>{userLevel} – {tooltip.info.title}</p>
+                            <p className="opacity-90 leading-relaxed font-medium font-basic text-slate-200">{tooltip.info.desc}</p>
+                            <div className="absolute -bottom-1.5 left-4 w-3 h-3 bg-slate-900/95 border-r border-b border-slate-700/50 rotate-45"></div>
+                        </div>
+                    </div>,
+                    document.body
+                )}
+                </>
+            );
+        };
+
+        const HomeView = ({ setActiveTab, progress, userLevel, themeColor }) => {
+            const completedCount = Object.values(progress).filter(val => val === true || (typeof val === 'number' && val > 0)).length;
+            const percentage = Math.round((completedCount / 4) * 100);
+            const quizScoreDisplay = typeof progress.quiz === 'number' ? `${progress.quiz}%` : (progress.quiz ? '100%' : '0%');
+            const quizColorClass = (progress.quiz === 100 || progress.quiz === true) ? `text-${themeColor}-600` : 'text-slate-900';
+            const quizIconBg = (progress.quiz === 100 || progress.quiz === true) ? `bg-${themeColor}-100 text-${themeColor}-600` : `bg-${themeColor}-50 text-${themeColor}-600`;
+
+            return (
+                <div className="space-y-10 animate-fade-in max-w-7xl mx-auto" style={{ fontSize: '1.3rem' }}>
+                    <div className="space-y-3">
+                        <div className="flex items-center gap-2">
+                            <span className={`px-2 py-1 bg-${themeColor}-100 text-${themeColor}-700 text-[0.8em] font-extrabold rounded-md tracking-wider font-basic`}>
+                                EBS 지식채널e
+                            </span>
+                            <span className={`text-[0.8em] font-bold text-${themeColor}-600 tracking-wide font-basic`}>
+                                “같아요”에 숨겨진 생존 전략
+                            </span>
+                        </div>
+                        <h1 className="text-[3em] font-normal text-slate-900 tracking-tight font-surround">우리는 왜 “같아요”라고 할까?</h1>
+                        <p className="text-[1.125em] text-slate-600 font-medium font-surround-air">— 확신을 회피하는 시대, 그리고 확신을 미루는 시대의 언어</p>
+                    </div>
+
+                    <div className="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden flex flex-col md:flex-row h-auto md:h-[20rem]">
+                        <div className="md:w-5/12 relative group bg-black cursor-pointer overflow-hidden" onClick={() => setActiveTab('learn')}>
+                            <img src="https://img.youtube.com/vi/nb-L3S8AFh8/maxresdefault.jpg" alt="Thumbnail" className="w-full h-full object-cover opacity-80 group-hover:opacity-60 transition-opacity duration-300" />
+                            <div className="absolute top-6 left-6">
+                                <span className="bg-[#ea3323] text-white text-[0.625em] font-bold px-2 py-1 rounded border border-[#ea3323] shadow-sm tracking-wider">ON AIR</span>
+                            </div>
+                            <div className="absolute inset-0 flex items-center justify-center">
+                                <div className="w-[3.5rem] h-[3.5rem] bg-white rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                                    <PlayIconLine className={`w-6 h-6 text-${themeColor}-600 fill-current ml-1`} />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="md:w-7/12 p-8 md:p-10 flex flex-col justify-center">
+                            <div className="flex items-center gap-2 mb-4">
+                                <span className="px-2 py-1 bg-slate-100 text-slate-600 text-[0.625em] font-bold rounded uppercase tracking-wide">Listening</span>
+                                <LevelBadge levelCode={userLevel} />
+                            </div>
+                            
+                            <div className="mb-3">
+                                <h2 className="text-[1.5em] font-normal text-slate-900 font-surround">동영상 자료</h2>
+                            </div>
+                            
+                            <div className="text-slate-600 text-[0.875em] leading-relaxed mb-8 pr-4">
+                                <p>팟캐스트를 듣고 드라마 시청 습관에 대한 이야기를 들어보세요.</p>
+                            </div>
+                            
+                            <div className="flex items-center gap-3">
+                                <button 
+                                    onClick={() => setActiveTab('learn')}
+                                    className="px-6 py-3 bg-[#111827] text-white rounded-xl hover:bg-black transition-colors shadow-md flex flex-col items-center leading-tight"
+                                >
+                                    <span className="text-[0.875em] font-bold">동영상 보러 가기</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        {/* Card 1: Vocabulary */}
+                        <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex flex-col justify-between min-h-[10rem] h-full hover:shadow-md transition-shadow">
+                            <div className="flex justify-between items-start">
+                                <div>
+                                    <div className="flex flex-col">
+                                        <span className="text-[0.75em] font-normal text-slate-500 font-surround">핵심 어휘</span>
+                                    </div>
+                                    <p className="text-[2.25em] font-black text-slate-900 mt-1 font-juache">{VOCAB_DATA.length}개</p>
+                                </div>
+                                <div className={`w-[2.5rem] h-[2.5rem] bg-${themeColor}-50 text-${themeColor}-600 rounded-xl flex items-center justify-center`}>
+                                    <VocabIcon className="w-5 h-5" />
+                                </div>
+                            </div>
+                            <button onClick={() => setActiveTab('vocab')} className="group flex items-center gap-1 transition-colors">
+                                <div className="flex flex-col items-start">
+                                    <span className={`text-[0.75em] font-bold text-slate-400 group-hover:text-${themeColor}-600`}>핵심 어휘 확인</span>
+                                </div>
+                                <span className={`text-[1.125em] leading-none text-slate-400 group-hover:text-${themeColor}-600 ml-1`}>→</span>
+                            </button>
+                        </div>
+
+                        {/* Card 2: Quiz Progress */}
+                        <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex flex-col justify-between min-h-[10rem] h-full hover:shadow-md transition-shadow">
+                            <div className="flex justify-between items-start">
+                                <div>
+                                    <div className="flex flex-col">
+                                        <span className="text-[0.75em] font-normal text-slate-500 font-surround">내용 확인 퀴즈</span>
+                                    </div>
+                                    <p className={`text-[2.25em] font-black mt-1 transition-all duration-500 font-juache ${quizColorClass}`}>
+                                        {quizScoreDisplay}
+                                    </p>
+                                </div>
+                                <div className={`w-[2.5rem] h-[2.5rem] rounded-xl flex items-center justify-center transition-colors ${quizIconBg}`}>
+                                    <QuizIcon className="w-5 h-5" />
+                                </div>
+                            </div>
+                            <button onClick={() => setActiveTab('quiz')} className="group flex items-center gap-1 transition-colors">
+                                <div className="flex flex-col items-start">
+                                    <span className={`text-[0.75em] font-bold text-slate-400 group-hover:text-${themeColor}-600`}>퀴즈 시작하기</span>
+                                </div>
+                                <span className={`text-[1.125em] leading-none text-slate-400 group-hover:text-${themeColor}-600 ml-1`}>→</span>
+                            </button>
+                        </div>
+
+                        {/* Card 3: Food For Thought */}
+                        <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex flex-col justify-between min-h-[10rem] h-full hover:shadow-md transition-shadow">
+                            <div className="flex justify-between items-start">
+                                <div>
+                                    <div className="flex flex-col">
+                                        <span className="text-[0.75em] font-normal text-slate-500 font-surround">생각해 보기</span>
+                                    </div>
+                                    <div className="flex flex-col mt-3">
+                                        <a 
+                                            href="https://gemini.google.com/share/b879ec742712" 
+                                            target="_blank" 
+                                            rel="noopener noreferrer" 
+                                            className={`text-[1.0625em] font-black text-${themeColor}-600 hover:text-${themeColor}-800 hover:underline transition-colors flex items-center gap-1 leading-tight`}
+                                        >
+                                            Gemini AI Feedback
+                                            <ExternalLinkIcon className="w-4 h-4" />
+                                        </a>
+                                    </div>
+                                </div>
+                                <div className={`w-[2.5rem] h-[2.5rem] bg-${themeColor}-50 text-${themeColor}-600 rounded-xl flex items-center justify-center`}>
+                                    <DiscussIcon className="w-5 h-5" />
+                                </div>
+                            </div>
+                            
+                            <button onClick={() => setActiveTab('discuss')} className="group flex items-center gap-1 transition-colors">
+                                <div className="flex flex-col items-start">
+                                    <span className="text-[0.75em] font-bold text-slate-400 group-hover:text-blue-600">다음 질문들을 생각해 보세요.</span>
+                                </div>
+                                <span className="text-[1.125em] leading-none text-slate-400 group-hover:text-blue-600 ml-1">→</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const SidebarVocabCard = ({ word, activeVocabTerm, sidebarVocabRefs, themeColor }) => {
+            const [showTrans, setShowTrans] = useState(false);
+            const trans = word.translations?.en;
+
+            return (
+                <div 
+                    ref={el => sidebarVocabRefs.current[word.term] = el}
+                    className={`p-4 rounded-xl border transition-all duration-500 ${
+                        activeVocabTerm === word.term 
+                        ? `border-${themeColor}-500 bg-${themeColor}-50 ring-2 ring-${themeColor}-200 shadow-md scale-105` 
+                        : 'bg-white border-slate-200 shadow-sm'
+                    }`}
+                >
+                    <div className="flex justify-between items-start mb-2">
+                        <h3 className="text-[1.25em] font-ocarina text-slate-900">{word.term}</h3>
+                        <TranslateButton onClick={() => setShowTrans(!showTrans)} isShowing={showTrans} />
+                    </div>
+                    
+                    <p className="text-[1.1875em] font-diary text-slate-600 mb-2 font-medium">{word.mainDef}</p>
+                    {showTrans && trans?.mainDef && (
+                        <p className="text-[1em] font-gowoon text-slate-500 mb-3 animate-fade-in">{trans.mainDef}</p>
+                    )}
+                    
+                    {word.subDefs && word.subDefs.length > 0 && (
+                        <div className={`space-y-2 bg-${themeColor}-50 p-2.5 rounded-lg border border-${themeColor}-100`}>
+                            {word.subDefs.map((sub, i) => {
+                                const subTrans = trans?.subDefs?.[i];
+                                return (
+                                    <div key={i}>
+                                        <p className={`text-[1.125em] font-free text-${themeColor}-900 font-bold leading-snug`}>{sub.subTerm}</p>
+                                        <p className={`text-[1.0625em] font-dictation text-${themeColor}-700`}>{sub.subDef}</p>
+                                        {showTrans && subTrans?.def && (
+                                            <p className="text-[0.875em] font-gowoon text-slate-500 mt-0.5 animate-fade-in">{subTrans.def}</p>
+                                        )}
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        const VocabPopup = ({ popup, themeColor, onGlobalClick }) => {
+            const [showTrans, setShowTrans] = useState(false);
+            const trans = popup.data?.translations?.en;
+
+            // Using rem based calculation approx
+            const popupWidth = 288; 
+            const padding = 16;
+            const windowWidth = window.innerWidth;
+
+            let leftPos = popup.x - (popupWidth / 2);
+            
+            if (leftPos < padding) {
+                leftPos = padding;
+            } else if (leftPos + popupWidth > windowWidth - padding) {
+                leftPos = windowWidth - popupWidth - padding;
+            }
+
+            const arrowLeft = popup.x - leftPos;
+
+            useEffect(() => {
+                setShowTrans(false);
+            }, [popup.data]);
+
+            if (!popup.show || !popup.data) return null;
+
+            return createPortal(
+                <div 
+                    className={`fixed z-[9999] bg-white rounded-xl shadow-xl border border-slate-200 p-4 w-72 animate-fade-in ${!popup.fixed ? 'pointer-events-none' : ''}`}
+                    style={{ 
+                        left: leftPos, 
+                        top: popup.y + 12,
+                    }}
+                    onClick={(e) => e.stopPropagation()}
+                >
+                    <div className="flex items-center justify-between mb-2">
+                        <h3 className="text-[1.25em] font-ocarina text-slate-900 tracking-wide">{popup.data.term}</h3>
+                        {popup.fixed && (
+                            <TranslateButton onClick={() => setShowTrans(!showTrans)} isShowing={showTrans} />
+                        )}
+                    </div>
+                    
+                    <p className="text-[1.1875em] font-diary text-slate-700 font-medium mb-3 leading-snug">{popup.data.mainDef}</p>
+                    {showTrans && popup.fixed && trans?.mainDef && (
+                        <p className="text-[1em] font-gowoon text-slate-500 mb-3 animate-fade-in border-t border-slate-100 pt-2">{trans.mainDef}</p>
+                    )}
+                    
+                    {popup.fixed && popup.data.subDefs && popup.data.subDefs.length > 0 && (
+                        <div className="space-y-1 mt-2">
+                            {popup.data.subDefs.map((sub, idx) => {
+                                const subTrans = trans?.subDefs?.[idx];
+                                return (
+                                    <div key={idx} className={`bg-${themeColor}-50 rounded-lg p-2 border border-${themeColor}-100`}>
+                                        <p className={`text-[1.125em] font-free text-${themeColor}-900 font-bold`}>{sub.subTerm}</p>
+                                        <p className={`text-[1.0625em] font-dictation text-${themeColor}-700`}>{sub.subDef}</p>
+                                        {showTrans && subTrans?.def && (
+                                            <p className="text-[0.875em] font-gowoon text-slate-500 mt-0.5 animate-fade-in border-t border-slate-200/50 pt-1">{subTrans.def}</p>
+                                        )}
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    )}
+                    
+                    <div 
+                        className="absolute top-0 -translate-x-1/2 -translate-y-1/2 w-3 h-3 bg-white border-l border-t border-slate-200 rotate-45"
+                        style={{ left: arrowLeft }}
+                    ></div>
+                </div>,
+                document.body
+            );
+        };
+
+        const LearnView = ({ updateProgress, themeColor, autoScroll, showVocab, playbackRate }) => {
+            const [player, setPlayer] = useState(null);
+            const playerRef = useRef(null); 
+            const [currentTime, setCurrentTime] = useState(0);
+            const [activeLine, setActiveLine] = useState(null);
+            const [translations, setTranslations] = useState({});
+            const [popup, setPopup] = useState({ show: false, fixed: false, data: null, x: 0, y: 0 });
+            const [activeVocabTerm, setActiveVocabTerm] = useState(null);
+            const sidebarVocabRefs = useRef({});
+            const scriptRefs = useRef({});
+            const intervalRef = useRef(null);
+
+            useEffect(() => {
+                const loadVideo = () => {
+                    if (window.YT && window.YT.Player) {
+                        new window.YT.Player('youtube-player', {
+                            videoId: 'nb-L3S8AFh8',
+                            width: '100%',
+                            height: '100%',
+                            playerVars: { 'autoplay': 0, 'controls': 1, 'rel': 0 },
+                            events: {
+                                'onReady': (event) => {
+                                    playerRef.current = event.target;
+                                    setPlayer(event.target);
+                                },
+                                'onStateChange': (event) => {
+                                    if (event.data === window.YT.PlayerState.PLAYING) {
+                                        startInterval();
+                                        updateProgress('learn');
+                                    } else stopInterval();
+                                }
+                            }
+                        });
+                    }
+                };
+                if (!window.YT) {
+                    const tag = document.createElement('script');
+                    tag.src = "https://www.youtube.com/iframe_api";
+                    const firstScriptTag = document.getElementsByTagName('script')[0];
+                    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+                    window.onYouTubeIframeAPIReady = loadVideo;
+                } else {
+                    loadVideo();
+                }
+                return () => stopInterval();
+            }, []);
+
+            useEffect(() => {
+                if (player && player.setPlaybackRate) {
+                    player.setPlaybackRate(playbackRate);
+                }
+            }, [playbackRate, player]);
+
+            const handleGlobalClick = useCallback(() => {
+                if (popup.fixed) {
+                    setPopup(prev => ({ ...prev, show: false, fixed: false }));
+                }
+            }, [popup.fixed]);
+
+            useEffect(() => {
+                if (popup.fixed) {
+                    window.addEventListener('click', handleGlobalClick);
+                }
+                return () => window.removeEventListener('click', handleGlobalClick);
+            }, [popup.fixed, handleGlobalClick]);
+
+            const startInterval = () => {
+                stopInterval();
+                intervalRef.current = setInterval(() => {
+                    const p = playerRef.current;
+                    if (p && p.getCurrentTime) {
+                        const time = p.getCurrentTime();
+                        setCurrentTime(time);
+                        const currentLine = SCRIPT_DATA.find(line => time >= line.time[0] && time < line.time[1]);
+                        if (currentLine) setActiveLine(currentLine.id);
+                    }
+                }, 200);
+            };
+            const stopInterval = () => clearInterval(intervalRef.current);
+
+            useEffect(() => {
+                if (popup.show) return;
+                if (activeLine && autoScroll && scriptRefs.current[activeLine]) {
+                    scriptRefs.current[activeLine].scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }, [activeLine, autoScroll, popup.show]);
+
+            const handleLineClick = (time) => {
+                if (player) {
+                    player.seekTo(time);
+                    player.playVideo();
+                }
+            };
+
+            const toggleTranslation = (id) => {
+                setTranslations(prev => ({...prev, [id]: !prev[id]}));
+            };
+
+            const scrollToVocab = (term) => {
+                const element = sidebarVocabRefs.current[term];
+                if (element) {
+                    element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            };
+
+            const handleVocabEnter = (e, wordData) => {
+                if (popup.fixed) return; 
+                const rect = e.target.getBoundingClientRect();
+                setPopup({
+                    show: true,
+                    fixed: false,
+                    data: wordData,
+                    x: rect.left + rect.width / 2, 
+                    y: rect.bottom
+                });
+
+                if (showVocab) {
+                    setActiveVocabTerm(wordData.term);
+                    scrollToVocab(wordData.term);
+                }
+            };
+
+            const handleVocabLeave = () => {
+                if (popup.fixed) return;
+                setPopup(prev => ({ ...prev, show: false }));
+            };
+
+            const handleVocabClick = (e, wordData) => {
+                e.stopPropagation(); 
+                if (popup.fixed && popup.data && popup.data.term === wordData.term) {
+                    setPopup(prev => ({ ...prev, show: false, fixed: false }));
+                    return;
+                }
+                const rect = e.target.getBoundingClientRect();
+                setPopup({
+                    show: true,
+                    fixed: true,
+                    data: wordData,
+                    x: rect.left + rect.width / 2,
+                    y: rect.bottom
+                });
+
+                if (showVocab) {
+                    setActiveVocabTerm(wordData.term);
+                    scrollToVocab(wordData.term);
+                }
+            };
+
+            const { termMap, vocabRegex } = useMemo(() => {
+                const map = {};
+                VOCAB_DATA.forEach(vocab => {
+                    map[vocab.term] = vocab;
+                    if (vocab.variants) {
+                        vocab.variants.forEach(v => map[v] = vocab);
+                    }
+                });
+                const patterns = Object.keys(map).sort((a, b) => b.length - a.length);
+                if (patterns.length === 0) return { termMap: map, vocabRegex: null };
+                const regex = new RegExp(`(${patterns.map(p => p.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})`, 'g');
+                return { termMap: map, vocabRegex: regex };
+            }, []);
+
+            const renderTextWithVocab = (text) => {
+                if (!vocabRegex) return [text];
+                const parts = text.split(vocabRegex);
+                return parts.map((part, index) => {
+                    if (termMap[part]) {
+                        const vocab = termMap[part];
+                        const isActive = (popup.show && popup.data && popup.data.term === vocab.term) || (showVocab && activeVocabTerm === vocab.term);
+                        return (
+                            <span 
+                                key={index}
+                                className={`cursor-pointer border-b-2 transition-all duration-200 font-bold inline-block leading-tight
+                                    ${isActive 
+                                        ? `text-${themeColor}-700 border-${themeColor}-500 bg-${themeColor}-100 rounded-sm px-0.5 mx-0.5` 
+                                        : `text-slate-900 border-dashed border-slate-400 hover:text-${themeColor}-600 hover:border-${themeColor}-400 hover:bg-${themeColor}-50`
+                                    }`}
+                                onMouseEnter={(e) => handleVocabEnter(e, vocab)}
+                                onMouseLeave={handleVocabLeave}
+                                onClick={(e) => handleVocabClick(e, vocab)}
+                            >
+                                {part}
+                            </span>
+                        );
+                    }
+                    return part;
+                });
+            };
+
+            return (
+                <div className="flex h-[calc(100vh-4rem)] gap-4 animate-fade-in overflow-hidden relative w-full mx-auto max-w-full">
+                    <VocabPopup popup={popup} themeColor={themeColor} onGlobalClick={handleGlobalClick} />
+
+                    <div className={`bg-black rounded-xl overflow-hidden shadow-lg transition-all duration-300 ${showVocab ? 'w-5/12' : 'flex-1'}`}>
+                            <div id="youtube-player" className="w-full h-full"></div>
+                    </div>
+
+                    <div 
+                        className={`flex flex-col bg-white rounded-xl border border-slate-200 shadow-sm transition-all duration-300 ${showVocab ? 'w-4/12' : 'w-5/12'}`}
+                        style={{ fontSize: '1.3rem' }}
+                    >
+                        <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50 rounded-xl">
+                            {SCRIPT_DATA.map(line => {
+                                const isActive = activeLine === line.id;
+                                return (
+                                    <div key={line.id} ref={el => scriptRefs.current[line.id] = el} className="flex flex-col">
+                                        <div className="flex items-center gap-2 mb-1 ml-1">
+                                            <span className="text-[0.75em] font-bold text-slate-600">{line.speaker}</span>
+                                            <button 
+                                                onClick={(e) => { e.stopPropagation(); handleLineClick(line.time[0]); }} 
+                                                className={`text-[0.625em] text-${themeColor}-600 hover:underline flex items-center gap-0.5`}
+                                            >
+                                                <PlayIconLine className="w-3 h-3 fill-current" /> 재생 (Play)
+                                            </button>
+                                        </div>
+                                        <div 
+                                            onClick={() => handleLineClick(line.time[0])}
+                                            className={`p-5 rounded-2xl border transition-all duration-300 cursor-pointer relative group ${
+                                                isActive 
+                                                ? 'bg-yellow-100 border-yellow-400 shadow-md ring-1 ring-yellow-200 scale-[1.01]' 
+                                                : 'bg-white border-slate-200 hover:border-slate-300'
+                                            }`}
+                                        >
+                                            <p className="text-[1.375em] text-slate-800 leading-relaxed font-medium">
+                                                {renderTextWithVocab(line.kor)}
+                                            </p>
+                                            
+                                            <div className="my-3 border-t border-dashed border-slate-200"></div>
+                                            {translations[line.id] ? (
+                                                <p className="text-[1.125em] text-slate-500 animate-fade-in">{line.eng}</p>
+                                            ) : (
+                                                <TranslateButton 
+                                                    onClick={() => toggleTranslation(line.id)}
+                                                    isShowing={false} 
+                                                />
+                                            )}
+                                            {translations[line.id] && (
+                                                <button 
+                                                    onClick={(e) => { e.stopPropagation(); toggleTranslation(line.id); }}
+                                                    className="absolute bottom-4 right-4 text-[0.625em] text-slate-300 hover:text-slate-500"
+                                                >
+                                                    접기
+                                                </button>
+                                            )}
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                            <div className="h-32"></div>
+                        </div>
+                    </div>
+
+                    {showVocab && (
+                        <div className="w-3/12 flex flex-col bg-white rounded-xl border border-slate-200 shadow-sm animate-fade-in">
+                            <div className="p-4 border-b border-slate-100 flex items-center gap-2 bg-white rounded-t-xl">
+                                <VocabIcon className={`w-5 h-5 text-${themeColor}-600`} />
+                                <div className="flex flex-col leading-none">
+                                    <h2 className="font-normal text-slate-900 text-sm font-surround">핵심 어휘</h2>
+                                </div>
+                            </div>
+                            <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50">
+                                {VOCAB_DATA.map((word, idx) => (
+                                    <SidebarVocabCard 
+                                        key={idx}
+                                        word={word}
+                                        activeVocabTerm={activeVocabTerm}
+                                        sidebarVocabRefs={sidebarVocabRefs}
+                                        themeColor={themeColor}
+                                    />
+                                ))}
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        const VocabCard = ({ word, themeColor }) => {
+            const [isOpen, setIsOpen] = useState(false);
+            const [showTrans, setShowTrans] = useState(false);
+            const trans = word.translations?.en;
+
+            return (
+                <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all h-full flex flex-col">
+                    <div className="flex justify-between mb-4">
+                        <div className="flex flex-col">
+                            <h3 className="text-[1.5em] font-extrabold text-slate-900">{word.term}</h3>
+                            {showTrans && trans?.term && (
+                                <p className="text-[1.1875em] font-gowoon text-slate-500 font-medium mt-1">{trans.term}</p>
+                            )}
+                        </div>
+                        <div className="shrink-0 ml-2 mt-1">
+                            <TranslateButton onClick={() => setShowTrans(!showTrans)} isShowing={showTrans} />
+                        </div>
+                    </div>
+                    <div className={`pl-4 border-l-4 border-${themeColor}-500 mb-6`}>
+                        <p className="text-[1.3125em] font-diary text-slate-600 font-medium">{word.mainDef}</p>
+                        {showTrans && trans?.mainDef && (
+                            <p className="text-[1.125em] font-gowoon text-slate-500 mt-1">{trans.mainDef}</p>
+                        )}
+                    </div>
+                    
+                    <div className="flex-1 flex flex-col">
+                        <button 
+                            onClick={() => setIsOpen(!isOpen)}
+                            className="w-full flex items-center justify-between p-4 bg-slate-50 hover:bg-slate-100 rounded-xl transition-all group border border-transparent hover:border-slate-200"
+                        >
+                            <div className="flex items-center gap-2">
+                                <span className={`w-1.5 h-1.5 rounded-full transition-colors duration-300 ${isOpen ? `bg-${themeColor}-500` : 'bg-slate-400'}`}></span>
+                                <span className={`text-[0.75em] font-bold uppercase tracking-wider transition-colors duration-300 ${isOpen ? `text-${themeColor}-700` : 'text-slate-500'}`}>
+                                    Examples (예문)
+                                </span>
+                            </div>
+                            <ChevronRight className={`w-4 h-4 text-slate-400 transition-transform duration-300 ${isOpen ? 'rotate-90' : ''}`} />
+                        </button>
+
+                        <div 
+                            className={`overflow-hidden transition-all duration-300 ease-in-out ${isOpen ? 'max-h-96 opacity-100 mt-2' : 'max-h-0 opacity-0'}`}
+                        >
+                            <div className="bg-slate-50 rounded-xl p-4 space-y-3 border border-slate-100">
+                                {word.examples.map((ex, i) => (
+                                    <div key={i}>
+                                        <p className="font-bold text-[1.1875em] font-marker text-slate-800 leading-relaxed">{ex.kor}</p>
+                                        <p className="text-[1.0625em] font-gowoon text-slate-500 mt-0.5">{ex.eng}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {word.subDefs && word.subDefs.length > 0 && (
+                            <div className={`bg-${themeColor}-50 rounded-xl p-5 space-y-2 border border-${themeColor}-100 mt-4`}>
+                                {word.subDefs.map((sub, i) => {
+                                    const subTrans = trans?.subDefs?.[i];
+                                    return (
+                                        <div key={i} className="flex flex-col">
+                                            <div className="flex items-baseline gap-2">
+                                                <span className={`font-bold text-[1.25em] font-free text-${themeColor}-900`}>{sub.subTerm}</span>
+                                                {showTrans && subTrans?.term && (
+                                                    <span className="text-[1.0625em] font-gowoon text-slate-500">({subTrans.term})</span>
+                                                )}
+                                            </div>
+                                            <span className={`text-[1.1875em] font-dictation text-${themeColor}-600`}>{sub.subDef}</span>
+                                            {showTrans && subTrans?.def && (
+                                                <span className="text-[1em] font-gowoon text-slate-500 mt-0.5">{subTrans.def}</span>
+                                            )}
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
+        };
+
+        const VocabView = ({ updateProgress, themeColor }) => {
+            useEffect(() => {
+                updateProgress('vocab');
+            }, []);
+
+            return (
+            <div className="w-full animate-fade-in max-w-7xl mx-auto" style={{ fontSize: '1.4rem' }}>
+                <div className="flex items-center gap-4 mb-8">
+                    <div className={`w-[4rem] h-[4rem] bg-${themeColor}-100 rounded-2xl flex items-center justify-center shrink-0`}>
+                        <VocabIcon className={`w-10 h-10 text-${themeColor}-600`} />
+                    </div>
+                    <div className="flex flex-col">
+                        <h2 className="text-[1.875em] font-normal text-slate-900 font-surround">핵심 어휘</h2>
+                    </div>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {VOCAB_DATA.map((word, idx) => (
+                        <VocabCard key={idx} word={word} themeColor={themeColor} />
+                    ))}
+                </div>
+            </div>
+            );
+        };
+
+        const QuizSentence = ({ quiz, onAttempt, themeColor, onShuffle }) => {
+            const [userInput, setUserInput] = useState('');
+            const [result, setResult] = useState(null);
+            const [showHint, setShowHint] = useState(false);
+            const [showTranslation, setShowTranslation] = useState(false);
+
+            const handleCheck = () => {
+                const isCorrect = userInput.trim() === quiz.answer; 
+                setResult(isCorrect ? 'correct' : 'incorrect');
+                setShowHint(false);
+                
+                if (onAttempt) {
+                    onAttempt(quiz.id, isCorrect);
+                }
+                
+                if (onShuffle) {
+                    onShuffle();
+                }
+            };
+
+            const handleShowAnswer = () => {
+                setUserInput(quiz.answer); 
+                setResult(null); 
+                setShowHint(false);
+                
+                if (onShuffle) {
+                    onShuffle();
+                }
+            };
+
+            const safeWidth = quiz.answer ? Math.max(80, quiz.answer.length * 20) : 80;
+
+            const getCheckButtonClass = () => {
+                const baseClass = "px-3 py-1.5 rounded-lg text-xs font-bold transition-colors shadow-sm";
+                if (result === 'correct') return `${baseClass} bg-green-50 text-green-900 hover:bg-green-100`;
+                if (result === 'incorrect') return `${baseClass} bg-red-50 text-red-900 hover:bg-red-100`;
+                return `${baseClass} bg-yellow-50 text-yellow-900 hover:bg-yellow-100`;
+            };
+
+            const translationText = (
+                <span>
+                    {quiz.textParts_eng[0]}
+                    <span className={`font-bold ${result === 'correct' ? 'text-green-600' : 'text-slate-400'}`}>
+                        {result === 'correct' ? quiz.answer_eng : "______"}
+                    </span>
+                    {quiz.textParts_eng[1]}
+                </span>
+            );
+
+            return (
+                <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+                    <div className="text-[1.125em] text-slate-800 font-medium leading-loose mb-4">
+                        <span className="font-bold text-slate-500 mr-2">{quiz.id}.</span>
+                        
+                        <span>{quiz.textParts[0]}</span>
+                        <input 
+                            type="text" 
+                            value={userInput} 
+                            onChange={(e) => { setUserInput(e.target.value); setResult(null); }}
+                            className={`mx-1 px-3 py-0.5 border-b-2 font-bold text-center focus:outline-none transition-colors bg-transparent inline-block
+                                ${result === 'correct' 
+                                    ? 'border-green-500 text-green-700' 
+                                    : result === 'incorrect' 
+                                        ? 'border-red-500 text-red-700' 
+                                        : `border-slate-300 text-${themeColor}-600 focus:border-${themeColor}-500`
+                                }`}
+                            style={{ width: `${safeWidth}px`, minWidth: '5rem' }}
+                        />
+                        <span>{quiz.textParts[1]}</span>
+                    </div>
+                    
+                    {showTranslation && (
+                        <p className="mt-2 mb-4 text-slate-600 text-[0.875em] font-medium pl-6 animate-fade-in border-l-2 border-slate-200">
+                            {translationText}
+                        </p>
+                    )}
+
+                    {result === 'correct' && (
+                        <div className={`mb-4 px-4 py-3 rounded-lg text-[0.875em] font-medium bg-${themeColor}-50 text-${themeColor}-800 border border-${themeColor}-100 animate-fade-in`}>
+                            <p className="font-bold mb-1">정답입니다! 🎉</p>
+                            <p>{quiz.explanation}</p>
+                        </div>
+                    )}
+                    
+                    {result === 'incorrect' && (
+                        <div className="mb-4 px-4 py-2 rounded-lg text-[0.875em] font-bold bg-red-50 text-red-700 border border-red-100 animate-fade-in">
+                            다시 시도해보세요.
+                        </div>
+                    )}
+
+                    {showHint && (
+                        <div className="mb-4 px-4 py-2 bg-yellow-50 text-yellow-800 rounded-lg text-[0.875em] font-medium border border-yellow-200 animate-fade-in">
+                            💡 힌트: {quiz.hint}
+                        </div>
+                    )}
+
+                    <div className="flex flex-wrap gap-2 items-center">
+                        <button onClick={handleCheck} className={getCheckButtonClass()}>
+                            정답 확인
+                        </button>
+                        <button onClick={handleShowAnswer} className="px-3 py-1.5 bg-slate-50 text-slate-600 rounded-lg text-[0.75em] font-bold hover:bg-slate-100 transition-colors">
+                            정답 보기
+                        </button>
+                        <button onClick={() => setShowHint(!showHint)} className="px-3 py-1.5 bg-slate-50 text-slate-600 rounded-lg text-[0.75em] font-bold hover:bg-slate-100 transition-colors">
+                            힌트 보기
+                        </button>
+                        <TranslateButton onClick={() => setShowTranslation(!showTranslation)} isShowing={showTranslation} className="ml-1" />
+                    </div>
+                </div>
+            );
+        };
+
+        const QuizView = ({ updateProgress, themeColor }) => {
+            const [attempts, setAttempts] = useState({});
+            const [shuffledChoices, setShuffledChoices] = useState(ANSWER_CHOICES);
+
+            const totalQuestions = QUIZ_LIST.length;
+            const correctCount = Object.values(attempts).filter(v => v).length;
+            const currentScore = Math.round((correctCount / totalQuestions) * 100);
+
+            useEffect(() => {
+                const totalAttempts = Object.keys(attempts).length;
+                if (totalAttempts === 0) return; 
+
+                updateProgress('quiz', currentScore);
+            }, [attempts, currentScore, updateProgress]); 
+
+            const handleAttempt = (quizId, isCorrect) => {
+                setAttempts(prev => {
+                    if (prev.hasOwnProperty(quizId)) return prev;
+                    const newAttempts = { ...prev, [quizId]: isCorrect };
+                    return newAttempts;
+                });
+            };
+
+            const shuffleChoices = useCallback(() => {
+                setShuffledChoices(prev => {
+                    const newArray = [...prev];
+                    for (let i = newArray.length - 1; i > 0; i--) {
+                        const j = Math.floor(Math.random() * (i + 1));
+                        [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+                    }
+                    return newArray;
+                });
+            }, []);
+
+            return (
+                <div className="w-full animate-fade-in max-w-7xl mx-auto p-4" style={{ fontSize: '1.5rem' }}>
+                    <div className="flex items-center gap-4 mb-8">
+                        <div className={`w-[4rem] h-[4rem] bg-${themeColor}-100 rounded-2xl flex items-center justify-center shrink-0`}>
+                            <QuizIcon className={`w-8 h-8 text-${themeColor}-600`} />
+                        </div>
+                        <div className="flex flex-col">
+                            <div className="flex items-end gap-3">
+                                <h2 className="text-[1.875em] font-normal text-slate-900 font-surround leading-none">내용 확인 퀴즈</h2>
+                                <span className={`text-[1.125em] font-bold text-${themeColor}-600 animate-fade-in leading-none mb-0.5`}>
+                                    (정답률: {currentScore}%)
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="flex flex-col lg:flex-row gap-6">
+                        <div className="w-full lg:w-48 shrink-0">
+                            <div className="bg-slate-50 rounded-2xl p-6 border border-slate-200 lg:sticky lg:top-6">
+                                <h3 className="text-center font-bold text-slate-700 mb-4 pb-2 border-b border-slate-200">정답 목록</h3>
+                                <div className="flex flex-wrap lg:flex-col gap-2 justify-center">
+                                    {shuffledChoices.map((choice, idx) => (
+                                        <div key={idx} className={`bg-white px-2 py-2 rounded-lg text-center text-[0.875em] font-bold text-slate-600 shadow-sm border border-slate-100 hover:border-${themeColor}-400 hover:text-${themeColor}-600 transition-colors cursor-default select-all`}>
+                                            {choice}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="flex-1 w-full space-y-6">
+                            {QUIZ_LIST.map((quiz) => (
+                                <QuizSentence 
+                                    key={quiz.id} 
+                                    quiz={quiz} 
+                                    onAttempt={handleAttempt} 
+                                    themeColor={themeColor}
+                                    onShuffle={shuffleChoices}
+                                />
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const callGeminiWithBackoff = async (payload) => {
+            const apiKey = ""; 
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+            const delays = [1000, 2000, 4000, 8000, 16000];
+            
+            for (let i = 0; i <= delays.length; i++) {
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    if (!response.ok) {
+                        if (response.status === 429 || response.status >= 500) {
+                            throw new Error(`Server error: ${response.status}`);
+                        }
+                        throw new Error(`API error: ${response.statusText}`);
+                    }
+                    return await response.json();
+                } catch (error) {
+                    if (i === delays.length) throw error;
+                    await new Promise(resolve => setTimeout(resolve, delays[i]));
+                }
+            }
+        };
+
+        const FeedbackSection = ({ value, onChange, placeholder, question, keyPhrases, themeColor }) => {
+            const [feedback, setFeedback] = useState(null);
+            const [isLoading, setIsLoading] = useState(false);
+            const [error, setError] = useState(null);
+
+            const checkSentence = async () => {
+                if (!value || value.trim() === '') {
+                    setError("문장을 입력해야 피드백을 받을 수 있어요.");
+                    setFeedback(null);
+                    return;
+                }
+                setIsLoading(true);
+                setError(null);
+                setFeedback(null);
+
+                const systemPrompt = `You are an advanced Korean language tutor AI for A2 level learners. Analyze the user's sentence in response to a specific question.
+The user's answer is in Korean.
+Your goal is to provide feedback in ENGLISH to help the learner understand.
+
+Instructions:
+1. "feedback_message_eng": Write the feedback status or brief comment in English.
+2. "explanation_eng": Explain the grammar or vocabulary mistake in English. You can quote Korean words but the explanation must be in English.
+3. "corrected_sentence": Provide the natural and correct Korean sentence.
+4. "relevance_feedback_eng": If the answer is irrelevant, explain why in English.
+
+Question: "${question}"
+User's Answer: "${value}"
+
+Your response MUST be a JSON object with the specified schema.`;
+                const payload = {
+                    contents: [{ role: "user", parts: [{ text: systemPrompt }, { text: `Please provide feedback on my answer.\n\nQuestion: "${question}"\nUser's Answer: "${value}"` }] }],
+                    generationConfig: {
+                        responseMimeType: "application/json",
+                        responseSchema: { type: "OBJECT", properties: { "is_relevant": { "type": "BOOLEAN" }, "relevance_feedback_eng": { "type": "STRING", "nullable": true }, "is_correct": { "type": "BOOLEAN", "nullable": true }, "feedback_message_eng": { "type": "STRING", "nullable": true }, "corrected_sentence": { "type": "STRING", "nullable": true }, "explanation_eng": { "type": "STRING", "nullable": true }, "alternative_expressions": { "type": "ARRAY", "items": { "type": "OBJECT", "properties": { "expression_kor": { "type": "STRING" }, "expression_eng": { "type": "STRING" } }, "required": ["expression_kor", "expression_eng"] } } }, "required": ["is_relevant"] }
+                    }
+                };
+
+                try {
+                    const result = await callGeminiWithBackoff(payload);
+                    if (result.candidates?.[0]?.content?.parts?.[0]?.text) {
+                        const parsedJson = JSON.parse(result.candidates[0].content.parts[0].text);
+                        setFeedback(parsedJson);
+                    } else {
+                        setError("AI의 응답을 처리하는 데 문제가 발생했어요.");
+                    }
+                } catch (err) {
+                    console.error("Error checking sentence:", err);
+                    setError("문장 검사에 실패했어요. 다시 시도해 주세요.");
+                } finally {
+                    setIsLoading(false);
+                }
+            };
+
+            return (
+                <div>
+                    {keyPhrases}
+                    <div>
+                        <h4 className="font-bold text-slate-900 mb-3 text-[1em]">핵심 표현을 사용해서 질문에 대답해 보세요.</h4>
+                        <textarea 
+                            value={value} 
+                            onChange={onChange} 
+                            placeholder={placeholder}
+                            className={`w-full p-4 rounded-xl border border-slate-200 focus:border-${themeColor}-500 focus:ring-1 focus:ring-${themeColor}-500 outline-none min-h-[7.5rem] resize-none text-[1em] text-slate-800 placeholder-slate-400 mb-3`}
+                        ></textarea>
+                        
+                        <button
+                            onClick={checkSentence}
+                            disabled={!value.trim() || isLoading}
+                            className={`flex items-center gap-2 px-5 py-[0.375rem] text-[0.75em] leading-[0.75em] rounded-xl font-bold transition-all shadow-sm ${
+                                !value.trim() || isLoading
+                                ? 'bg-slate-100 text-slate-400 cursor-not-allowed'
+                                : 'bg-indigo-600 text-white hover:bg-indigo-700 hover:shadow-md'
+                            }`}
+                        >
+                            {isLoading ? (
+                                <>
+                                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                                    <span>분석 중... (Analyzing)</span>
+                                </>
+                            ) : (
+                                <>
+                                    <SparklesIcon className="w-5 h-5" />
+                                    <span>AI Feedback (피드백 받기)</span>
+                                </>
+                            )}
+                        </button>
+
+                        {error && (
+                            <div className="mt-4 p-4 bg-red-50 text-red-600 rounded-xl border border-red-200 text-[0.875em] font-medium animate-fade-in">
+                                {error}
+                            </div>
+                        )}
+
+                        {feedback && (
+                            <div className={`mt-6 rounded-2xl p-6 border animate-fade-in ${feedback.is_correct ? `bg-${themeColor}-50 border-${themeColor}-200` : 'bg-yellow-50 border-yellow-200'}`}>
+                                <div className="flex items-center gap-2 mb-4">
+                                    <span className="text-[1.5em]">🤖</span>
+                                    <h4 className="font-extrabold text-slate-900 text-[1.125em]">AI Tutor Feedback</h4>
+                                </div>
+                                
+                                <div className="mb-4">
+                                    <span className={`font-black text-[0.875em] px-3 py-1 rounded-full bg-white border shadow-sm ${feedback.is_correct ? `text-${themeColor}-600 border-${themeColor}-200` : 'text-yellow-600 border-yellow-200'}`}>
+                                        {feedback.is_correct ? '🎉 Great Job!' : '⚠️ Needs Improvement'}
+                                    </span>
+                                </div>
+
+                                <div className="space-y-4">
+                                    {feedback.feedback_message_eng && (
+                                        <div className="flex flex-col sm:flex-row gap-1 sm:gap-4">
+                                            <span className="font-bold text-slate-500 text-[0.875em] sm:w-24 shrink-0">Feedback</span>
+                                            <p className="text-slate-800 text-[0.875em] font-medium leading-relaxed">{feedback.feedback_message_eng}</p>
+                                        </div>
+                                    )}
+                                    {feedback.explanation_eng && (
+                                        <div className="flex flex-col sm:flex-row gap-1 sm:gap-4">
+                                            <span className="font-bold text-slate-500 text-[0.875em] sm:w-24 shrink-0">Explanation</span>
+                                            <p className="text-slate-800 text-[0.875em] font-medium leading-relaxed">{feedback.explanation_eng}</p>
+                                        </div>
+                                    )}
+                                    {feedback.corrected_sentence && (
+                                        <div className="flex flex-col sm:flex-row gap-1 sm:gap-4">
+                                            <span className="font-bold text-slate-500 text-[0.875em] sm:w-24 shrink-0">Correction</span>
+                                            <p className="text-slate-900 text-[1.125em] font-black leading-relaxed">{feedback.corrected_sentence}</p>
+                                        </div>
+                                    )}
+                                    {!feedback.is_relevant && (
+                                        <div className="flex flex-col sm:flex-row gap-1 sm:gap-4">
+                                            <span className="font-bold text-slate-500 text-[0.875em] sm:w-24 shrink-0">Relevance</span>
+                                            <p className="text-slate-800 text-[0.875em] font-medium leading-relaxed">{feedback.relevance_feedback_eng || "This answer doesn't seem relevant to the question."}</p>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
+        };
+
+        const DiscussQuestionItem = ({ item, themeColor }) => {
+            const [text, setText] = useState('');
+            const [showTranslation, setShowTranslation] = useState(false);
+
+            return (
+                <div className="mb-12 border-b border-slate-100 pb-12 last:mb-0 last:border-0 last:pb-0">
+                    <div className="mb-8">
+                        <h3 className="text-[1.25em] font-bold text-slate-900 mb-2 leading-relaxed">
+                            {item.id}. {item.questionKor}
+                        </h3>
+                        {showTranslation && (
+                            <p className="text-slate-500 text-[0.875em] mb-3 animate-fade-in font-medium leading-relaxed">
+                                {item.questionEng}
+                            </p>
+                        )}
+                        <TranslateButton onClick={() => setShowTranslation(!showTranslation)} isShowing={showTranslation} />
+                    </div>
+
+                    <FeedbackSection 
+                        themeColor={themeColor}
+                        question={item.questionKor}
+                        value={text}
+                        onChange={(e) => setText(e.target.value)}
+                        placeholder="여기에 답변을 입력하세요 (Type your response here)"
+                        keyPhrases={
+                            <div className="mb-10 space-y-4">
+                                <div className="flex items-center gap-2">
+                                    <span className="text-red-500 text-[1.125em]">📍</span>
+                                    <h4 className="font-bold text-slate-900 text-[1.125em]">핵심 표현</h4>
+                                </div>
+
+                                <div className="space-y-4 pl-1">
+                                    {item.vocab.map((v, i) => (
+                                        <div key={i} className={`pl-4 border-l-4 border-${themeColor}-500`}>
+                                            <p className="text-slate-700">
+                                                <span className={`text-${themeColor}-600 font-bold text-[1.125em] mr-2`}>{v.term}:</span>
+                                                <span>{v.def}</span>
+                                            </p>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        }
+                    />
+                </div>
+            );
+        };
+
+        const DiscussView = ({ updateProgress, themeColor }) => {
+            return (
+                <div className="w-full animate-fade-in max-w-7xl mx-auto" style={{ fontSize: '1.35rem' }}>
+                    <div className="flex items-center gap-4 mb-8">
+                        <div className={`w-[4rem] h-[4rem] bg-${themeColor}-100 rounded-2xl flex items-center justify-center shrink-0`}>
+                            <DiscussIcon className="w-10 h-10 text-current" />
+                        </div>
+                        <div className="flex flex-col">
+                            <h2 className="text-[1.875em] font-normal text-slate-900 font-surround">생각해 보기</h2>
+                        </div>
+                    </div>
+
+                    <div className={`mb-8 p-4 rounded-2xl bg-${themeColor}-50 border border-${themeColor}-100`}>
+                        <div className="text-slate-800 text-[0.875em] font-medium leading-relaxed">
+                            <p>AI Feedback은 Gemini 웹페이지에서만 작용하기 때문에 Github 웹페이지에서 사용할 수 없어요.</p>
+                            
+                            <p className="flex flex-wrap items-center gap-1 mt-2">
+                                AI Feedback 기능을 사용하기 원할 경우, 다음 링크를 클릭하세요: 
+                                <a 
+                                    href="https://gemini.google.com/share/b879ec742712" 
+                                    target="_blank" 
+                                    rel="noopener noreferrer" 
+                                    className={`font-bold text-${themeColor}-600 hover:underline inline-flex items-center gap-0.5`}
+                                >
+                                    Gemini AI Feedback
+                                    <ExternalLinkIcon className="w-3 h-3" />
+                                </a>
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-8 md:p-10">
+                        {DISCUSS_DATA.map((item) => (
+                            <DiscussQuestionItem 
+                                key={item.id}
+                                item={item}
+                                themeColor={themeColor}
+                            />
+                        ))}
+                    </div>
+                </div>
+            );
+        };
+
+        const App = () => {
+            const [activeTab, setActiveTab] = useState('home');
+            const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+            const [userLevel] = useState("B2+");
+            
+            const [autoScroll, setAutoScroll] = useState(true);
+            const [showVocab, setShowVocab] = useState(false);
+            const [playbackRate, setPlaybackRate] = useState(1.0);
+
+            const [progress, setProgress] = useState({
+                learn: false,
+                vocab: false,
+                quiz: 0,
+                discuss: false
+            });
+
+            const themeColor = useMemo(() => getLevelTheme(userLevel), [userLevel]);
+
+            const updateProgress = useCallback((key, value = true) => {
+                setProgress(prev => {
+                    if (prev[key] === value) return prev;
+                    return { ...prev, [key]: value };
+                });
+            }, []);
+
+            const handleSpeedChange = (e) => {
+                const rate = parseFloat(e.target.value);
+                setPlaybackRate(rate);
+            };
+
+            // Custom navigation handler for sidebar to control collapse state
+            const handleSidebarNavigation = (tabId) => {
+                setActiveTab(tabId);
+                // "동영상 자료"(learn) 클릭 시 사이드바 접음
+                if (tabId === 'learn') {
+                    setIsSidebarCollapsed(true);
+                } 
+                // "시작 페이지", "핵심 어휘", "내용 확인 퀴즈", "생각해 보기" 클릭 시 사이드바 펼침
+                else {
+                    setIsSidebarCollapsed(false);
+                }
+            };
+
+            const mainPaddingClass = useMemo(() => {
+                switch(activeTab) {
+                    case 'home': return 'p-[1.25rem]';    
+                    case 'learn': return 'p-[0.125rem]';    
+                    case 'vocab': return 'p-[1rem]';   
+                    case 'quiz': return 'p-[0.25rem]';     
+                    case 'discuss': return 'p-[0.125rem]';  
+                    default: return 'p-[1.25rem]';
+                }
+            }, [activeTab]);
+
+            useEffect(() => {
+                const handleResize = () => {
+                    if (window.innerWidth < 1024) {
+                        setIsSidebarCollapsed(true);
+                    } else {
+                        setIsSidebarCollapsed(false);
+                    }
+                };
+                window.addEventListener('resize', handleResize);
+                handleResize(); 
+                return () => window.removeEventListener('resize', handleResize);
+            }, []);
+
+            const toggleSidebar = () => {
+                setIsSidebarCollapsed(!isSidebarCollapsed);
+            };
+
+            const renderContent = () => {
+                switch(activeTab) {
+                    case 'home': return <HomeView setActiveTab={setActiveTab} progress={progress} userLevel={userLevel} themeColor={themeColor} />;
+                    case 'learn': return <LearnView 
+                                            updateProgress={updateProgress} 
+                                            themeColor={themeColor}
+                                            autoScroll={autoScroll}
+                                            showVocab={showVocab}
+                                            playbackRate={playbackRate}
+                                            />;
+                    case 'vocab': return <VocabView updateProgress={updateProgress} themeColor={themeColor} />;
+                    case 'quiz': return <QuizView updateProgress={updateProgress} themeColor={themeColor} />;
+                    case 'discuss': return <DiscussView updateProgress={updateProgress} themeColor={themeColor} />;
+                    default: return <HomeView setActiveTab={setActiveTab} progress={progress} userLevel={userLevel} themeColor={themeColor} />;
+                }
+            };
+
+            const renderHeader = () => {
+                const headerScale = activeTab === 'learn' ? '1.0rem' : '1.3rem';
+
+                if (activeTab === 'learn') {
+                    const themeHex = LEVEL_THEMES[userLevel]?.hex || '#22c55e';
+
+                    return (
+                        <div 
+                            className="flex items-center justify-between h-full px-6 border-b border-slate-100 bg-white/90 backdrop-blur"
+                            style={{ fontSize: headerScale }}
+                        >
+                            <div className="flex items-center gap-3">
+                                <div className={`p-2 rounded-lg bg-${themeColor}-50`}>
+                                    <LearnIcon className={`w-5 h-5 text-${themeColor}-600`} />
+                                </div>
+                                <div className="flex flex-col">
+                                    <h1 className="text-[1.125em] font-normal text-slate-900 font-surround leading-none">동영상 & 스크립트</h1>
+                                </div>
+                            </div>
+
+                            <div className="flex items-center gap-4">
+                                <div className="flex items-center gap-2 cursor-pointer group" onClick={() => setAutoScroll(!autoScroll)}>
+                                    <div className={`w-9 h-5 rounded-full relative transition-colors duration-200 ease-in-out ${autoScroll ? `bg-${themeColor}-500` : 'bg-slate-300'}`}>
+                                        <div className={`absolute top-1 w-3 h-3 bg-white rounded-full shadow-sm transition-transform duration-200 ${autoScroll ? 'left-5' : 'left-1'}`}></div>
+                                    </div>
+                                    <span className="text-[0.875em] font-bold text-slate-600 group-hover:text-slate-800 transition-colors whitespace-nowrap hidden sm:inline">자동 스크롤</span>
+                                </div>
+
+                                <div className="flex items-center gap-2 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-200">
+                                    <SpeedSolidIcon className="w-4 h-4 text-slate-500" />
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-[0.625em] font-medium text-slate-400">0.5x</span>
+                                        <input 
+                                            type="range" min="0.5" max="1.0" step="0.01" 
+                                            value={playbackRate} onChange={handleSpeedChange}
+                                            className="w-20 h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer"
+                                            style={{ '--thumb-color': themeHex }} 
+                                        />
+                                        <span className="text-[0.625em] font-medium text-slate-400">1.0x</span>
+                                    </div>
+                                    <span className={`text-[0.75em] font-bold text-${themeColor}-700 min-w-[2.5rem] text-center`}>{playbackRate.toFixed(2)}x</span>
+                                </div>
+
+                                <button 
+                                    onClick={() => setShowVocab(!showVocab)}
+                                    className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-all shadow-sm ${showVocab ? 'bg-slate-100 border-slate-300' : 'bg-white border-slate-200 hover:bg-slate-50'}`}
+                                >
+                                    <OpenBookSolidIcon className="w-4 h-4 text-slate-600" />
+                                    <span className="text-[0.875em] font-bold text-slate-700 whitespace-nowrap hidden sm:inline">핵심 어휘</span>
+                                </button>
+                            </div>
+                        </div>
+                    );
+                }
+                
+                // Header for other tabs
+                return (
+                    <div 
+                        className="flex items-center justify-between h-full px-6 border-b border-slate-100 bg-white/90 backdrop-blur"
+                        style={{ fontSize: headerScale }}
+                    >
+                         <div className="flex items-center gap-3">
+                            {/* Placeholder or specific content for other headers if needed */}
+                        </div>
+                    </div>
+                );
+            };
+
+            const isLearnTab = activeTab === 'learn';
+
+            return (
+                <div className="flex min-h-screen bg-[#f9fafb]">
+                    <Sidebar 
+                        activeTab={activeTab} 
+                        setActiveTab={handleSidebarNavigation} 
+                        isCollapsed={isSidebarCollapsed} 
+                        toggleSidebar={toggleSidebar}
+                        userLevel={userLevel}
+                        themeColor={themeColor}
+                    />
+                    <div className={`flex-1 flex flex-col transition-all duration-300 ease-in-out ${isSidebarCollapsed ? 'md:ml-[5.5rem]' : 'md:ml-64'}`}>
+                        <header className={`h-16 bg-white sticky top-0 z-40 transition-all duration-300 ${isSidebarCollapsed ? 'md:left-[5.5rem]' : 'md:left-64'}`}>
+                            {renderHeader()}
+                        </header>
+                        <main className={`flex-1 ${mainPaddingClass} flex flex-col ${isLearnTab ? 'overflow-hidden' : 'overflow-y-auto h-[calc(100vh-4rem)]'}`}>
+                            {renderContent()}
+                        </main>
+                    </div>
+                    <nav className="md:hidden fixed bottom-0 w-full bg-white border-t border-slate-200 flex justify-around p-3 z-50">
+                        {['home','learn','vocab','quiz','discuss'].map(t=><button key={t} onClick={()=>setActiveTab(t)} className={`p-2 rounded-lg ${activeTab===t ? `text-${themeColor}-600 bg-${themeColor}-50` : 'text-slate-400'}`}>{t==='home'?<HomeIcon className="w-6 h-6"/>:t==='learn'?<LearnIcon className="w-6 h-6"/>:t==='vocab'?<VocabIcon className="w-6 h-6"/>:t==='quiz'?<QuizIcon className="w-6 h-6"/>:<DiscussIcon className="w-6 h-6"/>}</button>)}
+                    </nav>
+                </div>
+            );
+        };
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
