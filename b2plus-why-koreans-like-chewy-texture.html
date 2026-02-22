@@ -1,0 +1,2213 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenKoreanLearningLab</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Noto Sans KR"', 'sans-serif'],
+                        serif: ['"Noto Serif KR"', 'serif'],
+                        ui: ['"Noto Sans KR"', 'sans-serif'],
+                    },
+                    colors: {
+                        gray: {
+                            50: '#f9fafb',
+                            100: '#f3f4f6',
+                            200: '#e5e7eb',
+                            300: '#d1d5db',
+                            400: '#9ca3af',
+                            500: '#6b7280',
+                            600: '#4b5563',
+                            700: '#374151',
+                            800: '#1f2937',
+                            900: '#111827',
+                            950: '#030712',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: #ffffff; color: #1a1a1a; -webkit-font-smoothing: antialiased; }
+        .font-sans { font-family: 'Noto Sans KR', sans-serif; }
+        .font-serif { font-family: 'Noto Serif KR', serif; }
+        .font-ui { font-family: 'Noto Sans KR', sans-serif; }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 4px; height: 4px; } 
+        ::-webkit-scrollbar-track { background: transparent; } 
+        ::-webkit-scrollbar-thumb { background: #e5e7eb; border-radius: 0px; } 
+        ::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
+
+        /* Animation */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } } 
+        .animate-fade-in { animation: fadeIn 0.4s ease-out forwards; }
+
+        /* Range Input */
+        input[type=range] { -webkit-appearance: none; background: transparent; } 
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 12px; width: 12px; border-radius: 0%; background: #1a1a1a; cursor: pointer; margin-top: -5px; border: none; } 
+        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 2px; cursor: pointer; background: #e5e7eb; }
+
+        ::selection { background-color: #f3f4f6; color: #000; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+        const { useState, useEffect, useRef, useMemo, useCallback } = React;
+        const { createPortal } = ReactDOM;
+
+        const VIDEO_CONFIG = {
+            YOUTUBE_VIDEO_ID: 'Q3xPFQgDG4E',
+            DEFAULT_PLAYBACK_RATE: 1.0,
+        };
+
+        const VIDEO_SCRIPT_DATA = [
+            {
+                id: 's1',
+                speaker: '스브스뉴스',
+                kor: '유독 쫀득한 식감에 열광하는 한국인들.',
+                time: [2.2, 4.7],
+                eng: "Koreans are uniquely enthusiastic about chewy textures."
+            },
+            {
+                id: 's2',
+                speaker: '스브스뉴스',
+                kor: '대체 왜 이러는지 언제부터 그랬는지 스브스뉴스가 추적해 봤습니다.',
+                time: [4.7, 12.0],
+                eng: "SBS News investigated why this is and since when."
+            },
+            {
+                id: 's3',
+                speaker: '스브스뉴스',
+                kor: '한국에 음식이 들어오면 죄다 쫀득해지는데요.',
+                time: [12.0, 14.7],
+                eng: "When food comes to Korea, it all becomes chewy."
+            },
+            {
+                id: 's4',
+                speaker: '스브스뉴스',
+                kor: '빵이 찹쌀을 만나 꽈배기로,',
+                time: [14.7, 16.7],
+                eng: "Bread meets sticky rice to become Kkwaebaegi,"
+            },
+            {
+                id: 's5',
+                speaker: '스브스뉴스',
+                kor: '두바이 초콜릿이 두쫀쿠로,',
+                time: [16.7, 18.4],
+                eng: "Dubai chocolate becomes Dujjonku,"
+            },
+            {
+                id: 's6',
+                speaker: '스브스뉴스',
+                kor: '치즈를 찹쌀 속에 집어넣어 치즈볼로,',
+                time: [18.4, 20.6],
+                eng: "Cheese is put inside sticky rice to make cheese balls,"
+            },
+            {
+                id: 's7',
+                speaker: '스브스뉴스',
+                kor: '찰떡 아이스까지.',
+                time: [20.6, 21.9],
+                eng: "And even Chal-tteok Ice."
+            },
+            {
+                id: 's8',
+                speaker: '스브스뉴스',
+                kor: '심지어 어른 입맛이던 떡이 최근엔 MZ사이에서 떡켓팅 열풍을 일으키기도 했는데.',
+                time: [21.9, 27.4],
+                eng: "Even tteok, which used to be for older palates, recently caused a 'Tteok-keting' craze among the MZ generation."
+            },
+            {
+                id: 's9',
+                speaker: '스브스뉴스',
+                kor: '에이 우연 아니냐고요?',
+                time: [27.4, 29.3],
+                eng: "You think this is just a coincidence?"
+            },
+            {
+                id: 's10',
+                speaker: '스브스뉴스',
+                kor: '지금부터 증거 제출하겠습니다.',
+                time: [29.3, 31.7],
+                eng: "I will submit the evidence from now on."
+            },
+            {
+                id: 's11',
+                speaker: '스브스뉴스',
+                kor: '첫 번째 증거, 한국인의 피에는 쫀득의 피가 흐릅니다.',
+                time: [31.7, 35.5],
+                eng: "First evidence: The blood of chewiness flows in Koreans' veins."
+            },
+            {
+                id: 's12',
+                speaker: '스브스뉴스',
+                kor: '한반도의 벼농사에 적합한 뚜렷한 사계절 기후와 넓은 평야가 많은 지형은 곡물 위주의 식습관을 만들었습니다.',
+                time: [35.5, 42.6],
+                eng: "The distinct four seasons suitable for rice farming and the terrain with many broad plains created a grain-based diet."
+            },
+            {
+                id: 's13',
+                speaker: '스브스뉴스',
+                kor: '한반도 최초의 곡물 요리는 바로 죽.',
+                time: [42.6, 46.1],
+                eng: "The first grain dish on the Korean peninsula was porridge (Juk)."
+            },
+            {
+                id: 's14',
+                speaker: '스브스뉴스',
+                kor: '곡물을 돌에 갈아 토기에 넣고 물을 부은 후 끓여 먹었다고 하죠.',
+                time: [46.1, 49.7],
+                eng: "They say they ground grains on a stone, put them in earthenware, poured water, and boiled them."
+            },
+            {
+                id: 's15',
+                speaker: '스브스뉴스',
+                kor: '그런데 이 죽에서 의외의 요리가 탄생합니다.',
+                time: [49.7, 53.2],
+                eng: "But from this porridge, an unexpected dish is born."
+            },
+            {
+                id: 's16',
+                speaker: '이재호',
+                kor: '죽을 끓여서 먹다 보니까 토기를 가열했을 때 흙냄새나 불순물들이 많이 음식이 섞여 들어갔고,',
+                time: [53.2, 59.6],
+                eng: "As they boiled and ate porridge, the smell of dirt and impurities often mixed into the food when heating the earthenware,"
+            },
+            {
+                id: 's17',
+                speaker: '이재호',
+                kor: '선조들이 이거를 해결하기 위해서 \'시루\'라는 것을 발명하게 되었습니다.',
+                time: [59.6, 65.5],
+                eng: "So our ancestors invented something called 'Siru' (earthenware steamer) to solve this."
+            },
+            {
+                id: 's18',
+                speaker: '스브스뉴스',
+                kor: '증기로 쪄서 먹는 이 형태가 떡의 기원으로 볼 수 있다고 해요.',
+                time: [65.5, 69.1],
+                eng: "Steaming food with vapor can be seen as the origin of tteok."
+            },
+            {
+                id: 's19',
+                speaker: '스브스뉴스',
+                kor: '그리고 시간이 흘러 삼국시대로 오면 <삼국사기>에 "떡을 물어서 이 자국을 시험했다"라는 말이 있을 정도로 이미 오래전부터 떡을 먹었던 거죠.',
+                time: [69.1, 77.9],
+                eng: "As time passed to the Three Kingdoms period, the Samguk Sagi says, 'Bite the tteok to test the teeth marks,' showing they ate tteok a long time ago."
+            },
+            {
+                id: 's20',
+                speaker: '스브스뉴스',
+                kor: '한국인이 쫀득함에 익숙한 또 다른 이유가 우리가 먹는 쌀 안에 있다고 하는데요.',
+                time: [77.9, 83.2],
+                eng: "Another reason Koreans are used to chewiness lies in the rice we eat."
+            },
+            {
+                id: 's21',
+                speaker: '이재호',
+                kor: '한국에서 재배되는 맵쌀의 품종은 자포니카 품종인데,',
+                time: [83.2, 87.58],
+                eng: "The variety of non-glutinous rice grown in Korea is the Japonica variety,"
+            },
+            {
+                id: 's22',
+                speaker: '이재호',
+                kor: '찹쌀의 쫀득함을 이루는 아밀로펙틴이라는 성분이 맵쌀들에 비해서 상대적으로 함량이 높은 편입니다.',
+                time: [87.59, 95.79],
+                eng: "Which has a relatively high content of amylopectin, the component that makes sticky rice chewy, compared to other rice types."
+            },
+            {
+                id: 's23',
+                speaker: '스브스뉴스',
+                kor: '또 떡이 아니더라도 한국인들이 즐겨 먹는 음식들을 생각해보면 쫄깃 쫀득하잖아요?',
+                time: [95.8, 102.0],
+                eng: "Besides tteok, many foods Koreans enjoy are chewy and sticky, right?"
+            },
+            {
+                id: 's24',
+                speaker: '이현주',
+                kor: '콜라겐이 응축된 족발이나 편육도 있고요.',
+                time: [102.01, 105.63],
+                eng: "There are Jokbal and Pyeonyuk condensed with collagen."
+            },
+            {
+                id: 's25',
+                speaker: '이현주',
+                kor: '수분을 날려서 당도나 식감이 응축된 곶감이나 과메기도 대표적인 음식입니다.',
+                time: [105.64, 112.57],
+                eng: "Dried persimmons and Gwamegi, where moisture is removed to condense sweetness and texture, are also representative foods."
+            },
+            {
+                id: 's26',
+                speaker: '이현주',
+                kor: '이런 음식들은 재료 본연의 이 식감을 물리적으로 변형시켜서',
+                time: [112.58, 117.35],
+                eng: "These foods are examples of physically altering the original texture of ingredients,"
+            },
+            {
+                id: 's27',
+                speaker: '이현주',
+                kor: '입안에 넣으면은 찰지게 달라붙는 식감으로 만들어낸 사례라고 볼 수 있고요.',
+                time: [117.36, 123.18],
+                eng: "so they stick chewily when put in the mouth."
+            },
+            {
+                id: 's28',
+                speaker: '자막',
+                kor: '증거2: 쫀득함에 맞춰진 한국인 하드웨어와 소프트웨어',
+                time: [123.64, 125.96],
+                eng: "Evidence 2: Korean hardware and software tuned for chewiness"
+            },
+            {
+                id: 's29',
+                speaker: '스브스뉴스',
+                kor: '앞에서 봤듯이 오랜 세월 쫀득함에 익숙했던 한국인들 이에 발맞춰 피지컬도 쫀득 맞춤형이 됐는데요.',
+                time: [125.97, 132.7],
+                eng: "As seen earlier, Koreans, accustomed to chewiness for a long time, adapted their physical traits to match."
+            },
+            {
+                id: 's30',
+                speaker: '스브스뉴스',
+                kor: '그 결과가 바로 우리의 턱입니다.',
+                time: [132.7, 135.7],
+                eng: "The result is our jaw."
+            },
+            {
+                id: 's31',
+                speaker: '이재호',
+                kor: '동양인은 서양인에 비해서 동물이나 채소 위주의 식사를 오래 해서',
+                time: [135.7, 141.24],
+                eng: "Asians, compared to Westerners, have eaten a plant and vegetable-heavy diet for a long time,"
+            },
+            {
+                id: 's32',
+                speaker: '이재호',
+                kor: '넓적한 치아 구조나 발달한 턱 구조를 형성했고,',
+                time: [141.25, 145.37],
+                eng: "forming a broad tooth structure and developed jaw."
+            },
+            {
+                id: 's33',
+                speaker: '이재호',
+                kor: '이러한 구조 자체는 서양인들과 같은 쫀득한 음식을 먹더라도',
+                time: [145.38, 150.08],
+                eng: "This structure itself means that even when eating the same chewy food as Westerners,"
+            },
+            {
+                id: 's34',
+                speaker: '이재호',
+                kor: '(더 많은) 면적과 힘을 사용할 수 있어서',
+                time: [150.09, 152.52],
+                eng: "they can use more area and force,"
+            },
+            {
+                id: 's35',
+                speaker: '이재호',
+                kor: '씹을 때의 만족감이나 쾌감을 더 느낄 수 있는 물리적으로 좀 유리한 토대가 되었다...',
+                time: [152.53, 159.26],
+                eng: "providing a physically advantageous foundation to feel more satisfaction and pleasure when chewing..."
+            },
+            {
+                id: 's36',
+                speaker: '스브스뉴스',
+                kor: '몸이 쫀득함에 익숙하듯 한국인의 마음도 쫀득함을 기억하는데요.',
+                time: [159.27, 163.3],
+                eng: "Just as the body is used to chewiness, the Korean mind also remembers chewiness."
+            },
+            {
+                id: 's37',
+                speaker: '스브스뉴스',
+                kor: '떡 하면 뭐가 떠오르나요?',
+                time: [163.7, 165.2],
+                eng: "What comes to mind when you think of tteok?"
+            },
+            {
+                id: 's38',
+                speaker: '스브스뉴스',
+                kor: '이사 오면 꼭 떡을 돌리고 돌잔치에도 떡을 먹고 추석이 되면 무조건 송편을 먹잖아요.',
+                time: [165.34, 171.47],
+                eng: "When moving in, we always hand out tteok; we eat it at first birthdays; and on Chuseok, we unconditionally eat Songpyeon."
+            },
+            {
+                id: 's39',
+                speaker: '스브스뉴스',
+                kor: '조선시대에 들어서면서 떡이 제사와 행사처럼 특별한 날에 필수템으로 자리 잡았기 때문.',
+                time: [171.48, 177.5],
+                eng: "Entering the Joseon Dynasty, tteok became a must-have item for special days like ancestral rites and events."
+            },
+            {
+                id: 's40',
+                speaker: '이재호',
+                kor: '우리나라에서 쌀 자체가 되게 귀했었는데,',
+                time: [177.58, 179.68],
+                eng: "Rice itself was very precious in our country,"
+            },
+            {
+                id: 's41',
+                speaker: '이재호',
+                kor: '떡을 만들어 먹는 것 자체가 되게 귀한 것을 준다라는 매우 의미 있는 일이었습니다.',
+                time: [179.69, 186.05],
+                eng: "so making and eating tteok meant giving something very precious and meaningful."
+            },
+            {
+                id: 's42',
+                speaker: '이재호',
+                kor: '단순히 어떤 영양소나 맛이나 이런 것들로 분해되는 것이 아니라',
+                time: [186.06, 189.89],
+                eng: "I think it is not just breaking it down into nutrients or taste,"
+            },
+            {
+                id: 's43',
+                speaker: '이재호',
+                kor: '그 음식을 먹었을 때의 그 감각도 되게 중요하다고 저는 생각을 하거든요.',
+                time: [189.90, 193.92],
+                eng: "but the sensation when eating the food is also very important."
+            },
+            {
+                id: 's44',
+                speaker: '이재호',
+                kor: '그 음식을 한 입 베어 물었을 때의 그 식감이 주는 게',
+                time: [193.93, 198.03],
+                eng: "The texture when taking a bite"
+            },
+            {
+                id: 's45',
+                speaker: '이재호',
+                kor: '예전에 즐거운 그런 기억들을 떠올리게 하는 부분들이 되게 크게 작용하지 않았을까?',
+                time: [198.04, 203.76],
+                eng: "played a big role in bringing back happy memories from the past."
+            },
+            {
+                id: 's46',
+                speaker: '스브스뉴스',
+                kor: '쫀득함이라는 단순하게 씹는 맛을 넘어 축하와 나눔이라는 좋은 기억과도 연결된 한국인만의 감성적인 식감이라는 것이죠.',
+                time: [203.77, 212.0],
+                eng: "Chewiness is not just a taste of chewing, but an emotional texture unique to Koreans connected to good memories of celebration and sharing."
+            },
+            {
+                id: 's47',
+                speaker: '스브스뉴스',
+                kor: '다음 증거. 한국어는 심지어 쫀득이라는 말을 세분화합니다.',
+                time: [212.01, 216.18],
+                eng: "Next evidence. The Korean language even subdivides the word for chewiness."
+            },
+            {
+                id: 's48',
+                speaker: '스브스뉴스',
+                kor: '쫀득에 대해 논하기 전에 곰곰이 생각해보면,',
+                time: [216.19, 219.08],
+                eng: "Before discussing chewiness, if you think about it,"
+            },
+            {
+                id: 's49',
+                speaker: '스브스뉴스',
+                kor: '우리말에 수상할 정도로 감각어가 많은데,',
+                time: [219.09, 222.05],
+                eng: "Korean has suspiciously many sensory words."
+            },
+            {
+                id: 's50',
+                speaker: '스브스뉴스',
+                kor: '영어로 옐로우라면 한국어엔 노랗다, 누렇다, 누리끼리하다, 노르스름하다, 노릇노릇하다, 누르스름하다 이렇게 다양한 표현이 있잖아요.',
+                time: [222.06, 230.65],
+                eng: "For yellow in English, Korean has various expressions like norata, nureota, nurikkirihada, noreuseureumhada, noreun-noreuthada, nureuseureumhada."
+            },
+            {
+                id: 's51',
+                speaker: '스브스뉴스',
+                kor: '이걸 쫀득에서도 발견할 수 있다는데요.',
+                time: [230.66, 233.46],
+                eng: "This can also be found in chewiness."
+            },
+            {
+                id: 's52',
+                speaker: '권우진',
+                kor: '쫄깃쫄깃, 한국인들이 이 단어를 들었을 때는 뭔가 느낌 차이가 있잖아요.',
+                time: [233.47, 237.73],
+                eng: "Jjolgit-jjolgit. When Koreans hear this word, they feel a difference in nuance."
+            },
+            {
+                id: 's53',
+                speaker: '권우진',
+                kor: '모음을 바꾸거나 자음을 바꾸면 이렇게 다르구나라는 걸 우리는 알아차리고 전달할 수 있고 한데',
+                time: [237.74, 243.11],
+                eng: "By changing a vowel or consonant, we can notice and convey the difference,"
+            },
+            {
+                id: 's54',
+                speaker: '권우진',
+                kor: '영어로는 그렇게 하려면 많지 않은 어휘에 수식어를 넣어야 되는 거죠.',
+                time: [243.12, 247.94],
+                eng: "but in English, you'd have to add modifiers to a limited vocabulary."
+            },
+            {
+                id: 's55',
+                speaker: '권우진',
+                kor: '감각을 느낀 것을 누군가에게 미묘한 차이까지 반영해서 전달할 수 있는 이러한 글자와 언어를 가졌다라는 게 문화가 계속 레벨업 할 수 있는 어떤 토양이 되는 게 아니냐 이런 생각을 하게 됐었습니다.',
+                time: [247.95, 265.36],
+                eng: "I thought having such letters and language to convey sensed feelings reflecting even subtle differences is the soil for the culture to keep leveling up."
+            },
+            {
+                id: 's56',
+                speaker: '스브스뉴스',
+                kor: '그렇게 한국의 트렌드를 휩쓴 음식을 살펴보면',
+                time: [265.37, 268.27],
+                eng: "If you look at the foods that swept Korean trends,"
+            },
+            {
+                id: 's57',
+                speaker: '스브스뉴스',
+                kor: '짜다, 맵다, 달다의 맛 표현보다 유독 식감을 살린 표현이 많고,',
+                time: [268.28, 272.6],
+                eng: "there are unusually many expressions highlighting texture rather than salty, spicy, or sweet,"
+            },
+            {
+                id: 's58',
+                speaker: '스브스뉴스',
+                kor: '한국인이라면 누가 들어도 어떤 식감인지 바로 느껴지죠.',
+                time: [272.61, 276.54],
+                eng: "and any Korean immediately feels what kind of texture it is."
+            },
+            {
+                id: 's59',
+                speaker: '스브스뉴스',
+                kor: '마지막으로, 쫀득은 그 어느 식감보다 SNS에 최적화된 식감이라는 것.',
+                time: [276.55, 281.71],
+                eng: "Lastly, chewiness is a texture optimized for social media more than any other."
+            },
+            {
+                id: 's60',
+                speaker: '이현주',
+                kor: '쭉 늘어나는 모습은 화면을 통해서 봐도 굉장히 생생하게 전달이 되잖아요.',
+                time: [281.72, 287.32],
+                eng: "The stretching appearance is vividly conveyed even through a screen."
+            },
+            {
+                id: 's61',
+                speaker: '이현주',
+                kor: '그래서 우리는 그것을 보는 즉시 바로 먹고 싶다는 강한 욕구를 불러일으키게 됩니다.',
+                time: [287.33, 293.29],
+                eng: "So it immediately arouses a strong desire to eat it right away."
+            },
+            {
+                id: 's62',
+                speaker: '이현주',
+                kor: '쫙 늘어나는 거는 설사 잘 들리지 않더라도 이미 보는 것만으로도 충분히 충족이 되는 질감이기 때문에 굉장히 어떤 효과적인 면이 강한 거죠.',
+                time: [293.3, 303.63],
+                eng: "Stretching wide is a highly effective texture that fully satisfies just by looking, even if you can't hear it well."
+            },
+            {
+                id: 's63',
+                speaker: '자막',
+                kor: '사건 결론: 쫀득 사랑은 역사적+유전적+언어적+트렌드의 결합체',
+                time: [303.64, 307.67],
+                eng: "Conclusion: The love for chewiness is a combination of history, genetics, language, and trends."
+            },
+            {
+                id: 's64',
+                speaker: '스브스뉴스',
+                kor: '이제는 맛을 찾는 것을 넘어 쫀득한 식감까지 디자인하기 시작한 한국인들.',
+                time: [307.68, 312.58],
+                eng: "Now, Koreans are starting to design the chewy texture itself beyond just looking for taste."
+            },
+            {
+                id: 's65',
+                speaker: '스브스뉴스',
+                kor: '다음엔 어떤 디저트가 어떤 쫀득함이 유행할까요?',
+                time: [312.59, 316.1],
+                eng: "What dessert and what kind of chewiness will be popular next?"
+            },
+            {
+                id: 's66',
+                speaker: '스브스뉴스',
+                kor: '댓글로 수사협조 부탁드립니다.',
+                time: [316.1, 322.3],
+                eng: "Please cooperate with the investigation in the comments."
+            }
+        ];
+
+        const VIDEO_VOCAB_DATA = [
+            { 
+                term: '유독', 
+                mainDef: '유(唯 오직) + 독(獨 홀로) -> 보통의 것들과 다르게 혼자만 특별히', 
+                translations: { en: { term: 'unusually / exceptionally', mainDef: 'standing out as special or different from others.' } },
+                examples: [{ kor: "오늘따라 유독 피곤하네요.", eng: "I feel unusually tired today." }],
+                variants: ['유독']
+            },
+            { 
+                term: '쫀득하다', 
+                mainDef: '떡이나 젤리처럼 찰기가 있어 입에 착 달라붙는 느낌이 있다', 
+                translations: { en: { term: 'to be chewy', mainDef: 'having a sticky and elastic texture like rice cakes or jelly.' } },
+                examples: [{ kor: "이 인절미는 아주 쫀득해요.", eng: "This injeolmi (rice cake) is very chewy." }],
+                variants: ['쫀득하다', '쫀득한', '쫀득해지는데요', '쫀득함에', '쫀득']
+            },
+            { 
+                term: '식감', 
+                mainDef: '식(食 먹다) + 감(感 느끼다) -> 음식을 씹을 때 입안에서 느껴지는 느낌', 
+                translations: { en: { term: 'texture / mouthfeel', mainDef: 'the sensation felt in the mouth when chewing food.' } },
+                examples: [{ kor: "버섯은 고기 같은 식감이 나요.", eng: "Mushrooms have a meat-like texture." }],
+                variants: ['식감']
+            },
+            { 
+                term: '열광하다', 
+                mainDef: '열(熱 뜨겁다) + 광(狂 미치다) -> 너무 좋아서 미칠 정도로 흥분하다', 
+                translations: { en: { term: 'to go wild / to be enthusiastic', mainDef: 'to get extremely excited or crazy about something.' } },
+                examples: [{ kor: "팬들이 가수의 노래에 열광했어요.", eng: "The fans went wild over the singer's song." }],
+                variants: ['열광하다', '열광하는']
+            },
+            { 
+                term: '추적하다', 
+                mainDef: '추(追 쫓다) + 적(跡 자취) -> 도망가는 사람이나 숨겨진 사실을 뒤쫓아 찾아내다', 
+                translations: { en: { term: 'to track / trace', mainDef: 'to follow the traces of someone fleeing or hidden facts.' } },
+                examples: [{ kor: "경찰이 도둑을 추적하고 있어요.", eng: "The police are tracking the thief." }],
+                variants: ['추적하다', '추적해 봤습니다']
+            },
+            { 
+                term: '죄다', 
+                mainDef: '남거나 빠진 것 없이 모조리 모두 다', 
+                translations: { en: { term: 'all / entirely', mainDef: 'everything without leaving anything behind.' } },
+                examples: [{ kor: "배가 고파서 상자 안에 있는 과자를 죄다 먹었어요.", eng: "I was hungry so I ate all the snacks in the box." }],
+                variants: ['죄다'] 
+            },
+            { 
+                term: '찹쌀', 
+                mainDef: '찰기가 많아서 떡을 만들 때 쓰는 쌀', 
+                translations: { en: { term: 'glutinous rice / sweet rice', mainDef: 'rice that is very sticky, used for making rice cakes.' } },
+                examples: [{ kor: "찹쌀로 만든 밥은 아주 차져요.", eng: "Rice made with glutinous rice is very sticky." }],
+                variants: ['찹쌀']
+            },
+            { 
+                term: '꽈베기', 
+                mainDef: '(올바른 표기: 꽈배기) 밀가루 반죽을 길게 늘여서 꼬아 튀긴 빵', 
+                translations: { en: { term: 'twisted donut', mainDef: 'fried bread made by twisting long strips of dough.' } },
+                examples: [{ kor: "시장에서 달콤한 꽈배기를 샀어요.", eng: "I bought a sweet twisted donut at the market." }],
+                variants: ['꽈베기']
+            },
+            { 
+                term: '두쫀쿠', 
+                mainDef: '‘두바이 쫀득 쿠키’의 줄임말 (신조어)', 
+                translations: { en: { term: 'Dujjonku', mainDef: 'abbreviation for Dubai Chewy Cookie (neologism).' } },
+                examples: [{ kor: "요즘 두쫀쿠가 엄청 인기예요.", eng: "Dujjonku is super popular these days." }],
+                variants: ['두쫀쿠']
+            },
+            { 
+                term: '찰떡 아이스', 
+                mainDef: '찰떡 안에 아이스크림이 들어 있는 간식', 
+                translations: { en: { term: 'sticky rice ice cream', mainDef: 'a snack with ice cream inside a sticky rice cake.' } },
+                examples: [{ kor: "여름엔 시원한 찰떡 아이스가 최고죠.", eng: "Cool sticky rice ice cream is the best in summer." }],
+                variants: ['찰떡 아이스']
+            },
+            { 
+                term: 'MZ', 
+                mainDef: '1980년대부터 2000년대 초반에 태어난 젊은 세대', 
+                translations: { en: { term: 'MZ generation', mainDef: 'the young generation born from the 1980s to early 2000s.' } },
+                examples: [{ kor: "이 카페는 MZ 세대에게 인기가 많아요.", eng: "This cafe is very popular among the MZ generation." }],
+                variants: ['MZ']
+            },
+            { 
+                term: '떡켓팅', 
+                mainDef: '떡 + 티켓팅 -> 인기 있는 떡을 사기 위해 티켓팅처럼 치열하게 경쟁하는 것', 
+                translations: { en: { term: 'rice cake ticketing', mainDef: 'fierce competition to buy popular rice cakes, like concert ticketing.' } },
+                examples: [{ kor: "그 유명한 떡집은 떡켓팅을 해야 살 수 있어요.", eng: "You have to do 'rice cake ticketing' to buy from that famous shop." }],
+                variants: ['떡켓팅']
+            },
+            { 
+                term: '열풍을 일으키다', 
+                mainDef: '열(熱 뜨겁다) + 풍(風 바람) -> 어떤 일이 갑자기 아주 큰 인기를 끌다', 
+                translations: { en: { term: 'to cause a craze / boom', mainDef: 'for something to suddenly become extremely popular.' } },
+                examples: [{ kor: "새로운 춤이 학생들 사이에서 열풍을 일으켰어요.", eng: "The new dance caused a craze among students." }],
+                variants: ['열풍을 일으키다', '열풍을 일으키기도', '열풍']
+            },
+            { 
+                term: '우연', 
+                mainDef: '우(偶 짝) + 연(然 그러하다) -> 아무런 계획이나 생각 없이 어쩌다가 일어난 일', 
+                translations: { en: { term: 'coincidence', mainDef: 'something happening by chance without any plan.' } },
+                examples: [{ kor: "길에서 우연히 옛날 친구를 만났어요.", eng: "I met an old friend on the street by coincidence." }],
+                variants: ['우연']
+            },
+            { 
+                term: '증거', 
+                mainDef: '증(證 증거) + 거(據 의지하다) -> 어떤 사실이 맞다는 것을 보여주는 물건이나 내용', 
+                translations: { en: { term: 'evidence', mainDef: 'objects or information that show a fact is true.' } },
+                examples: [{ kor: "경찰이 범인이 남긴 증거를 찾았어요.", eng: "The police found the evidence left by the culprit." }],
+                variants: ['증거']
+            },
+            { 
+                term: '제출하다', 
+                mainDef: '제(提 끌다) + 출(出 내다) -> 어떤 문서나 물건을 검사받기 위해 내다', 
+                translations: { en: { term: 'to submit', mainDef: 'to hand in documents or objects for inspection.' } },
+                examples: [{ kor: "내일까지 숙제를 선생님께 제출해야 해요.", eng: "I have to submit my homework to the teacher by tomorrow." }],
+                variants: ['제출하다', '제출하겠습니다']
+            },
+            { 
+                term: '벼농사에 적합한 뚜렷한 사계절 기후', 
+                mainDef: '벼를 기르기(벼농사) 좋은 봄, 여름, 가을, 겨울의 날씨', 
+                subDefs: [
+                    { subTerm: '• 적합하다', subDef: '적(適 맞다) + 합(合 합하다) -> 어떤 일이나 조건에 꼭 맞다' },
+                    { subTerm: '• 기후', subDef: '기(氣 기운) + 후(候 기후) -> 일 년 동안의 평균적인 날씨' }
+                ],
+                translations: { en: { term: 'four-season climate suitable for rice farming', mainDef: 'weather suitable for growing rice with distinct seasons.', subDefs: [{ term: 'suitable', def: 'to fit a condition perfectly.' }, { term: 'climate', def: 'average weather over a year.' }] } },
+                examples: [{ kor: "이 옷은 운동하기에 아주 적합해요.", eng: "This clothing is very suitable for exercising." }],
+                variants: ['벼농사에 적합한 뚜렷한 사계절 기후']
+            },
+            { 
+                term: '평야', 
+                mainDef: '평(平 평평하다) + 야(野 들) -> 높낮이가 없이 넓고 평평한 땅', 
+                translations: { en: { term: 'plains', mainDef: 'a wide, flat area of land.' } },
+                examples: [{ kor: "넓은 평야에서 쌀이 많이 자라요.", eng: "A lot of rice grows on the broad plains." }],
+                variants: ['평야']
+            },
+            { 
+                term: '곡물', 
+                mainDef: '곡(穀 곡식) + 물(物 물건) -> 쌀, 보리, 밀처럼 우리가 주식으로 먹는 식물', 
+                translations: { en: { term: 'grain', mainDef: 'plants like rice or wheat eaten as a staple food.' } },
+                examples: [{ kor: "빵은 곡물인 밀가루로 만들어요.", eng: "Bread is made from flour, which is a grain." }],
+                variants: ['곡물']
+            },
+            { 
+                term: '식습관', 
+                mainDef: '식(食 먹다) + 습(習 익히다) + 관(慣 버릇) -> 오랫동안 반복해서 생긴 밥 먹는 버릇', 
+                translations: { en: { term: 'eating habits', mainDef: 'eating habits formed through long repetition.' } },
+                examples: [{ kor: "건강을 위해 좋은 식습관을 가져야 해요.", eng: "You should have good eating habits for your health." }],
+                variants: ['식습관']
+            },
+            { 
+                term: '토기', 
+                mainDef: '토(土 흙) + 기(器 그릇) -> 흙을 빚어서 구워 만든 그릇', 
+                translations: { en: { term: 'earthenware / pottery', mainDef: 'vessels made by molding and baking clay.' } },
+                examples: [{ kor: "박물관에서 옛날 사람들이 쓰던 토기를 보았어요.", eng: "I saw earthenware used by ancient people in the museum." }],
+                variants: ['토기']
+            },
+            { 
+                term: '의외', 
+                mainDef: '의(意 뜻) + 외(外 바깥) -> 전혀 생각하거나 예상하지 못한 것', 
+                translations: { en: { term: 'unexpected', mainDef: 'something completely unthought of or unexpected.' } },
+                examples: [{ kor: "조용하던 친구가 춤을 잘 춰서 의외였어요.", eng: "It was unexpected that the quiet friend danced so well." }],
+                variants: ['의외']
+            },
+            { 
+                term: '죽을 끓여서 먹다 보니까', 
+                mainDef: '죽을 물에 넣고 끓여 먹는 행동을 계속 반복하면서', 
+                subDefs: [{ subTerm: '• -다 보니까', subDef: '어떤 행동을 계속하다가 새로운 사실을 알게 되거나 결과가 생길 때 쓰는 말' }],
+                translations: { en: { term: 'as they kept eating boiled porridge', mainDef: 'while repeating the action of boiling and eating porridge.', subDefs: [{ term: '-da bonikka', def: 'used when a result occurs after repeated action.' }] } },
+                examples: [{ kor: "매일 운동을 하다 보니까 몸이 가벼워졌어요.", eng: "As I exercised every day, my body felt lighter." }],
+                variants: ['죽을 끓여서 먹다 보니까']
+            },
+            { 
+                term: '가열하다', 
+                mainDef: '가(加 더하다) + 열(熱 뜨겁다) -> 불이나 전기로 열을 주어 뜨겁게 만들다', 
+                translations: { en: { term: 'to heat', mainDef: 'to make hot by applying fire or electricity.' } },
+                examples: [{ kor: "냄비를 먼저 가열한 뒤에 고기를 구우세요.", eng: "Heat the pan first and then grill the meat." }],
+                variants: ['가열하다', '가열했을']
+            },
+            { 
+                term: '흙냄새', 
+                mainDef: '흙에서 나는 냄새', 
+                translations: { en: { term: 'smell of dirt / earthy smell', mainDef: 'the smell coming from the soil.' } },
+                examples: [{ kor: "비가 오면 땅에서 흙냄새가 나요.", eng: "When it rains, the ground smells like dirt." }],
+                variants: ['흙냄새']
+            },
+            { 
+                term: '불순물', 
+                mainDef: '불(不 아니) + 순(純 순수하다) + 물(物 물건) -> 순수하지 않고 다른 찌꺼기가 섞여 있는 물질', 
+                translations: { en: { term: 'impurities', mainDef: 'substances mixed with waste or other impure elements.' } },
+                examples: [{ kor: "정수기는 물 속의 불순물을 걸러줘요.", eng: "A water purifier filters out impurities in the water." }],
+                variants: ['불순물']
+            },
+            { 
+                term: '선조', 
+                mainDef: '선(先 먼저) + 조(祖 할아비) -> 지금 세대보다 먼저 살았던 옛날의 조상들', 
+                translations: { en: { term: 'ancestors', mainDef: 'ancestors who lived before the current generation.' } },
+                examples: [{ kor: "우리 선조들은 훌륭한 문화를 만들었어요.", eng: "Our ancestors created a wonderful culture." }],
+                variants: ['선조']
+            },
+            { 
+                term: '시루', 
+                mainDef: '떡이나 쌀을 찔 때 바닥에 구멍이 뚫려 있는 흙으로 만든 그릇', 
+                translations: { en: { term: 'siru (earthenware steamer)', mainDef: 'an earthenware pot with holes in the bottom used for steaming.' } },
+                examples: [{ kor: "명절에 시루에 떡을 쪄서 먹었어요.", eng: "We steamed rice cakes in a siru during the holidays." }],
+                variants: ['시루']
+            },
+            { 
+                term: '증기', 
+                mainDef: '증(蒸 찌다) + 기(氣 기운) -> 물이 끓어서 기체(수증기)로 변한 것', 
+                translations: { en: { term: 'steam / vapor', mainDef: 'water that has boiled and turned into gas.' } },
+                examples: [{ kor: "주전자에서 뜨거운 증기가 올라오고 있어요.", eng: "Hot steam is rising from the kettle." }],
+                variants: ['증기']
+            },
+            { 
+                term: '쪄서 먹다', 
+                mainDef: '뜨거운 수증기를 이용해 음식을 익혀서 먹다', 
+                translations: { en: { term: 'to steam and eat', mainDef: 'to cook food using hot steam and eat it.' } },
+                examples: [{ kor: "고구마를 쪄서 먹으면 달콤하고 맛있어요.", eng: "Steamed sweet potatoes are sweet and delicious." }],
+                variants: ['쪄서 먹다', '쪄서 먹는']
+            },
+            { 
+                term: '기원', 
+                mainDef: '기(起 일어나다) + 원(源 근원) -> 어떤 일이 처음으로 시작된 출발점', 
+                translations: { en: { term: 'origin', mainDef: 'the starting point where something first began.' } },
+                examples: [{ kor: "올림픽의 기원은 고대 그리스입니다.", eng: "The origin of the Olympics is ancient Greece." }],
+                variants: ['기원']
+            },
+            { 
+                term: '삼국시대', 
+                mainDef: '삼(三 셋) + 국(國 나라) + 시(時 때) + 대(代 대신) -> 고구려, 백제, 신라 세 나라가 있던 옛날 시대', 
+                translations: { en: { term: 'Three Kingdoms Period', mainDef: 'the ancient era when three nations (Goguryeo, Baekje, Silla) existed.' } },
+                examples: [{ kor: "삼국시대에는 화려한 불교 문화가 발전했어요.", eng: "Brilliant Buddhist culture developed during the Three Kingdoms period." }],
+                variants: ['삼국시대']
+            },
+            { 
+                term: '삼국사기', 
+                mainDef: '삼국시대의 역사를 기록한 한국의 아주 오래된 옛날 역사책', 
+                translations: { en: { term: 'Samguksagi', mainDef: 'a very old historical book recording the Three Kingdoms period.' } },
+                examples: [{ kor: "삼국사기를 읽으면 한국의 옛 역사를 알 수 있어요.", eng: "You can learn ancient Korean history by reading Samguksagi." }],
+                variants: ['삼국사기']
+            },
+            { 
+                term: '이 자국', 
+                mainDef: '치아(이)로 물어서 생긴 모양이나 흔적', 
+                translations: { en: { term: 'tooth mark / bite mark', mainDef: 'the shape or trace left by biting with teeth.' } },
+                examples: [{ kor: "사과를 한 입 베어 물자 이 자국이 남았어요.", eng: "I took a bite of the apple and left a tooth mark." }],
+                variants: ['이 자국']
+            },
+            { 
+                term: '-라는 말이 있을 정도로', 
+                mainDef: '어떤 표현이 사람들에게 널리 쓰일 만큼 아주 심하거나 많음을 뜻함', 
+                subDefs: [
+                    { subTerm: '• -라는 말이 있다', subDef: '사람들이 어떤 사실이나 속담을 자주 말하다' },
+                    { subTerm: '• -ㄹ/을 정도로', subDef: '어떤 상태나 행동이 아주 대단함을 나타내는 표현' }
+                ],
+                translations: { en: { term: 'to the extent that there\'s a saying...', mainDef: 'meaning something is so severe or common that it\'s widely spoken.', subDefs: [{ term: 'there\'s a saying', def: 'people frequently say a fact.' }, { term: 'to the extent that', def: 'expression showing an extreme state.' }] } },
+                examples: [{ kor: "배가 터질 정도로 밥을 아주 많이 먹었어요.", eng: "I ate so much food to the extent that my stomach would burst." }],
+                variants: ['라는 말이 있을 정도로', '말이 있을 정도로']
+            },
+            { 
+                term: '재배되다', 
+                mainDef: '재(栽 심다) + 배(培 북돋우다) -> 식물이나 농작물이 심어져서 길러지다', 
+                translations: { en: { term: 'to be cultivated', mainDef: 'for plants or crops to be planted and grown.' } },
+                examples: [{ kor: "이 지역에서는 맛있는 사과가 재배됩니다.", eng: "Delicious apples are cultivated in this region." }],
+                variants: ['재배되다', '재배되는']
+            },
+            { 
+                term: '맵쌀', 
+                mainDef: '찰기가 별로 없고 우리가 평소에 밥을 지어 먹는 일반적인 쌀', 
+                translations: { en: { term: 'non-glutinous rice', mainDef: 'regular rice with less stickiness, used for everyday meals.' } },
+                examples: [{ kor: "매일 먹는 밥은 보통 맵쌀로 만들어요.", eng: "The rice we eat every day is usually made with non-glutinous rice." }],
+                variants: ['맵쌀']
+            },
+            { 
+                term: '품종', 
+                mainDef: '품(品 물건) + 종(種 씨) -> 식물이나 동물의 종류', 
+                translations: { en: { term: 'variety / breed', mainDef: 'a type of plant or animal.' } },
+                examples: [{ kor: "이 딸기는 아주 달콤한 새로운 품종이에요.", eng: "This strawberry is a very sweet new variety." }],
+                variants: ['품종']
+            },
+            { 
+                term: '자포니카 품종', 
+                mainDef: '쌀알이 짧고 둥글며 밥을 하면 끈기가 생기는 쌀의 종류', 
+                translations: { en: { term: 'Japonica variety', mainDef: 'a short, round rice variety that becomes sticky when cooked.' } },
+                examples: [{ kor: "한국인들은 찰기가 있는 자포니카 품종을 주로 먹어요.", eng: "Koreans mostly eat the sticky Japonica variety." }],
+                variants: ['자포니카 품종']
+            },
+            { 
+                term: '아밀로펙틴', 
+                mainDef: '쌀이나 녹말에 들어 있어서 쫀득하고 끈적한 느낌을 주는 성분', 
+                translations: { en: { term: 'amylopectin', mainDef: 'a component in rice or starch that gives a chewy and sticky feeling.' } },
+                examples: [{ kor: "찹쌀에는 아밀로펙틴이 많이 들어 있어서 쫀득해요.", eng: "Sticky rice contains a lot of amylopectin, so it is chewy." }],
+                variants: ['아밀로펙틴']
+            },
+            { 
+                term: '함량이 높다', 
+                mainDef: '어떤 물질 안에 들어 있는 성분의 양이 많다', 
+                subDefs: [{ subTerm: '• 함량', subDef: '함(含 머금다) + 량(量 헤아리다) -> 물질에 포함된 성분의 양' }],
+                translations: { en: { term: 'high in content', mainDef: 'having a large amount of a component in a substance.', subDefs: [{ term: 'content', def: 'the amount of an ingredient contained.' }] } },
+                examples: [{ kor: "이 과일 주스는 비타민 함량이 아주 높아요.", eng: "This fruit juice is very high in vitamin content." }],
+                variants: ['함량이 높다', '함량이 높은']
+            },
+            { 
+                term: '쫄깃', 
+                mainDef: '씹을 때 조금 질기면서도 찰기가 있고 부드러운 느낌', 
+                translations: { en: { term: 'chewy', mainDef: 'a slightly tough yet sticky and soft feeling when chewed.' } },
+                examples: [{ kor: "이 오징어 구이는 아주 쫄깃하고 맛있어요.", eng: "This grilled squid is very chewy and delicious." }],
+                variants: ['쫄깃', '쫄깃쫄깃','쫄깃한']
+            },
+            { 
+                term: '콜라겐', 
+                mainDef: '우리 몸의 피부나 뼈를 튼튼하게 만드는 단백질', 
+                translations: { en: { term: 'collagen', mainDef: 'protein that makes our skin and bones strong.' } },
+                examples: [{ kor: "족발에는 피부에 좋은 콜라겐이 많다고 해요.", eng: "They say jokbal has a lot of collagen which is good for the skin." }],
+                variants: ['콜라겐']
+            },
+            { 
+                term: '응축되다', 
+                mainDef: '응(凝 엉기다) + 축(縮 줄이다) -> 물질이 뭉쳐서 빽빽하게 모이거나 줄어들다', 
+                translations: { en: { term: 'to be condensed', mainDef: 'for a substance to clump together tightly or shrink.' } },
+                examples: [{ kor: "공기 중의 수분이 응축되어 이슬이 맺혔어요.", eng: "Moisture in the air condensed and formed dew." }],
+                variants: ['응축되다', '응축된']
+            },
+            { 
+                term: '족발', 
+                mainDef: '돼지의 다리를 간장 양념에 푹 삶아 만든 쫄깃한 한국 요리', 
+                translations: { en: { term: 'Jokbal (pig\'s trotters)', mainDef: 'a chewy Korean dish made by boiling pig legs in soy sauce.' } },
+                examples: [{ kor: "야식으로 쫄깃한 족발을 시켜 먹었어요.", eng: "I ordered chewy jokbal for a late-night snack." }],
+                variants: ['족발']
+            },
+            { 
+                term: '편육', 
+                mainDef: '끓는 물에 삶은 고기를 무거운 것으로 누르고 얇게 썰어서 만든 음식', 
+                translations: { en: { term: 'Pyeonyuk (pressed meat)', mainDef: 'boiled meat pressed and sliced thinly.' } },
+                examples: [{ kor: "잔치에 가면 맛있는 편육을 자주 먹을 수 있어요.", eng: "You can often eat delicious pyeonyuk at a feast." }],
+                variants: ['편육']
+            },
+            { 
+                term: '수분을 날리다', 
+                mainDef: '안에 들어 있는 물기를 밖으로 빼내어 없애다', 
+                subDefs: [{ subTerm: '• 수분', subDef: '수(水 물) + 분(分 나누다) -> 물질 안에 들어 있는 물의 성분' }],
+                translations: { en: { term: 'to remove moisture', mainDef: 'to take out and eliminate the water content inside.', subDefs: [{ term: 'moisture', def: 'the water component contained within a substance.' }] } },
+                examples: [{ kor: "햇빛에 과일을 말려서 수분을 날려요.", eng: "Dry fruits in the sun to remove their moisture." }],
+                variants: ['수분을 날리다', '수분을 날려서']
+            },
+            { 
+                term: '당도', 
+                mainDef: '당(糖 설탕) + 도(度 법도/정도) -> 과일이나 음식 안에 들어 있는 단맛의 정도', 
+                translations: { en: { term: 'sweetness level', mainDef: 'the degree of sweetness in fruit or food.' } },
+                examples: [{ kor: "이 수박은 당도가 아주 높아서 꿀처럼 달아요.", eng: "This watermelon has a very high sweetness level, so it's sweet as honey." }],
+                variants: ['당도']
+            },
+            { 
+                term: '곶감', 
+                mainDef: '감의 껍질을 벗겨서 햇볕과 바람에 말린 달콤하고 쫀득한 간식', 
+                translations: { en: { term: 'dried persimmon', mainDef: 'a sweet and chewy snack made by peeling and drying persimmons.' } },
+                examples: [{ kor: "겨울에는 달콤한 곶감이 아주 맛있는 간식이에요.", eng: "Sweet dried persimmon is a very delicious snack in winter." }],
+                variants: ['곶감']
+            },
+            { 
+                term: '과메기', 
+                mainDef: '꽁치나 청어를 겨울 바닷바람에 얼렸다 녹였다 하면서 말린 생선 요리', 
+                translations: { en: { term: 'Gwamegi', mainDef: 'half-dried Pacific saury or herring.' } },
+                examples: [{ kor: "아버지는 겨울에 쫀득한 과메기 먹는 것을 좋아하세요.", eng: "My father likes eating chewy gwamegi in winter." }],
+                variants: ['과메기']
+            },
+            { 
+                term: '대표적', 
+                mainDef: '대(代 대신하다) + 표(表 겉) + 적(的 과녁) -> 어떤 전체의 특징을 가장 잘 보여주는 것', 
+                translations: { en: { term: 'representative', mainDef: 'showing the characteristics of a whole best.' } },
+                examples: [{ kor: "김치는 한국의 대표적인 전통 음식이에요.", eng: "Kimchi is Korea's representative traditional food." }],
+                variants: ['대표적']
+            },
+            { 
+                term: '본연의', 
+                mainDef: '본(本 근본) + 연(然 그러하다) -> 처음부터 원래 가지고 있던 자연스러운 성질', 
+                translations: { en: { term: 'natural / original', mainDef: 'the natural quality something originally possessed.' } },
+                examples: [{ kor: "화장을 지우고 본연의 깨끗한 얼굴을 보여주었어요.", eng: "I removed my makeup and showed my original clear face." }],
+                variants: ['본연의']
+            },
+            { 
+                term: '물리적으로', 
+                mainDef: '물(物 물건) + 리(理 다스리다) -> 화학적 변화가 아니라 힘이나 압력 등 외부의 작용을 통해서', 
+                translations: { en: { term: 'physically', mainDef: 'through external actions like force or pressure, not chemical changes.' } },
+                examples: [{ kor: "얼음이 녹아 물이 되는 것은 물리적으로 모양이 변하는 거예요.", eng: "Ice melting into water is physically changing its shape." }],
+                variants: ['물리적으로']
+            },
+            { 
+                term: '변형시키다', 
+                mainDef: '변(變 변하다) + 형(形 모양) -> 원래의 모양이나 상태를 다른 것으로 바꾸다', 
+                translations: { en: { term: 'to transform / modify', mainDef: 'to change the original shape or state into something else.' } },
+                examples: [{ kor: "종이를 접어서 멋진 비행기 모양으로 변형시켰어요.", eng: "I folded the paper and transformed it into a cool airplane shape." }],
+                variants: ['변형시키다', '변형시켜서']
+            },
+            { 
+                term: '찰지게 달라붙다', 
+                mainDef: '물건이 끈끈하고 힘 있게 딱 달라붙다', 
+                subDefs: [{ subTerm: '• 찰지다', subDef: '밥이나 떡이 끈기가 많고 차진 상태' }],
+                translations: { en: { term: 'to stick chewily', mainDef: 'to stick tightly and stickily.', subDefs: [{ term: 'sticky/glutinous', def: 'a state with a lot of stickiness.' }] } },
+                examples: [{ kor: "갓 지은 밥이 아주 찰져서 맛있어요.", eng: "Freshly cooked rice is very sticky and delicious." }],
+                variants: ['찰지게 달라붙다', '찰지게 달라붙는']
+            },
+            { 
+                term: '사례', 
+                mainDef: '사(事 일) + 례(例 예시) -> 이전에 실제로 일어났거나 있었던 구체적인 예', 
+                translations: { en: { term: 'case / example', mainDef: 'a specific example that actually happened before.' } },
+                examples: [{ kor: "이번 발표 시간에는 성공적인 사례를 보여드릴 거예요.", eng: "I will show successful cases during this presentation." }],
+                variants: ['사례']
+            },
+            { 
+                term: '이에 발맞춰', 
+                mainDef: '어떤 흐름이나 변화에 맞게 행동을 같이 하다', 
+                subDefs: [{ subTerm: '• 발맞추다', subDef: '여러 사람이 걸을 때 발을 똑같이 맞추거나 뜻을 함께하다' }],
+                translations: { en: { term: 'in step with this', mainDef: 'to act together according to a trend or change.', subDefs: [{ term: 'to keep pace', def: 'to sync footsteps or align intentions.' }] } },
+                examples: [{ kor: "음악 소리에 발맞추어 다 함께 춤을 춥시다.", eng: "Let's all dance keeping pace with the music." }],
+                variants: ['이에 발맞춰']
+            },
+            { 
+                term: '맞춤형이 되다', 
+                mainDef: '어떤 사람의 필요나 조건에 딱 맞게 만들어지다', 
+                subDefs: [{ subTerm: '• 맞춤형', subDef: '맞추다 + 형(形 모양) -> 조건에 맞게 특별히 만든 형태' }],
+                translations: { en: { term: 'to be customized', mainDef: 'to be made perfectly fitting someone\'s needs.', subDefs: [{ term: 'customized form', def: 'a shape specially made for a condition.' }] } },
+                examples: [{ kor: "제 발 사이즈에 딱 맞는 맞춤형 구두를 샀어요.", eng: "I bought customized shoes that perfectly fit my foot size." }],
+                variants: ['맞춤형이 되다', '맞춤형이 됐는데요']
+            },
+            { 
+                term: '위주의', 
+                mainDef: '위(爲 하다) + 주(主 주인) -> 어떤 것을 가장 중요하게 생각하거나 중심으로 삼는', 
+                translations: { en: { term: 'centered on / focused on', mainDef: 'considering something as the most important or central.' } },
+                examples: [{ kor: "저는 건강을 위해 채소 위주의 식사를 해요.", eng: "I eat a vegetable-centered diet for my health." }],
+                variants: ['위주의']
+            },
+            { 
+                term: '넓적한 치아 구조', 
+                mainDef: '이빨의 모양이 얇고 면적이 넓은 형태', 
+                subDefs: [
+                    { subTerm: '• 넓적하다', subDef: '얇고 면적이 넓다' },
+                    { subTerm: '• 치아', subDef: '치(齒 이) + 아(牙 어금니) -> 음식물을 씹는 이빨' }
+                ],
+                translations: { en: { term: 'broad tooth structure', mainDef: 'the shape of the teeth being thin and having a wide area.', subDefs: [{ term: 'broad/flat', def: 'thin with a wide area.' }, { term: 'teeth', def: 'teeth for chewing food.' }] } },
+                examples: [{ kor: "소가 풀을 잘 씹기 위해 넓적한 치아를 가졌어요.", eng: "Cows have broad teeth to chew grass well." }],
+                variants: ['넓적한 치아 구조']
+            },
+            { 
+                term: '발달한 턱 구조', 
+                mainDef: '음식을 씹는 턱의 뼈나 근육이 크고 튼튼하게 자란 모양', 
+                translations: { en: { term: 'developed jaw structure', mainDef: 'a shape where jaw bones or muscles have grown large and strong.' } },
+                examples: [{ kor: "육식 동물은 먹이를 부수기 위해 발달한 턱 구조를 가졌어요.", eng: "Carnivores have a developed jaw structure to crush their prey." }],
+                variants: ['발달한 턱 구조']
+            },
+            { 
+                term: '먹더라도', 
+                mainDef: '무언가를 입에 넣어 먹는 상황이 있다고 가정해도', 
+                subDefs: [{ subTerm: '• -더라도', subDef: '만약 그렇다고 치더라도 뒤의 일에는 상관이 없다는 뜻' }],
+                translations: { en: { term: 'even if (one) eats', mainDef: 'even supposing a situation where one eats something.', subDefs: [{ term: 'even if (supposing)', def: 'meaning that even supposing so, it doesn\'t affect the latter.' }] } },
+                examples: [{ kor: "매운 음식을 먹더라도 배가 안 아파요.", eng: "Even if I eat spicy food, my stomach doesn't hurt." }],
+                variants: ['먹더라도']
+            },
+            { 
+                term: '면적', 
+                mainDef: '면(面 낯) + 적(積 쌓다) -> 어떤 평면이 차지하고 있는 넓이의 크기', 
+                translations: { en: { term: 'area', mainDef: 'the size of the space a flat surface occupies.' } },
+                examples: [{ kor: "이 공원의 면적은 축구장보다 넓어요.", eng: "The area of this park is larger than a soccer field." }],
+                variants: ['면적']
+            },
+            { 
+                term: '씹을 때의 만족감이나 쾌감', 
+                mainDef: '음식을 씹을 때 마음에 쏙 들고 아주 기분이 좋은 느낌', 
+                subDefs: [
+                    { subTerm: '• 만족감', subDef: '만(滿 차다) + 족(足 발) + 감(感 느끼다) -> 마음에 꽉 차서 부족함이 없는 느낌' },
+                    { subTerm: '• 쾌감', subDef: '쾌(快 상쾌하다) + 감(感 느끼다) -> 기분이 아주 상쾌하고 좋은 느낌' }
+                ],
+                translations: { en: { term: 'satisfaction or pleasure when chewing', mainDef: 'a highly pleasing and good feeling when chewing food.', subDefs: [{ term: 'satisfaction', def: 'feeling full and lacking nothing.' }, { term: 'pleasure', def: 'a very refreshing and good feeling.' }] } },
+                examples: [{ kor: "시험을 백 점 받아서 큰 만족감을 느꼈어요.", eng: "I felt great satisfaction after getting a perfect score on the test." }],
+                variants: ['씹을 때의 만족감이나 쾌감']
+            },
+            { 
+                term: '유리한 토대가 되다', 
+                mainDef: '이익이 많고 좋은 조건의 튼튼한 바탕이나 기초가 되다', 
+                subDefs: [
+                    { subTerm: '• 유리하다', subDef: '유(有 있다) + 리(利 이롭다) -> 이익이 되거나 조건이 좋다' },
+                    { subTerm: '• 토대가 되다', subDef: '토(土 흙) + 대(臺 집) -> 어떤 일의 기초나 바탕이 되다' }
+                ],
+                translations: { en: { term: 'to become an advantageous foundation', mainDef: 'to become a strong base with good conditions.', subDefs: [{ term: 'advantageous', def: 'to be beneficial.' }, { term: 'to form a foundation', def: 'to become the basis of something.' }] } },
+                examples: [{ kor: "어릴 때 읽은 책들이 성장의 좋은 토대가 되었어요.", eng: "The books I read when I was young became a good foundation for my growth." }],
+                variants: ['유리한 토대가 되다', '유리한 토대가 되었다']
+            },
+            { 
+                term: '떡을 돌리다', 
+                mainDef: '새로 이사를 오거나 축하할 일이 있을 때 이웃들에게 떡을 나누어 주다', 
+                translations: { en: { term: 'to hand out rice cakes', mainDef: 'to distribute rice cakes to neighbors for moving or celebrating.' } },
+                examples: [{ kor: "이사 온 첫날 이웃들에게 인사하며 떡을 돌렸어요.", eng: "On the first day I moved in, I handed out rice cakes while greeting my neighbors." }],
+                variants: ['떡을 돌리다', '떡을 돌리고']
+            },
+            { 
+                term: '돌잔치', 
+                mainDef: '아기가 태어난 지 딱 1년이 되는 날을 축하하는 파티', 
+                translations: { en: { term: 'Doljanchi (first birthday party)', mainDef: 'a party celebrating a baby\'s exact 1-year mark.' } },
+                examples: [{ kor: "귀여운 조카의 첫 생일을 축하하러 돌잔치에 갔어요.", eng: "I went to the doljanchi to celebrate my cute nephew's first birthday." }],
+                variants: ['돌잔치']
+            },
+            { 
+                term: '송편', 
+                mainDef: '추석 명절에 쌀가루 반죽 안에 깨나 콩을 넣고 반달 모양으로 빚어 찌는 떡', 
+                translations: { en: { term: 'Songpyeon', mainDef: 'half-moon shaped rice cakes steamed during Chuseok.' } },
+                examples: [{ kor: "추석에는 온 가족이 모여서 달콤한 송편을 빚어 먹어요.", eng: "On Chuseok, the whole family gathers to make and eat sweet songpyeon." }],
+                variants: ['송편']
+            },
+            { 
+                term: '조선시대에 들어서면서', 
+                mainDef: '한국의 옛날 나라인 조선시대라는 시기가 시작되면서', 
+                subDefs: [{ subTerm: '• 조선시대', subDef: '1392년부터 1910년까지 이어진 한국의 옛 왕조 시대' }],
+                translations: { en: { term: 'entering the Joseon Dynasty period', mainDef: 'as the era of Korea\'s old nation, the Joseon Dynasty, began.', subDefs: [{ term: 'Joseon Dynasty', def: 'Korean dynasty from 1392 to 1910.' }] } },
+                examples: [{ kor: "한글은 조선시대에 훌륭한 세종대왕이 만들었어요.", eng: "Hangeul was created by the great King Sejong during the Joseon Dynasty." }],
+                variants: ['조선시대에 들어서면서']
+            },
+            { 
+                term: '제사', 
+                mainDef: '제(祭 제사) + 사(祀 제사) -> 돌아가신 조상을 생각하며 음식을 차려 놓고 절을 하는 의식', 
+                translations: { en: { term: 'Jesa (ancestral memorial service)', mainDef: 'a traditional ritual of offering food and bowing to deceased ancestors.' } },
+                examples: [{ kor: "명절이 되면 온 가족이 모여 할아버지의 제사를 지내요.", eng: "During the holidays, the whole family gathers to hold a memorial service for our grandfather." }],
+                variants: ['제사']
+            },
+            { 
+                term: '필수템으로 자리 잡다', 
+                mainDef: '꼭 필요한 물건으로 인정받고 사람들에게 아주 익숙해지다', 
+                subDefs: [
+                    { subTerm: '• 필수템', subDef: '필(必 반드시) + 수(須 모름지기) + 아이템(Item) -> 없으면 안 될 물건' },
+                    { subTerm: '• 자리 잡다', subDef: '어떤 것이 튼튼하게 위치를 차지하거나 확실히 인정받다' }
+                ],
+                translations: { en: { term: 'to establish itself as a must-have item', mainDef: 'to be recognized as essential and become very familiar.', subDefs: [{ term: 'must-have item', def: 'an indispensable object.' }, { term: 'to take root', def: 'to firmly occupy a position.' }] } },
+                examples: [{ kor: "요즘 스마트폰은 현대인에게 필수템으로 자리 잡았어요.", eng: "These days, smartphones have established themselves as a must-have item for modern people." }],
+                variants: ['필수템으로 자리 잡다', '필수템으로 자리 잡았기']
+            },
+            { 
+                term: '귀하다', 
+                mainDef: '귀(貴 귀하다) -> 아주 구하기 힘들어서 값어치가 높고 너무 소중하다', 
+                translations: { en: { term: 'to be precious/rare', mainDef: 'very hard to find, valuable, and precious.' } },
+                examples: [{ kor: "이 보석은 세상에 몇 개 없는 아주 귀한 물건이에요.", eng: "This jewel is a very precious item with only a few in the world." }],
+                variants: ['귀하다', '귀했었는데', '귀한']
+            },
+            { 
+                term: '영양소', 
+                mainDef: '영(營 짓다) + 양(養 기르다) + 소(素 바탕) -> 우리 몸을 건강하게 기르고 튼튼하게 자라게 하는 성분', 
+                translations: { en: { term: 'nutrient', mainDef: 'components that nourish the body and help it grow healthily.' } },
+                examples: [{ kor: "우유에는 어린이들 뼈를 튼튼하게 하는 영양소가 들어 있어요.", eng: "Milk contains nutrients that make children's bones strong." }],
+                variants: ['영양소']
+            },
+            { 
+                term: '분해되다', 
+                mainDef: '분(分 나누다) + 해(解 풀다) -> 하나의 물건이나 덩어리가 여러 부분으로 나뉘거나 풀리다', 
+                translations: { en: { term: 'to be decomposed', mainDef: 'for a single object or lump to be divided into multiple parts.' } },
+                examples: [{ kor: "우리가 꼭꼭 씹어 먹은 음식은 위에서 작게 분해됩니다.", eng: "The food we chew thoroughly is decomposed into small pieces in the stomach." }],
+                variants: ['분해되다', '분해되는']
+            },
+            { 
+                term: '감각', 
+                mainDef: '감(感 느끼다) + 각(覺 깨닫다) -> 눈, 코, 입, 귀, 피부를 통해 바깥의 느낌을 알아채는 것', 
+                translations: { en: { term: 'sense / sensation', mainDef: 'knowing external feelings through eyes, nose, mouth, ears, or skin.' } },
+                examples: [{ kor: "차가운 얼음을 손으로 만지면 차갑다는 감각을 강하게 느껴요.", eng: "If you touch cold ice, you strongly feel the sensation of coldness." }],
+                variants: ['감각']
+            },
+            { 
+                term: '한 입 베어 물다', 
+                mainDef: '입을 크게 벌려서 음식을 한 번에 잘라 물다', 
+                subDefs: [{ subTerm: '• 베어 물다', subDef: '음식 같은 것을 이빨로 끊어서 입에 물다' }],
+                translations: { en: { term: 'to take a bite', mainDef: 'to open the mouth wide and bite off food at once.', subDefs: [{ term: 'to bite off', def: 'to cut food with teeth and hold it in the mouth.' }] } },
+                examples: [{ kor: "배가 너무 고파서 부드러운 빵을 한 입 덥석 베어 물었어요.", eng: "I was so hungry that I took a big bite out of the soft bread." }],
+                variants: ['한 입 베어 물다', '베어 물었을 때의']
+            },
+            { 
+                term: '세분화하다', 
+                mainDef: '세(細 가늘다) + 분(分 나누다) + 화(化 되다) -> 어떤 것을 아주 작고 자세하게 여러 가지로 나누다', 
+                translations: { en: { term: 'to subdivide', mainDef: 'to divide something into many very small and detailed parts.' } },
+                examples: [{ kor: "쓰레기를 버릴 때는 종이, 플라스틱 등 종류별로 세분화해서 버려야 해요.", eng: "When throwing away trash, you must subdivide it by type like paper, plastic, etc." }],
+                variants: ['세분화하다', '세분화합니다']
+            },
+            { 
+                term: '곰곰이 생각해보다', 
+                mainDef: '마음을 가라앉히고 어떤 문제에 대해 깊게 그리고 차분하게 생각하다', 
+                subDefs: [{ subTerm: '• 곰곰이', subDef: '서두르지 않고 마음속으로 아주 깊이 생각하는 모양' }],
+                translations: { en: { term: 'to think over carefully', mainDef: 'to calm down and think deeply and calmly about a problem.', subDefs: [{ term: 'carefully / deeply', def: 'the manner of thinking very deeply without rushing.' }] } },
+                examples: [{ kor: "내일 여행에 무엇이 필요할지 침대에 누워 곰곰이 생각했어요.", eng: "Lying in bed, I thought deeply about what I would need for tomorrow's trip." }],
+                variants: ['곰곰이 생각해보다', '곰곰이 생각해보면']
+            },
+            { 
+                term: '수상할 정도로', 
+                mainDef: '무언가 의심이 갈 만큼 아주 대단하거나 심하게', 
+                subDefs: [
+                    { subTerm: '• 수상하다', subDef: '수(殊 다르다) + 상(常 평소) -> 평소와 달라서 이상하고 의심스럽다' },
+                    { subTerm: '• -ㄹ/을 정도로', subDef: '어떤 행동이나 상태가 아주 대단함을 나타내는 표현' }
+                ],
+                translations: { en: { term: 'suspiciously (much)', mainDef: 'to an extent that raises suspicion due to being extreme.', subDefs: [{ term: 'suspicious', def: 'strange and doubtful because it\'s different from usual.' }, { term: 'to the extent that', def: 'expression showing an extreme state.' }] } },
+                examples: [{ kor: "그 사람은 일도 안 하는데 수상할 정도로 돈이 많아요.", eng: "That person doesn't even work, but suspiciously has a lot of money." }],
+                variants: ['수상할 정도로']
+            },
+            { 
+                term: '감각어', 
+                mainDef: '감(感 느끼다) + 각(覺 깨닫다) + 어(語 말씀) -> 오감(눈, 코, 귀 등)으로 느낀 느낌을 표현하는 단어', 
+                translations: { en: { term: 'sensory word', mainDef: 'a word that expresses feelings perceived through the five senses.' } },
+                examples: [{ kor: "'따뜻하다', '부드럽다' 같은 단어는 우리가 자주 쓰는 감각어예요.", eng: "Words like 'warm' and 'soft' are sensory words we use often." }],
+                variants: ['감각어']
+            },
+            { 
+                term: '누렇다', 
+                mainDef: '노란색인데 맑지 않고 약간 어둡고 탁한 빛이 나다', 
+                translations: { en: { term: 'yellowish / sallow', mainDef: 'yellow but not clear, slightly dark and murky.' } },
+                examples: [{ kor: "가을이 깊어지면 들판의 벼가 누렇게 익어가요.", eng: "As autumn deepens, the rice in the fields ripens to a yellowish color." }],
+                variants: ['누렇다']
+            },
+            { 
+                term: '누리끼리하다', 
+                mainDef: '색깔이 선명하지 않고 탁하면서 조금 칙칙하게 누런색을 띠다', 
+                translations: { en: { term: 'dull yellowish', mainDef: 'a color that is not vivid, but rather murky and dull yellow.' } },
+                examples: [{ kor: "오래된 책을 꺼내보니 종이가 누리끼리하게 변해 있었어요.", eng: "I took out an old book and the paper had turned a dull yellowish color." }],
+                variants: ['누리끼리하다']
+            },
+            { 
+                term: '노르스름하다', 
+                mainDef: '진하지 않고 약간 노란빛을 띠면서 보기 좋게 부드러운 색이다', 
+                translations: { en: { term: 'pale yellow / yellowish', mainDef: 'not dark, having a slight yellow tint that is soft and pleasing.' } },
+                examples: [{ kor: "저녁 하늘에 노르스름한 예쁜 달이 떴어요.", eng: "A pretty, pale yellow moon rose in the evening sky." }],
+                variants: ['노르스름하다']
+            },
+            { 
+                term: '노릇노릇하다', 
+                mainDef: '음식이 타지 않고 알맞게 구워지거나 튀겨져서 예쁘게 노란색으로 변한 모양', 
+                translations: { en: { term: 'golden brown', mainDef: 'the appearance of food beautifully baked or fried to a yellow color without burning.' } },
+                examples: [{ kor: "불판 위의 삼겹살이 아주 노릇노릇하게 잘 구워졌어요.", eng: "The pork belly on the grill is cooked perfectly to a golden brown." }],
+                variants: ['노릇노릇하다']
+            },
+            { 
+                term: '누르스름하다', 
+                mainDef: '노르스름하다보다 조금 더 어둡고 약간 탁한 노란색을 띠다', 
+                translations: { en: { term: 'tinged with yellow / sallow', mainDef: 'slightly darker and more murky yellow than "noreuseureumhada".' } },
+                examples: [{ kor: "몸이 아픈 친구의 얼굴빛이 창백하고 누르스름해요.", eng: "My sick friend's face looks pale and sallow." }],
+                variants: ['누르스름하다']
+            },
+            { 
+                term: '모음', 
+                mainDef: '모(母 어미) + 음(音 소리) -> 한글의 ㅏ, ㅑ, ㅓ, ㅕ처럼 다른 글자 없이 혼자서 소리를 낼 수 있는 글자', 
+                translations: { en: { term: 'vowel', mainDef: 'letters like a, ya, eo, yeo in Hangeul that can make a sound on their own.' } },
+                examples: [{ kor: "한국어의 기본 모음은 모두 10개입니다.", eng: "There are 10 basic vowels in Korean." }],
+                variants: ['모음']
+            },
+            { 
+                term: '자음', 
+                mainDef: '자(子 아들) + 음(音 소리) -> 한글의 ㄱ, ㄴ, ㄷ처럼 혼자서는 안 되고 모음과 합쳐져야 소리가 나는 글자', 
+                translations: { en: { term: 'consonant', mainDef: 'letters like g, n, d in Hangeul that need to combine with a vowel to make a sound.' } },
+                examples: [{ kor: "자음 'ㄱ'과 모음 'ㅏ'가 만나면 '가'라는 소리가 나요.", eng: "When the consonant 'ㄱ' and vowel 'ㅏ' meet, it makes the sound 'ga'." }],
+                variants: ['자음']
+            },
+            { 
+                term: '어휘', 
+                mainDef: '어(語 말씀) + 휘(彙 무리) -> 일정한 범위 안에서 쓰이는 단어들의 모음이나 수', 
+                translations: { en: { term: 'vocabulary', mainDef: 'the collection or number of words used within a certain scope.' } },
+                examples: [{ kor: "책을 많이 읽고 공부하면 어휘가 풍부해져서 글을 잘 써요.", eng: "If you read and study a lot, your vocabulary gets rich and you write well." }],
+                variants: ['어휘']
+            },
+            { 
+                term: '수식어', 
+                mainDef: '수(修 닦다) + 식(飾 꾸미다) + 어(語 말씀) -> 문장 안에서 다른 단어의 뜻을 더 자세하고 예쁘게 꾸며주는 단어', 
+                translations: { en: { term: 'modifier', mainDef: 'a word that decorates or details the meaning of another word in a sentence.' } },
+                examples: [{ kor: "글을 쓸 때 수식어를 너무 많이 쓰면 의미가 어색해질 수 있어요.", eng: "When writing, using too many modifiers can make the meaning awkward." }],
+                variants: ['수식어']
+            },
+            { 
+                term: '미묘한 차이', 
+                mainDef: '미(微 작다) + 묘(妙 묘하다) -> 뚜렷하게 보이지 않고 아주 작아서 알아채기 힘든 약간의 다름', 
+                subDefs: [{ subTerm: '• 미묘하다', subDef: '뚜렷하지 않고 아주 작고 섬세하여 말로 표현하기 힘들다' }],
+                translations: { en: { term: 'subtle difference', mainDef: 'a slight difference that is very small and hard to notice.', subDefs: [{ term: 'subtle', def: 'very small and delicate, hard to express in words.' }] } },
+                examples: [{ kor: "두 쌍둥이는 너무 닮아서 가족만 아는 미묘한 차이로 구별해요.", eng: "The twins look so alike that they are distinguished by a subtle difference only the family knows." }],
+                variants: ['미묘한 차이', '미묘한 차이까지']
+            },
+            { 
+                term: '토양이 되다', 
+                mainDef: '토(土 흙) + 양(壤 흙) -> 식물이 자라는 흙처럼, 어떤 일이 발전하고 성공할 수 있는 좋은 바탕이나 환경이 되다', 
+                translations: { en: { term: 'to become a foundation/soil', mainDef: 'to become a good foundation or environment for something to develop, like soil for plants.' } },
+                examples: [{ kor: "학교에서 배운 다양한 경험들이 제 꿈을 이루는 훌륭한 토양이 되었어요.", eng: "The various experiences I learned at school became a great foundation for achieving my dream." }],
+                variants: ['토양이 되다', '토양이 되는']
+            },
+            { 
+                term: '트렌드를 휩쓸다', 
+                mainDef: '트렌드(Trend 유행) -> 요즘 사람들에게 새롭게 인기 있는 흐름을 압도적으로 차지하거나 크게 이끌다', 
+                translations: { en: { term: 'to sweep the trend', mainDef: 'to overwhelmingly dominate or lead a new popular flow among people.' } },
+                examples: [{ kor: "그 가수의 새로운 춤이 전 세계의 트렌드를 휩쓸고 있어요.", eng: "That singer's new dance is sweeping the global trend." }],
+                variants: ['트렌드를 휩쓸다', '트렌드를 휩쓴']
+            },
+            { 
+                term: '식감을 살리다', 
+                mainDef: '음식을 씹을 때의 쫀득하거나 바삭한 좋은 느낌을 죽이지 않고 더욱 잘 느껴지게 요리하다', 
+                translations: { en: { term: 'to bring out the texture', mainDef: 'to cook so that the good feeling of chewing is preserved and felt better.' } },
+                examples: [{ kor: "요리사는 채소를 아주 살짝만 볶아서 본래의 아삭한 식감을 살렸어요.", eng: "The chef stir-fried the vegetables very lightly to bring out their original crunchy texture." }],
+                variants: ['식감을 살리다', '식감을 살린']
+            },
+            { 
+                term: '최적화되다', 
+                mainDef: '최(最 가장) + 적(適 맞다) + 화(化 되다) -> 어떤 특별한 조건이나 상황에 가장 알맞고 완벽하게 맞춰지다', 
+                translations: { en: { term: 'to be optimized', mainDef: 'to be perfectly adjusted to suit a special condition or situation.' } },
+                examples: [{ kor: "이 게임 프로그램은 모바일 스마트폰에 최적화되어 있어서 쓰기 편해요.", eng: "This game program is optimized for mobile smartphones, so it's easy to use." }],
+                variants: ['최적화되다', '최적화된']
+            },
+            { 
+                term: '쭉 늘어나다', 
+                mainDef: '어떤 물건이 중간에 끊어지지 않고 길게 당겨지면서 모양이 부드럽게 길어지는 것', 
+                translations: { en: { term: 'to stretch smoothly', mainDef: 'for an object to be pulled and lengthen smoothly without breaking.' } },
+                examples: [{ kor: "따뜻한 치즈 피자를 한 조각 들자 치즈가 끊어지지 않고 쭉 늘어났어요.", eng: "When I lifted a slice of warm cheese pizza, the cheese stretched smoothly without breaking." }],
+                variants: ['쭉 늘어나다', '쭉 늘어나는']
+            },
+            { 
+                term: '생생하게 전달이 되다', 
+                mainDef: '어떤 소식이나 장면이 진짜 눈앞에서 보는 것처럼 아주 똑똑하고 분명하게 알려지다', 
+                subDefs: [{ subTerm: '• 생생하다', subDef: '생(生 날것) + 생(生 날것) -> 생기가 있고 펄떡펄떡 살아서 눈앞에 있는 것 같다' }],
+                translations: { en: { term: 'to be conveyed vividly', mainDef: 'for news or a scene to be told clearly as if seeing it right in front of your eyes.', subDefs: [{ term: 'vivid', def: 'lively and seemingly right before your eyes.' }] } },
+                examples: [{ kor: "어릴 때 바다에 놀러 갔던 기억이 아직도 머릿속에 아주 생생해요.", eng: "The memory of going to the sea when I was young is still very vivid in my mind." }],
+                variants: ['생생하게 전달이 되다']
+            },
+            { 
+                term: '욕구를 불러일으키다', 
+                mainDef: '어떤 것을 정말로 하고 싶거나 가지고 싶은 마음이 속에서부터 생겨나게 만들다', 
+                subDefs: [{ subTerm: '• 욕구', subDef: '욕(欲 바라다) + 구(求 구하다) -> 무엇을 얻거나 하고 싶어 간절히 바라는 마음' }],
+                translations: { en: { term: 'to arouse a desire', mainDef: 'to make a feeling of wanting to do or have something arise from inside.', subDefs: [{ term: 'desire', def: 'a strong wish to get or do something.' }] } },
+                examples: [{ kor: "골목에서 나는 고소한 빵 냄새가 빵을 먹고 싶은 욕구를 불러일으켰어요.", eng: "The savory smell of bread in the alley aroused a desire to eat it." }],
+                variants: ['욕구를 불러일으키다', '욕구를 불러일으키게']
+            },
+            { 
+                term: '쫙 늘어나다', 
+                mainDef: '고무줄이나 치즈 같은 찰기 있는 것이 한 번에 아주 길고 강하게 당겨져 길어지는 모양', 
+                translations: { en: { term: 'to stretch completely', mainDef: 'for something elastic to be pulled strongly and lengthen all at once.' } },
+                examples: [{ kor: "친구와 양쪽에서 고무줄을 당기니 고무줄이 쫙 늘어났어요.", eng: "When my friend and I pulled the rubber band from both sides, it stretched completely." }],
+                variants: ['쫙 늘어나다', '쫙 늘어나는']
+            },
+            { 
+                term: '설사 잘 들지 않더라도', 
+                mainDef: '만약 영상에서 소리가 잘 들리지 않는다고 가정해 보아도 (문제없다)', 
+                subDefs: [{ subTerm: '• 설사 -더라도', subDef: '설(設 베풀다) + 사(使 가령) -> 가령 그렇다고 치더라도 뒤의 일에는 상관이 없다는 뜻' }],
+                translations: { en: { term: 'even if it\'s not heard well', mainDef: 'assuming the sound in the video is not heard clearly (it\'s fine).', subDefs: [{ term: 'even if (supposing)', def: 'meaning that even if supposing so, it doesn\'t affect the latter.' }] } },
+                examples: [{ kor: "설사 내일 비가 오더라도 우리는 예정대로 소풍을 갈 거예요.", eng: "Even if it rains tomorrow, we will go on the picnic as planned." }],
+                variants: ['설사 잘 들지 않더라도']
+            },
+            { 
+                term: '질감', 
+                mainDef: '질(質 바탕) + 감(感 느끼다) -> 어떤 물건을 손으로 만지거나 입으로 씹었을 때 느껴지는 겉부분의 느낌', 
+                translations: { en: { term: 'texture', mainDef: 'the feeling of the surface of an object when touched or chewed.' } },
+                examples: [{ kor: "이 비싼 실크 옷은 만졌을 때의 질감이 정말 부드럽고 좋아요.", eng: "The texture of this expensive silk clothes is really soft and nice to the touch." }],
+                variants: ['질감']
+            },
+            { 
+                term: '효과적인 면', 
+                mainDef: '어떤 일을 했을 때 좋은 결과가 잘 나타나는 특정한 부분이나 측면', 
+                subDefs: [{ subTerm: '• -ㄴ/은 면', subDef: '면(面 낯/부분) -> 어떤 사물이나 사람을 바라보는 특정한 부분이나 특징' }],
+                translations: { en: { term: 'effective aspect', mainDef: 'a specific part where good results appear well when doing something.', subDefs: [{ term: 'aspect / side', def: 'a specific part or characteristic of an object or person.' }] } },
+                examples: [{ kor: "이 휴대폰은 가격이 좀 비싸지만 카메라 성능이 아주 좋은 면도 있어요.", eng: "This phone is a bit expensive, but it also has the aspect of having a very good camera." }],
+                variants: ['효과적인 면', '효과적인 면이', '효과적인']
+            },
+            { 
+                term: '유전적', 
+                mainDef: '유(遺 남길) + 전(傳 전할) + 적(的 과녁) -> 부모가 가진 신체적 특징이나 성질이 자식에게로 그대로 내려오는 특징', 
+                translations: { en: { term: 'genetic', mainDef: 'the characteristic of physical traits passing from parents to children.' } },
+                examples: [{ kor: "저의 큰 키와 검은 머리카락은 모두 부모님의 유전적인 영향이에요.", eng: "My tall height and black hair are all due to my parents' genetic influence." }],
+                variants: ['유전적']
+            },
+            { 
+                term: '결합체', 
+                mainDef: '결(結 맺을) + 합(合 합할) + 체(體 몸) -> 서로 다른 여러 가지 요소나 성질이 하나로 단단하게 뭉쳐서 이루어진 것', 
+                translations: { en: { term: 'combination / compound', mainDef: 'something made by firmly uniting various different elements or properties.' } },
+                examples: [{ kor: "이 새로 나온 자동차는 현대 과학과 최신 기술의 완벽 결합체입니다.", eng: "This new car is a perfect combination of modern science and the latest technology." }],
+                variants: ['결합체']
+            },
+            { 
+                term: '수사협조', 
+                mainDef: '수(搜 찾을) + 사(査 조사할) + 협(協 도울) + 조(助 도울) -> 사건을 조사하는 경찰을 도와주는 일 (유튜브에서는 시청자의 댓글 제보를 뜻하는 장난스러운 표현)', 
+                translations: { en: { term: 'investigation cooperation', mainDef: 'helping the police investigate (playfully used on YouTube to ask for comments).' } },
+                examples: [{ kor: "도둑을 잡기 위해 경찰이 동네 시민들에게 수사협조를 간절히 요청했어요.", eng: "To catch the thief, the police earnestly requested investigation cooperation from the citizens." }],
+                variants: ['수사협조']
+            }
+        ];
+
+        const ANSWER_CHOICES = ['쫀득하다', '식감을 살리다', '추적하다', '증거', '곡물', '변형시키다', '찰지게 달라붙다', '토양이 되다', '본연의', '질감', '세분화하다', '의외'
+        ];
+
+        const QUIZ_LIST = [
+            {
+              id: '1',
+              textParts: ["언제부터 한국인들이 유독 쫀득한 식감에 열광했는지, 스브스뉴스가 그 역사적 기원을 ", "."],
+              answer: '추적했어요',
+              hint: '사물의 자취를 따라가며 찾다. (단어 은행의 기본형 "추적하다"를 과거형 문장으로 자연스럽게 변형하세요)',
+              explanation: "맞아요! 원형 '추적하다'가 과거형 어미와 결합하여 '추적했어요(또는 추적해 봤어요)'로 알맞게 쓰였네요.",
+              textParts_eng: ["SBS News ", " the historical origins of why Koreans are so crazy about chewy textures."],
+              answer_eng: "tracked down"
+            },
+            {
+              id: '2',
+              textParts: ["단순한 우연이 아니라는 것을 입증하기 위해, 영상에서는 명백한 ", " 제출하겠다고 했어요."],
+              answer: '증거를',
+              hint: '어떤 사실을 증명할 수 있는 근거. (기본형에 목적격 조사를 붙이세요)',
+              explanation: "정답! 원형 '증거'에 목적격 조사 '를'이 붙어 문장에 자연스럽게 녹아들었어요.",
+              textParts_eng: ["To prove that it's not just a coincidence, they said they would submit clear ", " in the video."],
+              answer_eng: "evidence"
+            },
+            {
+              id: '3',
+              textParts: ["한반도의 뚜렷한 사계절과 넓은 평야는 벼농사에 적합해, 자연스럽게 ", " 위주의 식습관을 만들었어요."],
+              answer: '곡물',
+              hint: '쌀, 보리, 콩 등 농경지에서 기르는 농산물.',
+              explanation: "딩동댕! 쌀이나 보리 같은 '곡물'이 정답이에요. 기본형 그대로 명사로 사용하면 돼요.",
+              textParts_eng: ["The distinct four seasons and vast plains of the Korean peninsula were suitable for rice farming, naturally creating a ", "-based diet."],
+              answer_eng: "grain"
+            },
+            {
+              id: '4',
+              textParts: ["과메기나 족발 같은 음식들은 식재료 ", " 식감을 물리적으로 변형시켜 새롭게 만들어낸 사례예요."],
+              answer: '본연의',
+              hint: '본디부터 가지고 있는 본래의 상태나 성질.',
+              explanation: "그렇죠! 원래부터 가지고 있던 성질을 뜻하는 '본연의'가 '식감'을 잘 꾸며주고 있어요.",
+              textParts_eng: ["Foods like gwamegi or jokbal are examples of newly created dishes by physically altering the ingredients' ", " texture."],
+              answer_eng: "original"
+            },
+            {
+              id: '5',
+              textParts: ["한국의 조상들은 재료를 그냥 먹지 않고 수분을 날리거나 응축하는 등 물리적으로 ", " 더 매력적인 식감으로 만들었어요."],
+              answer: '변형시켜서',
+              hint: '모양이나 성질을 바꾸다. (기본형 "변형시키다"를 문맥에 맞게 활용하세요)',
+              explanation: "정확해요! 원형 '변형시키다'가 방법이나 수단을 나타내는 연결어미 '-아/어서'와 만나 '변형시켜서'로 완벽하게 활용되었어요.",
+              textParts_eng: ["Korean ancestors didn't just eat ingredients as they were, but made them into a more attractive texture by physically ", " them, such as removing moisture or condensing them."],
+              answer_eng: "transforming"
+            },
+            {
+              id: '6',
+              textParts: ["그 결과, 음식을 입안에 넣었을 때 착 감기며 ", " 식감을 만들어 낼 수 있었어요."],
+              answer: '찰지게 달라붙는',
+              hint: '끈기가 많아 착 붙는 느낌이 있다. (기본형 "찰지게 달라붙다"를 뒤의 명사를 수식하게 변형하세요)',
+              explanation: "훌륭해요! 원형 '찰지게 달라붙다'가 뒤에 오는 명사 '식감'을 꾸며주기 위해 '찰지게 달라붙는'으로 올바르게 변형되었어요.",
+              textParts_eng: ["As a result, they were able to create a texture that wraps around and ", " in the mouth when eating."],
+              answer_eng: "sticks chewily"
+            },
+            {
+              id: '7',
+              textParts: ["한국의 음식 트렌드를 살펴보면 짜고 맵고 단 맛을 묘사하는 것보다 유독 ", " 표현이 훨씬 많아요."],
+              answer: '식감을 살린',
+              hint: '음식을 먹을 때 입안에서 느껴지는 감촉을 돋보이게 하다. (기본형 "식감을 살리다"를 뒤의 명사 "표현"을 수식하게 변형하세요)',
+              explanation: "맞아요! '식감을 살리다'가 뒤의 '표현'을 수식하는 관형사형 '식감을 살린'으로 아주 자연스럽게 바뀌었네요.",
+              textParts_eng: ["If you look at Korean food trends, there are far more expressions ", " rather than describing salty, spicy, or sweet tastes."],
+              answer_eng: "highlighting the texture"
+            },
+            {
+              id: '8',
+              textParts: ["감각의 미묘한 차이까지 언어에 반영해 전달할 수 있다는 것은, 우리 식문화가 계속 발전할 수 있는 ", " 것이에요."],
+              answer: '토양이 되는',
+              hint: '어떤 사물이나 현상이 발생하거나 발전하는 데 바탕이 되다. (기본형 "토양이 되다"를 문맥에 맞게 변형하세요)',
+              explanation: "잘하셨어요! '토양이 되다'가 뒤의 의존명사 '것'을 수식하기 위해 '토양이 되는'으로 문법에 맞게 변형되었어요. 여기서 토양은 '바탕'을 의미해요.",
+              textParts_eng: ["Being able to reflect and convey even subtle differences in senses in language is ", " for our food culture to continue developing."],
+              answer_eng: "becoming the foundation"
+            },
+            {
+              id: '9',
+              textParts: ["치즈가 쫙 늘어나는 모습은 굳이 먹는 소리가 들리지 않아도 보는 것만으로 충분히 충족되는 ", "이기 때문에 SNS에 아주 최적화되어 있어요."],
+              answer: '질감',
+              hint: '물질의 표면에서 느껴지는 특징이나 감촉.',
+              explanation: "정답! 시각적으로 느껴지는 촉감인 '질감'이 조사 '이기' 앞에 원형 그대로 정확히 들어갔어요.",
+              textParts_eng: ["The visual of cheese stretching out is highly optimized for SNS because it's a ", " that satisfies just by looking at it, even without hearing the eating sound."],
+              answer_eng: "texture"
+            },
+            {
+              id: '10',
+              textParts: ["이제 한국인들은 단순히 맛있는 것을 찾는 단계를 넘어, ", " 식감 그 자체를 디자인하고 즐기기 시작했어요."],
+              answer: '쫀득한',
+              hint: '물기가 있고 차져서 꽤 끈끈하게 들러붙는 느낌. (기본형 "쫀득하다"를 뒤의 명사 "식감"을 수식하게 변형하세요)',
+              explanation: "퍼펙트! 원형 '쫀득하다'가 명사 '식감'을 수식하도록 관형형 어미를 붙여 '쫀득한'으로 올바르게 변형되었어요.",
+              textParts_eng: ["Now, Koreans have moved beyond simply looking for delicious things and have started to design and enjoy the ", " texture itself."],
+              answer_eng: "chewy"
+            }
+        ];
+
+        const DISCUSS_DATA = [
+            {
+                id: 1,
+                questionKor: "여러분 나라에서 사람들이 유독 좋아하는 식감이 있어요? 왜 그 식감이 인기 있다고 생각해요?",
+                questionEng: "Is there a specific food texture that people in your country are particularly obsessed with? Why do you think it's so popular?",
+                vocab: [
+                    { term: "유독", def: "유(唯 오직) + 독(獨 홀로) → 다른 것들과 다르게, 유난히/특별히", engDef: "Particularly / exceptionally (unlike anything else)." },
+                    { term: "식감", def: "식(食 먹다) + 감(感 느끼다) → 음식을 씹을 때 입안에서 느껴지는 느낌", engDef: "Mouthfeel / texture of food when chewing." }
+                ]
+            },
+            {
+                id: 2,
+                questionKor: "여러분은 쫀득한 식감의 음식을 좋아하는 편이에요? 여러분 나라에도 비슷한 식감의 음식이 있다면 어떤 건가요?",
+                questionEng: "Are you a fan of chewy foods? If your country has foods with a similar texture, what are they?",
+                vocab: [
+                    { term: "쫀득하다", def: "오래 씹어도 쉽게 끊어지지 않고, 탄력 있게 쫄깃쫄깃한 느낌이 있다", engDef: "To be delightfully chewy, resilient, and elastic without breaking easily." }
+                ]
+            },
+            {
+                id: 3,
+                questionKor: "동영상에서 한국에 들어온 음식은 ‘죄다 쫀득해진다’고 했는데, 여러분 나라에서도 외국 음식이 들어오면 특정 맛이나 식감으로 현지화되는 경향이 있어요?",
+                questionEng: "The video mentioned that foreign foods introduced to Korea \"all become chewy.\" Is there a tendency in your country for foreign foods to be localized with a specific taste or texture?",
+                vocab: [
+                    { term: "죄다", def: "남거나 빠진 것 없이 모조리 모두 다", engDef: "Everything completely / without exception." },
+                    { term: "현지화되다", def: "현지(現地) + 화(化) → 그 지역의 입맛/문화/방식에 맞게 바뀌다", engDef: "To be localized / adapted to the local taste, culture, or style." }
+                ]
+            },
+            {
+                id: 4,
+                questionKor: "동영상에 따르면 한반도의 기후와 지형이 곡물 위주의 식습관을 만들었다고 하는데, 여러분 나라의 자연환경이 고유한 식문화를 형성한 사례가 있어요?",
+                questionEng: "According to the video, the climate and geography of the Korean peninsula created a grain-heavy diet. Are there examples of your country's natural environment shaping its unique food culture?",
+                vocab: [
+                    { term: "곡물", def: "곡(穀 곡식) + 물(物 물건) → 쌀, 보리, 밀처럼 주식으로 먹는 곡식", engDef: "Grains / staples like rice, barley, and wheat." },
+                    { term: "식습관", def: "식(食 먹다) + 습(習 익히다) + 관(慣 버릇) → 오랫동안 반복해서 생긴 밥 먹는 습관", engDef: "Dietary habits / eating patterns developed over a long time." }
+                ]
+            },
+            {
+                id: 5,
+                questionKor: "동영상에서 쫀득한 식감이 단순한 ‘씹는 맛’을 넘어 축하와 나눔이라는 좋은 기억과도 연결된다고 했는데, 여러분에게도 특정 음식의 맛이나 식감이 특별한 감정이나 기억을 떠올리게 해요?",
+                questionEng: "The video stated that chewiness goes beyond just \"mouthfeel\" and is tied to fond memories of celebration and sharing. Does a specific food's taste or texture trigger special emotions or memories for you?",
+                vocab: []
+            },
+            {
+                id: 6,
+                questionKor: "동영상에서 ‘동양인은 채소 위주의 식사를 오래 해서 넓적한 치아와 발달한 턱 구조를 형성했다’고 했는데, 수천 년간 육류 위주의 유목 생활을 한 몽골인도 동양인의 전형적인 골격을 가지고 있어요. 이 점을 생각하면 동영상의 주장에 논리적인 허점이 있다고 생각해요?",
+                questionEng: "The video claimed that \"Asians developed broad teeth and strong jaw structures from a long history of plant-based diets.\" However, Mongolians, who have lived a meat-heavy nomadic lifestyle for millennia, also share this typical Asian bone structure. Considering this, do you think there's a logical loophole in the video's argument?",
+                vocab: [
+                    { term: "유목 생활", def: "한곳에 정착하지 않고 가축을 데리고 옮겨 다니며 사는 생활", engDef: "Nomadic lifestyle / living by moving around with livestock instead of settling." },
+                    { term: "논리적인 허점", def: "논리에서 비어 있는 약한 부분, 말이 완전히 이어지지 않는 지점", engDef: "Logical loophole / a weak point or gap in reasoning." }
+                ]
+            },
+            {
+                id: 7,
+                questionKor: "동영상에서 ‘영어로는 수식어를 넣어야 한다’고 하며 한국어 감각어의 우수성을 강조했는데, 실제로 영어에도 chewy, gummy, gooey, sticky, glutinous 등 식감을 세분화하는 독립적인 단어가 많아요. 한국어와 영어는 감각을 표현하는 ‘방식’이 다를 뿐이라고 생각해요, 아니면 한쪽이 더 풍부하다고 생각해요?",
+                questionEng: "The video emphasized the superiority of Korean sensory words, saying \"in English, you have to add modifiers.\" But in reality, English has many independent words that categorize textures like chewy, gummy, gooey, sticky, and glutinous. Do you think Korean and English just have different \"ways\" of expressing senses, or is one language genuinely richer?",
+                vocab: [
+                    { term: "감각어", def: "감(感 느끼다) + 각(覺 깨닫다) + 어(語 말) → 오감으로 느낀 느낌을 표현하는 단어", engDef: "Sensory words / vocabulary expressing feelings from the five senses." },
+                    { term: "세분화하다", def: "세(細 가늘다) + 분(分 나누다) + 화(化 되다) -> 어떤 것을 아주 작고 자세하게 여러 가지로 나누다", engDef: "To subdivide / break something down into very small, detailed categories." },
+                    { term: "수식어", def: "수(修 닦다) + 식(飾 꾸미다) + 어(語 말씀) -> 문장 안에서 다른 단어의 뜻을 더 자세하고 예쁘게 꾸며주는 단어(예: 매우, 아주 등)", engDef: "Modifiers / words that decorate or describe other words in a sentence (e.g., very, highly)." }
+                ]
+            },
+            {
+                id: 8,
+                questionKor: "국어학 박사가 ‘감각의 미묘한 차이를 전달할 수 있는 언어가 문화가 레벨업할 수 있는 토양이 되다’고 했는데, 이 논리대로라면 감각어가 적은 언어를 가진 문화는 발전하기 어렵다는 결론이 나와요. 이 주장에 동의해요, 아니면 언어와 문화의 관계가 그렇게 단순하지 않다고 생각해요?",
+                questionEng: "A linguistics expert said, \"A language capable of conveying subtle sensory differences becomes the soil for a culture to level up.\" Following this logic leads to the conclusion that cultures with fewer sensory words struggle to develop. Do you agree with this claim, or do you think the relationship between language and culture isn't that simple?",
+                vocab: [
+                    { term: "미묘한 차이", def: "아주 작고 섬세한 다름. 쉽게 알아차리기 어려운 작은 차이", engDef: "Subtle difference / a small, delicate variation that's hard to catch." },
+                    { term: "토양이 되다", def: "토(土 흙) + 양(壤 흙) -> 식물이 자라는 흙처럼, 어떤 일이 발전하고 성공할 수 있는 좋은 바탕이나 환경이 되다", engDef: "To become the soil (foundation) / a good base or environment for something to develop and succeed." }
+                ]
+            },
+            {
+                id: 9,
+                questionKor: "동영상에서 쫀득한 식감은 ‘보는 것만으로도 충족이 되는 질감’이라 SNS에 최적화되었다고 했는데, SNS가 특정 음식이나 식감의 유행에 어떤 영향을 미친다고 생각해요? 여러분 나라에서도 SNS 때문에 유행한 음식이 있어요?",
+                questionEng: "The video noted that chewiness is a \"texture that satisfies just by looking at it,\" making it perfectly optimized for social media. How do you think social media influences trends for specific foods or textures? Are there any foods that went viral in your country because of social media?",
+                vocab: [
+                    { term: "최적화되다", def: "최(最 가장) + 적(適 맞다) + 화(化 되다) -> 어떤 특별한 조건이나 상황에 가장 알맞고 완벽하게 맞춰지다", engDef: "To be optimized / perfectly tailored to fit a specific condition or situation." }
+                ]
+            },
+            {
+                id: 10,
+                questionKor: "이 동영상은 한국인의 쫀득한 식감 사랑을 역사, 신체, 언어, SNS라는 네 가지 증거로 설명했는데, 이 중에서 가장 설득력 있다고 느낀 증거와 가장 약하다고 느낀 증거는 무엇이라고 생각해요? 그 이유를 설명해 주세요.",
+                questionEng: "This video explained Koreans' love for chewy textures using four pieces of evidence: history, anatomy, language, and social media. Which piece of evidence did you find the most persuasive, and which the weakest? Please explain your reasons.",
+                vocab: [
+                    { term: "증거", def: "증(證 증거) + 거(據 의지하다) -> 어떤 사실이 맞다는 것을 보여주는 물건이나 내용", engDef: "Evidence / proof or information showing that a fact is true." }
+                ]
+            }
+        ];
+
+        const LEVEL_DEFINITIONS = { 
+            "A1": { title: "Novice", desc: "Basic everyday expressions." }, "A1+": { title: "Pre-Beginner", desc: "Can handle slightly more than A1." },
+            "A2": { title: "Beginner", desc: "Frequently used sentences." }, "A2+": { title: "Upper Beginner", desc: "Can speak a bit more smoothly." }, 
+            "B1": { title: "Pre-Intermediate", desc: "Standard speech main points." }, "B1+": { title: "Lower Intermediate", desc: "Stronger B1. More comfortable carrying conversations." },
+            "B2": { title: "Intermediate", desc: "Complex text main ideas." }, "B2+": { title: "Upper Intermediate", desc: "Near C1. Can argue a point logically." },
+            "C1": { title: "Advanced", desc: "Long, demanding texts." }, "C1+": { title: "Upper Advanced", desc: "Very strong C1, approaching native-like flexibility." },
+            "C2": { title: "Proficient", desc: "Can understand virtually everything heard or read." }
+        };
+
+        // --- Icons ---
+        const HomeIcon = ({className}) => (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square" strokeLinejoin="miter" className={className}><rect x="3" y="3" width="18" height="18" rx="0" ry="0" /><path d="M3 9h18" /><path d="M9 21V9" /></svg>);
+        const VocabIcon = ({className}) => (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square" strokeLinejoin="miter" className={className}><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>);
+        const QuizIcon = ({className}) => (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square" strokeLinejoin="miter" className={className}><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>);
+        const DiscussIcon = ({className}) => (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square" strokeLinejoin="miter" className={className}><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>);
+        const VideoIcon = ({className}) => (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square" strokeLinejoin="miter" className={className}><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>);
+        const TranslateIcon = ({className}) => (<svg viewBox="0 0 24 24" fill="currentColor" className={className}><path d="M12.87 15.07l-2.54-2.51.03-.03A17.52 17.52 0 0014.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.09-.02.67-.02zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z" /></svg>);
+        const ExternalLinkIcon = ({className}) => (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square" strokeLinejoin="miter" className={className}><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /><polyline points="15 3 21 3 21 9" /><line x1="10" y1="14" x2="21" y2="3" /></svg>);
+        const SparklesIcon = ({className}) => (<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className={className}><path d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 00-1.423 1.423z" /></svg>);
+        const RewindIcon = ({ className }) => (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square" strokeLinejoin="miter" className={className}><polygon points="11 19 2 12 11 5 11 19"></polygon><polygon points="22 19 13 12 22 5 22 19"></polygon></svg>);
+        const ForwardIcon = ({ className }) => (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square" strokeLinejoin="miter" className={className}><polygon points="13 19 22 12 13 5 13 19"></polygon><polygon points="2 19 11 12 2 5 2 19"></polygon></svg>);
+        const PauseIcon = ({ className }) => (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={className}><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>);
+        const PlayIconSolid = ({ className }) => (<svg viewBox="0 0 24 24" fill="currentColor" className={className}><path d="M5 3l14 9-14 9V3z" /></svg>);
+        const MenuIcon = ({ className }) => (
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square" strokeLinejoin="miter" className={className}>
+                <line x1="3" y1="12" x2="21" y2="12"/>
+                <line x1="3" y1="6" x2="21" y2="6"/>
+                <line x1="3" y1="18" x2="21" y2="18"/>
+            </svg>
+        );
+
+        // --- Shared Configurations (Optimized) ---
+        const NAV_ITEMS = [
+            { id: 'home', label: '시작 페이지', icon: HomeIcon },
+            { id: 'video', label: '동영상 자료', icon: VideoIcon },
+            { id: 'vocab', label: '핵심 어휘', icon: VocabIcon },
+            { id: 'quiz', label: '내용 확인 퀴즈', icon: QuizIcon },
+            { id: 'discuss', label: '생각해 보기', icon: DiscussIcon }
+        ];
+
+        const HOME_CARDS = [
+            { tag: "Vocab", title: "핵심 어휘", description: <>본문에 나온 단어와 표현을 <br/>학습해 보세요.</>, target: 'vocab' },
+            { tag: "Quiz", title: "내용 퀴즈", description: <>본문을 제대로 이해했는지 <br/>확인해 보세요.</>, target: 'quiz' },
+            { tag: "Discuss", title: "생각해 보기", description: <>본문에 대해 깊게 생각하고 <br/>표현해 보세요.</>, target: 'discuss' }
+        ];
+
+        // --- Helper Components & Utils ---
+        const TranslateButton = ({ onClick, isShowing, className = "" }) => (<button onClick={(e) => { e.stopPropagation(); onClick(e); }} className={`flex items-center gap-1 text-[10px] font-medium text-gray-400 hover:text-gray-900 font-sans transition-colors cursor-pointer border-none p-0 tracking-wide uppercase ${className}`}><TranslateIcon className="w-3 h-3" />{isShowing ? 'Hide' : 'Eng'}</button>);
+        
+        // Revised Bubble Translate Button (Inside Bubble)
+        const BubbleTranslateButton = ({ onClick, isShowing, className = "" }) => (
+            <button onClick={(e) => { e.stopPropagation(); onClick(e); }} className={`flex items-center gap-1.5 text-[10px] font-bold font-ui uppercase tracking-wider text-gray-400 hover:text-black transition-colors cursor-pointer border-none p-0 ${className}`}>
+                <TranslateIcon className="w-3 h-3" />{isShowing ? 'Eng' : 'Eng'}
+            </button>
+        );
+
+        const VideoTranslateButton = ({ onClick, isShowing, className = "" }) => (
+            <button onClick={(e) => { e.stopPropagation(); onClick(e); }} className={`flex items-center gap-1.5 text-[10px] font-medium font-ui uppercase tracking-wider text-gray-400 hover:text-gray-900 transition-colors cursor-pointer border-none p-0 ${className}`}>
+                <TranslateIcon className="w-3 h-3" />{isShowing ? 'Hide' : 'Eng'}
+            </button>
+        );
+        const LevelBadge = ({ levelCode }) => {
+            const definition = LEVEL_DEFINITIONS[levelCode] || { title: "Unknown", desc: "" };
+            return (<div className="flex items-center gap-2 border border-black px-2 py-0.5 rounded-none"><span className="text-xs font-bold font-sans text-black">{levelCode}</span><div className="w-px h-3 bg-gray-300"></div><span className="text-xs text-gray-500 font-sans">{definition.title}</span></div>);
+        };
+
+        // --- Main Views ---
+        const Header = ({ isExpanded, setIsExpanded, activeTab, setActiveTab }) => (
+            <>
+                <nav className={`sticky top-0 z-50 bg-white border-b border-gray-100 hidden lg:flex items-center justify-between px-8 overflow-hidden transition-all duration-500 ease-in-out ${isExpanded ? 'h-16 opacity-100' : 'h-0 opacity-0 border-none'}`}>
+                    <div className="flex items-center cursor-pointer text-left" onClick={() => setActiveTab('home')}><span className="text-lg font-bold font-sans tracking-tighter text-black whitespace-nowrap">OpenKoreanLearningLab</span></div>
+                    <div className="flex items-center justify-end gap-8 pr-12 flex-1">
+                        {NAV_ITEMS.map((menu) => (
+                            <button key={menu.id} onClick={() => setActiveTab(menu.id)} className={`text-sm font-medium transition-colors font-sans relative ${activeTab === menu.id ? 'text-black' : 'text-gray-400 hover:text-gray-600'}`}>{menu.label}{activeTab === menu.id && <div className="absolute -bottom-6 left-0 w-full h-0.5 bg-black"></div>}</button>
+                        ))}
+                    </div>
+                </nav>
+                
+                {/* Fixed Menu Button */}
+                <button 
+                    onClick={() => setIsExpanded(!isExpanded)}
+                    className={`fixed top-0 right-0 z-[60] hidden lg:flex items-center justify-center w-10 h-16 bg-white hover:bg-gray-50 transition-colors ${isExpanded ? 'border-b border-gray-100' : 'border-transparent'}`}
+                    title={isExpanded ? "메뉴 접기" : "메뉴 펼치기"}
+                >
+                    <MenuIcon className="w-5 h-5 text-black" />
+                </button>
+            </>
+        );
+
+        const HomeListItem = ({ title, description, onClick }) => (
+            <div className="cursor-pointer group flex flex-col items-center text-center p-8 border border-transparent hover:bg-gray-50 transition-all rounded-sm" onClick={onClick}>
+                <h2 className="text-xl font-bold text-[#1a1a1a] mb-3 font-serif group-hover:text-gray-600 transition-colors">{title}</h2>
+                <p className="text-sm text-[#444444] leading-relaxed font-serif">{description}</p>
+            </div>
+        );
+
+        const HomeView = ({ setActiveTab, userLevel }) => {
+            const levelInfo = LEVEL_DEFINITIONS[userLevel] || { title: "Unknown" };
+            return (
+                <div className="animate-fade-in max-w-5xl mx-auto w-full px-6 lg:px-0 pt-[3.75rem] pb-8 flex flex-col items-center h-full justify-center">
+                    <div className="flex flex-col items-center justify-center text-center w-full mb-16">
+                        <div className="flex items-center gap-3 mb-6"> 
+                            <span className="px-3 py-1 bg-gray-900 text-white text-[10px] font-sans font-bold tracking-widest uppercase">문화</span>
+                            <span className="px-3 py-1 bg-gray-900 text-white text-[10px] font-sans font-bold tracking-widest uppercase">음식</span>
+                            <div className="flex items-center border border-gray-900 px-3 py-1 text-[10px] font-sans tracking-widest uppercase text-gray-900">
+                                <span className="font-bold">{userLevel}</span>
+                                <span className="mx-2 w-px h-2.5 bg-gray-300"></span>
+                                <span className="font-medium">{levelInfo.title}</span>
+                            </div>
+                        </div>
+                        <h1 className="font-serif text-3xl md:text-5xl lg:text-7xl text-black leading-tight mb-4 font-bold">
+                            한국인은 쫀득한 식감을 <br /> 왜 좋아할까요?
+                        </h1>
+                        <p className="font-serif text-gray-500 text-sm md:text-base italic mb-8 max-w-2xl leading-relaxed">
+                            스브스뉴스가 추적한 한국인이 쫀득한 식감에 열광하는 이유와 그 기원.
+                        </p>
+                        
+                        <div 
+                            onClick={() => setActiveTab('video')}
+                            className="group relative w-full max-w-xl aspect-video cursor-pointer overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 bg-black"
+                        >
+                            <img 
+                                src={`https://img.youtube.com/vi/${VIDEO_CONFIG.YOUTUBE_VIDEO_ID}/maxresdefault.jpg`} 
+                                alt="Video Thumbnail" 
+                                className="w-full h-full object-cover opacity-90 group-hover:opacity-60 group-hover:scale-105 transition-all duration-500"
+                            />
+                            
+                            <div className="absolute inset-0 flex items-center justify-center">
+                                <div className="w-16 h-16 bg-white/90 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300 backdrop-blur-sm">
+                                    <PlayIconSolid className="w-6 h-6 text-black ml-1" />
+                                </div>
+                            </div>
+                            
+                            <div className="absolute bottom-4 left-0 right-0 text-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                <span className="text-white text-xs font-bold font-sans tracking-widest uppercase bg-black px-4 py-2">동영상 보기</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full pt-0 max-w-4xl">
+                        {HOME_CARDS.map((card, idx) => (<HomeListItem key={idx} title={card.title} description={card.description} onClick={() => setActiveTab(card.target)} />))}
+                    </div>
+                </div>
+            );
+        };
+
+        const VideoSidebarVocabCard = ({ word, activeVocabTerm, sidebarVocabRefs, themeColor }) => {
+            const [showTrans, setShowTrans] = useState(false);
+            const trans = word.translations?.en;
+            return (
+                <div ref={el => sidebarVocabRefs.current[word.term] = el} className={`p-5 border-b border-gray-100 last:border-0 transition-all duration-500 bg-white`}>
+                    <div className="flex justify-between items-baseline mb-2">
+                        <h3 className={`text-lg font-serif font-bold ${activeVocabTerm === word.term ? 'text-black underline decoration-1 underline-offset-4' : 'text-gray-900'}`}>{word.term}</h3>
+                        <VideoTranslateButton onClick={() => setShowTrans(!showTrans)} isShowing={showTrans} />
+                    </div>
+                    <p className="text-sm font-serif text-gray-600 mb-3 leading-relaxed">{word.mainDef}</p>
+                    {showTrans && trans?.mainDef && (<div className="mt-2 mb-4 pt-2 border-t border-gray-100 animate-fade-in"><p className="text-xs font-ui text-gray-500">{trans.mainDef}</p></div>)}
+                    {word.subDefs && word.subDefs.length > 0 && (
+                        <div className="space-y-2 mt-3 pl-3 border-l border-gray-200">
+                            {word.subDefs.map((sub, i) => (
+                                <div key={i}>
+                                    <p className="text-xs font-bold text-gray-800 font-ui mb-0.5">{sub.subTerm}</p>
+                                    <p className="text-xs text-gray-500 font-serif">{sub.subDef}</p>
+                                    {showTrans && trans?.subDefs?.[i]?.def && (<p className="text-[10px] text-gray-400 font-ui mt-0.5 italic">{trans.subDefs[i].def}</p>)}
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        const VideoVocabPopup = ({ popup, themeColor, onGlobalClick }) => {
+            const [showTrans, setShowTrans] = useState(false);
+            const trans = popup.data?.translations?.en;
+            const popupWidth = 300; const padding = 20; const windowWidth = window.innerWidth;
+            let leftPos = popup.x - (popupWidth / 2);
+            if (leftPos < padding) leftPos = padding; else if (leftPos + popupWidth > windowWidth - padding) leftPos = windowWidth - popupWidth - padding;
+            useEffect(() => { setShowTrans(false); }, [popup.data]);
+            if (!popup.show || !popup.data) return null;
+            return createPortal(
+                <div className={`fixed z-[9999] bg-white border border-gray-200 p-6 w-[300px] shadow-2xl animate-fade-in ${!popup.fixed ? 'pointer-events-none' : ''}`} style={{ left: leftPos, top: popup.y + 16 }} onClick={(e) => e.stopPropagation()}>
+                    <div className="flex items-center justify-between mb-4 pb-2 border-b border-gray-100">
+                        <h3 className="text-xl font-serif font-bold text-gray-900">{popup.data.term}</h3>
+                        {popup.fixed && (<VideoTranslateButton onClick={() => setShowTrans(!showTrans)} isShowing={showTrans} />)}
+                    </div>
+                    <p className="text-sm font-serif text-gray-700 leading-relaxed mb-4">{popup.data.mainDef}</p>
+                    {showTrans && popup.fixed && trans?.mainDef && (<div className="mb-4 bg-white border border-gray-100 p-3 animate-fade-in"><p className="text-xs font-ui text-gray-600">{trans.mainDef}</p></div>)}
+                    {popup.fixed && popup.data.subDefs && popup.data.subDefs.length > 0 && (<div className="space-y-3 mt-4">{popup.data.subDefs.map((sub, idx) => (<div key={idx}><p className="text-xs font-bold font-ui text-gray-900 mb-1">{sub.subTerm}</p><p className="text-xs font-serif text-gray-600">{sub.subDef}</p></div>))}</div>)}
+                    <div className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-white border-l border-t border-gray-200 rotate-45"></div>
+                </div>, document.body
+            );
+        };
+
+        const LearnView = ({ updateProgress }) => {
+            const playerRef = useRef(null); 
+            const [videoState, setVideoState] = useState({ player: null, currentTime: 0, duration: 0, isPlaying: false });
+            const [activeLine, setActiveLine] = useState(null);
+            const [translations, setTranslations] = useState({});
+            const [popup, setPopup] = useState({ show: false, fixed: false, data: null, x: 0, y: 0 });
+            const [isLoading, setIsLoading] = useState(true);
+            const [activeVocabTerm, setActiveVocabTerm] = useState(null);
+            const sidebarVocabRefs = useRef({});
+            const scriptRefs = useRef({});
+            const intervalRef = useRef(null);
+            const [isSpeedMenuOpen, setIsSpeedMenuOpen] = useState(false);
+            
+            const [layoutMode, setLayoutMode] = useState('split');
+            const [autoScroll, setAutoScroll] = useState(true);
+            const [showVocab, setShowVocab] = useState(false);
+            const [playbackRate, setPlaybackRate] = useState(1.0);
+
+            useEffect(() => {
+                const loadVideo = () => {
+                    if (window.YT && window.YT.Player) {
+                        new window.YT.Player('youtube-player', {
+                            videoId: VIDEO_CONFIG.YOUTUBE_VIDEO_ID, width: '100%', height: '100%',
+                            playerVars: { 'autoplay': 0, 'controls': 1, 'rel': 0, 'disablekb': 1 },
+                            events: {
+                                'onReady': (event) => { playerRef.current = event.target; setVideoState(prev => ({ ...prev, player: event.target, duration: event.target.getDuration() })); setIsLoading(false); },
+                                'onStateChange': (event) => { if (event.data === window.YT.PlayerState.PLAYING) { startInterval(); updateProgress('learn'); setVideoState(prev => ({ ...prev, isPlaying: true })); } else { stopInterval(); if (event.data === window.YT.PlayerState.PAUSED || event.data === window.YT.PlayerState.ENDED) { setVideoState(prev => ({ ...prev, isPlaying: false })); } } }
+                            }
+                        });
+                    }
+                };
+                if (!window.YT) { const tag = document.createElement('script'); tag.src = "https://www.youtube.com/iframe_api"; const firstScriptTag = document.getElementsByTagName('script')[0]; firstScriptTag.parentNode.insertBefore(tag, firstScriptTag); window.onYouTubeIframeAPIReady = loadVideo; } else { loadVideo(); }
+                return () => stopInterval();
+            }, []);
+
+            useEffect(() => { if (videoState.player && videoState.player.setPlaybackRate) videoState.player.setPlaybackRate(playbackRate); }, [playbackRate, videoState.player]);
+
+            const handleGlobalClick = useCallback(() => { if (popup.fixed) setPopup(prev => ({ ...prev, show: false, fixed: false })); }, [popup.fixed]);
+            useEffect(() => { if (popup.fixed) window.addEventListener('click', handleGlobalClick); return () => window.removeEventListener('click', handleGlobalClick); }, [popup.fixed, handleGlobalClick]);
+
+            useEffect(() => {
+                const handleKeyPress = (e) => {
+                    if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) return;
+                    if (e.code === 'Space') { e.preventDefault(); const player = videoState.player; if (player && typeof player.getPlayerState === 'function') { if (player.getPlayerState() === 1) player.pauseVideo(); else player.playVideo(); } }
+                    if (e.code === 'ArrowLeft') { e.preventDefault(); const currentIndex = VIDEO_SCRIPT_DATA.findIndex(line => line.id === activeLine); if (currentIndex > 0) handleLineClick(VIDEO_SCRIPT_DATA[currentIndex - 1].time[0]); }
+                    if (e.code === 'ArrowRight') { e.preventDefault(); const currentIndex = VIDEO_SCRIPT_DATA.findIndex(line => line.id === activeLine); if (currentIndex !== -1 && currentIndex < VIDEO_SCRIPT_DATA.length - 1) handleLineClick(VIDEO_SCRIPT_DATA[currentIndex + 1].time[0]); else if (currentIndex === -1 && VIDEO_SCRIPT_DATA.length > 0) handleLineClick(VIDEO_SCRIPT_DATA[0].time[0]); }
+                };
+                window.addEventListener('keydown', handleKeyPress); return () => window.removeEventListener('keydown', handleKeyPress);
+            }, [videoState.player, activeLine]);
+
+            const startInterval = () => { 
+                stopInterval(); 
+                intervalRef.current = setInterval(() => {
+                    const p = playerRef.current; 
+                    if (p && p.getCurrentTime) { 
+                        const time = p.getCurrentTime(); 
+                        setVideoState(prev => ({ ...prev, currentTime: time })); 
+                        const currentLine = VIDEO_SCRIPT_DATA.find(line => time >= line.time[0] && time < line.time[1]); 
+                        if (currentLine) setActiveLine(currentLine.id); 
+                    }
+                }, 200); 
+            };
+            
+            const stopInterval = () => { 
+                if (intervalRef.current) { 
+                    clearInterval(intervalRef.current); 
+                    intervalRef.current = null; 
+                } 
+            };
+
+            useEffect(() => { 
+                if (popup.show) return; 
+                if (activeLine && autoScroll && scriptRefs.current[activeLine]) {
+                    scriptRefs.current[activeLine].scrollIntoView({ behavior: 'smooth', block: 'center' }); 
+                }
+            }, [activeLine, autoScroll, popup.show, layoutMode]);
+
+            const handleLineClick = (time) => { const player = videoState.player; if (player) { player.seekTo(time, true); player.playVideo(); } };
+            const toggleTranslation = (id) => setTranslations(prev => ({...prev, [id]: !prev[id]}));
+            const scrollToVocab = (term) => { const element = sidebarVocabRefs.current[term]; if (element) element.scrollIntoView({ behavior: 'smooth', block: 'center' }); };
+            
+            const handleVocabEnter = (e, wordData) => { if (popup.fixed) return; const rect = e.target.getBoundingClientRect(); setPopup({ show: true, fixed: false, data: wordData, x: rect.left + rect.width / 2, y: rect.bottom }); if (showVocab) { setActiveVocabTerm(wordData.term); scrollToVocab(wordData.term); } };
+            const handleVocabLeave = () => { if (popup.fixed) return; setPopup(prev => ({ ...prev, show: false })); };
+            const handleVocabClick = (e, wordData) => { e.stopPropagation(); if (popup.fixed && popup.data && popup.data.term === wordData.term) { setPopup(prev => ({ ...prev, show: false, fixed: false })); return; } const rect = e.target.getBoundingClientRect(); setPopup({ show: true, fixed: true, data: wordData, x: rect.left + rect.width / 2, y: rect.bottom }); if (showVocab) { setActiveVocabTerm(wordData.term); scrollToVocab(wordData.term); } };
+
+            const handleSeek = (e) => { const time = parseFloat(e.target.value); if (videoState.player) videoState.player.seekTo(time, true); setVideoState(prev => ({ ...prev, currentTime: time })); };
+            const togglePlay = () => { const player = videoState.player; if (player) { if (videoState.isPlaying) player.pauseVideo(); else player.playVideo(); } };
+            const rewind2 = () => { const player = videoState.player; if (player) { const newTime = Math.max(0, videoState.currentTime - 1.5); player.seekTo(newTime, true); setVideoState(prev => ({ ...prev, currentTime: newTime })); } };
+            const forward2 = () => { const player = videoState.player; if (player) { const newTime = Math.min(videoState.duration, videoState.currentTime + 1.5); player.seekTo(newTime, true); setVideoState(prev => ({ ...prev, currentTime: newTime })); } };
+            const formatTime = (seconds) => { if (isNaN(seconds)) return "00:00"; const date = new Date(seconds * 1000); const mm = date.getUTCMinutes(); const ss = date.getUTCSeconds(); return `${mm.toString().padStart(2, '0')}:${ss.toString().padStart(2, '0')}`; };
+
+            const allVocabTerms = useMemo(() => { return VIDEO_VOCAB_DATA.flatMap(vocab => { const terms = [vocab.term]; if (vocab.variants) terms.push(...vocab.variants); if (vocab.subDefs) terms.push(...vocab.subDefs.map(s => s.subTerm)); return [...new Set(terms)].filter(t => t).map(term => ({ term, vocab })); }).sort((a, b) => b.term.length - a.term.length); }, []);
+
+            const renderTextWithVocab = (text) => {
+                if (!text) return [""];
+                const matches = [];
+                allVocabTerms.forEach(({ term, vocab }) => { let index = 0; while ((index = text.indexOf(term, index)) !== -1) { const end = index + term.length; const overlaps = matches.some(m => (index >= m.start && index < m.end) || (end > m.start && end <= m.end) || (index <= m.start && end >= m.end)); if (!overlaps) matches.push({ start: index, end, term, vocab }); index += 1; } });
+                matches.sort((a, b) => a.start - b.start);
+                const result = []; let lastIndex = 0;
+                matches.forEach((match, idx) => { if (match.start > lastIndex) result.push(text.substring(lastIndex, match.start)); const isActive = (popup.show && popup.data && popup.data.term === match.vocab.term) || (showVocab && activeVocabTerm === match.vocab.term); 
+                result.push(<span key={`${match.term}-${idx}`} className={`cursor-pointer border-b border-dotted transition-all duration-200 font-medium inline-block leading-tight ${isActive ? 'border-black bg-white text-black border-solid' : 'border-gray-400 text-gray-800 hover:border-black hover:text-black'}`} onMouseEnter={(e) => handleVocabEnter(e, match.vocab)} onMouseLeave={handleVocabLeave} onClick={(e) => handleVocabClick(e, match.vocab)}>{match.term}</span>); lastIndex = match.end; });
+                if (lastIndex < text.length) result.push(text.substring(lastIndex));
+                return result;
+            };
+
+            // Layout Mode Logic
+            const isScriptMode = layoutMode === 'script';
+            const isVideoOnlyMode = layoutMode === 'video';
+            const isSplitMode = layoutMode === 'split';
+
+            // Video Container Classes based on Breakpoints and Layout Mode
+            const videoStyle = isSplitMode 
+                ? `w-full aspect-video shrink-0 z-20 shadow-md lg:shadow-none lg:h-full lg:aspect-auto ${showVocab ? 'lg:w-[58%] xl:flex-1' : 'lg:w-[58%] xl:w-7/12'}` 
+                : (isScriptMode ? 'hidden' : 'flex-1 w-full h-full');
+
+            // Script Container Classes based on Breakpoints and Layout Mode
+            const scriptContainerBaseClass = `flex-1 flex flex-col min-h-0 bg-white border-l border-gray-200 transition-all duration-300`;
+            const scriptContainerResponsiveClass = isSplitMode 
+                ? `w-full lg:w-[42%] lg:h-full lg:flex-none ${showVocab ? 'xl:w-4/12' : 'xl:w-5/12'}`
+                : (isScriptMode ? 'w-full h-full' : 'hidden');
+
+            const LearnToolbar = () => (
+                <div className="sticky top-0 z-40 h-16 flex items-center justify-between px-6 py-3 bg-white border-b border-gray-200 shadow-sm pr-14">
+                    <div className="flex items-center gap-1 shrink-0">
+                        {[{ id: 'split', label: '동영상 & 스크립트' }, { id: 'video', label: '동영상만 보기' }, { id: 'script', label: '스크립트만 보기' }].map((mode) => {
+                            const isActive = layoutMode === mode.id;
+                            let visibilityClass = "hidden"; // Default hidden
+
+                            if (mode.id === 'split') visibilityClass = "block"; // Always visible (Video & Script)
+                            else if (mode.id === 'video') visibilityClass = "hidden md:block"; // Video Only from md
+                            else if (mode.id === 'script') visibilityClass = "hidden sm:block"; // Script Only from sm
+
+                            return (
+                                <button
+                                    key={mode.id}
+                                    onClick={() => setLayoutMode(mode.id)}
+                                    className={`px-3 py-1.5 text-xs font-bold font-ui uppercase tracking-widest transition-colors ${visibilityClass} ${isActive ? 'bg-black text-white' : 'text-gray-400 hover:text-black'}`}
+                                >
+                                    {mode.label}
+                                </button>
+                            );
+                        })}
+                    </div>
+
+                    <div className="flex items-center gap-4 flex-1 justify-end min-w-0">
+                        {/* Player Controls */}
+                        <div className="hidden sm:flex items-center gap-4 flex-1 max-w-xl justify-end">
+                            
+                            {/* 1. Progress Bar & Time - Hidden on xs/sm, shown from md */}
+                            <div className="hidden md:flex flex-col flex-1 gap-1 w-full">
+                                <div className="relative group h-2 flex items-center">
+                                    <div className="absolute inset-0 flex items-center">
+                                        <div className="w-full h-[1px] bg-gray-200 group-hover:h-[2px] transition-all"></div>
+                                        <div className="absolute left-0 top-1/2 -translate-y-1/2 h-[2px] bg-black" style={{ width: `${(videoState.currentTime/videoState.duration)*100}%` }}></div>
+                                    </div>
+                                    <input type="range" min="0" max={videoState.duration || 100} value={videoState.currentTime} onChange={handleSeek} className="absolute inset-0 w-full opacity-0 cursor-pointer" />
+                                </div>
+                                <span className="text-[10px] font-mono text-gray-400 text-right leading-none">{formatTime(videoState.currentTime)} / {formatTime(videoState.duration)}</span>
+                            </div>
+
+                            {/* 2. Control Buttons - Hidden on xs, Shown from sm */}
+                            <div className="hidden sm:flex items-center gap-3 shrink-0">
+                                <button onClick={rewind2} className="text-gray-400 hover:text-black transition-colors"><RewindIcon className="w-4 h-4" /></button>
+                                <button onClick={togglePlay} className="w-6 h-6 border border-black rounded-full flex items-center justify-center hover:bg-black hover:text-white transition-all">
+                                    {videoState.isPlaying ? <PauseIcon className="w-2.5 h-2.5 fill-current" /> : <PlayIconSolid className="w-2.5 h-2.5 fill-current ml-0.5" />}
+                                </button>
+                                <button onClick={forward2} className="text-gray-400 hover:text-black transition-colors"><ForwardIcon className="w-4 h-4" /></button>
+                            </div>
+                        </div>
+
+                        <div className="h-4 w-px bg-gray-200 hidden sm:block"></div>
+
+                        {/* Speed Control - Hidden on xs */}
+                        <div className="relative shrink-0 hidden sm:flex group">
+                            <button onClick={() => setIsSpeedMenuOpen(!isSpeedMenuOpen)} className="flex items-center gap-1.5 text-xs font-bold font-ui uppercase tracking-wider text-gray-500 hover:text-black">
+                                {playbackRate.toFixed(1)}x
+                            </button>
+                            {isSpeedMenuOpen && (
+                                <>
+                                <div className="fixed inset-0 z-40" onClick={() => setIsSpeedMenuOpen(false)}></div>
+                                <div className="absolute top-full right-0 mt-2 bg-white border border-gray-200 shadow-xl p-1 z-50 w-20 animate-fade-in">
+                                    {[0.5, 0.75, 1.0, 1.25, 1.5, 2.0].map(speed => (
+                                        <button key={speed} onClick={() => { setPlaybackRate(speed); setIsSpeedMenuOpen(false); }} className={`w-full text-center py-1.5 text-[10px] font-bold font-ui hover:bg-white ${playbackRate === speed ? 'text-black' : 'text-gray-400'}`}>
+                                            {speed}x
+                                        </button>
+                                    ))}
+                                </div>
+                                </>
+                            )}
+                        </div>
+
+                        {/* Auto Scroll - Hidden on xs */}
+                        <button 
+                            onClick={() => setAutoScroll(!autoScroll)} 
+                            className={`hidden sm:flex items-center gap-2 text-[10px] font-bold font-ui uppercase tracking-widest transition-colors ${autoScroll ? 'text-black' : 'text-gray-300 hover:text-gray-500'}`}
+                        >
+                            <span className={`w-2 h-2 rounded-full ${autoScroll ? 'bg-black' : 'border border-gray-300'}`}></span>
+                            <span className="md:hidden">스크롤</span>
+                            <span className="hidden md:inline">자동 스크롤</span>
+                        </button>
+
+                        {/* Dictionary - Hidden on xs/sm/md/lg, Show on xl */}
+                        <button 
+                            onClick={() => setShowVocab(!showVocab)} 
+                            className={`hidden xl:flex items-center gap-2 px-3 py-1.5 border transition-all text-[10px] font-bold font-ui uppercase tracking-widest ${showVocab ? 'bg-black text-white border-black' : 'bg-white border-gray-200 text-gray-500 hover:border-black hover:text-black'}`}
+                        >
+                            어휘
+                        </button>
+                    </div>
+                </div>
+            );
+
+            return (
+                <div className="flex flex-col h-full animate-fade-in">
+                    <LearnToolbar />
+                    <div className={`flex flex-col lg:flex-row flex-1 overflow-hidden relative`}>
+                        <VideoVocabPopup popup={popup} onGlobalClick={handleGlobalClick} />
+                        
+                        {/* Video Container */}
+                        <div className={`bg-black overflow-hidden relative transition-all duration-300 ${videoStyle} ${isScriptMode ? 'hidden' : ''} ${isVideoOnlyMode ? 'h-full flex-1 w-full' : ''}`}>
+                                {isLoading && (<div className="absolute inset-0 z-10 bg-black flex items-center justify-center"><div className="w-8 h-8 border-2 border-white/20 border-t-white rounded-full animate-spin"></div></div>)}
+                                <div id="youtube-player" className={`w-full h-full`}></div>
+                        </div>
+                        
+                        {/* Script Container */}
+                        <div className={`${scriptContainerBaseClass} ${scriptContainerResponsiveClass} ${isVideoOnlyMode ? 'hidden' : ''}`}>
+                            <div className={`flex-1 overflow-y-auto bg-white`}>
+                                {isScriptMode ? (
+                                    <div className="w-full mx-auto p-4 sm:p-8 min-h-full bg-white max-w-4xl lg:max-w-5xl">
+                                            {VIDEO_SCRIPT_DATA.map(line => {
+                                                const isActive = activeLine === line.id;
+                                                const isLeft = line.speaker === VIDEO_SCRIPT_DATA[0].speaker;
+                                                const alignClass = isLeft ? 'items-start' : 'items-end';
+                                                
+                                                // Typography for Script Only Mode
+                                                const speakerClass = "text-xs sm:text-sm md:text-base lg:text-base xl:text-base";
+                                                const koreanClass = "text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl";
+                                                const englishClass = "text-xs sm:text-sm md:text-sm lg:text-sm xl:text-sm";
+                                                
+                                                // SVG Tail
+                                                const TailSVG = () => (
+                                                    <svg 
+                                                        className={`absolute bottom-[-1px] ${isLeft ? '-left-[7px]' : '-right-[7px]'} w-[8px] h-[8px] z-10`} 
+                                                        viewBox="0 0 8 8" 
+                                                        fill="none" 
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                    >
+                                                        <path d={isLeft ? "M8 0 C 8 4 4 8 0 8 L 8 8 V 0 Z" : "M0 0 C 0 4 4 8 8 8 L 0 8 V 0 Z"} fill="white" />
+                                                        <path d={isLeft ? "M0 8 C 4 8 8 4 8 0" : "M8 8 C 4 8 0 4 0 0"} stroke={isActive ? "black" : "transparent"} strokeWidth="1" fill="none" /> 
+                                                        <path d={isLeft ? "M8 0 V8" : "M0 0 V8"} stroke="white" strokeWidth="2" />
+                                                    </svg>
+                                                );
+
+                                                return (
+                                                    <div key={line.id} ref={el => scriptRefs.current[line.id] = el} className={`flex flex-col w-full mb-8 ${alignClass}`}>
+                                                        <span className={`${speakerClass} font-bold font-ui uppercase tracking-widest text-gray-400 mb-2 ${isLeft ? 'ml-1' : 'mr-1'}`}>
+                                                            {line.speaker}
+                                                        </span>
+                                                        
+                                                        <div 
+                                                            onClick={() => handleLineClick(line.time[0])}
+                                                            className={`
+                                                                relative px-6 py-5 max-w-[90%] md:max-w-[80%] 
+                                                                bg-white border ${isActive ? 'border-black ring-1 ring-black' : 'border-transparent'} 
+                                                                rounded-2xl ${isLeft ? 'rounded-bl-none' : 'rounded-br-none'}
+                                                                hover:shadow-md transition-all duration-300 cursor-pointer group
+                                                            `}
+                                                        >
+                                                            <p className={`${koreanClass} font-serif leading-[1.8] tracking-wide text-gray-800 text-left`}>
+                                                                {renderTextWithVocab(line.kor)}
+                                                            </p>
+                                                            
+                                                            {translations[line.id] && (
+                                                                <div className="mt-3 pt-3 border-t border-dashed border-gray-100 animate-fade-in">
+                                                                    <p className={`${englishClass} font-serif text-gray-500 leading-relaxed text-left`}>
+                                                                        {line.eng}
+                                                                    </p>
+                                                                </div>
+                                                            )}
+
+                                                            <div className="flex items-center justify-between mt-4 gap-4">
+                                                                <BubbleTranslateButton onClick={() => toggleTranslation(line.id)} isShowing={translations[line.id]} />
+
+                                                                <button 
+                                                                    onClick={(e) => { e.stopPropagation(); handleLineClick(line.time[0]); }}
+                                                                    className="w-4 h-4 rounded-full border border-gray-300 flex items-center justify-center hover:bg-black hover:border-black hover:text-white transition-all text-gray-400"
+                                                                >
+                                                                    <PlayIconSolid className="w-2 h-2 ml-0.5" />
+                                                                </button>
+                                                            </div>
+
+                                                            <TailSVG />
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })}
+                                            <div className="h-32"></div>
+                                    </div>
+                                ) : (
+                                    <div className="p-8 space-y-8">
+                                    {VIDEO_SCRIPT_DATA.map(line => {
+                                            const isActive = activeLine === line.id;
+                                            const justifyClass = 'justify-start';
+                                            const textAlignClass = 'text-left';
+                                            
+                                            // Typography for Split View
+                                            const speakerClass = "text-xs sm:text-sm md:text-base lg:text-base xl:text-base";
+                                            const koreanClass = "text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl";
+                                            const englishClass = "text-xs sm:text-sm md:text-sm lg:text-sm xl:text-sm";
+
+                                            return (
+                                                <div key={line.id} ref={el => scriptRefs.current[line.id] = el} className={`transition-all duration-500 ${isActive ? 'opacity-100' : 'opacity-70 hover:opacity-90'}`}>
+                                                    <div className={`flex items-center gap-2 mb-2 ${justifyClass}`}>
+                                                        <span className={`${speakerClass} font-bold font-ui uppercase tracking-widest text-gray-400`}>{line.speaker}</span>
+                                                        {isActive && <span className="w-1.5 h-1.5 bg-black rounded-full animate-pulse"></span>}
+                                                    </div>
+                                                    <div onClick={() => handleLineClick(line.time[0])} className="cursor-pointer group">
+                                                        <p className={`${koreanClass} font-serif leading-relaxed ${textAlignClass} ${isActive ? 'text-black' : 'text-[#1a1a1a]'}`}>{renderTextWithVocab(line.kor)}</p>
+                                                        {translations[line.id] ? (
+                                                            <p className={`${englishClass} font-serif text-gray-500 mt-2 animate-fade-in pl-3 border-l border-gray-200 ${textAlignClass}`}>{line.eng}</p>
+                                                        ) : null}
+                                                        <div className={`flex mt-2 opacity-0 group-hover:opacity-100 transition-opacity justify-start`}>
+                                                            <VideoTranslateButton onClick={() => toggleTranslation(line.id)} isShowing={translations[line.id]} />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            );
+                                    })}
+                                    <div className="h-32"></div>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                        {showVocab && (
+                            <div className={`w-80 flex flex-col bg-white border-l border-gray-200 animate-fade-in ${isScriptMode ? 'fixed right-0 top-[114px] h-[calc(100vh-114px)]' : 'h-full'}`}>
+                                <div className="p-5 border-b border-gray-100 flex items-center justify-between bg-white">
+                                    <span className="font-ui text-xs font-bold uppercase tracking-widest text-gray-900">핵심 어휘</span>
+                                    <span className="text-xs font-serif text-gray-500 italic">{VIDEO_VOCAB_DATA.length}개</span>
+                                </div>
+                                <div className="flex-1 overflow-y-auto bg-white">
+                                    {VIDEO_VOCAB_DATA.map((word, idx) => (<VideoSidebarVocabCard key={idx} word={word} activeVocabTerm={activeVocabTerm} sidebarVocabRefs={sidebarVocabRefs} />))}
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
+        };
+
+        const SectionHeader = ({ title, subtitle, description }) => (
+            <div className="mb-16 flex flex-col items-center text-center">
+                <h2 className="text-[32px] md:text-[36px] font-bold text-[#1a1a1a] leading-tight font-serif mb-3 tracking-tight">
+                    {title}
+                </h2>
+                {subtitle && (
+                    <p className="text-[13px] text-[#888888] font-normal font-sans tracking-widest uppercase mb-2">
+                        {subtitle}
+                    </p>
+                )}
+                {description && (
+                    <p className="text-[16px] text-[#444444] font-serif leading-relaxed mt-2 max-w-2xl">
+                        {description}
+                    </p>
+                )}
+                <div className="w-[1px] h-6 bg-gray-200 mt-8"></div>
+            </div>
+        );
+
+        const VocabItem = ({ word }) => {
+            const [showTrans, setShowTrans] = useState(false); const trans = word.translations?.en;
+            return (
+                <div className="border border-gray-200 hover:border-gray-300 transition-colors p-6 flex flex-col group bg-white h-full">
+                    <div className="flex justify-between items-start mb-4">
+                        <h3 className="text-[28px] font-bold font-serif text-[#1a1a1a] group-hover:text-black transition-colors">{word.term}</h3>
+                        <div className="flex flex-col items-end gap-1"><TranslateButton onClick={() => setShowTrans(!showTrans)} isShowing={showTrans} />{showTrans && trans?.term && <span className="font-serif text-sm text-gray-400 italic animate-fade-in text-right">{trans.term}</span>}</div>
+                    </div>
+                    <div className="mb-6 flex-1">
+                        <p className="text-[17px] text-[#444] font-serif leading-relaxed">{word.mainDef}</p>
+                        {showTrans && trans?.mainDef && (<p className="text-sm text-gray-500 font-sans mt-2 animate-fade-in leading-relaxed">{trans.mainDef}</p>)}
+                        
+                        {word.subDefs && word.subDefs.length > 0 && (
+                            <div className="mt-4 space-y-3 pl-3 border-l-2 border-gray-100">
+                                {word.subDefs.map((sub, i) => (
+                                    <div key={i}>
+                                        <p className="text-sm font-bold text-gray-800 font-ui mb-0.5">{sub.subTerm}</p>
+                                        <p className="text-sm text-gray-600 font-serif">{sub.subDef}</p>
+                                        {showTrans && trans?.subDefs?.[i] && (
+                                            <div className="mt-1 animate-fade-in">
+                                                {trans.subDefs[i].term && <p className="text-xs text-gray-400 font-ui italic">{trans.subDefs[i].term}</p>}
+                                                <p className="text-xs text-gray-400 font-sans">{trans.subDefs[i].def}</p>
+                                            </div>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                    {word.examples && word.examples.length > 0 && (<div className="bg-gray-50 p-5 mt-auto border-l-2 border-transparent group-hover:border-gray-300 transition-all"><p className="text-[15px] text-[#1a1a1a] font-serif leading-snug">{word.examples[0].kor}</p>{showTrans && (<p className="text-[13px] text-gray-500 font-sans mt-2 pt-2 border-t border-gray-200 animate-fade-in">{word.examples[0].eng}</p>)}</div>)}
+                </div>
+            );
+        };
+        const VocabView = ({ updateProgress }) => { useEffect(() => { updateProgress('vocab'); }, []); return (<div className="max-w-4xl mx-auto w-full px-6 py-16 animate-fade-in"><SectionHeader title="핵심 어휘" description={`학습 자료에 등장하는 주요 어휘 ${VIDEO_VOCAB_DATA.length}개를 학습해 보세요.`} /><div className="grid grid-cols-1 md:grid-cols-2 gap-6">{VIDEO_VOCAB_DATA.map((word, idx) => (<VocabItem key={idx} word={word} />))}</div></div>); };
+
+        const QuizSentence = ({ quiz, onAttempt, onShuffle }) => {
+            const [userInput, setUserInput] = useState(''); const [result, setResult] = useState(null); const [showHint, setShowHint] = useState(false); const [showTranslation, setShowTranslation] = useState(false);
+            const handleCheck = () => { const isCorrect = userInput.trim() === quiz.answer; setResult(isCorrect ? 'correct' : 'incorrect'); setShowHint(false); if (onAttempt) onAttempt(quiz.id, isCorrect); if (onShuffle) onShuffle(); };
+            const handleShowAnswer = () => { setUserInput(quiz.answer); setResult(null); setShowHint(false); if (onShuffle) onShuffle(); }; 
+            
+            const textLength = Math.max(userInput.length, quiz.answer ? quiz.answer.length : 0);
+            const safeWidth = Math.max(100, textLength * 25);
+
+            return (
+                <div className="mb-10 pb-10 border-b border-gray-200 last:border-0">
+                    <div className="flex items-baseline gap-4 mb-4"><span className="text-xs font-bold font-sans text-black border border-black px-1.5 py-0.5">Q.{quiz.id}</span></div>
+                    <div className="text-xl font-serif text-gray-900 leading-loose mb-6"><span>{quiz.textParts[0]}</span><input type="text" value={userInput} onChange={(e) => { setUserInput(e.target.value); setResult(null); }} className={`mx-2 px-2 py-0 border-b-2 font-bold text-center outline-none bg-transparent transition-colors font-serif ${result === 'correct' ? 'border-green-500 text-green-700' : result === 'incorrect' ? 'border-red-500 text-red-700' : 'border-gray-300 text-black focus:border-black'}`} style={{ width: `${safeWidth}px` }} /><span>{quiz.textParts[1]}</span></div>
+                    <div className="flex flex-wrap gap-3 items-center"><button onClick={handleCheck} className="px-4 py-2 bg-black text-white text-xs font-bold font-sans hover:bg-gray-800 transition-colors">정답 확인</button><button onClick={handleShowAnswer} className="px-4 py-2 bg-white border border-gray-300 text-gray-600 text-xs font-bold font-sans hover:border-black hover:text-black transition-colors">정답 보기</button><button onClick={() => setShowHint(!showHint)} className="text-xs font-bold font-sans text-gray-400 hover:text-gray-600 underline">힌트</button><TranslateButton onClick={() => setShowTranslation(!showTranslation)} isShowing={showTranslation} /></div>
+                    {showTranslation && (<p className="mt-4 text-sm font-sans text-gray-500 bg-gray-50 p-3">{quiz.textParts_eng.join(' ... ')}</p>)}{showHint && (<p className="mt-4 text-sm font-sans text-gray-500 italic">💡 Hint: {quiz.hint}</p>)}{result === 'correct' && (<p className="mt-4 text-sm font-sans text-green-700 font-medium">✓ Correct. {quiz.explanation}</p>)}{result === 'incorrect' && (<p className="mt-4 text-sm font-sans text-red-600 font-medium">✕ Try again.</p>)}
+                </div>
+            );
+        };
+        const QuizView = ({ updateProgress }) => {
+            const [attempts, setAttempts] = useState({}); const [shuffledChoices, setShuffledChoices] = useState(ANSWER_CHOICES); const totalQuestions = QUIZ_LIST.length; const correctCount = Object.values(attempts).filter(v => v).length; const currentScore = Math.round((correctCount / totalQuestions) * 100);
+            useEffect(() => { const totalAttempts = Object.keys(attempts).length; if (totalAttempts === 0) return; updateProgress('quiz', currentScore); }, [attempts, currentScore, updateProgress]);
+            const handleAttempt = (quizId, isCorrect) => { setAttempts(prev => { if (prev.hasOwnProperty(quizId)) return prev; const newAttempts = { ...prev, [quizId]: isCorrect }; return newAttempts; }); };
+            const shuffleChoices = useCallback(() => { setShuffledChoices(prev => { const newArray = [...prev]; for (let i = newArray.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [newArray[i], newArray[j]] = [newArray[j], newArray[i]]; } return newArray; }); }, []);
+            return (
+                <div className="max-w-4xl mx-auto w-full px-6 py-12 flex flex-col md:flex-row gap-12 animate-fade-in">
+                    <div className="w-full md:w-64 shrink-0">
+                        <div className="sticky top-24"> 
+                            <div className="md:sticky md:top-24"> 
+                                <h2 className="text-[32px] md:text-[36px] font-serif font-bold text-gray-900 mb-2">내용 확인 퀴즈</h2><p className="text-sm font-sans text-gray-500 mb-6">학습 자료에 대한 이해도를 확인해 보세요.</p><div className="border-t border-gray-200 pt-4 mb-8"><span className="text-xs font-bold font-sans text-black uppercase block mb-2">정답률</span><span className="text-4xl font-serif font-bold text-gray-900">{currentScore}%</span></div><div className="bg-gray-50 p-4 border border-gray-100"><h4 className="text-xs font-bold font-sans text-gray-500 uppercase mb-3 border-b border-gray-200 pb-2">정답 목록</h4><div className="flex flex-wrap gap-2">{shuffledChoices.map((choice, idx) => (<span key={idx} className="text-xs font-serif text-gray-600 bg-white border border-gray-200 px-2 py-1 select-all">{choice}</span>))}</div></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="flex-1">{QUIZ_LIST.map((quiz) => (<QuizSentence key={quiz.id} quiz={quiz} onAttempt={handleAttempt} onShuffle={shuffleChoices} />))}</div>
+                </div>
+            );
+        };
+
+        const DiscussQuestionItem = ({ item }) => {
+            const [text, setText] = useState(''); const [showTranslation, setShowTranslation] = useState(false);
+            return (
+                <div className="mb-16">
+                    <div className="flex items-center gap-4 mb-6"><span className="text-4xl font-serif font-bold text-gray-200">{item.id < 10 ? `0${item.id}` : item.id}</span><h3 className="text-xl font-serif font-bold text-gray-900 leading-normal">{item.questionKor}</h3></div>
+                    <div className="pl-0 md:pl-14">
+                        <div className="flex gap-2 mb-4"><TranslateButton onClick={() => setShowTranslation(!showTranslation)} isShowing={showTranslation} />{showTranslation && (<p className="text-sm font-sans text-gray-500 animate-fade-in">{item.questionEng}</p>)}</div>
+                        
+                        {item.vocab && item.vocab.length > 0 && (
+                            <div className="bg-gray-50 p-5 mb-6 border-l-2 border-black">
+                                <span className="text-xs font-bold font-sans text-gray-400 uppercase mb-3 block">핵심 어휘</span>
+                                <div className="space-y-3">
+                                    {item.vocab.map((v, i) => (
+                                        <div key={i}>
+                                            <p className="text-sm font-serif text-gray-700">
+                                                <span className="font-bold text-black mr-2 inline-block min-w-[80px]">{v.term}</span>
+                                                {v.def}
+                                            </p>
+                                            {showTranslation && v.engDef && (
+                                                <p className="text-xs font-sans text-gray-500 mt-1 animate-fade-in md:pl-[88px]">{v.engDef}</p>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        <textarea value={text} onChange={(e) => setText(e.target.value)} placeholder="여기에 생각을 적어보세요..." className="w-full p-4 border border-gray-300 font-serif text-base text-gray-900 focus:border-black focus:ring-0 outline-none min-h-[150px] bg-white resize-y mb-3 transition-colors placeholder:text-gray-300"></textarea>
+                        <div className="flex justify-end"><button disabled={!text.trim()} className={`px-6 py-2 text-xs font-bold font-sans uppercase tracking-widest border transition-colors ${!text.trim() ? 'border-gray-200 text-gray-300 cursor-not-allowed' : 'border-black bg-black text-white hover:bg-white hover:text-black'}`}>AI 피드백 받기</button></div>
+                    </div>
+                </div>
+            );
+        };
+        const DiscussView = ({ updateProgress }) => (
+            <div className="max-w-3xl mx-auto w-full px-6 py-12 animate-fade-in">
+                <div className="mb-6 pb-6 text-center"><h2 className="text-[32px] md:text-[36px] font-serif font-bold text-gray-900 mb-2">생각해 보기</h2><p className="text-sm font-sans text-gray-500">학습 자료에 대해 심층적으로 생각해 보세요.</p></div>
+                <div className="bg-gray-50 border border-gray-200 p-4 mb-10 flex items-start gap-3"><div className="shrink-0 mt-0.5"><SparklesIcon className="w-4 h-4 text-gray-400" /></div><p className="text-xs font-sans text-gray-600 leading-relaxed">AI 피드백은 현재 Gemini 웹에서만 가능합니다. <a href="https://gemini.google.com" target="_blank" rel="noreferrer" className="underline decoration-gray-400 underline-offset-2 hover:text-black inline-flex items-center gap-1">Gemini에서 열기 <ExternalLinkIcon className="w-3 h-3"/></a></p></div>
+                {DISCUSS_DATA.map((item) => (<DiscussQuestionItem key={item.id} item={item} />))}
+            </div>
+        );
+
+        const App = () => {
+            const [activeTab, setActiveTab] = useState('home'); const [userLevel] = useState("B2+"); const [showVocab, setShowVocab] = useState(false); const [progress, setProgress] = useState({ learn: false, vocab: false, quiz: 0, discuss: false });
+            const [isHeaderExpanded, setIsHeaderExpanded] = useState(true); // Default to open
+
+            // Add this useEffect to manage header state based on tab
+            useEffect(() => {
+                if (activeTab === 'video') {
+                    setIsHeaderExpanded(false); // Collapse for immersive learning
+                } else {
+                    setIsHeaderExpanded(true); // Expand for navigation/home
+                }
+            }, [activeTab]);
+
+            const updateProgress = useCallback((key, value = true) => { setProgress(prev => { if (prev[key] === value) return prev; return { ...prev, [key]: value }; }); }, []);
+            
+            const renderContent = () => { 
+                switch(activeTab) { 
+                    case 'home': return <HomeView setActiveTab={setActiveTab} userLevel={userLevel} />; 
+                    case 'video': return <LearnView updateProgress={updateProgress} />;
+                    case 'vocab': return <VocabView updateProgress={updateProgress} />; 
+                    case 'quiz': return <QuizView updateProgress={updateProgress} />; 
+                    case 'discuss': return <DiscussView updateProgress={updateProgress} />; 
+                    default: return <HomeView setActiveTab={setActiveTab} userLevel={userLevel} />; 
+                } 
+            };
+            
+            const isVideoTab = activeTab === 'video';
+            return (
+                <div className={`flex flex-col bg-white text-gray-900 selection:bg-gray-200 selection:text-black font-sans ${isVideoTab ? 'h-screen overflow-hidden' : 'min-h-screen'}`}>
+                    <Header isExpanded={isHeaderExpanded} setIsExpanded={setIsHeaderExpanded} activeTab={activeTab} setActiveTab={setActiveTab} />
+                    <div className="lg:hidden h-14 border-b border-gray-100 flex items-center justify-center sticky top-0 bg-white z-40"><span className="text-lg font-bold font-sans tracking-tighter">OpenKoreanLearningLab</span></div>
+                    <main className={`flex-1 relative flex flex-col ${isVideoTab ? 'overflow-x-hidden lg:overflow-hidden lg:h-full' : ''}`}>{renderContent()}</main>
+                    <nav className="lg:hidden fixed bottom-0 w-full bg-white border-t border-gray-100 flex justify-around p-3 z-50">{NAV_ITEMS.map((item) => (<button key={item.id} onClick={() => setActiveTab(item.id)} className={`p-2 ${activeTab === item.id ? 'text-black' : 'text-gray-300'}`}><item.icon className="w-6 h-6" /></button>))}</nav>
+                </div>
+            );
+        };
+        const root = ReactDOM.createRoot(document.getElementById('root')); root.render(<App />);
+    </script>
+</body>
+</html>
