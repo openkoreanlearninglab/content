@@ -75,6 +75,273 @@
             DEFAULT_PLAYBACK_RATE: 1.0,
         };
 
+        const LEVEL_DEFINITIONS = { 
+            "A1": { title: "Novice", desc: "Basic everyday expressions." }, "A1+": { title: "Pre-Beginner", desc: "Can handle slightly more than A1." },
+            "A2": { title: "Beginner", desc: "Frequently used sentences." }, "A2+": { title: "Upper Beginner", desc: "Can speak a bit more smoothly." }, 
+            "B1": { title: "Pre-Intermediate", desc: "Standard speech main points." }, "B1+": { title: "Lower Intermediate", desc: "Stronger B1. More comfortable carrying conversations." },
+            "B2": { title: "Intermediate", desc: "Complex text main ideas." }, "B2+": { title: "Upper Intermediate", desc: "Near C1. Can argue a point logically." },
+            "C1": { title: "Advanced", desc: "Long, demanding texts." }, "C1+": { title: "Upper Advanced", desc: "Very strong C1, approaching native-like flexibility." },
+            "C2": { title: "Proficient", desc: "Can understand virtually everything heard or read." }
+        };
+
+        // ==========================================
+        // DATA ARRAYS
+        // ==========================================
+
+        const VIDEO_SCRIPT_DATA = [
+            { id: 's1', speaker: '우창윤', kor: '인류학자들이 하는 이야기가 있는데, 이게 아삭하다라는 소리가 나는 건요.', time: [0.00, 4.44], eng: "Anthropologists have this theory about that crunching sound." },
+            { id: 's2', speaker: '우창윤', kor: '우리가 어떤 과일이나 어떤 채소를 먹었을 때 신선하다는 거.', time: [4.47, 9.10], eng: "When we eat fruit or veggies, it signals freshness." },
+            { id: 's3', speaker: '우창윤', kor: '그럼 그게 안전하다는 뜻이고요.', time: [9.12, 10.48], eng: "And that basically means it's safe to eat." },
+            { id: 's4', speaker: '항성', kor: '오, 본능적인 거군요. 약간.', time: [10.58, 12.75], eng: "Oh, so it's kinda instinctive. A little bit." },
+            { id: 's5', speaker: '우창윤', kor: '그래서 그런 것도 우리가 좋아하게 되어 있는데, 악용하는 거예요.', time: [12.78, 16.48], eng: "So we're wired to like that stuff, but this? It's totally hacking that." },
+            { id: 's6', speaker: '김범준', kor: '먹어야 되겠어요? 안 먹어야 되겠어요?', time: [17.55, 19.08], eng: "Should we eat it? Or pass on it?" },
+            { id: 's7', speaker: '김범준', kor: '맛있다.', time: [20.57, 22.10], eng: "It's tasty." },
+            { id: 's8', speaker: '항성', kor: '요즘 SNS만 켜면은 이 영상 안 보신 분 없을 거예요.', time: [22.40, 26.07], eng: "If you're on social media these days, you've definitely seen this clip." },
+            { id: 's9', speaker: '항성', kor: '그냥 제 SNS는 아예 점령당했거든요.', time: [26.10, 29.75], eng: "My feed has been completely taken over by it." },
+            { id: 's10', speaker: '항성', kor: '바로 두바이 쫀득 쿠키.', time: [29.79, 32.05], eng: "The Dubai Chewy Cookie." },
+            { id: 's11', speaker: '우창윤', kor: '불편하네요.', time: [32.07, 33.33], eng: "That makes me uncomfortable." },
+            { id: 's12', speaker: '항성', kor: '아, 의사 선생님은 불편하시군요.', time: [34.78, 36.67], eng: "Ah, speaking as a doctor, you find it uncomfortable." },
+            { id: 's13', speaker: '우창윤', kor: '아니에요. 좋습니다.', time: [36.80, 38.67], eng: "No, no. It's great." },
+            { id: 's14', speaker: '우창윤', kor: '너무 유행이고 어제도 먹어봤어요.', time: [38.68, 41.01], eng: "It's super trendy, I actually tried it yesterday." },
+            { id: 's15', speaker: '우창윤', kor: '굉장히 잘 만든 식품이기는 해요.', time: [41.05, 44.11], eng: "It's a really well-engineered food product." },
+            { id: 's16', speaker: '항성', kor: '굉장히 잘 만들었다.', time: [44.12, 46.91], eng: "Really well-made." },
+            { id: 's17', speaker: '우창윤', kor: '잘 만들었어요. 굉장히 잘 만든 식품이에요.', time: [46.94, 49.43], eng: "They nailed it. It's a seriously well-crafted food." },
+            { id: 's18', speaker: '항성', kor: '저는 궁금해요.', time: [49.43, 50.30], eng: "I'm curious." },
+            { id: 's19', speaker: '항성', kor: '이거 한번 잘라볼게요.', time: [50.31, 51.92], eng: "Let me cut this open." },
+            { id: 's20', speaker: '항성', kor: '한번 잘라보도록 하겠습니다.', time: [51.95, 53.53], eng: "I'm gonna go ahead and cut it." },
+            { id: 's21', speaker: '우창윤', kor: '궁금하긴 합니다.', time: [53.57, 54.40], eng: "I am curious though." },
+            { id: 's22', speaker: '항성', kor: '말캉말캉하네요.', time: [54.43, 56.40], eng: "It's squishy." },
+            { id: 's23', speaker: '우창윤', kor: '진짜 부드럽다', time: [56.44, 58.66], eng: "It's really soft." },
+            { id: 's24', speaker: '항성', kor: '우창윤 교수님 진짜 불편해하시네요. 진심으로.', time: [58.82, 60.64], eng: "Professor Woo, you look genuinely uncomfortable. For real." },
+            { id: 's25', speaker: '김범준', kor: '일단 이렇게 살짝 이 나이프를 댔을 때 느낌은', time: [61.65, 64.07], eng: "First off, the feeling when the knife just touches it..." },
+            { id: 's26', speaker: '항성', kor: '떡이잖아요.', time: [64.099, 64.81], eng: "It's rice cake (tteok)." },
+            { id: 's27', speaker: '김범준', kor: '네 떡이에요 완전히.', time: [64.84, 66.05], eng: "Yeah, it's totally rice cake." },
+            { id: 's28', speaker: '우창윤', kor: '맞아요. 맞아요. 근데 안에 크리스피한 거를 딱 넣어 놓은 게', time: [66.06, 68.47], eng: "Right, right. But stuffing something crispy inside..." },
+            { id: 's29', speaker: '항성', kor: '이 소리가 소리가 나잖아요. 바삭바삭.', time: [68.51, 71.86], eng: "It makes this sound. Crunch crunch." },
+            { id: 's30', speaker: '우창윤', kor: '우리나라랑 일본이 유난히 이 크리스피한 식감과 소리를 되게 좋아해요.', time: [71.86, 77.32], eng: "Korea and Japan are particularly obsessed with this crispy texture and sound." },
+            { id: 's31', speaker: '항성', kor: '우와~ 일단 겉에 코코아 파우더 묻어 있고요.', time: [79.20, 81.93], eng: "Wow~ First off, it's dusted with cocoa powder." },
+            { id: 's32', speaker: '항성', kor: '마시멜로우로 되어 있는데, 이 안에는', time: [81.96, 84.19], eng: "It's made of marshmallow, but inside..." },
+            { id: 's33', speaker: '김범준', kor: '마시따.', time: [84.22, 85.44], eng: "Delish." },
+            { id: 's34', speaker: '항성', kor: '인정하셨습니다. 저희 맛있습니다.', time: [86.59, 88.55], eng: "He admitted it. Ours is tasty." },
+            { id: 's35', speaker: '항성', kor: '한번 드시러 오세요.', time: [88.85, 90.02], eng: "Come by and try it sometime." },
+            { id: 's36', speaker: '김범준', kor: '잘 만드셨는데요?', time: [90.70, 92.50], eng: "You made this really well?" },
+            { id: 's37', speaker: '항성', kor: '그쵸?', time: [92.53, 93.78], eng: "Right?" },
+            { id: 's38', speaker: '우창윤', kor: '이게 또 사람들이 좋아하는 게 만드는 곳마다 조금씩 다르게 하니까 사람들이 그 차이를 좀 보려고', time: [93.82, 99.06], eng: "People love this because every spot makes it a bit different, so they want to see the difference..." },
+            { id: 's39', speaker: '김범준', kor: '아, 여기서 먹고 저기서 먹고', time: [99.08, 100.48], eng: "Ah, eating here, eating there." },
+            { id: 's40', speaker: '우창윤', kor: '네, 막 그렇게 하시는 분도 많고.', time: [100.51, 102.31], eng: "Yeah, lots of people do that." },
+            { id: 's41', speaker: '우창윤', kor: '막 변형을 주는 막 그런 분들도 생기고.', time: [102.35, 105.21], eng: "Some people even tweak the recipe." },
+            { id: 's42', speaker: '항성', kor: '촬영하고 있는 장소가 이제 \'힉스커피\'라는 곳입니다.', time: [105.25, 107.62], eng: "We're filming at a place called 'Higgs Coffee'." },
+            { id: 's43', speaker: '우창윤', kor: '아, 깜짝 놀랐어요.', time: [107.65, 108.87], eng: "Ah, I was surprised." },
+            { id: 's44', speaker: '우창윤', kor: '이게 굉장히 잘해놓고, 인스타에서 보던 그곳이어가지고, 와 너무 반가운 마음에 사진 찍고 이랬어요.', time: [108.90, 115.49], eng: "It's set up so well, and it's the place I saw on Insta, so I was super happy and took photos." },
+            { id: 's45', speaker: '항성', kor: '그러니까요? 오시자마자 사진 찍으시더라고요.', time: [115.53, 117.61], eng: "Right? You were snapping pics as soon as you walked in." },
+            { id: 's46', speaker: '우창윤', kor: '어, 저 진짜 안 그러거든요.', time: [117.64, 119.20], eng: "Uh, I don't usually do that." },
+            { id: 's47', speaker: '항성', kor: '교수님도 처음 와보셨죠?', time: [119.23, 120.38], eng: "Professor, it's your first time here too, right?" },
+            { id: 's48', speaker: '김범준', kor: '예, 저는 얘기를 들었거든요.', time: [120.41, 121.83], eng: "Yeah, I'd heard about it." },
+            { id: 's49', speaker: '김범준', kor: '그래서 너무 궁금했는데.', time: [121.87, 123.03], eng: "So I was super curious." },
+            { id: 's50', speaker: '김범준', kor: '달 표면 그것도 인상적이었고.', time: [123.06, 124.96], eng: "The moon surface thing was impressive too." },
+            { id: 's51', speaker: '김범준', kor: '여기는 화성인가요?', time: [124.99, 126.18], eng: "Is this Mars?" },
+            { id: 's52', speaker: '항성', kor: '여기는 화성으로 꾸며놨습니다.', time: [126.21, 127.64], eng: "We decorated it to look like Mars." },
+            { id: 's53', speaker: '항성', kor: '저희뿐만 아니라 요즘에 카페부터 시작해서, 그거 아세요?, 국밥집에서 팝니다.', time: [127.68, 132.66], eng: "It's not just us, starting from cafes these days... did you know? They sell it at soup rice places." },
+            { id: 's54', speaker: '김범준', kor: '국밥집에서요? 디저트로 파는, 주는 건가요?', time: [132.70, 136.15], eng: "At a soup rice place? Do they sell it as dessert, or just give it to you?" },
+            { id: 's55', speaker: '항성', kor: '매출이 엄청 올랐다고 그러더라고요.', time: [136.19, 138.23], eng: "I heard their sales skyrocketed." },
+            { id: 's56', speaker: '항성', kor: '왜냐하면, 국밥을 먹어야만 살 수 있어요.', time: [138.26, 141.49], eng: "Because you can only buy it if you eat the soup rice." },
+            { id: 's57', speaker: '김범준', kor: '\'두쫀쿠 주세요\' 하면 안 주고?', time: [141.51, 142.75], eng: "So if I say 'Give me a Dubai Cookie', they won't give it to me?" },
+            { id: 's58', speaker: '항성', kor: '안 주고 ! 국밥을 먹어야지.', time: [142.78, 144.69], eng: "Nope! You gotta eat the soup." },
+            { id: 's59', speaker: '우창윤', kor: '그래도 후식은 저는 그래도 과일이 나왔으면 좋겠어요. 사과.', time: [144.72, 148.18], eng: "Still, for dessert, I'd prefer fruit. Like an apple." },
+            { id: 's60', speaker: '김범준', kor: '사과를 먹을 때도 우리가 아삭하는 그 청각이 굉장히 중요한 것 같긴 해요.', time: [148.21, 153.31], eng: "Even when eating an apple, that crunching sound seems really important." },
+            { id: 's61', speaker: '우창윤', kor: '맞아요.', time: [153.34, 153.82], eng: "Exactly." },
+            { id: 's62', speaker: '우창윤', kor: '왜 우리가 크리스피한 식감을 좋아하냐라고 했을 때 인류학자들이 하는 이야기가 있는데,', time: [153.85, 159.33], eng: "Anthropologists have a theory on why we love crispy textures," },
+            { id: 's63', speaker: '우창윤', kor: '이게 \'아삭하다\'라는 소리가 나는 건요, 우리가 어떤 과일이나 어떤 채소를 먹었을 때 신선하다는 거.', time: [159.36, 166.50], eng: "That 'crunch' sound signals that the fruit or veggie is fresh." },
+            { id: 's64', speaker: '우창윤', kor: '그럼 그게 안전하다는 뜻이고요.', time: [166.54, 167.78], eng: "And that means it's safe." },
+            { id: 's65', speaker: '항성', kor: '오! 본능적인 거군요 약간.', time: [167.81, 170.02], eng: "Oh! So it's kinda instinctive." },
+            { id: 's66', speaker: '우창윤', kor: '그런 것도 우리가 좋아하게 되어 있는데, 악용하는 거예요.', time: [170.05, 174.08], eng: "We're wired to like that, but this is exploiting it." },
+            { id: 's67', speaker: '김범준', kor: '이건 신선하고는 상관없는데?', time: [175.74, 177.00], eng: "This has nothing to do with freshness though?" },
+            { id: 's68', speaker: '우창윤', kor: '전혀 상관없어요.', time: [177.03, 178.37], eng: "Nothing at all." },
+            { id: 's69', speaker: '우창윤', kor: '악용하는 거예요.', time: [179.01, 180.13], eng: "It's hacking the system." },
+            { id: 's70', speaker: '우창윤', kor: '특히 한국인들이 굉장히 이런 식감이나 맛에 대해서 다양한 단어들도 있잖아요.', time: [180.16, 184.95], eng: "Especially Koreans, we have so many words for these textures and tastes." },
+            { id: 's71', speaker: '김범준', kor: '우리 그 \'겉바속촉\', 이거는 뒤집힌 것 같아요.', time: [184.98, 189.30], eng: "Our 'Crispy outside, soft inside', this seems flipped." },
+            { id: 's72', speaker: '항성', kor: '그렇죠. 그렇죠.', time: [189.31, 190.45], eng: "Right. Right." },
+            { id: 's73', speaker: '김범준', kor: '겉촉속바.', time: [190.48, 192.92], eng: "Soft outside, crispy inside." },
+            { id: 's74', speaker: '우창윤', kor: '그리고 그 바삭함이 소리도', time: [192.96, 194.69], eng: "And that crispiness, the sound too..." },
+            { id: 's75', speaker: '김범준', kor: '네, 맞아요. 소리가 나요 소리가.', time: [194.70, 196.30], eng: "Yeah, exactly. It makes a sound." },
+            { id: 's76', speaker: '우창윤', kor: '소리도 나게 되어 있고요.', time: [196.31, 197.46], eng: "It's designed to make a sound." },
+            { id: 's77', speaker: '우창윤', kor: '그리고 단맛과 크리미한 맛이 같이 오죠.', time: [197.47, 199.90], eng: "Plus, the sweet and creamy flavors hit you together." },
+            { id: 's78', speaker: '우창윤', kor: '소프트한 맛도 원래 굉장히 매력적으로 느끼는데 보통은 하나만 해야 돼요.', time: [199.91, 204.23], eng: "We find soft tastes attractive too, but usually you gotta pick one." },
+            { id: 's79', speaker: '우창윤', kor: '과자나 이런 것들이 부드럽게 가는 쪽이라 바삭한 크리스피하게 가는 쪽이 있어요.', time: [204.24, 207.70], eng: "Snacks usually go either the soft route or the crispy route." },
+            { id: 's80', speaker: '김범준', kor: '아, 그렇죠. 나뉘죠.', time: [207.71, 209.13], eng: "Ah, right. They're split." },
+            { id: 's81', speaker: '우창윤', kor: '보통은 나뉘어요.', time: [209.14, 210.00], eng: "Usually they're split." },
+            { id: 's82', speaker: '우창윤', kor: '그게 보통 국룰이었어요.', time: [210.01, 211.24], eng: "That was basically the unwritten rule." },
+            { id: 's83', speaker: '항성', kor: '아 그쵸.', time: [211.25, 211.78], eng: "Ah, right." },
+            { id: 's84', speaker: '김범준', kor: '근데 여기 이거는 이제 그거를...', time: [211.79, 213.07], eng: "But this, this one..." },
+            { id: 's85', speaker: '우창윤', kor: '그거를 같이 넣은 거고,', time: [213.08, 214.11], eng: "It put them together." },
+            { id: 's86', speaker: '우창윤', kor: '저는 별로 안 좋아하지만 이런 과자나 이런 쪽을 연구개발하는 쪽은 딱 씹었을 때 그 소리의 어떤 데시벨마저도 계속 연구하거든요.', time: [214.12, 221.59], eng: "I don't really like it, but R&D folks study the exact decibel of the crunch when you bite down." },
+            { id: 's87', speaker: '항성', kor: '아, 그래요?', time: [221.60, 222.05], eng: "Oh, really?" },
+            { id: 's88', speaker: '우창윤', kor: '어느 정도의 소리가 사람들이 가장 매력적으로 하게 하는지.', time: [222.06, 225.12], eng: "What sound level makes people find it most attractive." },
+            { id: 's89', speaker: '우창윤', kor: '그런데 이제 점점 사람들이 너무나 다양한 식품 경험들을 하다 보니까 다감각적인 경험을 하게 해주는 게 좋다.', time: [225.13, 231.93], eng: "But since people are experiencing such diverse foods now, multi-sensory experiences are the way to go." },
+            { id: 's90', speaker: '우창윤', kor: '그쪽으로 가고 있어요.', time: [232.00, 234.20], eng: "That's where the trend is heading." },
+            { id: 's91', speaker: '우창윤', kor: '그게 어떻게 보면은 이제 \'두쫀쿠\'라는 걸로 우리나라에서 좀 이렇게 세상에 나와버린 거죠.', time: [234.21, 239.67], eng: "In a way, 'Dubai Chewy Cookie' is what brought this to light in Korea." },
+            { id: 's92', speaker: '항성', kor: '이걸 만들고 하다 보니까 여기 들어가는 카다이프라든지 피스타치오 스프레드가 우리나라에서 주로 먹는 것들이 아니잖아요.', time: [239.68, 247.01], eng: "Making this, the Kataifi and pistachio spread aren't things we usually eat in Korea." },
+            { id: 's93', speaker: '우창윤', kor: '아니죠.', time: [247.02, 247.61], eng: "No, they're not." },
+            { id: 's94', speaker: '김범준', kor: '그럼 수입하는 거예요?', time: [247.62, 248.67], eng: "So, do you import them?" },
+            { id: 's95', speaker: '항성', kor: '전부 수입하는 거예요.', time: [248.69, 249.97], eng: "We import everything." },
+            { id: 's96', speaker: '항성', kor: '그러니까 비쌀 수밖에 없어', time: [249.98, 252.40], eng: "So it has to be expensive." },
+            { id: 's97', speaker: '우창윤', kor: '원재료 자체가 비싸군요.', time: [252.51, 254.12], eng: "The raw ingredients themselves are pricey." },
+            { id: 's98', speaker: '우창윤', kor: '그런데 사실 저는 이게 칼로리보다도 중요한 게 이 단맛과 기름맛이 섞여 있잖아요.', time: [254.13, 260.52], eng: "But actually, more important than calories, is that mix of sweet and oily tastes." },
+            { id: 's99', speaker: '우창윤', kor: '이게 저는 진짜 위험하다고 항상 보거든요.', time: [261.13, 263.59], eng: "I honestly see this as really dangerous." },
+            { id: 's100', speaker: '우창윤', kor: '단맛과 기름맛. 이게 결국 탄수화물이랑 지방인데,', time: [264.01, 267.86], eng: "Sweet and oily. That's carbs and fat," },
+            { id: 's101', speaker: '우창윤', kor: '둘 다 인간 생존에 너무 필요한 두 가지 물질이어가지고.', time: [267.87, 271.96], eng: "Both are crucial for human survival." },
+            { id: 's102', speaker: '항성', kor: '에너지원으로 좋은 거 아닌가요?', time: [271.97, 273.73], eng: "Aren't they good energy sources?" },
+            { id: 's103', speaker: '우창윤', kor: '그러니까 당연히 원시에는 이런 탄수화물과 지방을 먹어야 이게 우리 생존 확률이 올라가니까', time: [273.74, 278.94], eng: "So naturally, back in primitive times, eating carbs and fats increased survival odds," },
+            { id: 's104', speaker: '우창윤', kor: '뇌에서 먹었을 때 도파민과 엔돌핀이 나오도록 설계가 되어 있는데,', time: [278.95, 282.05], eng: "So our brains are designed to release dopamine and endorphins when we eat them." },
+            { id: 's105', speaker: '우창윤', kor: '원래 있는 식품들에는 이 탄수화물이랑 지방이 이래서 반씩 섞여 있는 게 없어요.', time: [282.06, 287.19], eng: "But in natural foods, you don't find carbs and fats mixed half-and-half like this." },
+            { id: 's106', speaker: '우창윤', kor: '사과 탄수화물 식이섬유 이쪽만 있고, 고기들은 대부분 다 단백질과 지방만 있고, 다 그래요.', time: [287.20, 294.02], eng: "Apples are carbs and fiber, meat is mostly protein and fat. It's usually like that." },
+            { id: 's107', speaker: '우창윤', kor: '그런데 유일하게 2개 같이 있는 거는 견과류만 그래요.', time: [294.03, 296.73], eng: "The only thing that has both is nuts." },
+            { id: 's108', speaker: '우창윤', kor: '그래서 이 두 개를 섞는 건 원래 반칙이에요.', time: [296.74, 298.92], eng: "So mixing these two is basically cheating." },
+            { id: 's109', speaker: '우창윤', kor: '아까 말했던 미각 경험을 떠나서 우리의 뇌가 엄청난 보상 가중치를 줘요.', time: [298.94, 303.40], eng: "Beyond the taste experience, our brain gives it a huge reward weight." },
+            { id: 's110', speaker: '우창윤', kor: '편의점 들어가서 초코바나 과자 보면은 탄수화물 지방이 반씩 들어있는 게 많아요.', time: [304.61, 308.90], eng: "If you look at chocolate bars or snacks in convenience stores, lots are half carbs, half fat." },
+            { id: 's111', speaker: '항성', kor: '진짜 탄수화물 + 지방 이 조합은 맛이 없을 수 없는 조합이거든요.', time: [308.91, 314.11], eng: "Seriously, the carb + fat combo is a flavor you just can't hate." },
+            { id: 's112', speaker: '김범준', kor: '아, 그렇구나', time: [314.12, 314.75], eng: "Ah, I see." },
+            { id: 's113', speaker: '우창윤', kor: '그게 생존에 유리한 조합이었으니까요.', time: [314.76, 316.72], eng: "Because it was a survival-friendly combo." },
+            { id: 's114', speaker: '우창윤', kor: '그래서 그 조합을 조금씩 뒤틀고 하는 게 나름의 레시피인 건데, 이거 보시면 딱 그 단맛과 기름 맛이 딱 섞여 있어요.', time: [316.73, 323.99], eng: "So tweaking that combo is a recipe in itself, and if you look at this, it's perfectly mixed sweet and oily." },
+            { id: 's115', speaker: '우창윤', kor: '그래서 그 이야기 드려요. "배 부를 때 드시라, 차라리, 후식으로."', time: [324.00, 327.72], eng: "So I tell people, 'Eat it when you're full, like as dessert.'" },
+            { id: 's116', speaker: '우창윤', kor: '왜냐하면, 배고픈 상태는 우리의 포만감의 호르몬이 낮아져 있는 상태예요.', time: [327.73, 331.73], eng: "Because when hungry, our satiety hormones are low." },
+            { id: 's117', speaker: '우창윤', kor: '포만감의 호르몬이 낮아져 있다는 거는 사실 생존에 불리한 상황이죠.', time: [331.74, 335.47], eng: "Low satiety hormones actually mean a disadvantage for survival." },
+            { id: 's118', speaker: '우창윤', kor: '이럴 때는 탄수화물과 지방에 대한 보상 가중치가 올라가요. 우리의 뇌가.', time: [335.48, 341.43], eng: "In that state, the brain increases the reward value for carbs and fats." },
+            { id: 's119', speaker: '우창윤', kor: '그래서 그런데 포만 호르몬이 올라가져 있는 상태에서는 미각은 그대로여도 도파민의 분비가 좀 덜하게 되고, 나중에 생각이 덜 나는 거예요.', time: [341.44, 348.74], eng: "But if your satiety hormones are high, even if the taste is the same, dopamine release is lower, and you crave it less later." },
+            { id: 's120', speaker: '우창윤', kor: '그래서 후식으로 먹었으면 좋겠다.', time: [349.89, 351.08], eng: "So I'd prefer you eat it as dessert." },
+            { id: 's121', speaker: '김범준', kor: '그 얘기 들어보니까 맛있게 먹으려면 배고플 때 먹는 거네요.', time: [351.09, 354.65], eng: "Hearing that, to enjoy it most, I should eat it when hungry." },
+            { id: 's122', speaker: '김범준', kor: '왜 저는 그거 반대로 이해하게 되지?', time: [354.66, 358.69], eng: "Why do I understand it the opposite way?" },
+            { id: 's123', speaker: '항성', kor: '저는 어떻게 보이냐면은 이게 음식계의 BTS고요.', time: [358.70, 361.59], eng: "To me, this looks like the BTS of food." },
+            { id: 's124', speaker: '항성', kor: '약간 케데헌(케이팝 데몬 헌터스)처럼 보이거든요.', time: [361.60, 364.19], eng: "Kind of like K-pop Demon Hunters (K-De-Heon)." },
+            { id: 's125', speaker: '우창윤', kor: '잘 만들긴 했어요.', time: [364.20, 365.76], eng: "It is well-made." },
+            { id: 's126', speaker: '항성', kor: '그런데 카다이프 자체는 어때요? 카다이프만으로는?', time: [365.77, 368.80], eng: "But what about the Kataifi itself? Just the Kataifi?" },
+            { id: 's127', speaker: '항성', kor: '우리 소면하고 비교해보면 그렇게 다르지는 않지 않아요?', time: [368.81, 371.84], eng: "Compared to our somyeon (noodles), isn't it pretty similar?" },
+            { id: 's128', speaker: '우창윤', kor: '원래 과거에는 밀가루로 만들었을 테니까.', time: [371.85, 375.47], eng: "Well, historically it would've been made with flour." },
+            { id: 's129', speaker: '우창윤', kor: '밀가루는 오히려 과당이랑 다르게 분해되면 완전히 포도당이 돼 가지고 우리가 사용할 수 있는 에너지원이 온전히 돼요.', time: [375.48, 382.55], eng: "Unlike fructose, flour breaks down into pure glucose, becoming a complete energy source we can use." },
+            { id: 's130', speaker: '우창윤', kor: '그래서 활동량이 많을 때는 사실 괜찮았죠.', time: [382.56, 385.35], eng: "So when activity levels were high, it was actually fine." },
+            { id: 's131', speaker: '우창윤', kor: '카다이프가 가늘게 뽑아가지고, 이제 철판 같은 거에다가 가열해서 만들잖아요.', time: [385.36, 389.95], eng: "Kataifi is spun thin and cooked on a griddle, right?" },
+            { id: 's132', speaker: '항성', kor: '그쵸 그쵸.', time: [389.96, 390.49], eng: "Right, right." },
+            { id: 's133', speaker: '우창윤', kor: '그런데 여기도 이제는 밀가루랑 옥수수 전분 섞어요.', time: [390.50, 393.15], eng: "But now they mix flour and cornstarch." },
+            { id: 's134', speaker: '우창윤', kor: '왜냐하면, 식감이 2개 다르거든요.', time: [393.16, 395.06], eng: "Because the textures are different." },
+            { id: 's135', speaker: '우창윤', kor: '아밀로오스나 아밀로펙틴이랑 그 구조가 달라가지고, 옥수수 전분 들어가면은 이 튀겼을 때 바삭함이 더해져요.', time: [395.07, 401.36], eng: "Amylose and amylopectin structures differ, so adding cornstarch adds crispiness when fried." },
+            { id: 's136', speaker: '우창윤', kor: '옛날엔 다 밀가루로만 했는데 이것마저도 이렇게 조절을 해요. 이제.', time: [401.37, 405.20], eng: "It used to be just flour, but even this is engineered now." },
+            { id: 's137', speaker: '우창윤', kor: '그것도 버터에 튀겨요.', time: [405.21, 406.38], eng: "And they fry it in butter." },
+            { id: 's138', speaker: '우창윤', kor: '이제는 그거를 막 버터에 튀기고, 막 추가하고 뭔가 더 하고 이래가지고, 정말 다른 목적으로 사용하니까 문제가 되는 거죠.', time: [408.04, 416.14], eng: "Now they fry it in butter, add stuff, do more to it... using it for a totally different purpose is where the problem lies." },
+            { id: 's139', speaker: '우창윤', kor: '피스타치오. 피스타치오 되게 좋은 거죠.', time: [416.15, 418.31], eng: "Pistachio. Pistachios are great." },
+            { id: 's140', speaker: '우창윤', kor: '피스타치오 저 엄청 좋아합니다.', time: [418.32, 420.08], eng: "I love pistachios." },
+            { id: 's141', speaker: '항성', kor: '저 엄청 좋아해요.', time: [420.09, 421.20], eng: "I love them so much." },
+            { id: 's142', speaker: '우창윤', kor: '비싸서 못 먹어요 피스타치오.', time: [421.20, 422.72], eng: "They're too expensive to eat." },
+            { id: 's143', speaker: '우창윤', kor: '그런데 이제 그거를 갈아가지고, 땅에 발라먹기 쉬운 상태로 이제 스프레드로 만든 거예요.', time: [422.73, 427.89], eng: "But they ground it up and made it into a spread so it's easy to eat." },
+            { id: 's144', speaker: '우창윤', kor: '끈적끈적한 느낌을 줘야 되잖아요.', time: [427.90, 429.95], eng: "You need that sticky feel." },
+            { id: 's145', speaker: '우창윤', kor: '전분 같은 거 넣고 설탕이나 시럽 넣고, 그럼 이건 아예 다른 게 되는 거죠.', time: [429.96, 434.27], eng: "Add starch, sugar, or syrup, and it becomes something else entirely." },
+            { id: 's146', speaker: '우창윤', kor: '피스타치오의 무엇이었던 걸 가지고, 아예 전혀 다른 무엇인가가 된 거예요.', time: [435.27, 439.77], eng: "It went from being pistachio to being something completely different." },
+            { id: 's147', speaker: '우창윤', kor: '두 개를 섞어가지고 안을 만들고 그 다음에 마시멜로우 있잖아요.', time: [439.78, 446.01], eng: "Mix those two for the filling, and then there's the marshmallow." },
+            { id: 's148', speaker: '우창윤', kor: '마시멜로우도 어떻게 만드냐면요.', time: [446.02, 447.71], eng: "You know how marshmallow is made?" },
+            { id: 's149', speaker: '항성', kor: '어떻게 만들어요?', time: [447.72, 448.81], eng: "How is it made?" },
+            { id: 's150', speaker: '우창윤', kor: '마시멜로우요?', time: [448.82, 449.78], eng: "Marshmallow?" },
+            { id: 's151', speaker: '우창윤', kor: '포도당 시럽이나 설탕 시럽 같은 거 있죠.', time: [449.79, 452.85], eng: "You take glucose syrup or sugar syrup." },
+            { id: 's152', speaker: '우창윤', kor: '여기에다가 젤라틴을 넣어요.', time: [452.86, 454.52], eng: "And add gelatin." },
+            { id: 's153', speaker: '우창윤', kor: '젤라틴이 콜라겐 안에서 나온 단백질이잖아요.', time: [455.16, 457.72], eng: "Gelatin is protein from collagen." },
+            { id: 's154', speaker: '우창윤', kor: '약간 용해시켜요.', time: [457.73, 458.82], eng: "Dissolve it a bit." },
+            { id: 's155', speaker: '우창윤', kor: '그런 다음에 휘핑, 공기를 넣으면서 조리하는 거예요.', time: [458.83, 462.36], eng: "Then whip it, cooking it while adding air." },
+            { id: 's156', speaker: '우창윤', kor: '휘핑돼서 이렇게 부풀면서 되게 부드러운 식감을 주는 거죠.', time: [462.37, 466.16], eng: "As it whips up, it expands and gives that soft texture." },
+            { id: 's157', speaker: '우창윤', kor: '그러니까 식감과 혈당 반응으로 세팅된 거죠.', time: [466.17, 468.29], eng: "So it's set for texture and blood sugar response." },
+            { id: 's158', speaker: '우창윤', kor: '그래서 뭐 마시멜로우라고 해서 다시 특별한 건 아니고 그냥 당덩어리.', time: [468.30, 473.00], eng: "So marshmallow isn't special, it's just a sugar lump." },
+            { id: 's159', speaker: '김범준', kor: '우리나라 사람 좀 익숙해진 것도 있을 것 같아요.', time: [475.02, 477.27], eng: "I think Koreans have gotten used to it." },
+            { id: 's160', speaker: '김범준', kor: '저도 처음에 두바이 초콜릿 먹었을 때는 그 식감이 너무 이상했어요.', time: [477.28, 480.97], eng: "When I first tried Dubai Chocolate, the texture was so weird." },
+            { id: 's161', speaker: '김범준', kor: '\'모래 씹는 것 같은 걸 왜 사람들이 좋아하지? \'그랬는데,', time: [480.98, 483.98], eng: "I was like, 'Why do people like chewing sand?'" },
+            { id: 's162', speaker: '김범준', kor: '이번에 이걸 다시 먹으니까 제가 이미 거기에 적응한 것 같아요.', time: [483.99, 487.78], eng: "But eating this again, I think I've adapted." },
+            { id: 's163', speaker: '항성', kor: '그렇죠.', time: [487.79, 488.25], eng: "Right." },
+            { id: 's164', speaker: '김범준', kor: '덜 불편해요. 씹히는 느낌이.', time: [488.26, 490.32], eng: "It's less uncomfortable. The chewing feeling." },
+            { id: 's165', speaker: '항성', kor: '그리고 저는 이 사각사각거리는 게 골전도처럼 들리잖아요.', time: [490.33, 494.59], eng: "And this crunching sounds like bone conduction." },
+            { id: 's166', speaker: '우창윤', kor: '맞아요. 맞아요.', time: [494.60, 495.32], eng: "Right, right." },
+            { id: 's167', speaker: '항성', kor: '되게 괜찮아요. 진짜로.', time: [495.33, 497.53], eng: "It's pretty good. Seriously." },
+            { id: 's168', speaker: '항성', kor: '그러니까 약간 맛도 맛인데 여러 가지 재미가 이렇게 다 섞여 있어요.', time: [497.54, 501.90], eng: "So besides the taste, there's a mix of different fun elements." },
+            { id: 's169', speaker: '항성', kor: '저희는 같이 물리학회에 소속이 되어 있어요.', time: [501.91, 504.63], eng: "We're in the Physics Society together." },
+            { id: 's170', speaker: '항성', kor: '거기서 아주 재미있는 재미있는 SNS 게시글을 올렸습니다.', time: [504.64, 508.87], eng: "There was a really fun post on SNS about it." },
+            { id: 's171', speaker: '항성', kor: '두쫀쿠의 과학이라고 해가지고 하나하나 분석을 해놓은 게시글이 있었어요.', time: [508.88, 515.18], eng: "A post analyzing the science of Dubai Chewy Cookies point by point." },
+            { id: 's172', speaker: '항성', kor: '일단 첫 번째가 점탄성입니다.', time: [515.19, 517.64], eng: "First up is viscoelasticity." },
+            { id: 's173', speaker: '우창윤', kor: '점탄성이요?', time: [517.65, 518.34], eng: "Viscoelasticity?" },
+            { id: 's174', speaker: '항성', kor: '네, 일단 점성은 아시겠죠? 끈끈함.', time: [518.35, 520.88], eng: "Yes, you know viscosity? Stickiness." },
+            { id: 's175', speaker: '우창윤', kor: '아, 끈끈한 느낌.', time: [520.89, 521.59], eng: "Ah, that sticky feeling." },
+            { id: 's176', speaker: '항성', kor: '이 안에 들어있는 게 스프레드가 다 점성이잖아요.', time: [521.60, 525.35], eng: "The spread inside is all viscous." },
+            { id: 's177', speaker: '항성', kor: '근데 이 겉을 싸고 있는 이 마시멜로우가 고체도 아니고,', time: [526.00, 530.63], eng: "But the marshmallow wrapping it isn't solid," },
+            { id: 's178', speaker: '항성', kor: '그렇다고 약간 이건 액체라고 하기도 그렇잖아요.', time: [530.64, 533.09], eng: "But calling it liquid is also weird." },
+            { id: 's179', speaker: '김범준', kor: '이게 점성하고 탄성을 동시에 갖고 있는 물질인데,', time: [533.10, 536.97], eng: "It's a material with both viscosity and elasticity." },
+            { id: 's180', speaker: '김범준', kor: '보통 액체는 점성은 있지만 탄성이 없고,', time: [536.98, 539.97], eng: "Usually liquids have viscosity but no elasticity," },
+            { id: 's181', speaker: '김범준', kor: '보통 고체는 탄성은 있는데, 점성은 없잖아요.', time: [539.98, 542.71], eng: "And solids have elasticity but no viscosity." },
+            { id: 's182', speaker: '김범준', kor: '점성과 탄성을 같이 갖고 있는 물질.', time: [542.72, 544.71], eng: "Material with both viscosity and elasticity." },
+            { id: 's183', speaker: '우창윤', kor: '어쩌다가 이런 게.', time: [544.72, 546.14], eng: "How did this happen?" },
+            { id: 's184', speaker: '항성', kor: '세상에 나오지 말아야 할 그런 녀석이 나와버렸고.', time: [546.15, 551.38], eng: "Something that shouldn't exist in this world just appeared." },
+            { id: 's185', speaker: '항성', kor: '그리고 또 하나 이 안쪽에 고분자 네트워크라고 돼 있다라고 그러더라고요.', time: [551.39, 555.85], eng: "And they said inside is a polymer network." },
+            { id: 's186', speaker: '항성', kor: '어? 안쪽이요?', time: [555.86, 556.58], eng: "Uh? Inside?" },
+            { id: 's187', speaker: '항성', kor: '네, 왜냐하면 마시멜로우 젤라틴으로 만든다고 그랬잖아요.', time: [556.60, 559.15], eng: "Yeah, because marshmallow is made with gelatin." },
+            { id: 's188', speaker: '항성', kor: '그 단백질이 가열되면은 사슬처럼 엉켜가지고 모양을 잡아준다고 그랬잖아요.', time: [559.16, 563.23], eng: "When that protein heats up, it tangles like chains to hold the shape." },
+            { id: 's189', speaker: '항성', kor: '다 연결돼 있다가 식으면서', time: [563.24, 565.13], eng: "It's all connected, then as it cools..." },
+            { id: 's190', speaker: '우창윤', kor: '그렇죠. 휘핑해가지고 공기 넣는 거죠.', time: [565.14, 566.99], eng: "Right. Whipping air into it." },
+            { id: 's191', speaker: '항성', kor: '공기 넣고 식으면서 완전히 촘촘하게 엉겨 붙어서 마시멜로우 자체의 고분자 네트워크화가 되는 거예요.', time: [567.00, 573.60], eng: "Adding air and cooling makes it tangle tight, creating a polymer network within the marshmallow." },
+            { id: 's192', speaker: '항성', kor: '그물망 구조 때문에 이 모양을 갖출 수가 있는 거예요.', time: [573.61, 576.87], eng: "That mesh structure lets it hold its shape." },
+            { id: 's193', speaker: '항성', kor: '그래서 씹는 순간에는 고체처럼 버티다가', time: [576.88, 580.18], eng: "So when you bite, it resists like a solid," },
+            { id: 's194', speaker: '항성', kor: '썰거나 먹기 시작하면 액체처럼 늘어나면서 점성과 탄성이 동시에 나타나는 거죠.', time: [580.19, 585.72], eng: "But as you cut or eat, it stretches like a liquid, showing both properties." },
+            { id: 's195', speaker: '우창윤', kor: '쫄깃쫄깃하면서 뭔가 약간 다른 느낌들이 있긴 해요.', time: [585.73, 590.79], eng: "It's chewy but feels kinda different." },
+            { id: 's196', speaker: '항성', kor: '좌굴 현상이라고 들어보셨습니까?', time: [590.80, 592.72], eng: "Have you heard of buckling?" },
+            { id: 's197', speaker: '우창윤', kor: '전혀 모르겠어요.', time: [592.73, 593.76], eng: "No idea." },
+            { id: 's198', speaker: '항성', kor: '우리 소면같이 이렇게 약간 휘다가 모양이 점점 더 휘는 게 아니라', time: [593.77, 600.09], eng: "Like somyeon noodles, they bend a bit, but instead of bending more..." },
+            { id: 's199', speaker: '항성', kor: '어느 순간 일정 힘이 되면은 딱 부러지는 거잖아요.', time: [600.10, 603.00], eng: "At a certain force, they just snap." },
+            { id: 's200', speaker: '항성', kor: '근데 그거가 나타나면서 이 카다이프가 바삭바삭.', time: [603.01, 607.06], eng: "When that happens, the Kataifi goes crunch." },
+            { id: 's201', speaker: '김범준', kor: '근데 여러 개가 있으니까 우리가 누르면은 그게 하나가 부러지는 게 아니라', time: [607.07, 611.17], eng: "But since there are many, when we press, it's not just one breaking," },
+            { id: 's202', speaker: '우창윤', kor: '엄청나게 많은 그 카다이프들이', time: [611.18, 612.38], eng: "A huge number of Kataifi strands..." },
+            { id: 's203', speaker: '김범준', kor: '연속적으로 부러지면서', time: [612.39, 613.94], eng: "Breaking continuously," },
+            { id: 's204', speaker: '우창윤', kor: '그러면서 소리가 파다닥 나는 거니까', time: [613.95, 615.96], eng: "Making that crackling sound." },
+            { id: 's205', speaker: '김범준', kor: '소리, 그리고 바삭함 같은 거', time: [615.97, 618.25], eng: "The sound, and that crispiness." },
+            { id: 's206', speaker: '항성', kor: '지금 우리가 과학이 아닌 얘기를 한 적이 없어요.', time: [618.26, 621.31], eng: "We haven't stopped talking science." },
+            { id: 's207', speaker: '항성', kor: '\'생리학적으로 이게 얼마나 잘 만들어졌길래 위험한가\'에 대해서도 얘기를 했고,', time: [621.32, 627.32], eng: "We talked about 'physiologically, why is this well-made but dangerous'," },
+            { id: 's208', speaker: '항성', kor: '과학적으로도 고분자 네트워크 들어왔고요.', time: [627.33, 630.89], eng: "And scientifically, polymer networks came up." },
+            { id: 's209', speaker: '항성', kor: '점탄성 들어왔고, 좌굴 현상 들어왔어요.', time: [630.90, 633.49], eng: "Viscoelasticity came up, buckling came up." },
+            { id: 's210', speaker: '항성', kor: '엄청나게 과학적인...', time: [633.50, 635.06], eng: "Super scientific..." },
+            { id: 's211', speaker: '김범준', kor: '그래서 먹어야 되겠어요? 안 먹어야 되겠어요?', time: [635.07, 636.64], eng: "So, should we eat it? Or not?" },
+            { id: 's212', speaker: '우창윤', kor: '식후에 드시면 좋겠다.', time: [638.11, 639.36], eng: "I'd recommend it after a meal." },
+            { id: 's213', speaker: '항성', kor: '그리고 맛이 있으세요? 없으세요?', time: [639.37, 640.93], eng: "And is it tasty? Or not?" },
+            { id: 's214', speaker: '김범준', kor: '맛도 있고', time: [640.94, 641.94], eng: "It's tasty." },
+            { id: 's215', speaker: '우창윤', kor: '재밌어요.', time: [641.95, 642.80], eng: "It's fun." },
+            { id: 's216', speaker: '우창윤', kor: '이게 감각을 되게 여러 개를 자극하기 때문에 궁금하신 분들은 친구들하고 같이 한번 경험해 보시고,', time: [642.81, 650.68], eng: "It stimulates so many senses, so if you're curious, try it with friends," },
+            { id: 's217', speaker: '우창윤', kor: '가능하면 먹고 이제 가볍게 기분 좋게 산책.', time: [650.69, 653.01], eng: "And if possible, take a light, happy walk after." },
+            { id: 's218', speaker: '우창윤', kor: '뭐 물론 산책만으로 안 되는 정도긴 합니다.', time: [653.02, 655.13], eng: "Of course, a walk won't burn it all off." },
+            { id: 's219', speaker: '김범준', kor: '물리학 가르칠 때 학생들에게 많이 내는 문제가 햄버거 하나를 먹었다.', time: [655.14, 660.29], eng: "A common physics problem for students: You ate a hamburger." },
+            { id: 's220', speaker: '김범준', kor: '이 칼로리를 질량이 10kg인 바벨을 몇 번을 움직여야 이 칼로리를 소비할 수 있느냐?', time: [660.30, 667.50], eng: "How many times must you lift a 10kg barbell to burn those calories?" },
+            { id: 's221', speaker: '김범준', kor: '계산하고 나면 결론이 \'먹지 말자\'.', time: [667.51, 670.33], eng: "After calculating, the conclusion is 'Don't eat it'." },
+            { id: 's222', speaker: '우창윤', kor: '맞아요. 이게 칼로리가 높다는 걸 누구나 알아요.', time: [670.34, 673.67], eng: "True. Everyone knows it's high calorie." },
+            { id: 's223', speaker: '우창윤', kor: '직관적으로 알잖아요.', time: [673.68, 675.10], eng: "You know intuitively." },
+            { id: 's224', speaker: '항성', kor: '너무 직관적인데.', time: [675.11, 676.01], eng: "It's too intuitive." },
+            { id: 's225', speaker: '우창윤', kor: '직관적으로 칼로리가 높다라는 걸 아니까 여성분들이 어떤 선택을 하냐면요, 저녁 식사를 안 먹고 이걸 먹어요.', time: [676.02, 681.91], eng: "Since they intuitively know it's high calorie, women often choose to skip dinner and eat this instead." },
+            { id: 's226', speaker: '항성', kor: '아, 그렇죠.', time: [681.92, 682.51], eng: "Ah, right." },
+            { id: 's227', speaker: '김범준', kor: '아, 그러면 그게 안 좋겠네요.', time: [682.52, 683.75], eng: "Ah, that would be bad." },
+            { id: 's228', speaker: '우창윤', kor: '그쵸, \'나는 고칼로리 음식을 먹을 거니까 저녁 대신에 이걸 먹어야지.\'', time: [683.76, 687.91], eng: "Right, 'Since I'm eating high-calorie food, I'll eat this instead of dinner.'" },
+            { id: 's229', speaker: '우창윤', kor: '그리고 이게 내 다이어트에 도움이 된다고 생각하시는데,', time: [687.92, 690.75], eng: "And they think it helps their diet," },
+            { id: 's230', speaker: '항성', kor: '이거 너무 중요하네요.', time: [690.76, 692.15], eng: "This is super important." },
+            { id: 's231', speaker: '우창윤', kor: '오히려 이렇게 과하게 이제 혈당과 인슐린 반응을 일으키는 걸 먹잖아요.', time: [692.16, 697.16], eng: "But eating something that spikes blood sugar and insulin like this..." },
+            { id: 's232', speaker: '우창윤', kor: '놀랍게도 근이 감소하는 방향으로 가기도 해요.', time: [697.17, 699.49], eng: "Surprisingly, it can lead to muscle loss." },
+            { id: 's233', speaker: '항성', kor: '아, 그래서 꼭 식후에 먹는.', time: [699.50, 703.60], eng: "Ah, so definitely eat it after a meal." },
+            { id: 's234', speaker: '항성', kor: '이 정체가 사실은 디저트잖아요.', time: [703.61, 705.19], eng: "Because this is actually dessert." },
+            { id: 's235', speaker: '우창윤', kor: '그렇죠. 디저트예요. 식사 아닙니다.', time: [705.20, 707.53], eng: "Right. It's dessert. Not a meal." },
+            { id: 's236', speaker: '우창윤', kor: '이거 밥이 아니에요. 여러분.', time: [707.54, 709.63], eng: "This isn't rice, everyone." },
+            { id: 's237', speaker: '항성', kor: '그러니까요 디저트잖아요.', time: [709.64, 711.58], eng: "Exactly, it's dessert." },
+            { id: 's238', speaker: '김범준', kor: '국밥집 제대로 하는 거네요.', time: [711.59, 713.11], eng: "The soup rice place is doing it right." },
+            { id: 's239', speaker: '우창윤', kor: '오히려 그게 저는 맞다고 보는데.', time: [713.12, 715.14], eng: "I actually think that's the right way." },
+            { id: 's240', speaker: '항성', kor: '오늘 어떠셨습니까?', time: [715.15, 716.31], eng: "How was today?" },
+            { id: 's241', speaker: '우창윤', kor: '아 너무 즐거웠고요.', time: [716.32, 717.88], eng: "Ah, it was so fun." },
+            { id: 's242', speaker: '우창윤', kor: '이게 그 점탄성과 이 아까 말씀 주신 고분자 네트워크가 있다라고 하니까', time: [717.88, 723.28], eng: "Hearing about viscoelasticity and polymer networks," },
+            { id: 's243', speaker: '우창윤', kor: '이게 그 다양한 식감 경험을 줄 수 있는 이유를 좀 알 것 같네요.', time: [723.29, 726.99], eng: "I think I get why it offers such a diverse texture experience." },
+            { id: 's244', speaker: '김범준', kor: '오늘 너무 재미있었고요.', time: [727.00, 728.12], eng: "Today was really fun." },
+            { id: 's245', speaker: '김범준', kor: '설명하시는 이야기가 너무 이렇게 설득력이 있어갖고 많은 사람들이 이거 먹으려고 힉스 커피에 많이 오지 않을까?', time: [728.13, 734.76], eng: "Your explanation was so convincing, I think lots of people will come to Higgs Coffee for this." },
+            { id: 's246', speaker: '우창윤', kor: '그걸 제가 바란 건 아니에요.', time: [734.77, 737.20], eng: "I wasn't aiming for that." },
+            { id: 's247', speaker: '항성', kor: '의학계, 또 과학계를 이끄시는 이 두 분과 함께 사소하지만 대한민국을 점령을 하고 있는 두바이 쫀득 쿠키에 대해서 과학적으로 의학적으로 분석을 해봤습니다.', time: [738.28, 749.04], eng: "With these two leaders in medicine and science, we analyzed the Dubai Chewy Cookie taking over Korea scientifically and medically." },
+            { id: 's248', speaker: '항성', kor: '오늘 여기서 마치도록 하고요.', time: [749.05, 750.44], eng: "We'll wrap it up here." },
+            { id: 's249', speaker: '항성', kor: '오늘 함께해 주신 우창윤 교수님, 김범준 교수님 감사합니다.', time: [750.45, 753.61], eng: "Thank you, Professor Woo Chang-yoon and Professor Kim Beom-jun." },
+            { id: 's250', speaker: '김범준', kor: '예, 고맙습니다.', time: [753.62, 754.92], eng: "Yes, thank you." },
+            { id: 's251', speaker: '우창윤', kor: '감사합니다.', time: [754.92, 756.99], eng: "Thank you." }
+        ];
+
         const VIDEO_VOCAB_DATA = [
             { 
                 term: '인류학자', 
@@ -1610,359 +1877,173 @@
             }
         ];
 
-        const VIDEO_SCRIPT_DATA = [
-            { id: 's1', speaker: '우창윤', kor: '인류학자들이 하는 이야기가 있는데, 이게 아삭하다라는 소리가 나는 건요.', time: [0.00, 4.44], eng: "Anthropologists have this theory about that crunching sound." },
-            { id: 's2', speaker: '우창윤', kor: '우리가 어떤 과일이나 어떤 채소를 먹었을 때 신선하다는 거.', time: [4.47, 9.10], eng: "When we eat fruit or veggies, it signals freshness." },
-            { id: 's3', speaker: '우창윤', kor: '그럼 그게 안전하다는 뜻이고요.', time: [9.12, 10.48], eng: "And that basically means it's safe to eat." },
-            { id: 's4', speaker: '항성', kor: '오, 본능적인 거군요. 약간.', time: [10.58, 12.75], eng: "Oh, so it's kinda instinctive. A little bit." },
-            { id: 's5', speaker: '우창윤', kor: '그래서 그런 것도 우리가 좋아하게 되어 있는데, 악용하는 거예요.', time: [12.78, 16.48], eng: "So we're wired to like that stuff, but this? It's totally hacking that." },
-            { id: 's6', speaker: '김범준', kor: '먹어야 되겠어요? 안 먹어야 되겠어요?', time: [17.55, 19.08], eng: "Should we eat it? Or pass on it?" },
-            { id: 's7', speaker: '김범준', kor: '맛있다.', time: [20.57, 22.10], eng: "It's tasty." },
-            { id: 's8', speaker: '항성', kor: '요즘 SNS만 켜면은 이 영상 안 보신 분 없을 거예요.', time: [22.40, 26.07], eng: "If you're on social media these days, you've definitely seen this clip." },
-            { id: 's9', speaker: '항성', kor: '그냥 제 SNS는 아예 점령당했거든요.', time: [26.10, 29.75], eng: "My feed has been completely taken over by it." },
-            { id: 's10', speaker: '항성', kor: '바로 두바이 쫀득 쿠키.', time: [29.79, 32.05], eng: "The Dubai Chewy Cookie." },
-            { id: 's11', speaker: '우창윤', kor: '불편하네요.', time: [32.07, 33.33], eng: "That makes me uncomfortable." },
-            { id: 's12', speaker: '항성', kor: '아, 의사 선생님은 불편하시군요.', time: [34.78, 36.67], eng: "Ah, speaking as a doctor, you find it uncomfortable." },
-            { id: 's13', speaker: '우창윤', kor: '아니에요. 좋습니다.', time: [36.80, 38.67], eng: "No, no. It's great." },
-            { id: 's14', speaker: '우창윤', kor: '너무 유행이고 어제도 먹어봤어요.', time: [38.68, 41.01], eng: "It's super trendy, I actually tried it yesterday." },
-            { id: 's15', speaker: '우창윤', kor: '굉장히 잘 만든 식품이기는 해요.', time: [41.05, 44.11], eng: "It's a really well-engineered food product." },
-            { id: 's16', speaker: '항성', kor: '굉장히 잘 만들었다.', time: [44.12, 46.91], eng: "Really well-made." },
-            { id: 's17', speaker: '우창윤', kor: '잘 만들었어요. 굉장히 잘 만든 식품이에요.', time: [46.94, 49.43], eng: "They nailed it. It's a seriously well-crafted food." },
-            { id: 's18', speaker: '항성', kor: '저는 궁금해요.', time: [49.43, 50.30], eng: "I'm curious." },
-            { id: 's19', speaker: '항성', kor: '이거 한번 잘라볼게요.', time: [50.31, 51.92], eng: "Let me cut this open." },
-            { id: 's20', speaker: '항성', kor: '한번 잘라보도록 하겠습니다.', time: [51.95, 53.53], eng: "I'm gonna go ahead and cut it." },
-            { id: 's21', speaker: '우창윤', kor: '궁금하긴 합니다.', time: [53.57, 54.40], eng: "I am curious though." },
-            { id: 's22', speaker: '항성', kor: '말캉말캉하네요.', time: [54.43, 56.40], eng: "It's squishy." },
-            { id: 's23', speaker: '우창윤', kor: '진짜 부드럽다', time: [56.44, 58.66], eng: "It's really soft." },
-            { id: 's24', speaker: '항성', kor: '우창윤 교수님 진짜 불편해하시네요. 진심으로.', time: [58.82, 60.64], eng: "Professor Woo, you look genuinely uncomfortable. For real." },
-            { id: 's25', speaker: '김범준', kor: '일단 이렇게 살짝 이 나이프를 댔을 때 느낌은', time: [61.65, 64.07], eng: "First off, the feeling when the knife just touches it..." },
-            { id: 's26', speaker: '항성', kor: '떡이잖아요.', time: [64.099, 64.81], eng: "It's rice cake (tteok)." },
-            { id: 's27', speaker: '김범준', kor: '네 떡이에요 완전히.', time: [64.84, 66.05], eng: "Yeah, it's totally rice cake." },
-            { id: 's28', speaker: '우창윤', kor: '맞아요. 맞아요. 근데 안에 크리스피한 거를 딱 넣어 놓은 게', time: [66.06, 68.47], eng: "Right, right. But stuffing something crispy inside..." },
-            { id: 's29', speaker: '항성', kor: '이 소리가 소리가 나잖아요. 바삭바삭.', time: [68.51, 71.86], eng: "It makes this sound. Crunch crunch." },
-            { id: 's30', speaker: '우창윤', kor: '우리나라랑 일본이 유난히 이 크리스피한 식감과 소리를 되게 좋아해요.', time: [71.86, 77.32], eng: "Korea and Japan are particularly obsessed with this crispy texture and sound." },
-            { id: 's31', speaker: '항성', kor: '우와~ 일단 겉에 코코아 파우더 묻어 있고요.', time: [79.20, 81.93], eng: "Wow~ First off, it's dusted with cocoa powder." },
-            { id: 's32', speaker: '항성', kor: '마시멜로우로 되어 있는데, 이 안에는', time: [81.96, 84.19], eng: "It's made of marshmallow, but inside..." },
-            { id: 's33', speaker: '김범준', kor: '마시따.', time: [84.22, 85.44], eng: "Delish." },
-            { id: 's34', speaker: '항성', kor: '인정하셨습니다. 저희 맛있습니다.', time: [86.59, 88.55], eng: "He admitted it. Ours is tasty." },
-            { id: 's35', speaker: '항성', kor: '한번 드시러 오세요.', time: [88.85, 90.02], eng: "Come by and try it sometime." },
-            { id: 's36', speaker: '김범준', kor: '잘 만드셨는데요?', time: [90.70, 92.50], eng: "You made this really well?" },
-            { id: 's37', speaker: '항성', kor: '그쵸?', time: [92.53, 93.78], eng: "Right?" },
-            { id: 's38', speaker: '우창윤', kor: '이게 또 사람들이 좋아하는 게 만드는 곳마다 조금씩 다르게 하니까 사람들이 그 차이를 좀 보려고', time: [93.82, 99.06], eng: "People love this because every spot makes it a bit different, so they want to see the difference..." },
-            { id: 's39', speaker: '김범준', kor: '아, 여기서 먹고 저기서 먹고', time: [99.08, 100.48], eng: "Ah, eating here, eating there." },
-            { id: 's40', speaker: '우창윤', kor: '네, 막 그렇게 하시는 분도 많고.', time: [100.51, 102.31], eng: "Yeah, lots of people do that." },
-            { id: 's41', speaker: '우창윤', kor: '막 변형을 주는 막 그런 분들도 생기고.', time: [102.35, 105.21], eng: "Some people even tweak the recipe." },
-            { id: 's42', speaker: '항성', kor: '촬영하고 있는 장소가 이제 \'힉스커피\'라는 곳입니다.', time: [105.25, 107.62], eng: "We're filming at a place called 'Higgs Coffee'." },
-            { id: 's43', speaker: '우창윤', kor: '아, 깜짝 놀랐어요.', time: [107.65, 108.87], eng: "Ah, I was surprised." },
-            { id: 's44', speaker: '우창윤', kor: '이게 굉장히 잘해놓고, 인스타에서 보던 그곳이어가지고, 와 너무 반가운 마음에 사진 찍고 이랬어요.', time: [108.90, 115.49], eng: "It's set up so well, and it's the place I saw on Insta, so I was super happy and took photos." },
-            { id: 's45', speaker: '항성', kor: '그러니까요? 오시자마자 사진 찍으시더라고요.', time: [115.53, 117.61], eng: "Right? You were snapping pics as soon as you walked in." },
-            { id: 's46', speaker: '우창윤', kor: '어, 저 진짜 안 그러거든요.', time: [117.64, 119.20], eng: "Uh, I don't usually do that." },
-            { id: 's47', speaker: '항성', kor: '교수님도 처음 와보셨죠?', time: [119.23, 120.38], eng: "Professor, it's your first time here too, right?" },
-            { id: 's48', speaker: '김범준', kor: '예, 저는 얘기를 들었거든요.', time: [120.41, 121.83], eng: "Yeah, I'd heard about it." },
-            { id: 's49', speaker: '김범준', kor: '그래서 너무 궁금했는데.', time: [121.87, 123.03], eng: "So I was super curious." },
-            { id: 's50', speaker: '김범준', kor: '달 표면 그것도 인상적이었고.', time: [123.06, 124.96], eng: "The moon surface thing was impressive too." },
-            { id: 's51', speaker: '김범준', kor: '여기는 화성인가요?', time: [124.99, 126.18], eng: "Is this Mars?" },
-            { id: 's52', speaker: '항성', kor: '여기는 화성으로 꾸며놨습니다.', time: [126.21, 127.64], eng: "We decorated it to look like Mars." },
-            { id: 's53', speaker: '항성', kor: '저희뿐만 아니라 요즘에 카페부터 시작해서, 그거 아세요?, 국밥집에서 팝니다.', time: [127.68, 132.66], eng: "It's not just us, starting from cafes these days... did you know? They sell it at soup rice places." },
-            { id: 's54', speaker: '김범준', kor: '국밥집에서요? 디저트로 파는, 주는 건가요?', time: [132.70, 136.15], eng: "At a soup rice place? Do they sell it as dessert, or just give it to you?" },
-            { id: 's55', speaker: '항성', kor: '매출이 엄청 올랐다고 그러더라고요.', time: [136.19, 138.23], eng: "I heard their sales skyrocketed." },
-            { id: 's56', speaker: '항성', kor: '왜냐하면, 국밥을 먹어야만 살 수 있어요.', time: [138.26, 141.49], eng: "Because you can only buy it if you eat the soup rice." },
-            { id: 's57', speaker: '김범준', kor: '\'두쫀쿠 주세요\' 하면 안 주고?', time: [141.51, 142.75], eng: "So if I say 'Give me a Dubai Cookie', they won't give it to me?" },
-            { id: 's58', speaker: '항성', kor: '안 주고 ! 국밥을 먹어야지.', time: [142.78, 144.69], eng: "Nope! You gotta eat the soup." },
-            { id: 's59', speaker: '우창윤', kor: '그래도 후식은 저는 그래도 과일이 나왔으면 좋겠어요. 사과.', time: [144.72, 148.18], eng: "Still, for dessert, I'd prefer fruit. Like an apple." },
-            { id: 's60', speaker: '김범준', kor: '사과를 먹을 때도 우리가 아삭하는 그 청각이 굉장히 중요한 것 같긴 해요.', time: [148.21, 153.31], eng: "Even when eating an apple, that crunching sound seems really important." },
-            { id: 's61', speaker: '우창윤', kor: '맞아요.', time: [153.34, 153.82], eng: "Exactly." },
-            { id: 's62', speaker: '우창윤', kor: '왜 우리가 크리스피한 식감을 좋아하냐라고 했을 때 인류학자들이 하는 이야기가 있는데,', time: [153.85, 159.33], eng: "Anthropologists have a theory on why we love crispy textures," },
-            { id: 's63', speaker: '우창윤', kor: '이게 \'아삭하다\'라는 소리가 나는 건요, 우리가 어떤 과일이나 어떤 채소를 먹었을 때 신선하다는 거.', time: [159.36, 166.50], eng: "That 'crunch' sound signals that the fruit or veggie is fresh." },
-            { id: 's64', speaker: '우창윤', kor: '그럼 그게 안전하다는 뜻이고요.', time: [166.54, 167.78], eng: "And that means it's safe." },
-            { id: 's65', speaker: '항성', kor: '오! 본능적인 거군요 약간.', time: [167.81, 170.02], eng: "Oh! So it's kinda instinctive." },
-            { id: 's66', speaker: '우창윤', kor: '그런 것도 우리가 좋아하게 되어 있는데, 악용하는 거예요.', time: [170.05, 174.08], eng: "We're wired to like that, but this is exploiting it." },
-            { id: 's67', speaker: '김범준', kor: '이건 신선하고는 상관없는데?', time: [175.74, 177.00], eng: "This has nothing to do with freshness though?" },
-            { id: 's68', speaker: '우창윤', kor: '전혀 상관없어요.', time: [177.03, 178.37], eng: "Nothing at all." },
-            { id: 's69', speaker: '우창윤', kor: '악용하는 거예요.', time: [179.01, 180.13], eng: "It's hacking the system." },
-            { id: 's70', speaker: '우창윤', kor: '특히 한국인들이 굉장히 이런 식감이나 맛에 대해서 다양한 단어들도 있잖아요.', time: [180.16, 184.95], eng: "Especially Koreans, we have so many words for these textures and tastes." },
-            { id: 's71', speaker: '김범준', kor: '우리 그 \'겉바속촉\', 이거는 뒤집힌 것 같아요.', time: [184.98, 189.30], eng: "Our 'Crispy outside, soft inside', this seems flipped." },
-            { id: 's72', speaker: '항성', kor: '그렇죠. 그렇죠.', time: [189.31, 190.45], eng: "Right. Right." },
-            { id: 's73', speaker: '김범준', kor: '겉촉속바.', time: [190.48, 192.92], eng: "Soft outside, crispy inside." },
-            { id: 's74', speaker: '우창윤', kor: '그리고 그 바삭함이 소리도', time: [192.96, 194.69], eng: "And that crispiness, the sound too..." },
-            { id: 's75', speaker: '김범준', kor: '네, 맞아요. 소리가 나요 소리가.', time: [194.70, 196.30], eng: "Yeah, exactly. It makes a sound." },
-            { id: 's76', speaker: '우창윤', kor: '소리도 나게 되어 있고요.', time: [196.31, 197.46], eng: "It's designed to make a sound." },
-            { id: 's77', speaker: '우창윤', kor: '그리고 단맛과 크리미한 맛이 같이 오죠.', time: [197.47, 199.90], eng: "Plus, the sweet and creamy flavors hit you together." },
-            { id: 's78', speaker: '우창윤', kor: '소프트한 맛도 원래 굉장히 매력적으로 느끼는데 보통은 하나만 해야 돼요.', time: [199.91, 204.23], eng: "We find soft tastes attractive too, but usually you gotta pick one." },
-            { id: 's79', speaker: '우창윤', kor: '과자나 이런 것들이 부드럽게 가는 쪽이라 바삭한 크리스피하게 가는 쪽이 있어요.', time: [204.24, 207.70], eng: "Snacks usually go either the soft route or the crispy route." },
-            { id: 's80', speaker: '김범준', kor: '아, 그렇죠. 나뉘죠.', time: [207.71, 209.13], eng: "Ah, right. They're split." },
-            { id: 's81', speaker: '우창윤', kor: '보통은 나뉘어요.', time: [209.14, 210.00], eng: "Usually they're split." },
-            { id: 's82', speaker: '우창윤', kor: '그게 보통 국룰이었어요.', time: [210.01, 211.24], eng: "That was basically the unwritten rule." },
-            { id: 's83', speaker: '항성', kor: '아 그쵸.', time: [211.25, 211.78], eng: "Ah, right." },
-            { id: 's84', speaker: '김범준', kor: '근데 여기 이거는 이제 그거를...', time: [211.79, 213.07], eng: "But this, this one..." },
-            { id: 's85', speaker: '우창윤', kor: '그거를 같이 넣은 거고,', time: [213.08, 214.11], eng: "It put them together." },
-            { id: 's86', speaker: '우창윤', kor: '저는 별로 안 좋아하지만 이런 과자나 이런 쪽을 연구개발하는 쪽은 딱 씹었을 때 그 소리의 어떤 데시벨마저도 계속 연구하거든요.', time: [214.12, 221.59], eng: "I don't really like it, but R&D folks study the exact decibel of the crunch when you bite down." },
-            { id: 's87', speaker: '항성', kor: '아, 그래요?', time: [221.60, 222.05], eng: "Oh, really?" },
-            { id: 's88', speaker: '우창윤', kor: '어느 정도의 소리가 사람들이 가장 매력적으로 하게 하는지.', time: [222.06, 225.12], eng: "What sound level makes people find it most attractive." },
-            { id: 's89', speaker: '우창윤', kor: '그런데 이제 점점 사람들이 너무나 다양한 식품 경험들을 하다 보니까 다감각적인 경험을 하게 해주는 게 좋다.', time: [225.13, 231.93], eng: "But since people are experiencing such diverse foods now, multi-sensory experiences are the way to go." },
-            { id: 's90', speaker: '우창윤', kor: '그쪽으로 가고 있어요.', time: [232.00, 234.20], eng: "That's where the trend is heading." },
-            { id: 's91', speaker: '우창윤', kor: '그게 어떻게 보면은 이제 \'두쫀쿠\'라는 걸로 우리나라에서 좀 이렇게 세상에 나와버린 거죠.', time: [234.21, 239.67], eng: "In a way, 'Dubai Chewy Cookie' is what brought this to light in Korea." },
-            { id: 's92', speaker: '항성', kor: '이걸 만들고 하다 보니까 여기 들어가는 카다이프라든지 피스타치오 스프레드가 우리나라에서 주로 먹는 것들이 아니잖아요.', time: [239.68, 247.01], eng: "Making this, the Kataifi and pistachio spread aren't things we usually eat in Korea." },
-            { id: 's93', speaker: '우창윤', kor: '아니죠.', time: [247.02, 247.61], eng: "No, they're not." },
-            { id: 's94', speaker: '김범준', kor: '그럼 수입하는 거예요?', time: [247.62, 248.67], eng: "So, do you import them?" },
-            { id: 's95', speaker: '항성', kor: '전부 수입하는 거예요.', time: [248.69, 249.97], eng: "We import everything." },
-            { id: 's96', speaker: '항성', kor: '그러니까 비쌀 수밖에 없어', time: [249.98, 252.40], eng: "So it has to be expensive." },
-            { id: 's97', speaker: '우창윤', kor: '원재료 자체가 비싸군요.', time: [252.51, 254.12], eng: "The raw ingredients themselves are pricey." },
-            { id: 's98', speaker: '우창윤', kor: '그런데 사실 저는 이게 칼로리보다도 중요한 게 이 단맛과 기름맛이 섞여 있잖아요.', time: [254.13, 260.52], eng: "But actually, more important than calories, is that mix of sweet and oily tastes." },
-            { id: 's99', speaker: '우창윤', kor: '이게 저는 진짜 위험하다고 항상 보거든요.', time: [261.13, 263.59], eng: "I honestly see this as really dangerous." },
-            { id: 's100', speaker: '우창윤', kor: '단맛과 기름맛. 이게 결국 탄수화물이랑 지방인데,', time: [264.01, 267.86], eng: "Sweet and oily. That's carbs and fat," },
-            { id: 's101', speaker: '우창윤', kor: '둘 다 인간 생존에 너무 필요한 두 가지 물질이어가지고.', time: [267.87, 271.96], eng: "Both are crucial for human survival." },
-            { id: 's102', speaker: '항성', kor: '에너지원으로 좋은 거 아닌가요?', time: [271.97, 273.73], eng: "Aren't they good energy sources?" },
-            { id: 's103', speaker: '우창윤', kor: '그러니까 당연히 원시에는 이런 탄수화물과 지방을 먹어야 이게 우리 생존 확률이 올라가니까', time: [273.74, 278.94], eng: "So naturally, back in primitive times, eating carbs and fats increased survival odds," },
-            { id: 's104', speaker: '우창윤', kor: '뇌에서 먹었을 때 도파민과 엔돌핀이 나오도록 설계가 되어 있는데,', time: [278.95, 282.05], eng: "So our brains are designed to release dopamine and endorphins when we eat them." },
-            { id: 's105', speaker: '우창윤', kor: '원래 있는 식품들에는 이 탄수화물이랑 지방이 이래서 반씩 섞여 있는 게 없어요.', time: [282.06, 287.19], eng: "But in natural foods, you don't find carbs and fats mixed half-and-half like this." },
-            { id: 's106', speaker: '우창윤', kor: '사과 탄수화물 식이섬유 이쪽만 있고, 고기들은 대부분 다 단백질과 지방만 있고, 다 그래요.', time: [287.20, 294.02], eng: "Apples are carbs and fiber, meat is mostly protein and fat. It's usually like that." },
-            { id: 's107', speaker: '우창윤', kor: '그런데 유일하게 2개 같이 있는 거는 견과류만 그래요.', time: [294.03, 296.73], eng: "The only thing that has both is nuts." },
-            { id: 's108', speaker: '우창윤', kor: '그래서 이 두 개를 섞는 건 원래 반칙이에요.', time: [296.74, 298.92], eng: "So mixing these two is basically cheating." },
-            { id: 's109', speaker: '우창윤', kor: '아까 말했던 미각 경험을 떠나서 우리의 뇌가 엄청난 보상 가중치를 줘요.', time: [298.94, 303.40], eng: "Beyond the taste experience, our brain gives it a huge reward weight." },
-            { id: 's110', speaker: '우창윤', kor: '편의점 들어가서 초코바나 과자 보면은 탄수화물 지방이 반씩 들어있는 게 많아요.', time: [304.61, 308.90], eng: "If you look at chocolate bars or snacks in convenience stores, lots are half carbs, half fat." },
-            { id: 's111', speaker: '항성', kor: '진짜 탄수화물 + 지방 이 조합은 맛이 없을 수 없는 조합이거든요.', time: [308.91, 314.11], eng: "Seriously, the carb + fat combo is a flavor you just can't hate." },
-            { id: 's112', speaker: '김범준', kor: '아, 그렇구나', time: [314.12, 314.75], eng: "Ah, I see." },
-            { id: 's113', speaker: '우창윤', kor: '그게 생존에 유리한 조합이었으니까요.', time: [314.76, 316.72], eng: "Because it was a survival-friendly combo." },
-            { id: 's114', speaker: '우창윤', kor: '그래서 그 조합을 조금씩 뒤틀고 하는 게 나름의 레시피인 건데, 이거 보시면 딱 그 단맛과 기름 맛이 딱 섞여 있어요.', time: [316.73, 323.99], eng: "So tweaking that combo is a recipe in itself, and if you look at this, it's perfectly mixed sweet and oily." },
-            { id: 's115', speaker: '우창윤', kor: '그래서 그 이야기 드려요. "배 부를 때 드시라, 차라리, 후식으로."', time: [324.00, 327.72], eng: "So I tell people, 'Eat it when you're full, like as dessert.'" },
-            { id: 's116', speaker: '우창윤', kor: '왜냐하면, 배고픈 상태는 우리의 포만감의 호르몬이 낮아져 있는 상태예요.', time: [327.73, 331.73], eng: "Because when hungry, our satiety hormones are low." },
-            { id: 's117', speaker: '우창윤', kor: '포만감의 호르몬이 낮아져 있다는 거는 사실 생존에 불리한 상황이죠.', time: [331.74, 335.47], eng: "Low satiety hormones actually mean a disadvantage for survival." },
-            { id: 's118', speaker: '우창윤', kor: '이럴 때는 탄수화물과 지방에 대한 보상 가중치가 올라가요. 우리의 뇌가.', time: [335.48, 341.43], eng: "In that state, the brain increases the reward value for carbs and fats." },
-            { id: 's119', speaker: '우창윤', kor: '그래서 그런데 포만 호르몬이 올라가져 있는 상태에서는 미각은 그대로여도 도파민의 분비가 좀 덜하게 되고, 나중에 생각이 덜 나는 거예요.', time: [341.44, 348.74], eng: "But if your satiety hormones are high, even if the taste is the same, dopamine release is lower, and you crave it less later." },
-            { id: 's120', speaker: '우창윤', kor: '그래서 후식으로 먹었으면 좋겠다.', time: [349.89, 351.08], eng: "So I'd prefer you eat it as dessert." },
-            { id: 's121', speaker: '김범준', kor: '그 얘기 들어보니까 맛있게 먹으려면 배고플 때 먹는 거네요.', time: [351.09, 354.65], eng: "Hearing that, to enjoy it most, I should eat it when hungry." },
-            { id: 's122', speaker: '김범준', kor: '왜 저는 그거 반대로 이해하게 되지?', time: [354.66, 358.69], eng: "Why do I understand it the opposite way?" },
-            { id: 's123', speaker: '항성', kor: '저는 어떻게 보이냐면은 이게 음식계의 BTS고요.', time: [358.70, 361.59], eng: "To me, this looks like the BTS of food." },
-            { id: 's124', speaker: '항성', kor: '약간 케데헌(케이팝 데몬 헌터스)처럼 보이거든요.', time: [361.60, 364.19], eng: "Kind of like K-pop Demon Hunters (K-De-Heon)." },
-            { id: 's125', speaker: '우창윤', kor: '잘 만들긴 했어요.', time: [364.20, 365.76], eng: "It is well-made." },
-            { id: 's126', speaker: '항성', kor: '그런데 카다이프 자체는 어때요? 카다이프만으로는?', time: [365.77, 368.80], eng: "But what about the Kataifi itself? Just the Kataifi?" },
-            { id: 's127', speaker: '항성', kor: '우리 소면하고 비교해보면 그렇게 다르지는 않지 않아요?', time: [368.81, 371.84], eng: "Compared to our somyeon (noodles), isn't it pretty similar?" },
-            { id: 's128', speaker: '우창윤', kor: '원래 과거에는 밀가루로 만들었을 테니까.', time: [371.85, 375.47], eng: "Well, historically it would've been made with flour." },
-            { id: 's129', speaker: '우창윤', kor: '밀가루는 오히려 과당이랑 다르게 분해되면 완전히 포도당이 돼 가지고 우리가 사용할 수 있는 에너지원이 온전히 돼요.', time: [375.48, 382.55], eng: "Unlike fructose, flour breaks down into pure glucose, becoming a complete energy source we can use." },
-            { id: 's130', speaker: '우창윤', kor: '그래서 활동량이 많을 때는 사실 괜찮았죠.', time: [382.56, 385.35], eng: "So when activity levels were high, it was actually fine." },
-            { id: 's131', speaker: '우창윤', kor: '카다이프가 가늘게 뽑아가지고, 이제 철판 같은 거에다가 가열해서 만들잖아요.', time: [385.36, 389.95], eng: "Kataifi is spun thin and cooked on a griddle, right?" },
-            { id: 's132', speaker: '항성', kor: '그쵸 그쵸.', time: [389.96, 390.49], eng: "Right, right." },
-            { id: 's133', speaker: '우창윤', kor: '그런데 여기도 이제는 밀가루랑 옥수수 전분 섞어요.', time: [390.50, 393.15], eng: "But now they mix flour and cornstarch." },
-            { id: 's134', speaker: '우창윤', kor: '왜냐하면, 식감이 2개 다르거든요.', time: [393.16, 395.06], eng: "Because the textures are different." },
-            { id: 's135', speaker: '우창윤', kor: '아밀로오스나 아밀로펙틴이랑 그 구조가 달라가지고, 옥수수 전분 들어가면은 이 튀겼을 때 바삭함이 더해져요.', time: [395.07, 401.36], eng: "Amylose and amylopectin structures differ, so adding cornstarch adds crispiness when fried." },
-            { id: 's136', speaker: '우창윤', kor: '옛날엔 다 밀가루로만 했는데 이것마저도 이렇게 조절을 해요. 이제.', time: [401.37, 405.20], eng: "It used to be just flour, but even this is engineered now." },
-            { id: 's137', speaker: '우창윤', kor: '그것도 버터에 튀겨요.', time: [405.21, 406.38], eng: "And they fry it in butter." },
-            { id: 's138', speaker: '우창윤', kor: '이제는 그거를 막 버터에 튀기고, 막 추가하고 뭔가 더 하고 이래가지고, 정말 다른 목적으로 사용하니까 문제가 되는 거죠.', time: [408.04, 416.14], eng: "Now they fry it in butter, add stuff, do more to it... using it for a totally different purpose is where the problem lies." },
-            { id: 's139', speaker: '우창윤', kor: '피스타치오. 피스타치오 되게 좋은 거죠.', time: [416.15, 418.31], eng: "Pistachio. Pistachios are great." },
-            { id: 's140', speaker: '우창윤', kor: '피스타치오 저 엄청 좋아합니다.', time: [418.32, 420.08], eng: "I love pistachios." },
-            { id: 's141', speaker: '항성', kor: '저 엄청 좋아해요.', time: [420.09, 421.20], eng: "I love them so much." },
-            { id: 's142', speaker: '우창윤', kor: '비싸서 못 먹어요 피스타치오.', time: [421.20, 422.72], eng: "They're too expensive to eat." },
-            { id: 's143', speaker: '우창윤', kor: '그런데 이제 그거를 갈아가지고, 땅에 발라먹기 쉬운 상태로 이제 스프레드로 만든 거예요.', time: [422.73, 427.89], eng: "But they ground it up and made it into a spread so it's easy to eat." },
-            { id: 's144', speaker: '우창윤', kor: '끈적끈적한 느낌을 줘야 되잖아요.', time: [427.90, 429.95], eng: "You need that sticky feel." },
-            { id: 's145', speaker: '우창윤', kor: '전분 같은 거 넣고 설탕이나 시럽 넣고, 그럼 이건 아예 다른 게 되는 거죠.', time: [429.96, 434.27], eng: "Add starch, sugar, or syrup, and it becomes something else entirely." },
-            { id: 's146', speaker: '우창윤', kor: '피스타치오의 무엇이었던 걸 가지고, 아예 전혀 다른 무엇인가가 된 거예요.', time: [435.27, 439.77], eng: "It went from being pistachio to being something completely different." },
-            { id: 's147', speaker: '우창윤', kor: '두 개를 섞어가지고 안을 만들고 그 다음에 마시멜로우 있잖아요.', time: [439.78, 446.01], eng: "Mix those two for the filling, and then there's the marshmallow." },
-            { id: 's148', speaker: '우창윤', kor: '마시멜로우도 어떻게 만드냐면요.', time: [446.02, 447.71], eng: "You know how marshmallow is made?" },
-            { id: 's149', speaker: '항성', kor: '어떻게 만들어요?', time: [447.72, 448.81], eng: "How is it made?" },
-            { id: 's150', speaker: '우창윤', kor: '마시멜로우요?', time: [448.82, 449.78], eng: "Marshmallow?" },
-            { id: 's151', speaker: '우창윤', kor: '포도당 시럽이나 설탕 시럽 같은 거 있죠.', time: [449.79, 452.85], eng: "You take glucose syrup or sugar syrup." },
-            { id: 's152', speaker: '우창윤', kor: '여기에다가 젤라틴을 넣어요.', time: [452.86, 454.52], eng: "And add gelatin." },
-            { id: 's153', speaker: '우창윤', kor: '젤라틴이 콜라겐 안에서 나온 단백질이잖아요.', time: [455.16, 457.72], eng: "Gelatin is protein from collagen." },
-            { id: 's154', speaker: '우창윤', kor: '약간 용해시켜요.', time: [457.73, 458.82], eng: "Dissolve it a bit." },
-            { id: 's155', speaker: '우창윤', kor: '그런 다음에 휘핑, 공기를 넣으면서 조리하는 거예요.', time: [458.83, 462.36], eng: "Then whip it, cooking it while adding air." },
-            { id: 's156', speaker: '우창윤', kor: '휘핑돼서 이렇게 부풀면서 되게 부드러운 식감을 주는 거죠.', time: [462.37, 466.16], eng: "As it whips up, it expands and gives that soft texture." },
-            { id: 's157', speaker: '우창윤', kor: '그러니까 식감과 혈당 반응으로 세팅된 거죠.', time: [466.17, 468.29], eng: "So it's set for texture and blood sugar response." },
-            { id: 's158', speaker: '우창윤', kor: '그래서 뭐 마시멜로우라고 해서 다시 특별한 건 아니고 그냥 당덩어리.', time: [468.30, 473.00], eng: "So marshmallow isn't special, it's just a sugar lump." },
-            { id: 's159', speaker: '김범준', kor: '우리나라 사람 좀 익숙해진 것도 있을 것 같아요.', time: [475.02, 477.27], eng: "I think Koreans have gotten used to it." },
-            { id: 's160', speaker: '김범준', kor: '저도 처음에 두바이 초콜릿 먹었을 때는 그 식감이 너무 이상했어요.', time: [477.28, 480.97], eng: "When I first tried Dubai Chocolate, the texture was so weird." },
-            { id: 's161', speaker: '김범준', kor: '\'모래 씹는 것 같은 걸 왜 사람들이 좋아하지? \'그랬는데,', time: [480.98, 483.98], eng: "I was like, 'Why do people like chewing sand?'" },
-            { id: 's162', speaker: '김범준', kor: '이번에 이걸 다시 먹으니까 제가 이미 거기에 적응한 것 같아요.', time: [483.99, 487.78], eng: "But eating this again, I think I've adapted." },
-            { id: 's163', speaker: '항성', kor: '그렇죠.', time: [487.79, 488.25], eng: "Right." },
-            { id: 's164', speaker: '김범준', kor: '덜 불편해요. 씹히는 느낌이.', time: [488.26, 490.32], eng: "It's less uncomfortable. The chewing feeling." },
-            { id: 's165', speaker: '항성', kor: '그리고 저는 이 사각사각거리는 게 골전도처럼 들리잖아요.', time: [490.33, 494.59], eng: "And this crunching sounds like bone conduction." },
-            { id: 's166', speaker: '우창윤', kor: '맞아요. 맞아요.', time: [494.60, 495.32], eng: "Right, right." },
-            { id: 's167', speaker: '항성', kor: '되게 괜찮아요. 진짜로.', time: [495.33, 497.53], eng: "It's pretty good. Seriously." },
-            { id: 's168', speaker: '항성', kor: '그러니까 약간 맛도 맛인데 여러 가지 재미가 이렇게 다 섞여 있어요.', time: [497.54, 501.90], eng: "So besides the taste, there's a mix of different fun elements." },
-            { id: 's169', speaker: '항성', kor: '저희는 같이 물리학회에 소속이 되어 있어요.', time: [501.91, 504.63], eng: "We're in the Physics Society together." },
-            { id: 's170', speaker: '항성', kor: '거기서 아주 재미있는 재미있는 SNS 게시글을 올렸습니다.', time: [504.64, 508.87], eng: "There was a really fun post on SNS about it." },
-            { id: 's171', speaker: '항성', kor: '두쫀쿠의 과학이라고 해가지고 하나하나 분석을 해놓은 게시글이 있었어요.', time: [508.88, 515.18], eng: "A post analyzing the science of Dubai Chewy Cookies point by point." },
-            { id: 's172', speaker: '항성', kor: '일단 첫 번째가 점탄성입니다.', time: [515.19, 517.64], eng: "First up is viscoelasticity." },
-            { id: 's173', speaker: '우창윤', kor: '점탄성이요?', time: [517.65, 518.34], eng: "Viscoelasticity?" },
-            { id: 's174', speaker: '항성', kor: '네, 일단 점성은 아시겠죠? 끈끈함.', time: [518.35, 520.88], eng: "Yes, you know viscosity? Stickiness." },
-            { id: 's175', speaker: '우창윤', kor: '아, 끈끈한 느낌.', time: [520.89, 521.59], eng: "Ah, that sticky feeling." },
-            { id: 's176', speaker: '항성', kor: '이 안에 들어있는 게 스프레드가 다 점성이잖아요.', time: [521.60, 525.35], eng: "The spread inside is all viscous." },
-            { id: 's177', speaker: '항성', kor: '근데 이 겉을 싸고 있는 이 마시멜로우가 고체도 아니고,', time: [526.00, 530.63], eng: "But the marshmallow wrapping it isn't solid," },
-            { id: 's178', speaker: '항성', kor: '그렇다고 약간 이건 액체라고 하기도 그렇잖아요.', time: [530.64, 533.09], eng: "But calling it liquid is also weird." },
-            { id: 's179', speaker: '김범준', kor: '이게 점성하고 탄성을 동시에 갖고 있는 물질인데,', time: [533.10, 536.97], eng: "It's a material with both viscosity and elasticity." },
-            { id: 's180', speaker: '김범준', kor: '보통 액체는 점성은 있지만 탄성이 없고,', time: [536.98, 539.97], eng: "Usually liquids have viscosity but no elasticity," },
-            { id: 's181', speaker: '김범준', kor: '보통 고체는 탄성은 있는데, 점성은 없잖아요.', time: [539.98, 542.71], eng: "And solids have elasticity but no viscosity." },
-            { id: 's182', speaker: '김범준', kor: '점성과 탄성을 같이 갖고 있는 물질.', time: [542.72, 544.71], eng: "Material with both viscosity and elasticity." },
-            { id: 's183', speaker: '우창윤', kor: '어쩌다가 이런 게.', time: [544.72, 546.14], eng: "How did this happen?" },
-            { id: 's184', speaker: '항성', kor: '세상에 나오지 말아야 할 그런 녀석이 나와버렸고.', time: [546.15, 551.38], eng: "Something that shouldn't exist in this world just appeared." },
-            { id: 's185', speaker: '항성', kor: '그리고 또 하나 이 안쪽에 고분자 네트워크라고 돼 있다라고 그러더라고요.', time: [551.39, 555.85], eng: "And they said inside is a polymer network." },
-            { id: 's186', speaker: '항성', kor: '어? 안쪽이요?', time: [555.86, 556.58], eng: "Uh? Inside?" },
-            { id: 's187', speaker: '항성', kor: '네, 왜냐하면 마시멜로우 젤라틴으로 만든다고 그랬잖아요.', time: [556.60, 559.15], eng: "Yeah, because marshmallow is made with gelatin." },
-            { id: 's188', speaker: '항성', kor: '그 단백질이 가열되면은 사슬처럼 엉켜가지고 모양을 잡아준다고 그랬잖아요.', time: [559.16, 563.23], eng: "When that protein heats up, it tangles like chains to hold the shape." },
-            { id: 's189', speaker: '항성', kor: '다 연결돼 있다가 식으면서', time: [563.24, 565.13], eng: "It's all connected, then as it cools..." },
-            { id: 's190', speaker: '우창윤', kor: '그렇죠. 휘핑해가지고 공기 넣는 거죠.', time: [565.14, 566.99], eng: "Right. Whipping air into it." },
-            { id: 's191', speaker: '항성', kor: '공기 넣고 식으면서 완전히 촘촘하게 엉겨 붙어서 마시멜로우 자체의 고분자 네트워크화가 되는 거예요.', time: [567.00, 573.60], eng: "Adding air and cooling makes it tangle tight, creating a polymer network within the marshmallow." },
-            { id: 's192', speaker: '항성', kor: '그물망 구조 때문에 이 모양을 갖출 수가 있는 거예요.', time: [573.61, 576.87], eng: "That mesh structure lets it hold its shape." },
-            { id: 's193', speaker: '항성', kor: '그래서 씹는 순간에는 고체처럼 버티다가', time: [576.88, 580.18], eng: "So when you bite, it resists like a solid," },
-            { id: 's194', speaker: '항성', kor: '썰거나 먹기 시작하면 액체처럼 늘어나면서 점성과 탄성이 동시에 나타나는 거죠.', time: [580.19, 585.72], eng: "But as you cut or eat, it stretches like a liquid, showing both properties." },
-            { id: 's195', speaker: '우창윤', kor: '쫄깃쫄깃하면서 뭔가 약간 다른 느낌들이 있긴 해요.', time: [585.73, 590.79], eng: "It's chewy but feels kinda different." },
-            { id: 's196', speaker: '항성', kor: '좌굴 현상이라고 들어보셨습니까?', time: [590.80, 592.72], eng: "Have you heard of buckling?" },
-            { id: 's197', speaker: '우창윤', kor: '전혀 모르겠어요.', time: [592.73, 593.76], eng: "No idea." },
-            { id: 's198', speaker: '항성', kor: '우리 소면같이 이렇게 약간 휘다가 모양이 점점 더 휘는 게 아니라', time: [593.77, 600.09], eng: "Like somyeon noodles, they bend a bit, but instead of bending more..." },
-            { id: 's199', speaker: '항성', kor: '어느 순간 일정 힘이 되면은 딱 부러지는 거잖아요.', time: [600.10, 603.00], eng: "At a certain force, they just snap." },
-            { id: 's200', speaker: '항성', kor: '근데 그거가 나타나면서 이 카다이프가 바삭바삭.', time: [603.01, 607.06], eng: "When that happens, the Kataifi goes crunch." },
-            { id: 's201', speaker: '김범준', kor: '근데 여러 개가 있으니까 우리가 누르면은 그게 하나가 부러지는 게 아니라', time: [607.07, 611.17], eng: "But since there are many, when we press, it's not just one breaking," },
-            { id: 's202', speaker: '우창윤', kor: '엄청나게 많은 그 카다이프들이', time: [611.18, 612.38], eng: "A huge number of Kataifi strands..." },
-            { id: 's203', speaker: '김범준', kor: '연속적으로 부러지면서', time: [612.39, 613.94], eng: "Breaking continuously," },
-            { id: 's204', speaker: '우창윤', kor: '그러면서 소리가 파다닥 나는 거니까', time: [613.95, 615.96], eng: "Making that crackling sound." },
-            { id: 's205', speaker: '김범준', kor: '소리, 그리고 바삭함 같은 거', time: [615.97, 618.25], eng: "The sound, and that crispiness." },
-            { id: 's206', speaker: '항성', kor: '지금 우리가 과학이 아닌 얘기를 한 적이 없어요.', time: [618.26, 621.31], eng: "We haven't stopped talking science." },
-            { id: 's207', speaker: '항성', kor: '\'생리학적으로 이게 얼마나 잘 만들어졌길래 위험한가\'에 대해서도 얘기를 했고,', time: [621.32, 627.32], eng: "We talked about 'physiologically, why is this well-made but dangerous'," },
-            { id: 's208', speaker: '항성', kor: '과학적으로도 고분자 네트워크 들어왔고요.', time: [627.33, 630.89], eng: "And scientifically, polymer networks came up." },
-            { id: 's209', speaker: '항성', kor: '점탄성 들어왔고, 좌굴 현상 들어왔어요.', time: [630.90, 633.49], eng: "Viscoelasticity came up, buckling came up." },
-            { id: 's210', speaker: '항성', kor: '엄청나게 과학적인...', time: [633.50, 635.06], eng: "Super scientific..." },
-            { id: 's211', speaker: '김범준', kor: '그래서 먹어야 되겠어요? 안 먹어야 되겠어요?', time: [635.07, 636.64], eng: "So, should we eat it? Or not?" },
-            { id: 's212', speaker: '우창윤', kor: '식후에 드시면 좋겠다.', time: [638.11, 639.36], eng: "I'd recommend it after a meal." },
-            { id: 's213', speaker: '항성', kor: '그리고 맛이 있으세요? 없으세요?', time: [639.37, 640.93], eng: "And is it tasty? Or not?" },
-            { id: 's214', speaker: '김범준', kor: '맛도 있고', time: [640.94, 641.94], eng: "It's tasty." },
-            { id: 's215', speaker: '우창윤', kor: '재밌어요.', time: [641.95, 642.80], eng: "It's fun." },
-            { id: 's216', speaker: '우창윤', kor: '이게 감각을 되게 여러 개를 자극하기 때문에 궁금하신 분들은 친구들하고 같이 한번 경험해 보시고,', time: [642.81, 650.68], eng: "It stimulates so many senses, so if you're curious, try it with friends," },
-            { id: 's217', speaker: '우창윤', kor: '가능하면 먹고 이제 가볍게 기분 좋게 산책.', time: [650.69, 653.01], eng: "And if possible, take a light, happy walk after." },
-            { id: 's218', speaker: '우창윤', kor: '뭐 물론 산책만으로 안 되는 정도긴 합니다.', time: [653.02, 655.13], eng: "Of course, a walk won't burn it all off." },
-            { id: 's219', speaker: '김범준', kor: '물리학 가르칠 때 학생들에게 많이 내는 문제가 햄버거 하나를 먹었다.', time: [655.14, 660.29], eng: "A common physics problem for students: You ate a hamburger." },
-            { id: 's220', speaker: '김범준', kor: '이 칼로리를 질량이 10kg인 바벨을 몇 번을 움직여야 이 칼로리를 소비할 수 있느냐?', time: [660.30, 667.50], eng: "How many times must you lift a 10kg barbell to burn those calories?" },
-            { id: 's221', speaker: '김범준', kor: '계산하고 나면 결론이 \'먹지 말자\'.', time: [667.51, 670.33], eng: "After calculating, the conclusion is 'Don't eat it'." },
-            { id: 's222', speaker: '우창윤', kor: '맞아요. 이게 칼로리가 높다는 걸 누구나 알아요.', time: [670.34, 673.67], eng: "True. Everyone knows it's high calorie." },
-            { id: 's223', speaker: '우창윤', kor: '직관적으로 알잖아요.', time: [673.68, 675.10], eng: "You know intuitively." },
-            { id: 's224', speaker: '항성', kor: '너무 직관적인데.', time: [675.11, 676.01], eng: "It's too intuitive." },
-            { id: 's225', speaker: '우창윤', kor: '직관적으로 칼로리가 높다라는 걸 아니까 여성분들이 어떤 선택을 하냐면요, 저녁 식사를 안 먹고 이걸 먹어요.', time: [676.02, 681.91], eng: "Since they intuitively know it's high calorie, women often choose to skip dinner and eat this instead." },
-            { id: 's226', speaker: '항성', kor: '아, 그렇죠.', time: [681.92, 682.51], eng: "Ah, right." },
-            { id: 's227', speaker: '김범준', kor: '아, 그러면 그게 안 좋겠네요.', time: [682.52, 683.75], eng: "Ah, that would be bad." },
-            { id: 's228', speaker: '우창윤', kor: '그쵸, \'나는 고칼로리 음식을 먹을 거니까 저녁 대신에 이걸 먹어야지.\'', time: [683.76, 687.91], eng: "Right, 'Since I'm eating high-calorie food, I'll eat this instead of dinner.'" },
-            { id: 's229', speaker: '우창윤', kor: '그리고 이게 내 다이어트에 도움이 된다고 생각하시는데,', time: [687.92, 690.75], eng: "And they think it helps their diet," },
-            { id: 's230', speaker: '항성', kor: '이거 너무 중요하네요.', time: [690.76, 692.15], eng: "This is super important." },
-            { id: 's231', speaker: '우창윤', kor: '오히려 이렇게 과하게 이제 혈당과 인슐린 반응을 일으키는 걸 먹잖아요.', time: [692.16, 697.16], eng: "But eating something that spikes blood sugar and insulin like this..." },
-            { id: 's232', speaker: '우창윤', kor: '놀랍게도 근이 감소하는 방향으로 가기도 해요.', time: [697.17, 699.49], eng: "Surprisingly, it can lead to muscle loss." },
-            { id: 's233', speaker: '항성', kor: '아, 그래서 꼭 식후에 먹는.', time: [699.50, 703.60], eng: "Ah, so definitely eat it after a meal." },
-            { id: 's234', speaker: '항성', kor: '이 정체가 사실은 디저트잖아요.', time: [703.61, 705.19], eng: "Because this is actually dessert." },
-            { id: 's235', speaker: '우창윤', kor: '그렇죠. 디저트예요. 식사 아닙니다.', time: [705.20, 707.53], eng: "Right. It's dessert. Not a meal." },
-            { id: 's236', speaker: '우창윤', kor: '이거 밥이 아니에요. 여러분.', time: [707.54, 709.63], eng: "This isn't rice, everyone." },
-            { id: 's237', speaker: '항성', kor: '그러니까요 디저트잖아요.', time: [709.64, 711.58], eng: "Exactly, it's dessert." },
-            { id: 's238', speaker: '김범준', kor: '국밥집 제대로 하는 거네요.', time: [711.59, 713.11], eng: "The soup rice place is doing it right." },
-            { id: 's239', speaker: '우창윤', kor: '오히려 그게 저는 맞다고 보는데.', time: [713.12, 715.14], eng: "I actually think that's the right way." },
-            { id: 's240', speaker: '항성', kor: '오늘 어떠셨습니까?', time: [715.15, 716.31], eng: "How was today?" },
-            { id: 's241', speaker: '우창윤', kor: '아 너무 즐거웠고요.', time: [716.32, 717.88], eng: "Ah, it was so fun." },
-            { id: 's242', speaker: '우창윤', kor: '이게 그 점탄성과 이 아까 말씀 주신 고분자 네트워크가 있다라고 하니까', time: [717.88, 723.28], eng: "Hearing about viscoelasticity and polymer networks," },
-            { id: 's243', speaker: '우창윤', kor: '이게 그 다양한 식감 경험을 줄 수 있는 이유를 좀 알 것 같네요.', time: [723.29, 726.99], eng: "I think I get why it offers such a diverse texture experience." },
-            { id: 's244', speaker: '김범준', kor: '오늘 너무 재미있었고요.', time: [727.00, 728.12], eng: "Today was really fun." },
-            { id: 's245', speaker: '김범준', kor: '설명하시는 이야기가 너무 이렇게 설득력이 있어갖고 많은 사람들이 이거 먹으려고 힉스 커피에 많이 오지 않을까?', time: [728.13, 734.76], eng: "Your explanation was so convincing, I think lots of people will come to Higgs Coffee for this." },
-            { id: 's246', speaker: '우창윤', kor: '그걸 제가 바란 건 아니에요.', time: [734.77, 737.20], eng: "I wasn't aiming for that." },
-            { id: 's247', speaker: '항성', kor: '의학계, 또 과학계를 이끄시는 이 두 분과 함께 사소하지만 대한민국을 점령을 하고 있는 두바이 쫀득 쿠키에 대해서 과학적으로 의학적으로 분석을 해봤습니다.', time: [738.28, 749.04], eng: "With these two leaders in medicine and science, we analyzed the Dubai Chewy Cookie taking over Korea scientifically and medically." },
-            { id: 's248', speaker: '항성', kor: '오늘 여기서 마치도록 하고요.', time: [749.05, 750.44], eng: "We'll wrap it up here." },
-            { id: 's249', speaker: '항성', kor: '오늘 함께해 주신 우창윤 교수님, 김범준 교수님 감사합니다.', time: [750.45, 753.61], eng: "Thank you, Professor Woo Chang-yoon and Professor Kim Beom-jun." },
-            { id: 's250', speaker: '김범준', kor: '예, 고맙습니다.', time: [753.62, 754.92], eng: "Yes, thank you." },
-            { id: 's251', speaker: '우창윤', kor: '감사합니다.', time: [754.92, 756.99], eng: "Thank you." }
+        const ANSWER_CHOICES = [
+            '악용하다', 
+            '쫀득하다', 
+            '말캉말캉', 
+            '바삭하다', 
+            '식감', 
+            '다감각적', 
+            '보상 가중치', 
+            '점성', 
+            '탄성', 
+            '물리학적', 
+            '뒤틀다', 
+            '변형'
         ];
 
-        const LEVEL_DEFINITIONS = { 
-            "A1": { title: "Novice", desc: "Basic everyday expressions." }, "A1+": { title: "Pre-Beginner", desc: "Can handle slightly more than A1." },
-            "A2": { title: "Beginner", desc: "Frequently used sentences." }, "A2+": { title: "Upper Beginner", desc: "Can speak a bit more smoothly." }, 
-            "B1": { title: "Pre-Intermediate", desc: "Standard speech main points." }, "B1+": { title: "Lower Intermediate", desc: "Stronger B1. More comfortable carrying conversations." },
-            "B2": { title: "Intermediate", desc: "Complex text main ideas." }, "B2+": { title: "Upper Intermediate", desc: "Near C1. Can argue a point logically." },
-            "C1": { title: "Advanced", desc: "Long, demanding texts." }, "C1+": { title: "Upper Advanced", desc: "Very strong C1, approaching native-like flexibility." },
-            "C2": { title: "Proficient", desc: "Can understand virtually everything heard or read." }
-        };
-
-        const QUIZ_LIST = [          {
-              id: '1',
-              textParts: ["두바이 쫀득 쿠키 겉을 둘러싼 마시멜로를 처음 만져보면 떡처럼 매우 부드럽고 ", "한 촉감이 느껴져요."],
-              answer: '말캉말캉',
-              hint: '부드럽고 가볍게 씹히거나 만져지는 느낌.',
-              explanation: "맞아요! 마시멜로는 떡처럼 매우 부드럽고 가볍게 만져지는 '말캉말캉'한 촉감을 줍니다.",
-              textParts_eng: ["When you first touch the marshmallow wrapping the Dubai chewy cookie, you can feel a very soft and ", " texture like rice cake."],
-              answer_eng: "squishy"
+        const QUIZ_LIST = [
+            {
+                id: '1',
+                textParts: [
+                    "두바이 쫀득 쿠키 겉을 둘러싼 마시멜로를 처음 만져보면 떡처럼 매우 부드럽고 ", 
+                    "한 촉감이 느껴져요."
+                ],
+                answer: '말캉말캉',
+                hint: '부드럽고 가볍게 씹히거나 만져지는 느낌.',
+                explanation: "맞아요! 마시멜로는 떡처럼 매우 부드럽고 가볍게 만져지는 '말캉말캉'한 촉감을 줍니다.",
+                textParts_eng: [
+                    "When you first touch the marshmallow wrapping the Dubai chewy cookie, you can feel a very soft and ", 
+                    " texture like rice cake."
+                ],
+                answer_eng: "squishy"
             },
             {
-              id: '2',
-              textParts: ["카다이프 면이 연속적으로 부러질 때 귀에서 경쾌하게 '", "' 소리가 나면서 먹는 재미를 더해줘요."],
-              answer: '바삭한',
-              hint: '마른 물건이 가볍게 부서지는 소리나 그 모양.',
-              explanation: "정답! 얇은 카다이프 면이 부러질 때 나는 '바삭하다'는 청각적 자극이 쿠키를 먹는 재미를 더합니다.",
-              textParts_eng: ["When the Kataifi noodles break continuously, a pleasantly ", " sound adds to the fun of eating."],
-              answer_eng: "crispy"
+                id: '2',
+                textParts: [
+                    "카다이프 면이 연속적으로 부러질 때 귀에서 경쾌하게 '", 
+                    "' 소리가 나면서 먹는 재미를 더해줘요."
+                ],
+                answer: '바삭한',
+                hint: '마른 물건이 가볍게 부서지는 소리나 그 모양.',
+                explanation: "정답! 얇은 카다이프 면이 부러질 때 나는 '바삭하다'는 청각적 자극이 쿠키를 먹는 재미를 더합니다.",
+                textParts_eng: [
+                    "When the Kataifi noodles break continuously, a pleasantly ", 
+                    " sound adds to the fun of eating."
+                ],
+                answer_eng: "crispy"
             },
             {
-              id: '3',
-              textParts: ["요즘 소비자들은 디저트를 즐길 때 맛뿐만 아니라 입에서 느껴지는 촉각인 ", "과(와) 소리를 아주 중요하게 생각해요."],
-              answer: '식감',
-              hint: '음식을 입에 넣고 씹을 때 느껴지는 감촉.',
-              explanation: "그렇죠! 음식의 단순한 맛을 넘어 입안에서 느껴지는 촉각인 '식감(Texture)'이 디저트 선택의 중요한 기준이 되었습니다.",
-              textParts_eng: ["Consumers nowadays consider the sound and the tactile sensation in the mouth, or ", ", very important when enjoying desserts."],
-              answer_eng: "texture"
+                id: '3',
+                textParts: [
+                    "요즘 소비자들은 디저트를 즐길 때 맛뿐만 아니라 입에서 느껴지는 촉각인 ", 
+                    "과(와) 소리를 아주 중요하게 생각해요."
+                ],
+                answer: '식감',
+                hint: '음식을 입에 넣고 씹을 때 느껴지는 감촉.',
+                explanation: "그렇죠! 음식의 단순한 맛을 넘어 입안에서 느껴지는 촉각인 '식감(Texture)'이 디저트 선택의 중요한 기준이 되었습니다.",
+                textParts_eng: [
+                    "Consumers nowadays consider the sound and the tactile sensation in the mouth, or ", 
+                    ", very important when enjoying desserts."
+                ],
+                answer_eng: "texture"
             },
             {
-              id: '4',
-              textParts: ["그래서 단순한 미각을 넘어 촉각, 청각 등 여러 감각을 동시에 자극하는 ", "인 경험을 주는 것이 요즘 디저트의 트렌드예요."],
-              answer: '다감각적',
-              hint: '여러 가지 감각이 한꺼번에 작용하는 것.',
-              explanation: "딩동댕! 요즘 디저트는 시각, 미각, 청각, 촉각을 모두 만족시키는 '다감각적(Multi-sensory)' 경험을 추구합니다.",
-              textParts_eng: ["Therefore, providing a ", " experience that simultaneously stimulates multiple senses is the trend in desserts today."],
-              answer_eng: "multisensory"
+                id: '4',
+                textParts: [
+                    "그래서 단순한 미각을 넘어 촉각, 청각 등 여러 감각을 동시에 자극하는 ", 
+                    "인 경험을 주는 것이 요즘 디저트의 트렌드예요."
+                ],
+                answer: '다감각적',
+                hint: '여러 가지 감각이 한꺼번에 작용하는 것.',
+                explanation: "딩동댕! 요즘 디저트는 시각, 미각, 청각, 촉각을 모두 만족시키는 '다감각적(Multi-sensory)' 경험을 추구합니다.",
+                textParts_eng: [
+                    "Therefore, providing a ", 
+                    " experience that simultaneously stimulates multiple senses is the trend in desserts today."
+                ],
+                answer_eng: "multisensory"
             },
             {
-              id: '5',
-              textParts: ["우리가 아삭한 식감을 좋아하는 건 신선함과 안전함을 판단하는 본능인데, 식품업계가 이 본능을 ", "고 의사들은 우려해요."],
-              answer: '악용한다',
-              hint: '나쁜 목적이나 자신의 이익을 위해 잘못 사용함.',
-              explanation: "맞아요! 건강에 꼭 좋지 않은 음식이어도, 바삭한 소리를 통해 뇌의 신선함 감지 본능을 '악용'하여 계속 먹게 만듭니다.",
-              textParts_eng: ["Doctors worry that the food industry ", "s this instinct to judge freshness and safety by crunchy textures."],
-              answer_eng: "abuse"
+                id: '5',
+                textParts: [
+                    "우리가 아삭한 식감을 좋아하는 건 신선함과 안전함을 판단하는 본능인데, 식품업계가 이 본능을 ", 
+                    "고 의사들은 우려해요."
+                ],
+                answer: '악용한다',
+                hint: '나쁜 목적이나 자신의 이익을 위해 잘못 사용함.',
+                explanation: "맞아요! 건강에 꼭 좋지 않은 음식이어도, 바삭한 소리를 통해 뇌의 신선함 감지 본능을 '악용'하여 계속 먹게 만듭니다.",
+                textParts_eng: [
+                    "Doctors worry that the food industry ", 
+                    "s this instinct to judge freshness and safety by crunchy textures."
+                ],
+                answer_eng: "abuse"
             },
             {
-              id: '6',
-              textParts: ["뇌는 생존에 유리한 고칼로리(탄수화물+지방) 음식을 먹을 때 엄청난 ", "을(를) 주어 도파민을 분비하기 때문이에요."],
-              answer: '보상 가중치',
-              hint: '어떤 행동을 했을 때 뇌가 그 가치를 높게 평가하여 주는 보상의 정도.',
-              explanation: "정확해요! 고에너지원을 섭취하면 우리 뇌는 엄청난 '보상 가중치'를 부여해 도파민을 분비하고 쾌락을 느끼게 합니다.",
-              textParts_eng: ["This is because the brain gives a huge ", " and releases dopamine when eating high-calorie foods advantageous for survival."],
-              answer_eng: "reward value"
+                id: '6',
+                textParts: [
+                    "뇌는 생존에 유리한 고칼로리(탄수화물+지방) 음식을 먹을 때 엄청난 ", 
+                    "을(를) 주어 도파민을 분비하기 때문이에요."
+                ],
+                answer: '보상 가중치',
+                hint: '어떤 행동을 했을 때 뇌가 그 가치를 높게 평가하여 주는 보상의 정도.',
+                explanation: "정확해요! 고에너지원을 섭취하면 우리 뇌는 엄청난 '보상 가중치'를 부여해 도파민을 분비하고 쾌락을 느끼게 합니다.",
+                textParts_eng: [
+                    "This is because the brain gives a huge ", 
+                    " and releases dopamine when eating high-calorie foods advantageous for survival."
+                ],
+                answer_eng: "reward value"
             },
             {
-              id: '7',
-              textParts: ["두쫀쿠의 인기에는 생리학적 이유뿐만 아니라 ", " 이유도 있어요."],
-              answer: '물리학적',
-              hint: '물질의 물리적 성질과 현상에 관한 것.',
-              explanation: "잘하셨어요! 식욕을 자극하는 생리학적 메커니즘 외에도, 재료들의 '물리학적' 성질이 독특한 식감을 만들어냅니다.",
-              textParts_eng: ["There are ", " reasons as well as physiological reasons for the popularity of the Dubai chewy cookie."],
-              answer_eng: "physical"
+                id: '7',
+                textParts: [
+                    "두쫀쿠의 인기에는 생리학적 이유뿐만 아니라 ", 
+                    " 이유도 있어요."
+                ],
+                answer: '물리학적',
+                hint: '물질의 물리적 성질과 현상에 관한 것.',
+                explanation: "잘하셨어요! 식욕을 자극하는 생리학적 메커니즘 외에도, 재료들의 '물리학적' 성질이 독특한 식감을 만들어냅니다.",
+                textParts_eng: [
+                    "There are ", 
+                    " reasons as well as physiological reasons for the popularity of the Dubai chewy cookie."
+                ],
+                answer_eng: "physical"
             },
             {
-              id: '8',
-              textParts: ["피스타치오 스프레드처럼 액체가 쉽게 흐르지 않고 끈끈하게 달라붙는 성질을 물리학에서는 ", "(이)라고 불러요."],
-              answer: '점성',
-              hint: '유체가 흐를 때 저항하는 끈끈한 성질 (Viscosity).',
-              explanation: "정답! 피스타치오 스프레드처럼 흐름에 저항하며 끈적거리는 물리적 성질을 '점성'이라고 합니다.",
-              textParts_eng: ["The property of not flowing easily and sticking together, like pistachio spread, is called ", " in physics."],
-              answer_eng: "viscosity"
+                id: '8',
+                textParts: [
+                    "피스타치오 스프레드처럼 액체가 쉽게 흐르지 않고 끈끈하게 달라붙는 성질을 물리학에서는 ", 
+                    "(이)라고 불러요."
+                ],
+                answer: '점성',
+                hint: '유체가 흐를 때 저항하는 끈끈한 성질 (Viscosity).',
+                explanation: "정답! 피스타치오 스프레드처럼 흐름에 저항하며 끈적거리는 물리적 성질을 '점성'이라고 합니다.",
+                textParts_eng: [
+                    "The property of not flowing easily and sticking together, like pistachio spread, is called ", 
+                    " in physics."
+                ],
+                answer_eng: "viscosity"
             },
             {
-              id: '9',
-              textParts: ["반면 겉을 둘러싼 마시멜로는 고체처럼 원래의 모양을 유지하려고 되돌아가는 성질인 ", "도 함께 가지고 있어요."],
-              answer: '탄성',
-              hint: '외부의 힘에 의해 변형된 물체가 원래의 상태로 되돌아가려는 성질 (Elasticity).',
-              explanation: "맞습니다! 마시멜로는 씹을 때 고체처럼 본래 모양으로 돌아가려는 '탄성'을 지니고 있어 씹는 맛을 더합니다.",
-              textParts_eng: ["On the other hand, the marshmallow wrapping also has ", ", which is the property of trying to return to its original shape like a solid."],
-              answer_eng: "elasticity"
+                id: '9',
+                textParts: [
+                    "반면 겉을 둘러싼 마시멜로는 고체처럼 원래의 모양을 유지하려고 되돌아가는 성질인 ", 
+                    "도 함께 가지고 있어요."
+                ],
+                answer: '탄성',
+                hint: '외부의 힘에 의해 변형된 물체가 원래의 상태로 되돌아가려는 성질 (Elasticity).',
+                explanation: "맞습니다! 마시멜로는 씹을 때 고체처럼 본래 모양으로 돌아가려는 '탄성'을 지니고 있어 씹는 맛을 더합니다.",
+                textParts_eng: [
+                    "On the other hand, the marshmallow wrapping also has ", 
+                    ", which is the property of trying to return to its original shape like a solid."
+                ],
+                answer_eng: "elasticity"
             },
             {
-              id: '10',
-              textParts: ["이처럼 두쫀쿠는 점탄성을 지니고 있어서 ", " 식감을 줘요."],
-              answer: '쫀득한',
-              hint: '물기가 있고 차져서 꽤 끈끈하게 들러붙는 느낌.',
-              explanation: "그렇죠! 점성과 탄성을 동시에 가진 점탄성 물질들이 어우러져 이름 그대로 '쫀득하다'는 매력적인 식감을 완성합니다.",
-              textParts_eng: ["In this way, the Dubai chewy cookie has viscoelasticity, giving it a ", " texture."],
-              answer_eng: "chewy"
-            }];
+                id: '10',
+                textParts: [
+                    "이처럼 두쫀쿠는 점탄성을 지니고 있어서 ", 
+                    " 식감을 줘요."
+                ],
+                answer: '쫀득한',
+                hint: '물기가 있고 차져서 꽤 끈끈하게 들러붙는 느낌.',
+                explanation: "그렇죠! 점성과 탄성을 동시에 가진 점탄성 물질들이 어우러져 이름 그대로 '쫀득하다'는 매력적인 식감을 완성합니다.",
+                textParts_eng: [
+                    "In this way, the Dubai chewy cookie has viscoelasticity, giving it a ", 
+                    " texture."
+                ],
+                answer_eng: "chewy"
+            }
+        ];
         
         const DISCUSS_DATA = [
             {
@@ -1970,8 +2051,18 @@
                 questionKor: "한국에서는 '두바이 쫀득 쿠키’처럼 쫀득한 식감의 음식이 많은데, 여러분의 나라에서 사람들은 보통 어떤 식감을 특별히 선호해요?",
                 questionEng: "In Korea, there are many foods with a chewy texture like the 'Dubai Chewy Cookie'. What kind of texture do people in your country usually prefer?",
                 vocab: [
-                    { term: "쫀득하다", def: "찰기가 있어 입에 착 달라붙는 느낌 (주로 떡 등에서 느낌)" },
-                    { term: "식감", def: "식(食 먹다) + 감(感 느끼다) -> 음식을 씹을 때 입안에서 느껴지는 느낌" }
+                    { 
+                        term: "쫀득하다", 
+                        def: "찰기가 있어 입에 착 달라붙는 느낌 (주로 떡 등에서 느낌)", 
+                        termEng: "chewy", 
+                        defEng: "The feeling of being sticky and clinging to the mouth (usually felt in foods like rice cakes)." 
+                    },
+                    { 
+                        term: "식감", 
+                        def: "식(食 먹다) + 감(感 느끼다) -> 음식을 씹을 때 입안에서 느껴지는 느낌", 
+                        termEng: "texture/mouthfeel", 
+                        defEng: "The feeling experienced in the mouth when chewing food." 
+                    }
                 ]
             },
             {
@@ -1979,9 +2070,24 @@
                 questionKor: "두바이 쫀득 쿠키는 바삭하면서 동시에 쫀득해요. 이처럼 여러 가지 상반된 식감이 결합된 음식을 선호해요? 하나의 식감에 집중한 음식과 비교했을 때 어떤 매력이 있다고 생각해요?",
                 questionEng: "The Dubai Chewy Cookie is crispy and chewy at the same time. Do you prefer foods that combine multiple contrasting textures like this? Compared to food that focuses on a single texture, what appeal do you think it has?",
                 vocab: [
-                    { term: "바삭하다", def: "수분이 없어 가볍게 부서지는 소리가 나다" },
-                    { term: "쫀득하다", def: "찰기가 있어 입에 착 달라붙는 느낌" },
-                    { term: "식감", def: "식(食 먹다) + 감(感 느끼다) -> 음식을 씹을 때 입안에서 느껴지는 느낌" }
+                    { 
+                        term: "바삭하다", 
+                        def: "수분이 없어 가볍게 부서지는 소리가 나다", 
+                        termEng: "crispy/crunchy", 
+                        defEng: "Making a light, breaking sound due to lack of moisture." 
+                    },
+                    { 
+                        term: "쫀득하다", 
+                        def: "찰기가 있어 입에 착 달라붙는 느낌", 
+                        termEng: "chewy", 
+                        defEng: "The feeling of being sticky and clinging to the mouth." 
+                    },
+                    { 
+                        term: "식감", 
+                        def: "식(食 먹다) + 감(感 느끼다) -> 음식을 씹을 때 입안에서 느껴지는 느낌", 
+                        termEng: "texture/mouthfeel", 
+                        defEng: "The feeling experienced in the mouth when chewing food." 
+                    }
                 ]
             },
             {
@@ -1989,8 +2095,18 @@
                 questionKor: "카다이프의 낯선 식감 때문에 두바이 초콜릿을 꺼리던 사람들도 두바이 쫀득 쿠키에는 열광하고 있어요. 이것은 사람들이 이색적인 맛에 서서히 익숙해진 결과일까요, 아니면 낯선 재료에 익숙한 '쫀득함'이 결합되었기 때문일까요?",
                 questionEng: "Even people who avoided Dubai chocolate due to the unfamiliar texture of kataifi are enthusiastic about Dubai chewy cookies. Is this the result of people gradually getting used to exotic tastes, or is it because the familiar 'chewiness' was combined with unfamiliar ingredients?",
                 vocab: [
-                    { term: "이색적", def: "보통의 것과 달라서 색다른 성질" },
-                    { term: "익숙하다", def: "어떤 일을 여러 번 하거나 경험하여 낯설지 않다" }
+                    { 
+                        term: "이색적", 
+                        def: "보통의 것과 달라서 색다른 성질", 
+                        termEng: "exotic/unique", 
+                        defEng: "A property that is different and distinct from the ordinary." 
+                    },
+                    { 
+                        term: "익숙하다", 
+                        def: "어떤 일을 여러 번 하거나 경험하여 낯설지 않다", 
+                        termEng: "familiar", 
+                        defEng: "Not unfamiliar because of having done or experienced something many times." 
+                    }
                 ]
             },
             {
@@ -1998,9 +2114,24 @@
                 questionKor: "단순히 맛있는 것을 넘어, 청각(바삭한 소리)과 촉각(쫀득함)을 동시에 자극하는 ‘다감각적 경험’이 최신 식품 트렌드의 핵심이 되고 있는 이유는 무엇일까요?",
                 questionEng: "Beyond simply being delicious, what is the reason why a 'multisensory experience' that simultaneously stimulates hearing (crispy sound) and touch (chewiness) is becoming the core of the latest food trends?",
                 vocab: [
-                    { term: "청각", def: "귀를 통해 소리를 느끼는 감각" },
-                    { term: "촉각", def: "피부에 닿아 형태나 온도를 느끼는 감각" },
-                    { term: "다감각", def: "시각, 청각, 미각, 후각, 촉각 등 여러 가지 감각이 복합적으로 작용하는 것" }
+                    { 
+                        term: "청각", 
+                        def: "귀를 통해 소리를 느끼는 감각", 
+                        termEng: "hearing/auditory sense", 
+                        defEng: "The sense of feeling sound through the ears." 
+                    },
+                    { 
+                        term: "촉각", 
+                        def: "피부에 닿아 형태나 온도를 느끼는 감각", 
+                        termEng: "touch/tactile sense", 
+                        defEng: "The sense of feeling shape or temperature upon touching the skin." 
+                    },
+                    { 
+                        term: "다감각", 
+                        def: "시각, 청각, 미각, 후각, 촉각 등 여러 가지 감각이 복합적으로 작용하는 것", 
+                        termEng: "multisensory", 
+                        defEng: "The complex interaction of multiple senses such as sight, hearing, taste, smell, and touch." 
+                    }
                 ]
             },
             {
@@ -2008,9 +2139,24 @@
                 questionKor: "사람들이 바삭한 식감을 좋아하는 이유가 인류의 생존 본능에 내재된 '아삭한 소리 = 신선함 = 안전함' 때문이라는 진화생물학적 주장에 동의해요? 아니면 다소 논리적 비약이 있다고 생각해요?",
                 questionEng: "Do you agree with the evolutionary biological claim that the reason we like crispy textures is due to the survival instinct of 'crunchy sound = freshness = safety'? Or do you think there is somewhat of a logical leap?",
                 vocab: [
-                    { term: "바삭하다", def: "수분이 없어 가볍게 부서지는 소리가 나다" },
-                    { term: "아삭하다", def: "채소나 과일 따위가 연하고 맑게 베어지는 소리가 나다" },
-                    { term: "논리적 비약", def: "논리의 전개 과정에서 단계나 근거를 훌쩍 건너뛰는 것" }
+                    { 
+                        term: "바삭하다", 
+                        def: "수분이 없어 가볍게 부서지는 소리가 나다", 
+                        termEng: "crispy/crunchy", 
+                        defEng: "Making a light, breaking sound due to lack of moisture." 
+                    },
+                    { 
+                        term: "아삭하다", 
+                        def: "채소나 과일 따위가 연하고 맑게 베어지는 소리가 나다", 
+                        termEng: "crunchy/crisp", 
+                        defEng: "The sound of vegetables or fruits being bitten into softly and clearly." 
+                    },
+                    { 
+                        term: "논리적 비약", 
+                        def: "논리의 전개 과정에서 단계나 근거를 훌쩍 건너뛰는 것", 
+                        termEng: "logical leap", 
+                        defEng: "Skipping over steps or grounds in the process of developing a logic." 
+                    }
                 ]
             },
             {
@@ -2018,8 +2164,18 @@
                 questionKor: "견과류를 제외하면 탄수화물과 지방이 5:5로 결합된 자연 식품은 거의 없다고 하는데, 현대 식품 산업이 극강의 맛을 내기 위해 이 두 가지를 인위적으로 섞는 것을 상업적 '반칙'이라고 생각해요?",
                 questionEng: "Except for nuts, it is said that there are almost no natural foods where carbohydrates and fats are combined 5:5. Do you think it is a commercial 'foul play' for the modern food industry to artificially mix these two to produce extreme flavors?",
                 vocab: [
-                    { term: "탄수화물", def: "탄(炭 숯/탄소) + 수(水 물) + 화(化 되다) + 물(物 물건) -> 쌀이나 밀가루처럼 에너지를 주는 영양소" },
-                    { term: "지방", def: "지(脂 기름) + 방(肪 기름) -> 기름기가 있는 영양소로 에너지를 저장함" }
+                    { 
+                        term: "탄수화물", 
+                        def: "탄(炭 숯/탄소) + 수(水 물) + 화(化 되다) + 물(物 물건) -> 쌀이나 밀가루처럼 에너지를 주는 영양소", 
+                        termEng: "carbohydrate", 
+                        defEng: "Nutrients that provide energy, like rice or flour." 
+                    },
+                    { 
+                        term: "지방", 
+                        def: "지(脂 기름) + 방(肪 기름) -> 기름기가 있는 영양소로 에너지를 저장함", 
+                        termEng: "fat", 
+                        defEng: "Oily nutrients that store energy." 
+                    }
                 ]
             },
             {
@@ -2027,11 +2183,36 @@
                 questionKor: "현대 식품 산업은 맛을 매력적으로 만들기 위해 뇌의 보상 가중치(도파민과 엔돌핀)를 극대화하는 레시피를 연구해요. 여러분은 식품 산업이 이처럼 인간의 본능을 치밀하게 이용하는 현상이 ‘미식의 발전’이라고 생각해요? 아니면 본능을 ‘악용’하는 것이라고 생각해요?",
                 questionEng: "The modern food industry researches recipes that maximize the brain's reward weighting (dopamine and endorphins) to make flavors attractive. Do you view the phenomenon of the food industry meticulously using human instincts like this as an 'advancement of gastronomy', or an 'abuse' of instincts?",
                 vocab: [
-                    { term: "보상 가중치", def: "어떤 행동(예: 식사)에 대해 뇌가 부여하는 쾌감의 가치나 중요도" },
-                    { term: "도파민", def: "뇌에서 쾌감과 즐거움을 느끼게 하는 신경 전달 물질" },
-                    { term: "엔돌핀", def: "통증을 줄이고 기분을 좋게 하는 신경 호르몬" },
-                    { term: "미식", def: "좋은 음식을 찾아 먹는 일, 또는 그런 문화" },
-                    { term: "악용하다", def: "악(惡 나쁘다) + 용(用 쓰다) -> 나쁜 목적으로 마음대로 사용하다" }
+                    { 
+                        term: "보상 가중치", 
+                        def: "어떤 행동(예: 식사)에 대해 뇌가 부여하는 쾌감의 가치나 중요도", 
+                        termEng: "reward weighting", 
+                        defEng: "The value or importance of pleasure assigned by the brain to a certain action (e.g., eating)." 
+                    },
+                    { 
+                        term: "도파민", 
+                        def: "뇌에서 쾌감과 즐거움을 느끼게 하는 신경 전달 물질", 
+                        termEng: "dopamine", 
+                        defEng: "A neurotransmitter in the brain that makes one feel pleasure and joy." 
+                    },
+                    { 
+                        term: "엔돌핀", 
+                        def: "통증을 줄이고 기분을 좋게 하는 신경 호르몬", 
+                        termEng: "endorphin", 
+                        defEng: "A neurohormone that reduces pain and improves mood." 
+                    },
+                    { 
+                        term: "미식", 
+                        def: "좋은 음식을 찾아 먹는 일, 또는 그런 문화", 
+                        termEng: "gastronomy/gourmet", 
+                        defEng: "The act of seeking out and eating good food, or such culture." 
+                    },
+                    { 
+                        term: "악용하다", 
+                        def: "악(惡 나쁘다) + 용(用 쓰다) -> 나쁜 목적으로 마음대로 사용하다", 
+                        termEng: "to abuse/misuse", 
+                        defEng: "To use something arbitrarily for a bad purpose." 
+                    }
                 ]
             },
             {
@@ -2039,9 +2220,24 @@
                 questionKor: "탄수화물과 지방의 조합(단맛+기름맛)은 뇌에 강력한 보상을 준다고 했는데, 인간의 본능을 자극하도록 설계된 이러한 ‘초가공식품’의 유혹을 개인의 의지와 자제력만으로 조절하는 것이 현대 사회에서 가능하다고 생각해요?",
                 questionEng: "The combination of carbohydrates and fats (sweet + oily) provides a powerful reward to the brain. Do you think it is possible in modern society to control the temptation of these 'ultra-processed foods' designed to stimulate human instincts solely with personal will and self-restraint?",
                 vocab: [
-                    { term: "탄수화물", def: "탄(炭 숯/탄소) + 수(水 물) + 화(化 되다) + 물(物 물건) -> 쌀이나 밀가루처럼 에너지를 주는 영양소" },
-                    { term: "지방", def: "지(脂 기름) + 방(肪 기름) -> 기름기가 있는 영양소로 에너지를 저장함" },
-                    { term: "초가공식품", def: "보존성이나 강한 맛을 위해 공장에서 여러 단계의 인위적 가공을 거친 식품" }
+                    { 
+                        term: "탄수화물", 
+                        def: "탄(炭 숯/탄소) + 수(水 물) + 화(化 되다) + 물(物 물건) -> 쌀이나 밀가루처럼 에너지를 주는 영양소", 
+                        termEng: "carbohydrate", 
+                        defEng: "Nutrients that provide energy, like rice or flour." 
+                    },
+                    { 
+                        term: "지방", 
+                        def: "지(脂 기름) + 방(肪 기름) -> 기름기가 있는 영양소로 에너지를 저장함", 
+                        termEng: "fat", 
+                        defEng: "Oily nutrients that store energy." 
+                    },
+                    { 
+                        term: "초가공식품", 
+                        def: "보존성이나 강한 맛을 위해 공장에서 여러 단계의 인위적 가공을 거친 식품", 
+                        termEng: "ultra-processed food", 
+                        defEng: "Food that has undergone multiple stages of artificial processing in a factory for preservation or strong flavor." 
+                    }
                 ]
             },
             {
@@ -2049,10 +2245,30 @@
                 questionKor: "이 동영상에서는 두쫀쿠가 인기 있는 이유를 물리 법칙(점탄성, 좌굴 현상, 고분자 네트워크)으로 설명했는데, 다른 음식에도 이 설명 방식을 적용할 수 있을까요? 다른 사례를 찾아 보세요.",
                 questionEng: "In this video, the reason for the popularity of the Dubai chewy cookie is explained using laws of physics (viscoelasticity, buckling phenomenon, polymer network). Can this scientific explanation method be applied to other foods? Try to find other examples.",
                 vocab: [
-                    { term: "물리 법칙", def: "자연계에서 일어나는 물리적 현상의 보편적인 법칙" },
-                    { term: "점탄성", def: "점(粘 끈끈하다) + 탄(彈 튕기다) + 성(性 성질) -> 끈적거리는 성질과 튕기는 성질을 동시에 가진 것" },
-                    { term: "좌굴 현상", def: "좌(挫 꺾이다) + 굴(屈 굽다) -> 긴 기둥이 힘을 받아 갑자기 휘거나 꺾이는 현상" },
-                    { term: "고분자 네트워크", def: "분자들이 그물처럼 얽혀 있는 복잡한 화학 구조" }
+                    { 
+                        term: "물리 법칙", 
+                        def: "자연계에서 일어나는 물리적 현상의 보편적인 법칙", 
+                        termEng: "laws of physics", 
+                        defEng: "Universal laws of physical phenomena occurring in the natural world." 
+                    },
+                    { 
+                        term: "점탄성", 
+                        def: "점(粘 끈끈하다) + 탄(彈 튕기다) + 성(性 성질) -> 끈적거리는 성질과 튕기는 성질을 동시에 가진 것", 
+                        termEng: "viscoelasticity", 
+                        defEng: "Having both sticky (viscous) and bouncing (elastic) properties." 
+                    },
+                    { 
+                        term: "좌굴 현상", 
+                        def: "좌(挫 꺾이다) + 굴(屈 굽다) -> 긴 기둥이 힘을 받아 갑자기 휘거나 꺾이는 현상", 
+                        termEng: "buckling phenomenon", 
+                        defEng: "A phenomenon where a long column suddenly bends or breaks under force." 
+                    },
+                    { 
+                        term: "고분자 네트워크", 
+                        def: "분자들이 그물처럼 얽혀 있는 복잡한 화학 구조", 
+                        termEng: "polymer network", 
+                        defEng: "A complex chemical structure where molecules are entangled like a net." 
+                    }
                 ]
             },
             {
@@ -2060,16 +2276,43 @@
                 questionKor: "질감과 같은 물리적인 감각은 화학적인 맛(단맛, 신맛, 쓴맛, 짠맛)에 어떻게 영향을 줄까요? 예를 들어 -10℃ 이하에서는 매우 단단하게 언 아이스크림, -5℃에서 언 아이스크림, 녹은 아이스크림처럼 점성이 달라진다면 화학적인 맛이 달라질까요? 젤라토와 소프트아이스크림처럼 탄성이 다를 때 화학적인 맛의 인식은 어떻게 달라질까요?",
                 questionEng: "How do physical sensations like texture affect chemical tastes (sweetness, sourness, bitterness, saltiness)? For example, if the viscosity changes like hard frozen ice cream below -10℃, ice cream frozen at -5℃, and melted ice cream, will the chemical taste change? How does the perception of chemical taste change when elasticity differs, like between gelato and soft serve ice cream?",
                 vocab: [
-                    { term: "질감", def: "물체의 겉면을 만졌을 때 느껴지는 바탕의 성질이나 느낌" },
-                    { term: "물리적인 감각", def: "씹는 소리, 질감, 온도, 형태 등 물리적 자극을 통해 느끼는 감각" },
-                    { term: "화학적인 맛", def: "단맛, 신맛 등 혀의 미뢰가 화학 물질을 감지하여 느끼는 맛" },
-                    { term: "점성", def: "액체가 흐를 때 끈끈하게 저항하는 성질" },
-                    { term: "탄성", def: "외부의 힘에 의해 변형된 물체가 튕기듯 원래의 모양으로 되돌아가려는 성질" }
+                    { 
+                        term: "질감", 
+                        def: "물체의 겉면을 만졌을 때 느껴지는 바탕의 성질이나 느낌", 
+                        termEng: "texture", 
+                        defEng: "The nature or feeling of the surface of an object when touched." 
+                    },
+                    { 
+                        term: "물리적인 감각", 
+                        def: "씹는 소리, 질감, 온도, 형태 등 물리적 자극을 통해 느끼는 감각", 
+                        termEng: "physical sensation", 
+                        defEng: "Sensation felt through physical stimuli such as chewing sound, texture, temperature, and shape." 
+                    },
+                    { 
+                        term: "화학적인 맛", 
+                        def: "단맛, 신맛 등 혀의 미뢰가 화학 물질을 감지하여 느끼는 맛", 
+                        termEng: "chemical taste", 
+                        defEng: "Taste perceived by the tongue's taste buds detecting chemical substances, such as sweetness and sourness." 
+                    },
+                    { 
+                        term: "점성", 
+                        def: "액체가 흐를 때 끈끈하게 저항하는 성질", 
+                        termEng: "viscosity", 
+                        defEng: "The property of a liquid resisting stickily when it flows." 
+                    },
+                    { 
+                        term: "탄성", 
+                        def: "외부의 힘에 의해 변형된 물체가 튕기듯 원래의 모양으로 되돌아가려는 성질", 
+                        termEng: "elasticity", 
+                        defEng: "The property of an object deformed by external force trying to bounce back to its original shape." 
+                    }
                 ]
             }
         ];
 
-        const ANSWER_CHOICES = ['악용하다', '쫀득하다', '말캉말캉', '바삭하다', '식감', '다감각적', '보상 가중치', '점성', '탄성', '물리학적', '뒤틀다', '변형'];
+        // ==========================================
+        // END OF DATA ARRAYS
+        // ==========================================
 
         // --- Icons ---
         const HomeIcon = ({className}) => (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square" strokeLinejoin="miter" className={className}><rect x="3" y="3" width="18" height="18" rx="0" ry="0" /><path d="M3 9h18" /><path d="M9 21V9" /></svg>);
@@ -2162,15 +2405,16 @@
             return (
                 <div className="animate-fade-in max-w-5xl mx-auto w-full px-6 lg:px-0 pt-[3.75rem] pb-8 flex flex-col items-center h-full justify-center">
                     <div className="flex flex-col items-center justify-center text-center w-full mb-16">
-                        <div className="flex items-center gap-3 mb-6"> 
+                        <div className="flex flex-wrap justify-center items-center gap-2 mb-6"> 
                             <span className="px-3 py-1 bg-gray-900 text-white text-[10px] font-sans font-bold tracking-widest uppercase">과학</span>
+                            <span className="px-3 py-1 bg-gray-900 text-white text-[10px] font-sans font-bold tracking-widest uppercase">음식</span>
                             <div className="flex items-center border border-gray-900 px-3 py-1 text-[10px] font-sans tracking-widest uppercase text-gray-900">
                                 <span className="font-bold">{userLevel}</span>
                                 <span className="mx-2 w-px h-2.5 bg-gray-300"></span>
                                 <span className="font-medium">{levelInfo.title}</span>
                             </div>
                         </div>
-                        <h1 className="font-serif text-3xl md:text-5xl lg:text-6xl text-black leading-tight mb-4 font-bold">
+                        <h1 className="font-serif text-3xl md:text-5xl lg:text-7xl text-black leading-tight mb-4 font-bold">
                             두바이 쫀득 쿠키가 맛있는 <br /> 과학적인 이유
                         </h1>
                         <p className="font-serif text-gray-500 text-sm md:text-base italic mb-8 max-w-2xl leading-relaxed">
@@ -2179,7 +2423,7 @@
                         
                         <div 
                             onClick={() => setActiveTab('video')}
-                            className="group relative w-full max-w-lg aspect-video cursor-pointer overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 bg-black"
+                            className="group relative w-full max-w-xl aspect-video cursor-pointer overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 bg-black"
                         >
                             <img 
                                 src={`https://img.youtube.com/vi/${VIDEO_CONFIG.YOUTUBE_VIDEO_ID}/maxresdefault.jpg`} 
@@ -2535,14 +2779,14 @@
                                                             )}
 
                                                             <div className="flex items-center justify-between mt-4 gap-4">
-                                                                <BubbleTranslateButton onClick={() => toggleTranslation(line.id)} isShowing={translations[line.id]} />
+                                                                    <BubbleTranslateButton onClick={() => toggleTranslation(line.id)} isShowing={translations[line.id]} />
 
-                                                                <button 
-                                                                    onClick={(e) => { e.stopPropagation(); handleLineClick(line.time[0]); }}
-                                                                    className="w-4 h-4 rounded-full border border-gray-300 flex items-center justify-center hover:bg-black hover:border-black hover:text-white transition-all text-gray-400"
-                                                                >
-                                                                    <PlayIconSolid className="w-2 h-2 ml-0.5" />
-                                                                </button>
+                                                                    <button 
+                                                                        onClick={(e) => { e.stopPropagation(); handleLineClick(line.time[0]); }}
+                                                                        className="w-4 h-4 rounded-full border border-gray-300 flex items-center justify-center hover:bg-black hover:border-black hover:text-white transition-all text-gray-400"
+                                                                    >
+                                                                        <PlayIconSolid className="w-2 h-2 ml-0.5" />
+                                                                    </button>
                                                             </div>
 
                                                             <TailSVG />
@@ -2555,32 +2799,32 @@
                                 ) : (
                                     <div className="p-8 space-y-8">
                                     {VIDEO_SCRIPT_DATA.map(line => {
-                                        const isActive = activeLine === line.id;
-                                        const justifyClass = 'justify-start';
-                                        const textAlignClass = 'text-left';
-                                        
-                                        // Typography for Split View
-                                        const speakerClass = "text-xs sm:text-sm md:text-base lg:text-base xl:text-base";
-                                        const koreanClass = "text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl";
-                                        const englishClass = "text-xs sm:text-sm md:text-sm lg:text-sm xl:text-sm";
+                                            const isActive = activeLine === line.id;
+                                            const justifyClass = 'justify-start';
+                                            const textAlignClass = 'text-left';
+                                            
+                                            // Typography for Split View
+                                            const speakerClass = "text-xs sm:text-sm md:text-base lg:text-base xl:text-base";
+                                            const koreanClass = "text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl";
+                                            const englishClass = "text-xs sm:text-sm md:text-sm lg:text-sm xl:text-sm";
 
-                                        return (
-                                            <div key={line.id} ref={el => scriptRefs.current[line.id] = el} className={`transition-all duration-500 ${isActive ? 'opacity-100' : 'opacity-70 hover:opacity-90'}`}>
-                                                <div className={`flex items-center gap-2 mb-2 ${justifyClass}`}>
-                                                    <span className={`${speakerClass} font-bold font-ui uppercase tracking-widest text-gray-400`}>{line.speaker}</span>
-                                                    {isActive && <span className="w-1.5 h-1.5 bg-black rounded-full animate-pulse"></span>}
-                                                </div>
-                                                <div onClick={() => handleLineClick(line.time[0])} className="cursor-pointer group">
-                                                    <p className={`${koreanClass} font-serif leading-relaxed ${textAlignClass} ${isActive ? 'text-black' : 'text-[#1a1a1a]'}`}>{renderTextWithVocab(line.kor)}</p>
-                                                    {translations[line.id] ? (
-                                                        <p className={`${englishClass} font-serif text-gray-500 mt-2 animate-fade-in pl-3 border-l border-gray-200 ${textAlignClass}`}>{line.eng}</p>
-                                                    ) : null}
-                                                    <div className={`flex mt-2 opacity-0 group-hover:opacity-100 transition-opacity justify-start`}>
-                                                        <VideoTranslateButton onClick={() => toggleTranslation(line.id)} isShowing={translations[line.id]} />
+                                            return (
+                                                <div key={line.id} ref={el => scriptRefs.current[line.id] = el} className={`transition-all duration-500 ${isActive ? 'opacity-100' : 'opacity-70 hover:opacity-90'}`}>
+                                                        <div className={`flex items-center gap-2 mb-2 ${justifyClass}`}>
+                                                            <span className={`${speakerClass} font-bold font-ui uppercase tracking-widest text-gray-400`}>{line.speaker}</span>
+                                                            {isActive && <span className="w-1.5 h-1.5 bg-black rounded-full animate-pulse"></span>}
+                                                        </div>
+                                                        <div onClick={() => handleLineClick(line.time[0])} className="cursor-pointer group">
+                                                            <p className={`${koreanClass} font-serif leading-relaxed ${textAlignClass} ${isActive ? 'text-black' : 'text-[#1a1a1a]'}`}>{renderTextWithVocab(line.kor)}</p>
+                                                            {translations[line.id] ? (
+                                                                <p className={`${englishClass} font-serif text-gray-500 mt-2 animate-fade-in pl-3 border-l border-gray-200 ${textAlignClass}`}>{line.eng}</p>
+                                                            ) : null}
+                                                            <div className={`flex mt-2 opacity-0 group-hover:opacity-100 transition-opacity justify-start`}>
+                                                                <VideoTranslateButton onClick={() => toggleTranslation(line.id)} isShowing={translations[line.id]} />
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </div>
-                                        );
+                                            );
                                     })}
                                     <div className="h-32"></div>
                                     </div>
@@ -2697,10 +2941,25 @@
             const [text, setText] = useState(''); const [showTranslation, setShowTranslation] = useState(false);
             return (
                 <div className="mb-16">
-                    <div className="flex items-center gap-4 mb-6"><span className="text-4xl font-serif font-bold text-gray-200">0{item.id}</span><h3 className="text-xl font-serif font-bold text-gray-900 leading-normal">{item.questionKor}</h3></div>
+                    <div className="flex items-center gap-4 mb-6">
+                        <span className="text-4xl font-serif font-bold text-gray-200">{String(item.id).padStart(2, '0')}</span>
+                        <h3 className="text-xl font-serif font-bold text-gray-900 leading-normal">{item.questionKor}</h3>
+                    </div>
                     <div className="pl-0 md:pl-14">
                         <div className="flex gap-2 mb-4"><TranslateButton onClick={() => setShowTranslation(!showTranslation)} isShowing={showTranslation} />{showTranslation && (<p className="text-sm font-sans text-gray-500 animate-fade-in">{item.questionEng}</p>)}</div>
-                        <div className="bg-gray-50 p-5 mb-6 border-l-2 border-black"><span className="text-xs font-bold font-sans text-gray-400 uppercase mb-2 block">핵심 어휘</span><div className="space-y-1">{item.vocab.map((v, i) => (<p key={i} className="text-sm font-serif text-gray-700"><span className="font-bold text-black mr-2">{v.term}</span>{v.def}</p>))}</div></div>
+                        <div className="bg-gray-50 p-5 mb-6 border-l-2 border-black">
+                            <span className="text-xs font-bold font-sans text-gray-400 uppercase mb-2 block">핵심 어휘</span>
+                            <div className="space-y-3">
+                                {item.vocab.map((v, i) => (
+                                    <div key={i}>
+                                        <p className="text-sm font-serif text-gray-700"><span className="font-bold text-black mr-2">{v.term}</span>{v.def}</p>
+                                        {showTranslation && v.defEng && (
+                                            <p className="text-xs font-sans text-gray-500 mt-1 animate-fade-in"><span className="font-bold mr-2 italic">{v.termEng}</span>{v.defEng}</p>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
                         <textarea value={text} onChange={(e) => setText(e.target.value)} placeholder="여기에 생각을 적어보세요..." className="w-full p-4 border border-gray-300 font-serif text-base text-gray-900 focus:border-black focus:ring-0 outline-none min-h-[150px] bg-white resize-y mb-3 transition-colors placeholder:text-gray-300"></textarea>
                         <div className="flex justify-end"><button disabled={!text.trim()} className={`px-6 py-2 text-xs font-bold font-sans uppercase tracking-widest border transition-colors ${!text.trim() ? 'border-gray-200 text-gray-300 cursor-not-allowed' : 'border-black bg-black text-white hover:bg-white hover:text-black'}`}>AI 피드백 받기</button></div>
                     </div>
@@ -2710,13 +2969,13 @@
         const DiscussView = ({ updateProgress }) => (
             <div className="max-w-3xl mx-auto w-full px-6 py-12 animate-fade-in">
                 <div className="mb-6 pb-6 text-center"><h2 className="text-[32px] md:text-[36px] font-serif font-bold text-gray-900 mb-2">생각해 보기</h2><p className="text-sm font-sans text-gray-500">학습 자료에 대해 심층적으로 생각해 보세요.</p></div>
-                <div className="bg-gray-50 border border-gray-200 p-4 mb-10 flex items-start gap-3"><div className="shrink-0 mt-0.5"><SparklesIcon className="w-4 h-4 text-gray-400" /></div><p className="text-xs font-sans text-gray-600 leading-relaxed">AI 피드백은 현재 Gemini 웹에서만 가능합니다. <a href="https://gemini.google.com/share/b18311794c89" target="_blank" rel="noreferrer" className="underline decoration-gray-400 underline-offset-2 hover:text-black inline-flex items-center gap-1">Gemini에서 열기 <ExternalLinkIcon className="w-3 h-3"/></a></p></div>
+                <div className="bg-gray-50 border border-gray-200 p-4 mb-10 flex items-start gap-3"><div className="shrink-0 mt-0.5"><SparklesIcon className="w-4 h-4 text-gray-400" /></div><p className="text-xs font-sans text-gray-600 leading-relaxed">AI 피드백은 현재 Gemini 웹에서만 가능합니다. <a href="https://gemini.google.com/share/95da1585650c" target="_blank" rel="noreferrer" className="underline decoration-gray-400 underline-offset-2 hover:text-black inline-flex items-center gap-1">Gemini에서 열기 <ExternalLinkIcon className="w-3 h-3"/></a></p></div>
                 {DISCUSS_DATA.map((item) => (<DiscussQuestionItem key={item.id} item={item} />))}
             </div>
         );
 
         const App = () => {
-            const [activeTab, setActiveTab] = useState('home'); const [userLevel] = useState("B2+"); const [showVocab, setShowVocab] = useState(false); const [progress, setProgress] = useState({ learn: false, vocab: false, quiz: 0, discuss: false });
+            const [activeTab, setActiveTab] = useState('home'); const [userLevel] = useState("C1"); const [showVocab, setShowVocab] = useState(false); const [progress, setProgress] = useState({ learn: false, vocab: false, quiz: 0, discuss: false });
             const [isHeaderExpanded, setIsHeaderExpanded] = useState(true); // Default to open
 
             // Add this useEffect to manage header state based on tab
