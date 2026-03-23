@@ -1,1 +1,899 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenKoreanLearningLab - KOSPI 5000</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'journal-black': '#1a1a1a',
+                    },
+                    spacing: {
+                        '15': '3.75rem',
+                    },
+                    fontFamily: {
+                        'eng-header': ['Montserrat', 'sans-serif'],
+                        'sans-kr': ['"Noto Sans KR"', 'sans-serif'],
+                        'serif-kr': ['"Noto Serif KR"', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: #ffffff; color: #1a1a1a; }
+        .font-sans { font-family: 'Noto Sans KR', sans-serif; }
+        .font-serif { font-family: 'Noto Serif KR', serif; }
+        ::-webkit-scrollbar { width: 4px; height: 4px; } 
+        ::-webkit-scrollbar-track { background: transparent; } 
+        ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 0px; } 
+        ::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } } 
+        .animate-fade-in { animation: fadeIn 0.4s ease-out forwards; }
+        input[type=range] { -webkit-appearance: none; background: transparent; } 
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%; background: #000; cursor: pointer; margin-top: -7px; border: 2px solid white; box-shadow: 0 0 0 1px #e5e7eb; } 
+        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 2px; cursor: pointer; background: #e5e7eb; }
+        .highlight-yellow::selection { background-color: rgba(253, 224, 71, 0.5); color: inherit; }
+        .highlight-red::selection { background-color: rgba(252, 165, 165, 0.5); color: inherit; }
+        .highlight-green::selection { background-color: rgba(134, 239, 172, 0.5); color: inherit; }
+        .marker-yellow { background: linear-gradient(to top, rgba(253, 224, 71, 0.6) 50%, transparent 50%); box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+        .marker-red { background: linear-gradient(to top, rgba(252, 165, 165, 0.6) 50%, transparent 50%); box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+        .marker-green { background: linear-gradient(to top, rgba(134, 239, 172, 0.6) 50%, transparent 50%); box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+        .cursor-eraser { cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="1.5"><path d="M20 20H7L3 16C2 15 2 13 3 12L13 2L22 11L20 20Z"/></svg>') 0 24, auto; }
+        ::selection { background-color: #f3f4f6; color: #000; }
+        
+        /* 인쇄 전용 스타일 설정 */
+        @media print {
+            @page { margin: 1.5cm; }
+            body, html, #root { height: auto !important; overflow: visible !important; background-color: #ffffff !important; color: #000000 !important; }
+            .h-screen, .min-h-screen, .h-full, .flex-1, .overflow-hidden, .overflow-y-auto, .overflow-x-hidden {
+                height: auto !important;
+                min-height: auto !important;
+                overflow: visible !important;
+            }
+            ::-webkit-scrollbar { display: none !important; }
+            .sticky, .fixed { position: static !important; }
+            .break-inside-avoid { page-break-inside: avoid; }
+            .animate-fade-in { animation: none !important; opacity: 1 !important; transform: none !important; }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+        const { useState, useEffect, useRef, useMemo, useCallback } = React;
+        const { createPortal } = ReactDOM;
 
+        // --- Data & Config ---
+        const CONFIG = { GEMINI_API_URL: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent', API_RETRY_DELAYS: [1000, 2000, 4000, 8000, 16000] };
+        
+        const LEVEL_DEFINITIONS = { 
+            "A1": { title: "Novice", desc: "Basic everyday expressions." }, "A1+": { title: "Pre-Beginner", desc: "Can handle slightly more than A1." },
+            "A2": { title: "Beginner", desc: "Frequently used sentences." }, "A2+": { title: "Upper Beginner", desc: "Can speak a bit more smoothly." }, 
+            "B1": { title: "Pre-Intermediate", desc: "Standard speech main points." }, "B1+": { title: "Lower Intermediate", desc: "Stronger B1. More comfortable carrying conversations." },
+            "B2": { title: "Intermediate", desc: "Complex text main ideas." }, "B2+": { title: "Upper Intermediate", desc: "Near C1. Can argue a point logically." },
+            "C1": { title: "Advanced", desc: "Long, demanding texts." }, "C1+": { title: "Upper Advanced", desc: "Very strong C1, approaching native-like flexibility." },
+            "C2": { title: "Proficient", desc: "Can understand virtually everything heard or read." }
+        };
+
+        // 경제/사회 테마의 새로운 읽기 자료 데이터
+        const READING_DATA = [
+            { id: 1, title: "[기획] 코스피 5000,\n서민 경제와 무관한 숫자일까", subtitle: "뉴시안 · 이태영 기자", source: "https://www.newsian.co.kr/news/articleView.html?idxno=86040", level: "C1+", content: [
+                { text: "“주가는 최고라는데 월세는 또 올랐다. 코스피 5000이 내 삶에 무슨 의미가 있나.”", trans: "", isQuote: true },
+                { text: "", trans: "", isBlank: true },
+                { text: "코스피가 5000선을 넘긴 날, 서울의 한 직장인 커뮤니티에 올라온 글이다.", trans: "" },
+                { text: "", trans: "", isBlank: true },
+                { text: "같은 날, 온라인 증권 커뮤니티에는 수익 인증 글이 줄을 이었다. 같은 숫자를 두고 전혀 다른 현실이 교차한 것이다. 이 장면은 코스피 5000을 둘러싼 논쟁의 출발점이 된다.", trans: "" },
+                { text: "", trans: "", isBlank: true },
+                { text: "코스피 5000을 바라보는 시선은 극명하게 갈린다. 한쪽에서는 “나라가 잘 나가고 있다”는 평가가 나온다. 반대편에서는 “주가 상승은 자산을 가진 사람들의 이야기일 뿐”이라는 냉소가 이어진다. 이 질문은 단순한 체감도의 문제가 아니다. 증시와 실물, 자산과 노동이 어떻게 연결돼 있는가라는 한국 경제 구조의 본질을 묻는 문제로 분석된다.", trans: "" },
+                { text: "", trans: "", isBlank: true },
+                { text: "비판론자들은 증시 상승이 자산 보유 계층에 편중돼 있다고 지적한다. 주가가 오를수록 자산 격차는 확대되고, 임금과 물가는 제자리에 머문다는 주장이다.", trans: "" },
+                { text: "", trans: "", isBlank: true },
+                { text: "한 사회경제 전문가는 “주가가 오르는 동안 월세와 생활비는 오히려 더 빨리 뛰었다”며 “증시 지수는 서민의 삶을 대표하는 지표가 아니다”라고 말했다. 실제로 과거 증시 호황기에도 체감 경기와의 괴리는 반복돼 왔다. 지수는 올랐지만, 고용의 질은 개선되지 않았고, 실질임금 상승률은 물가를 따라가지 못했다는 지적도 적지 않았다.", trans: "" },
+                { text: "", trans: "", isBlank: true },
+                { text: "이런 경험은 ‘코스피 상승=내 삶과 무관’이라는 인식을 강화했다. 특히 주식 투자에 적극적으로 참여하지 못한 계층일수록 이 괴리는 더 크게 느껴진다는 점이 강조됐다.", trans: "" },
+                { text: "", trans: "", isBlank: true },
+                { text: "반론도 존재한다. 증시는 서민 경제와 직접 연결되기보다는 고용·투자·기업 활동이라는 간접 경로를 통해 영향을 미친다는 설명이다.", trans: "" },
+                { text: "", trans: "", isBlank: true },
+                { text: "한 거시경제 전문가는 “주가 상승은 기업의 자본 조달 비용을 낮추고 투자 여력을 키운다”며 “이 과정이 설비 투자와 고용 확대로 이어질 경우, 효과는 결국 노동시장으로 흘러간다”고 말했다. 증시는 실물 경제의 ‘선행 지표’이지 ‘생활 지표’는 아니라는 것이다.", trans: "" },
+                { text: "", trans: "", isBlank: true },
+                { text: "문제는 이 연결 고리가 과거보다 약해졌다는 점이다. 기업 이익과 주가가 상승해도 투자와 고용으로 이어지지 않고, 내부 유보나 주주 환원에 머무는 구조가 고착화됐다는 지적이다.", trans: "" },
+                { text: "", trans: "", isBlank: true },
+                { text: "전문가들 사이에서는 “코스피 5000이 서민 경제와 무관하다고 단정하기도, 직접적이라고 말하기도 어렵다”는 중간 결론이 우세하다. 증시 성과가 임금·고용·복지로 이어지지 못하는 구조적 단절이 핵심으로 지적됐다. 특히 고용의 질, 비정규직 비중, 자영업 구조 등 한국 경제의 취약 지점은 주가 상승의 효과를 흡수하지 못하고 있다. 이 때문에 지수는 오르는데 체감 경기는 개선되지 않는 ‘비대칭 회복’이 반복된다.", trans: "" },
+                { text: "", trans: "", isBlank: true },
+                { text: "개인 투자자의 비중이 커진 점도 이번 코스피 5000 국면의 특징이다. 주식이 더 이상 일부 계층의 전유물이 아닌 상황에서, 개인의 투자 방식은 시장 안정성뿐 아니라 가계 재무 구조 전반에 영향을 미친다.", trans: "" },
+                { text: "", trans: "", isBlank: true },
+                { text: "한 금융 안정 전문가는 “차입을 동반한 투자가 늘어날수록 증시 조정은 개인 손실을 넘어 사회적 리스크로 확산될 수 있다”며 “지수 상승기일수록 개인 투자자의 위험 관리가 중요해진다”고 경고했다.", trans: "" },
+                { text: "", trans: "", isBlank: true },
+                { text: "특히 \"자산 가격의 잔치로 남길 것인가, 아니면 투자·고용·임금으로 이어지는 선순환의 출발점으로 만들 것\"인가가 숙제로 남아 있다.", trans: "" },
+                { text: "", trans: "", isBlank: true },
+                { text: "답은 시장에만 있지 않다. 정책의 방향, 기업의 투자 선택, 그리고 개인의 판단이 맞물릴 때 비로소 지수는 숫자를 넘어 삶의 지표가 된다.", trans: "" },
+                { text: "", trans: "", isBlank: true },
+                { text: "코스피 5000은 도착점이 아니라, 한국 경제가 어디로 가고 있는지를 되묻는 이정표로 급부상하고 있다.", trans: "" }
+            ]},
+            { id: 2, title: "[칼럼] 코스피 5000 확실히 굳히려면", subtitle: "조선일보 · 박병원 (퇴계학연구원 이사장 / 前 청와대 경제수석)", source: "https://www.chosun.com/opinion/chosun_column/2026/02/19/BVEVGVW7QBEGZN6MHV2QES3QMU/", level: "C1+", content: [
+                { text: "코스피 5000이라는 꿈같은 목표가 의외로 빨리 달성되었다. 한국 주식의 저평가 원인을 “소액주주가 대주주를 믿을 수가 없어서”라고 보는 배당 확대 독려, 이사의 주주에 대한 충실 의무 등 소액주주의 권한 강화, 자사주 소각 의무화, 그리고 배당소득 분리과세 등 밸류 업 정책이 어느 정도 효과가 있었던 것 같다.", trans: "" },
+                { text: "", trans: "", isBlank: true },
+                { text: "정부는 여세를 몰아 비생산적 부동산 투기를 근절하여 더 많은 돈이 주식시장으로 흐르게 하겠다고 한다. 수요억제책만으로는 실패한다는 경험을 교훈 삼아 임기 초부터 공급확대에 나선 것도 잘하는 일이다. 그러나 공급확대는 생각처럼 쉬운 일이 아니고 시간도 많이 걸린다. 대통령이 직접, 계속 챙겨야 할 것이다.", trans: "" },
+                { text: "", trans: "", isBlank: true },
+                { text: "이번 주가 급등이 돈의 흐름을 바꾸는 것만으로 가능했던 것은 아닐 것이다. AI 붐으로 반도체 수요가 폭증하는 기회를 잡은 SK하이닉스와 삼성전자, 과감한 투자로 휴머노이드 로봇 아틀라스라는 새로운 성장 동력을 선보인 현대자동차, 중국의 추격과 정부의 핍박을 견뎌내고 국제 경쟁력을 유지해 트럼프 대통령의 마스가(MASGA) 정책과 중국 견제 정책이라는 기회를 잡은 조선·방산·원전, 그리고 새로운 가능성을 보여 주고 있는 바이오·제약, 이차전지, 엔터테인먼트 등 투자할 만한 기업이 있었기에 가능했던 것이다.", trans: "" },
+                { text: "", trans: "", isBlank: true },
+                { text: "있는 주식의 주가를 높여도 새로운 부가가치를 만들어내지는 못한다. 소비와 투자의 활성화, 일자리 창출로 이어져 실물 경제의 성장과 선순환이 이루어져야 경제정책은 비로소 성공한다. 아직은 동·서학 개미들이 영끌까지 해서 마련한 돈으로 금융 자산에 투자하고 있을 뿐, 소비에도 실물 투자에도 돈이 흐르지 않는 상황인 것 같다. 국내 주가가 이렇게 올라도 투자자들이 여전히 알파벳·테슬라 주식을 선호하는 것은 그들이 더 과감한 기술 개발, 설비 투자를 하고 있어 장차 더 많은 수익을 창출해 낼 것 같기 때문이다. 실물 투자 없는 주가 상승은 한계가 있다.", trans: "" },
+                { text: "", trans: "", isBlank: true },
+                { text: "기업이 번 돈은 제일 먼저 노동자가, 그다음은 대출을 해준 채권자가 자기 몫을 떼어 간다. 이익이 나면 나라가 먼저 세금을 떼어 가고 주주는 마지막에 배당과 주가 상승으로 이익을 향유한다. 기업의 이익을 늘려 주는 것이 소액주주가 더 많은 배당을 받고 주가가 계속 오르게 하며 대주주가 과감한 실물 투자를 하게 하는 최선의 방안이다. 어쩌면 외국인 투자도 더 끌어들일 수  있을 것이다.", trans: "" },
+                { text: "", trans: "", isBlank: true },
+                { text: "먼저 전기료. 전기가 국가 경쟁력을 좌우한다는 AI 시대에 가정용 전기료는 적게 올리고 기업용을 많이 올린 전 정부의 조치는 악수 중의 악수였다. 이제 에너지 가격이 떨어졌으니 전기료를 내려야 한다. 인하 여력을 기업용에 집중해야 한다. 물가 안정을 원하면 수입을 더 개방하면 된다. 트럼프 대통령도 좋아할 것이다.", trans: "" },
+                { text: "", trans: "", isBlank: true },
+                { text: "다음은 노동 비용. 최저임금의 급격한 인상, 통상임금의 범위 확대, 정년 60세 의무화, 주 52시간 근무제, 노란봉투법, 중대재해처벌법 등 2000년대 들어서 임금 비용을 올리는 일이 끝없이 이어졌다. 이 모든 것을 합치면 기업의 임금 부담이 얼마나 늘어났는지는 분석해 보지도 않는다. 그러고도 또 포괄 임금제 폐지, 65세로 정년 연장 등이 논의되고 있다. 이 모두가 이미 취직한 사람들에게만 이익이고 아직 취직하지 못한 사람들에게는 불리하다. 주주에게도 불이익이다. 노동 개혁? 아마 못 해낼 것이다. 미취업자와 투자자의 이익을 침해하는 일을 그만하기라도 하면 좋겠다.", trans: "" },
+                { text: "", trans: "", isBlank: true },
+                { text: "다음 이자 비용. 재정적자를 최소화해 국채 발행을 줄이면 자본시장 이자율은 안정될 것이고 기업의 경쟁력 강화와 주가 상승에도 도움이 될 것이다. 그리고 법인세. 기업에 배당과 투자, 일자리 창출을 요청하면서 그 재원을 정부가 더 가져가겠다는 건 좀 후안무치한 일 아닌가? 배당소득세 경감과 법인세 인상은 조삼모사(朝三暮四) 같은데 주식 투자자는 원숭이가 아니다.", trans: "" },
+                { text: "", trans: "", isBlank: true },
+                { text: "마지막으로 규제 개혁. 이 돈 한 푼 안 드는 투자 활성화 방안도 모든 정부가 실패했다. 모든 규제의 배후에는 기득권이 도사리고 있고 표를 의식하는 정치권은 규제를 혁파하지 못한다. 대통령도 ‘정치’를 의식하는 한 성공하기 어렵다. 역대 대통령 누구도 성공하지 못한 이유다. 정치를 그만두고 통치를 하는 대통령이라야 규제 혁파에 진심일 수 있다. 여의도와 척을 질 각오로 직접, 매일 챙겨야 겨우 성과를 거둘 수 있을 것이다. 이 정부는 꼭 성공해 주기를 바란다. 대형 유통업체의 영업시간 규제를 풀어주면 우리도 월마트 같은 시총 1조 달러(원이 아니다!) 기업이 등장할지도 모른다.", trans: "" }
+            ]},
+            { id: 3, title: "[칼럼] 코스피 5000 시대의 역설:\n타오르는 코스피 지수와 후진적 금융과세", subtitle: "소셜코리아 · 김은정 (참여연대 협동사무처장)", source: "https://www.socialkorea.org/news/articleView.html?idxno=10030", level: "C2", content: [
+                { text: "코 앞에 다가온 코스피 5000 시대", trans: "", isHeading: true },
+                { text: "한국 자본시장이 전례 없는 역동성의 시대로 진입하고 있다. 코스피 지수는 연일 사상 최고치를 경신하며, 과거 실현 불가능해 보였던 ‘코스피 5000’이라는 수치가 이제는 현실적인 목표로 다가왔다. 개인 투자자들의 예탁금은 급증했고, 그에 비례해 신용융자 잔액도 역대 최고 수준에 도달했다. 2024년 GDP 대비 90.1%였던 주식시장 시가총액 비율은 2026년 1월 15일 기준 171.02%를 기록하며, 한국 증시의 총 시가총액이 4,485.57조 원에 달했다. 이제 주식시장의 덩치는 국가 경제 규모를 넘어섰다.", trans: "" },
+                { text: "", trans: "", isBlank: true },
+                { text: "하지만 자본시장이 뜨겁게 달아오른 것과는 대조적으로, 서민들이 체감하는 민생의 온기는 갈수록 차갑게 식고 있다. 주가지수 상승이 노동의 가치 제고나 실물경제 선순환으로 연결되지 못하고, 오히려 자산에서 비롯된 소득 격차를 심화시키는 결과를 낳고 있기 때문이다. ‘자본시장 활성화’라는 명분 아래 반복된 감세정책은 자본의 과실이 다시 사회로 환원되는 길목을 사실상 차단했다.", trans: "" },
+                { text: "", trans: "", isBlank: true },
+                { text: "과실을 나누는 방식의 왜곡", trans: "", isHeading: true },
+                { text: "주가 상승 자체가 나쁜 일은 아니다. 그동안 한국 증시가 겪어온 ‘코리아 디스카운트’를 해소하고, 기업 가치를 정상적으로 평가받는 과정이라 볼 수도 있다. 그러나 문제는 “그 과실을 어떻게 나눌 것인가”에 있다.", trans: "" },
+                { text: "", trans: "", isBlank: true },
+                { text: "조세는 부의 재분배를 위한 핵심 기제다. 하지만 자본시장 활성화를 명분으로 한 반복적인 감세는 그 기능을 마비시켰다. 수익은 늘어났지만, 분배 경로는 차단된 셈이다. 이러한 왜곡을 바로잡기 위해 여야 합의로 도입된 것이 금융투자소득세(이하 금투세)였다. 금투세는 손실에도 세금을 내야 하는 기존 거래세 구조에서 벗어나, 실제  수익이 발생했을 때만 과세하고 손실은 이월할 수 있는 합리적인 과세 체계였다.", trans: "" },
+                { text: "", trans: "", isBlank: true },
+                { text: "그러나 금투세는 정치적 이해관계와 왜곡된 여론 속에서 시행을 앞두고 끝내 폐지됐다. 금투세가 주가 하락을 유발할 것이라는 공포 마케팅이 시장을 장악했고, 정치권은 표심 앞에서 원칙을 접었다. 정작 금투세 폐지를 가장 반긴 이들은 일반 개인 투자자가 아니라, 비과세 혜택을 유지하고자 했던 거대 사모펀드와 초고액 자산가들이었다.", trans: "" },
+                { text: "", trans: "", isBlank: true },
+                { text: "그 결과 “소득 있는 곳에 과세한다”는 조세의 기본 원칙이 무너졌고, 자산 불평등을 완화할 조세의 기능도 흐려졌다. 종합적인 자산 과세 개편 로드맵은 실종되고, 오히려 대다수 개인 투자자에게는 거래세를 유지하면서 지배주주에게는 배당소득 분리과세 혜택이 돌아가는 기형적인 구조가 고착됐다.", trans: "" },
+                { text: "", trans: "", isBlank: true },
+                { text: "“지금은 아니다”라는 핑계는 유효한가?", trans: "", isHeading: true },
+                { text: "금투세 폐지 당시 정치권의 명분은 분명했다. 당시 이재명 대통령은 당대표 시절 “원칙적으로는 강행이 옳지만, 시장이 어렵고 투자자의 입장을 고려했다”며 폐지에 동의했다. 타당성은 인정하면서도 정치적 부담을 회피한 선택이었다.", trans: "" },
+                { text: "", trans: "", isBlank: true },
+                { text: "일부 의원들은 코스피 지수가 3,000~4,000대에 도달하면 새로운 세제를 받아들일 수 있을 것이라는 ‘여건론’을 제시하기도 했다. 그러나 지금은 그 ‘여건’을 충분히 넘어선 상태다. 코스피는 5,000선을 향해 질주 중이며, 외국인 순매수, 시가총액 확대, 개인 투자 열기 등 모든 지표가 과열 신호를 보내고 있다.", trans: "" },
+                { text: "", trans: "", isBlank: true },
+                { text: "그럼에도 불구하고 금투세 재도입 논의는 다시 살아나지 않았다. 오히려 감세 정책만이 논의 테이블에 오르며, 정책 방향은 여전히 자산 보유자에게 기울어 있다.", trans: "" },
+                { text: "", trans: "", isBlank: true },
+                { text: "금융 과세 후퇴의 실체와 그 폐해", trans: "", isHeading: true },
+                { text: "2025년 세제 개편에서 정부는 주식 양도세 대주주 기준을 기존 10억 원으로 환원하겠다고 밝혔지만, 결국 윤석열 정부 당시 상향된 50억 원 기준을 유지했다. 정부 의지만으로도 시행령을 되돌릴 수 있었지만, 여론을 의식해 포기한 것이다. 그 결과 현재 양도차익 과세 대상은 전체 투자자의 0.004%에 불과한 초고액 자산가에만 해당된다.", trans: "" },
+                { text: "", trans: "", isBlank: true },
+                { text: "배당소득 분리과세 역시 유리한 방향으로 완화됐다. 정부안보다  국회 심의 과정에서 더 낮은 세율이 적용되며, 가장 많은 배당을 받는 ‘회장님’들의 세부담은 오히려 줄었다. 조세 원칙과 형평을 무시한 이러한 감세 정책은, 과거 “기업에 세금을 깎아주면 투자와 고용이 늘어 세수가 증가한다”는 근거 없는 낙수효과 주장처럼 정치권을 지배하고 있다. 이는 매우 위험한 신호다.", trans: "" },
+                { text: "", trans: "", isBlank: true },
+                { text: "노동보다 자본이 우대받는 사회", trans: "", isHeading: true },
+                { text: "자본시장에 대한 감세는 단순히 부자 감세를 넘어서, 우리 사회의 핵심 가치인 ‘노동’의 가치를 훼손하는 문제로 이어진다. 금융자산과 주식, 배당 수익은 극소수 자산가에게 집중되어 있고, 대부분의 가계는 여전히 근로소득과 이전소득에 의존하고 있다.", trans: "" },
+                { text: "", trans: "", isBlank: true },
+                { text: "이러한 구조에서 자본이득에 대한 감세는 상위 자산계층의 소득만을 증폭시키고, 노동자들과의 격차를 더욱 확대시킨다. 임금은 투명하게 과세되지만, 수억 원의 주식 차익과 배당에는 ‘분리과세’와 ‘비과세’라는 특혜가 주어진다.", trans: "" },
+                { text: "", trans: "", isBlank: true },
+                { text: "그 결과, 노동보다 자산에서 돈 버는 것이 더 유리한 사회가 제도적으로 고착화되고 있다. 청년들이 대출을 받아 주식시장에 뛰어드는 것도 탐욕이 아닌, 합리적 대응처럼 여겨지고 있다.", trans: "" },
+                { text: "", trans: "", isBlank: true },
+                { text: "대만의 교훈, 통제되지 않는 자산 과열의 끝", trans: "", isHeading: true },
+                { text: "금투세 반대론자들은 1990년 대만의 주가 폭락 사례를 인용하지만, 그 진짜 교훈은 정반대다. 당시 대만은 주가지수가 2년 반 만에 10배 급등했고, 사회 전반이 ‘노동의 실종’ 상태에 빠져들었다. 이로 인해 대만 정부는 1989년 금투세 도입을 발표하며 통제 장치를 마련했다.", trans: "" },
+                { text: "", trans: "", isBlank: true },
+                { text: "대만 사례가 말해주는 것은 “금투세를 도입하면 안 된다”가 아니라, “통제 장치 없이 자산 가격 급등을 방치하면 사회적 혼란이 발생한다”는 점이다. 한국도 이 교훈을 되새겨야 한다.", trans: "" },
+                { text: "", trans: "", isBlank: true },
+                { text: "불평등 고착화와 재정 리스크", trans: "", isHeading: true },
+                { text: "‘2025년 가계금융복지조사’에 따르면 순자산 지니계수는 0.625로 사상 최고치를 기록했고, 상위 10%가 전체 순자산의 46.1%를 차지했다. 자산 격차가 빠르게 확대되고 있다.", trans: "" },
+                { text: "", trans: "", isBlank: true },
+                { text: "코스피 5000, 누구를 위한 숫자인가", trans: "", isHeading: true },
+                { text: "정부는 “부동산 자금을 자본시장으로 유도하겠다”고 말하지만, 그 방식이 “세금을 덜 부과하겠다”는 것이라면 결국 자산 소득이 노동 소득보다 유리한 구조만 고착시킬 뿐이다.", trans: "" },
+                { text: "", trans: "", isBlank: true },
+                { text: "“코스피 5000 시대, 이제 국회와 정부는 답해야 한다. \n이 숫자가 소수 자산가만을 위한 불평등의 기록이 될 것인가, \n아니면 공정한 과세를 통해 모두 함께 성장하는 희망의 지표가 될 것인가.”", trans: "", isQuote: true },
+                { text: "", trans: "", isBlank: true },
+                { text: "지금 필요한 것은 감세가 아니다. 금융 과세 체계의 정상화다. 금투세 재도입, 대주주 기준 정상화, 배당소득 과세 원칙 회복 없이 ‘코스피 5000’은 그저 숫자일 뿐이다. 숫자만 키운 성장은, 그만큼의 그림자도 남긴다는 사실을 정치권은 명심해야 한다.", trans: "" }
+            ]}
+        ];
+
+        // 어휘 데이터 업데이트 (경제 테마) - 읽기 자료 1, 2, 3별로 분리
+        const VOCAB_DATA = {
+            1: [
+                { term: '코스피', mainDef: '한국종합주가지수. 증권시장에서 형성되는 주가 변동 상황을 종합적으로 나타내는 지표.', translations: { en: { term: 'KOSPI', mainDef: 'Korea Composite Stock Price Index. A comprehensive indicator showing stock price fluctuations.' } }, examples: [{kor: "코스피가 5000선을 넘겼다.", eng: "KOSPI surpassed the 5000 mark."}], variants: ['코스피', '코스피가', '코스피를'] },
+                { term: '선순환', mainDef: '좋은 현상이 끊임없이 맞물려 돌아가는 것.', translations: { en: { term: 'Virtuous Cycle', mainDef: 'A recurring cycle of events, the result of each one being to increase the beneficial effect of the next.' } }, examples: [{kor: "투자 확대로 경제의 선순환이 이루어진다.", eng: "A virtuous cycle in the economy is achieved through expanded investment."}], variants: ['선순환', '선순환으로', '선순환이'] },
+                { term: '고착화', mainDef: '어떤 상황이나 현상이 굳어져 변하지 않는 상태가 됨.', translations: { en: { term: 'Entrenchment / Fixation', mainDef: 'A state where a certain situation or phenomenon becomes fixed and unchanging.' } }, examples: [{kor: "자산 소득이 유리한 구조가 고착화되고 있다.", eng: "A structure favoring asset income is becoming entrenched."}], variants: ['고착화', '고착화됐다', '고착화되고'] }
+            ],
+            2: [
+                { term: '배당', mainDef: '기업이 영업 활동을 통해 얻은 이익의 일부를 주주들에게 나누어 주는 것.', translations: { en: { term: 'Dividend', mainDef: 'Distributing a portion of the profits a company makes to its shareholders.' } }, examples: [{kor: "소액 주주가 더 많은 배당을 받는다.", eng: "Minority shareholders receive more dividends."}], variants: ['배당', '배당을', '배당소득'] },
+                { term: '실물 경제', mainDef: '재화나 서비스가 실제로 생산, 유통, 소비되는 경제 활동.', translations: { en: { term: 'Real Economy', mainDef: 'Economic activities where goods and services are actually produced, distributed, and consumed.' } }, examples: [{kor: "증시 상승이 실물 경제로 이어져야 한다.", eng: "Stock market growth must lead to the real economy."}], variants: ['실물', '실물경제', '실물 경제의'] },
+                { term: '기득권', mainDef: '법률이나 관습 따위로 이미 차지한 권리나 이익.', translations: { en: { term: 'Vested Rights / Vested Interests', mainDef: 'Rights or interests already acquired by law or custom.' } }, examples: [{kor: "규제의 배후에는 기득권이 도사리고 있다.", eng: "Vested interests lurk behind the regulations."}], variants: ['기득권', '기득권이'] }
+            ],
+            3: [
+                { term: '금투세', mainDef: '금융투자소득세의 줄임말. 주식, 채권, 펀드 등 금융투자로 얻은 소득에 매기는 세금.', translations: { en: { term: 'Financial Investment Income Tax', mainDef: 'Tax levied on income earned from financial investments such as stocks, bonds, and funds.' } }, examples: [{kor: "금투세 도입이 끝내 폐지되었다.", eng: "The introduction of FIIT was ultimately abolished."}], variants: ['금투세', '금투세는', '금투세를', '금융투자소득세'] },
+                { term: '과세', mainDef: '세금을 정하여 그것을 내도록 의무를 지움.', translations: { en: { term: 'Taxation', mainDef: 'Imposing a duty to pay taxes.' } }, examples: [{kor: "소득 있는 곳에 과세한다.", eng: "Tax where there is income."}], variants: ['과세', '과세한다', '과세하고', '과세 대상은'] },
+                { term: '예탁금', mainDef: '주식 투자를 위해 증권회사에 맡겨 놓은 돈.', translations: { en: { term: 'Deposit', mainDef: 'Money entrusted to a securities company for stock investment.' } }, examples: [{kor: "개인투자자들의 예탁금이 급증했다.", eng: "Retail investors' deposits have surged."}], variants: ['예탁금', '예탁금은', '예탁금이'] }
+            ]
+        };
+
+        // 퀴즈 업데이트 (경제 본문 기준)
+        const QUIZ_LIST = [
+            { id: 1, textParts: ["기업 이익과 주가가 상승해도 투자와 고용으로 이어지지 않는 구조는 증시와 실물 경제의 ", "이/가 약해졌음을 의미합니다."], answer: '연결 고리', hint: '두 가지 사물이나 현상을 서로 이어 주는 관계를 뜻하는 4글자 단어입니다.', explanation: "맞습니다. 과거에는 주가가 오르면 실물 경제도 좋아졌지만, 지금은 그 '연결 고리(link)'가 약해졌다는 것이 본문의 핵심 지적입니다.", textParts_eng: ["A structure where rising corporate profits and stock prices do not lead to investment and employment means that the ", " between the stock market and the real economy has weakened."], answer_eng: 'connection link' }, 
+            { id: 2, textParts: ["실제 수익이 발생했을 때만 과세하고 손실은 이월할 수 있는 합리적인 과세 체계로 도입이 논의되었으나 폐지된 세금은 ", "입니다."], answer: '금투세', hint: '금융투자소득세의 줄임말인 3글자 단어입니다.', explanation: "맞습니다. 금투세(금융투자소득세)는 조세의 형평성을 위해 논의되었으나 여러 이해관계로 인해 폐지되었습니다.", textParts_eng: ["The tax that was discussed as a rational taxation system taxing only actual profits and allowing losses to be carried over, but was eventually abolished, is the ", "."], answer_eng: 'FIIT' }
+        ];
+        
+        // 토론 업데이트
+        const DISCUSS_DATA = [
+            { id: 1, questionKor: "코스피 5000 시대가 도래했지만 서민들의 체감 경기는 여전히 차갑습니다. 주가 상승이 일반 국민의 삶에 긍정적인 영향을 미치려면 어떤 정책이나 노력이 필요할까요?", questionEng: "The era of KOSPI 5000 has arrived, but the economic conditions felt by ordinary people remain cold. What policies or efforts are needed for stock market growth to have a positive impact on the lives of ordinary citizens?", vocab: [{ term: "체감 경기", def: "사람들이 실생활에서 스스로 느끼는 경제 상황." }, { term: "긍정적인 영향", def: "바람직하거나 좋은 쪽으로 미치는 작용." }] }, 
+            { id: 2, questionKor: "금투세(금융투자소득세) 폐지에 대한 두 가지 상반된 시선(자본시장 활성화 vs. 부자 감세 및 불평등 심화) 중 여러분은 어느 쪽에 더 동의하나요? 그 이유는 무엇인가요?", questionEng: "Between the two contrasting views on the abolition of the Financial Investment Income Tax (vitalizing the capital market vs. tax cuts for the rich and worsening inequality), which side do you agree with more? What is your reason?", vocab: [{ term: "상반된 시선", def: "서로 반대되거나 어긋나는 관점이나 생각." }, { term: "불평등 심화", def: "차별이나 격차가 더욱 깊어짐." }] }
+        ];
+
+        const ANSWER_CHOICES = ['연결 고리', '금투세', '자본 조달', '낙수효과', '고착화', '기득권', '규제 개혁', '배당소득', '소액주주', '선순환'];
+
+        // --- Icons ---
+        const HomeIcon = ({className}) => (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square" strokeLinejoin="miter" className={className}><rect x="3" y="3" width="18" height="18" rx="0" ry="0" /><path d="M3 9h18" /><path d="M9 21V9" /></svg>);
+        const LearnIcon = ({className}) => (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square" strokeLinejoin="miter" className={className}><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>);
+        const VocabIcon = ({className}) => (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square" strokeLinejoin="miter" className={className}><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>);
+        const QuizIcon = ({className}) => (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square" strokeLinejoin="miter" className={className}><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>);
+        const DiscussIcon = ({className}) => (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square" strokeLinejoin="miter" className={className}><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>);
+        const OpenBookSolidIcon = ({className}) => (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square" strokeLinejoin="miter" className={className}><path d="M2 6 C2 3 8 2 12 6 C16 2 22 3 22 6 V20 C22 17 16 16 12 20 C8 16 2 17 2 20 Z" /><path d="M12 6 V20" /></svg>);
+        const TranslateIcon = ({className}) => (<svg viewBox="0 0 24 24" fill="currentColor" className={className}><path d="M12.87 15.07l-2.54-2.51.03-.03A17.52 17.52 0 0014.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.09-.02.67-.02zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z" /></svg>);
+        const ExternalLinkIcon = ({className}) => (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square" strokeLinejoin="miter" className={className}><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /><polyline points="15 3 21 3 21 9" /><line x1="10" y1="14" x2="21" y2="3" /></svg>);
+        const SparklesIcon = ({className}) => (<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className={className}><path d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 00-1.423 1.423z" /></svg>);
+        const HighlighterIcon = ({ className, style }) => (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square" strokeLinejoin="miter" className={className} style={style}><path d="M9 11l-6 6v3h9l3-3"/><path d="m22 12-4.6 4.6a2 2 0 0 1-2.8 0l-5.2-5.2a2 2 0 0 1 0-2.8L14 4"/></svg>);
+        const EraserIcon = ({className}) => (<svg viewBox="0 0 24 24" fill="currentColor" className={className}><path d="M15.143 2.617a2.5 2.5 0 0 0-3.536 0l-9 9a2.5 2.5 0 0 0 0 3.536l6.364 6.364a2.5 2.5 0 0 0 3.536 0l9-9a2.5 2.5 0 0 0 0-3.536l-6.364-6.364zm-2.829 12.02L5.8 8.122l6.364-6.364 6.514 6.515-6.364 6.364z" /><path d="M10 18l4 4" stroke="white" strokeWidth="2" /></svg>);
+        const ArrowRightIcon = ({className}) => (
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square" strokeLinejoin="miter" className={className}>
+                <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+        );
+
+        // --- Shared Configurations (Optimized) ---
+        const NAV_ITEMS = [
+            { id: 'home', label: '시작 페이지', icon: HomeIcon },
+            { id: 'reading', label: '읽기 자료', icon: LearnIcon },
+            { id: 'vocab', label: '핵심 어휘', icon: VocabIcon },
+            { id: 'quiz', label: '내용 확인 퀴즈', icon: QuizIcon },
+            { id: 'discuss', label: '생각해 보기', icon: DiscussIcon }
+        ];
+
+        const HOME_CARDS = [
+            { 
+                tag: "읽기 자료 1", 
+                title: "[뉴시안 기획 뉴스]", 
+                description: "코스피 5000, 서민 경제와 무관한 숫자일까",
+                target: 'reading',
+                readingId: 1
+            },
+            { 
+                tag: "읽기 자료 2", 
+                title: "[조선일보 칼럼]", 
+                description: "코스피 5000 확실히 굳히려면",
+                target: 'reading',
+                readingId: 2
+            },
+            { 
+                tag: "읽기 자료 3", 
+                title: "[소셜코리아 칼럼]", 
+                description: "코스피 5000 시대의 역설:\n타오르는 코스피 지수와 후진적 금융과세",
+                target: 'reading',
+                readingId: 3
+            }
+        ];
+
+        // --- Helper Components & Utils ---
+        const getContainerOffset = (root, node, offset) => {
+            let totalOffset = 0; const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+            while (walker.nextNode()) { if (walker.currentNode === node) return totalOffset + offset; totalOffset += walker.currentNode.length; }
+            return totalOffset;
+        };
+        const TranslateButton = ({ onClick, isShowing, className = "" }) => (<button onClick={(e) => { e.stopPropagation(); onClick(e); }} className={`inline-flex items-center gap-1 text-[10px] font-bold font-sans transition-all duration-300 cursor-pointer border-none p-0 tracking-widest uppercase ${isShowing ? 'opacity-100 text-black' : 'opacity-10 text-black hover:opacity-100'} ${className}`}><TranslateIcon className="w-3 h-3" />{isShowing ? 'Hide' : 'Eng'}</button>);
+        const LevelBadge = ({ levelCode }) => {
+            const definition = LEVEL_DEFINITIONS[levelCode] || { title: "Unknown", desc: "" };
+            return (<div className="flex items-center gap-2 border border-black px-2 py-0.5 rounded-none"><span className="text-xs font-bold font-sans text-black">{levelCode}</span><div className="w-px h-3 bg-gray-300"></div><span className="text-xs text-gray-500 font-sans">{definition.title}</span></div>);
+        };
+        const callGeminiWithBackoff = async (payload) => {
+            const apiKey = ""; const apiUrl = `${CONFIG.GEMINI_API_URL}?key=${apiKey}`; const delays = CONFIG.API_RETRY_DELAYS;
+            for (let i = 0; i <= delays.length; i++) { try { const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }); if (!response.ok) { if (response.status === 429 || response.status >= 500) throw new Error(`Server error: ${response.status}`); throw new Error(`API error: ${response.statusText}`); } return await response.json(); } catch (error) { if (i === delays.length) throw error; await new Promise(resolve => setTimeout(resolve, delays[i])); } }
+        };
+        const getAIDictionaryData = async (term, contextData) => {
+            const articleText = contextData.map(p => p.text).join('\n');
+            const systemPrompt = `당신은 친절한 한국어 선생님입니다. 학생이 C1 수준임을 감안하여, 주어진 '본문 맥락'을 참고하여 '검색어'를 설명해주세요. 경제 관련 용어이므로 명확하게 설명하되, 이해하기 쉽게 '-요' 체를 사용해주세요.\n\n본문 맥락:\n---${articleText}\n---\n\n위의 맥락을 바탕으로 검색어에 대해 설명해주세요.`;
+            const payload = { contents: [{ parts: [{ text: `검색어: "${term}"` }] }], systemInstruction: { parts: [{ text: systemPrompt }] }, generationConfig: { responseMimeType: "application/json", responseSchema: { type: "OBJECT", properties: { "term": { "type": "STRING" }, "definition": { "type": "STRING" }, "termTranslation": { "type": "STRING" }, "definitionTranslation": { "type": "STRING" }, "example": { "type": "STRING" } }, required: ["term", "definition", "termTranslation", "definitionTranslation", "example"] } } };
+            const result = await callGeminiWithBackoff(payload); return JSON.parse(result.candidates[0].content.parts[0].text);
+        };
+
+        // --- Main Views ---
+        const Header = ({ activeTab, setActiveTab }) => (
+            <header className="hidden lg:flex h-16 bg-white border-b border-gray-100 items-center justify-between px-8 shrink-0 z-50 sticky top-0 print:hidden">
+                <div className="flex items-center cursor-pointer text-left" onClick={() => setActiveTab('home')}><span className="text-lg font-bold font-sans tracking-tighter text-black whitespace-nowrap">OpenKoreanLearningLab</span></div>
+                <nav className="flex items-center gap-8">
+                    {NAV_ITEMS.map((menu) => (
+                        <button key={menu.id} onClick={() => setActiveTab(menu.id)} className={`text-sm font-medium transition-colors font-sans relative ${activeTab === menu.id ? 'text-black' : 'text-gray-400 hover:text-gray-600'}`}>{menu.label}{activeTab === menu.id && <div className="absolute -bottom-6 left-0 w-full h-0.5 bg-black"></div>}</button>
+                    ))}
+                </nav>
+            </header>
+        );
+
+        const HomeListItem = ({ tag, title, description, onClick }) => (
+            <div 
+                onClick={onClick} 
+                className="group py-8 px-5 md:px-12 lg:px-28 flex flex-col md:flex-row gap-4 md:items-center cursor-pointer hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-none print:py-2 print:px-0 print:flex-row print:border-none"
+            >
+                <div className="w-40 shrink-0 print:w-auto">
+                    {tag && (
+                        <span className="inline-block border border-black px-2 py-1 text-[11px] font-bold font-sans text-black bg-white group-hover:bg-black group-hover:text-white transition-colors print:text-[12px] print:border-none print:p-0 print:pr-4">
+                            {tag}
+                        </span>
+                    )}
+                </div>
+                
+                <div className="flex-1 flex flex-col gap-1.5">
+                    <h4 className="text-xs md:text-sm font-sans font-bold text-gray-500 print:text-[10px]">
+                        {title}
+                    </h4>
+                    {description && (
+                        <h3 className="text-lg md:text-xl font-serif font-bold text-gray-900 group-hover:underline decoration-1 underline-offset-4 leading-normal print:text-[14px] print:no-underline whitespace-pre-wrap">
+                            {description}
+                        </h3>
+                    )}
+                </div>
+            </div>
+        );
+
+        const HomeView = ({ setActiveTab, setActiveReadingId, userLevel }) => {
+            const levelInfo = LEVEL_DEFINITIONS[userLevel] || { title: "Unknown" };
+
+            return (
+                <div className="animate-fade-in max-w-4xl mx-auto w-full px-6 lg:px-0 pt-16 pb-12 print:pt-4">
+                    <div className="mb-16 flex flex-col items-center text-center print:mb-8">
+                        <div className="flex items-center gap-3 mb-6 justify-center print:hidden">
+                            <span className="bg-black text-white text-[10px] font-bold px-2 py-1 font-sans tracking-widest uppercase">경제</span>
+                            <span className="bg-black text-white text-[10px] font-bold px-2 py-1 font-sans tracking-widest uppercase">정치</span>
+                            <LevelBadge levelCode={userLevel} />
+                        </div>
+                        {/* h1 태그를 flex column으로 변경하고 강제 gap을 추가하여 두 문장을 확실히 분리 */}
+                        <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-journal-black leading-tight mb-6 tracking-tight print:text-[22px] print:mb-1 flex flex-col gap-4 md:gap-6">
+                            <span>코스피 5000 시대,</span>
+                            <span>앞으로 어떤 길을 가야 하는가?</span>
+                        </h1>
+                        <p className="font-serif text-gray-500 text-sm md:text-base italic max-w-2xl leading-relaxed print:text-[16px] print:mb-6 mt-4">
+                            한국 주가 지수 '코스피(KOSPI)'가 처음으로 5000을 넘겼는데, <br/>
+                            이를 두고 보수 진영과 진보 진영의 해석이 서로 대립하고 있어요.<br/>
+                            읽기 자료를 통해 '코스피 5000'이 의미하는 바가 무엇인지, <br/>
+                            그리고 두 진영의 엇갈린 시각이 무엇인지 확인해 보세요.<br/>
+                            또한, 한국 경제에 대한 배경 지식과 경제 관련된 어휘도 학습해 보세요.
+                        </p>
+                    </div>
+                    
+                    <div className="flex flex-col print:gap-2">
+                        {HOME_CARDS.map((card, idx) => (
+                            <HomeListItem 
+                                key={idx} 
+                                tag={card.tag} 
+                                title={card.title}
+                                description={card.description} 
+                                onClick={() => {
+                                    setActiveTab(card.target);
+                                    if (card.readingId) setActiveReadingId(card.readingId);
+                                }} 
+                            />
+                        ))}
+                    </div>
+                </div>
+            );
+        };
+
+        // -- Smart Vocabulary System Components --
+
+        const ReadingVocabContent = ({ word, showTrans, toggleTrans }) => {
+            const trans = word.translations?.en;
+            return (
+                <div className="flex flex-col">
+                    <div className="flex justify-between items-start mb-2 print:mb-0">
+                        <div className="print:flex print:flex-row print:items-baseline print:gap-1.5">
+                            <h3 className="font-serif text-xl font-bold text-gray-900 leading-tight print:text-[10px] print:leading-none">{word.term}</h3>
+                            {trans?.term && <p className={`font-sans text-xs text-gray-400 mb-1 print:mb-0 print:text-[6px] print:text-gray-400 print:opacity-40 print:font-normal print:leading-none ${showTrans ? 'block animate-fade-in' : 'hidden print:block'}`}>{trans.term}</p>}
+                        </div>
+                        <TranslateButton onClick={toggleTrans} isShowing={showTrans} className="print:hidden" />
+                    </div>
+
+                    <p className="font-serif text-[15px] text-gray-800 leading-snug mb-3 print:text-[9px] print:mb-0 print:leading-[1.15]">
+                        {word.mainDef}
+                    </p>
+                    {trans?.mainDef && <p className={`font-sans text-xs text-gray-400 mb-3 print:hidden ${showTrans ? 'block animate-fade-in' : 'hidden'}`}>{trans.mainDef}</p>}
+
+                    {word.subDefs && word.subDefs.length > 0 && (
+                        <div className="mb-3 pl-3 border-l-2 border-gray-200 print:mb-0 print:pl-1.5 print:mt-0.5">
+                            {word.subDefs.map((sub, idx) => (
+                                <div key={idx} className="mb-2 last:mb-0 print:mb-0">
+                                    <p className="font-serif text-sm font-bold text-gray-700 print:text-[8px] print:leading-none">{sub.subTerm}</p>
+                                    {trans?.subDefs?.[idx]?.subTerm && <p className={`font-sans text-[10px] text-gray-400 mb-0.5 print:hidden ${showTrans ? 'block animate-fade-in' : 'hidden'}`}>{trans.subDefs[idx].subTerm}</p>}
+                                    <p className="font-serif text-sm text-gray-600 print:text-[8px] print:leading-none">{sub.subDef}</p>
+                                    {trans?.subDefs?.[idx]?.subDef && <p className={`font-sans text-[10px] text-gray-400 print:hidden ${showTrans ? 'block animate-fade-in' : 'hidden'}`}>{trans.subDefs[idx].subDef}</p>}
+                                </div>
+                            ))}
+                        </div>
+                    )}
+
+                    {word.examples && word.examples.length > 0 && (
+                        <div className="pt-2 print:hidden">
+                            <span className="inline-block border border-gray-300 text-gray-500 text-[10px] px-1 rounded mb-1 font-sans">예문</span>
+                            {word.examples.map((ex, idx) => (
+                                <div key={idx} className="mb-2 last:mb-0">
+                                    <p className="font-serif text-sm text-gray-800 leading-relaxed">{ex.kor}</p>
+                                    {showTrans && <p className="font-sans text-xs text-gray-400 mt-0.5 animate-fade-in">{ex.eng}</p>}
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        const SidebarVocabCard = ({ word, activeVocabTerm, sidebarVocabRefs }) => {
+            const [showTrans, setShowTrans] = useState(false);
+            const isActive = activeVocabTerm === word.term;
+            
+            return (
+                <div 
+                    ref={el => sidebarVocabRefs.current[word.term] = el}
+                    className={`
+                        mb-4 rounded-lg border p-4 transition-all duration-200
+                        ${isActive 
+                            ? 'bg-gray-50 border-black shadow-sm' 
+                            : 'bg-white border-gray-200 hover:bg-gray-50 hover:border-gray-300'
+                        }
+                        print:mb-0.5 print:pt-1 print:px-1 print:pb-0 print:border-transparent print:rounded-none print:shadow-none break-inside-avoid
+                    `}
+                >
+                    <ReadingVocabContent word={word} showTrans={showTrans} toggleTrans={() => setShowTrans(!showTrans)} />
+                </div>
+            );
+        };
+
+        const VocabPopup = ({ popup, onGlobalClick }) => {
+            const [showTrans, setShowTrans] = useState(false);
+            const trans = popup.data?.translations?.en;
+            
+            const popupWidth = 300; 
+            const padding = 20; 
+            const windowWidth = window.innerWidth; 
+            let leftPos = popup.x - (popupWidth / 2); 
+            if (leftPos < padding) leftPos = padding; 
+            else if (leftPos + popupWidth > windowWidth - padding) leftPos = windowWidth - popupWidth - padding; 
+            const arrowLeft = popup.x - leftPos;
+
+            useEffect(() => { setShowTrans(false); }, [popup.data]);
+            
+            if (!popup.show || !popup.data) return null;
+
+            return createPortal(
+                <div 
+                    className={`fixed z-[9999] bg-white border border-gray-200 rounded-lg p-5 w-[300px] animate-fade-in shadow-lg ${!popup.fixed ? 'pointer-events-none' : ''} print:hidden`} 
+                    style={{ left: leftPos, top: popup.y + 16 }} 
+                    onClick={(e) => e.stopPropagation()}
+                >
+                    <div className="absolute top-0 -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-white border-l border-t border-gray-200 rotate-45" style={{ left: arrowLeft }}></div>
+
+                    {popup.fixed ? (
+                        <ReadingVocabContent word={popup.data} showTrans={showTrans} toggleTrans={() => setShowTrans(!showTrans)} />
+                    ) : (
+                        <div>
+                            <h3 className="font-serif text-lg font-bold text-gray-900 mb-1">{popup.data.term}</h3>
+                            <p className="font-serif text-sm text-gray-600 line-clamp-2">{popup.data.mainDef}</p>
+                        </div>
+                    )}
+                </div>, 
+            document.body);
+        };
+
+        const ReadingView = ({ updateProgress, showVocab, setShowVocab, userLevel, activeReadingId, setActiveReadingId }) => {
+            const [isHighlightMode, setIsHighlightMode] = useState(false); const [highlightColor, setHighlightColor] = useState('yellow'); const [highlights, setHighlights] = useState({}); const [popup, setPopup] = useState({ show: false, fixed: false, data: null, x: 0, y: 0 }); const [activeVocabTerm, setActiveVocabTerm] = useState(null); const [visibleTranslations, setVisibleTranslations] = useState({}); const [showDictionary, setShowDictionary] = useState(false); const [dictSearchTerm, setDictSearchTerm] = useState(''); const [dictResult, setDictResult] = useState(null); const [isDictLoading, setIsDictLoading] = useState(false); const [showDictTranslation, setShowDictTranslation] = useState(false); const sidebarVocabRefs = useRef({}); const currentReading = READING_DATA.find(r => r.id === activeReadingId);
+            
+            // 현재 활성화된 읽기 자료의 어휘 목록만 가져오기
+            const currentVocabData = VOCAB_DATA[activeReadingId] || [];
+
+            useEffect(() => { updateProgress('learn'); }, []);
+            const handleGlobalClick = useCallback(() => { if (popup.fixed) setPopup(prev => ({ ...prev, show: false, fixed: false })); }, [popup.fixed]); useEffect(() => { if (popup.fixed) window.addEventListener('click', handleGlobalClick); return () => window.removeEventListener('click', handleGlobalClick); }, [popup.fixed, handleGlobalClick]);
+            const toggleTranslation = (idx) => { setVisibleTranslations(prev => ({ ...prev, [idx]: !prev[idx] })); };
+            const handleDictionarySearch = async (e) => { e.preventDefault(); if (!dictSearchTerm.trim()) return; setIsDictLoading(true); setDictResult(null); setShowDictTranslation(false); try { const result = await getAIDictionaryData(dictSearchTerm, currentReading.content); setDictResult(result); } catch (error) { setDictResult({ term: dictSearchTerm, definition: "검색 중 오류가 발생했습니다.", termTranslation: "Error", definitionTranslation: "", example: "" }); } finally { setIsDictLoading(false); } };
+            const handleTextMouseUp = useCallback((e) => {
+                if (!isHighlightMode) return; const selection = window.getSelection(); if (selection.isCollapsed) return;
+                let container = selection.anchorNode.parentElement; while (container && !container.dataset.blockIndex) container = container.parentElement;
+                if (!container) return; const blockId = `${activeReadingId}-${container.dataset.blockIndex}`; const range = selection.getRangeAt(0); const start = getContainerOffset(container, range.startContainer, range.startOffset); const end = getContainerOffset(container, range.endContainer, range.endOffset); const effectiveStart = Math.min(start, end); const effectiveEnd = Math.max(start, end); if (effectiveStart === effectiveEnd) return;
+                setHighlights(prev => {
+                    const currentBlockHighlights = prev[blockId] || [];
+                    if (highlightColor === 'eraser') {
+                        let newHighlights = [];
+                        for(let h of currentBlockHighlights) {
+                            const overlapStart = Math.max(h.start, effectiveStart); const overlapEnd = Math.min(h.end, effectiveEnd);
+                            if (overlapStart < overlapEnd) { if (h.start < overlapStart) newHighlights.push({ start: h.start, end: overlapStart, color: h.color }); if (h.end > overlapEnd) newHighlights.push({ start: overlapEnd, end: h.end, color: h.color }); } else { newHighlights.push(h); }
+                        }
+                        return { ...prev, [blockId]: newHighlights };
+                    } else { return { ...prev, [blockId]: [...currentBlockHighlights, { start: effectiveStart, end: effectiveEnd, color: highlightColor }] }; }
+                }); selection.removeAllRanges();
+            }, [isHighlightMode, highlightColor, activeReadingId]);
+            const handleVocabEnter = (e, wordData) => { if (popup.fixed) return; const rect = e.target.getBoundingClientRect(); setPopup({ show: true, fixed: false, data: wordData, x: rect.left + rect.width / 2, y: rect.bottom }); if (showVocab) { setActiveVocabTerm(wordData.term); if(sidebarVocabRefs.current[wordData.term]) sidebarVocabRefs.current[wordData.term].scrollIntoView({ behavior: 'smooth', block: 'center' }); } };
+            const handleVocabLeave = () => { if (popup.fixed) return; setPopup(prev => ({ ...prev, show: false })); };
+            const handleVocabClick = (e, wordData) => { e.stopPropagation(); if (popup.fixed && popup.data && popup.data.term === wordData.term) { setPopup(prev => ({ ...prev, show: false, fixed: false })); return; } const rect = e.target.getBoundingClientRect(); setPopup({ show: true, fixed: true, data: wordData, x: rect.left + rect.width / 2, y: rect.bottom }); if (showVocab) { setActiveVocabTerm(wordData.term); if(sidebarVocabRefs.current[wordData.term]) sidebarVocabRefs.current[wordData.term].scrollIntoView({ behavior: 'smooth', block: 'center' }); } };
+            const renderTextWithVocabAndHighlights = (text, blockIndex) => {
+                const blockId = `${activeReadingId}-${blockIndex}`; const blockHighlights = highlights[blockId] || []; const allTerms = currentVocabData.flatMap(vocab => { const terms = [vocab.term]; if (vocab.variants) terms.push(...vocab.variants); return terms.map(term => ({ term, vocab })); }).sort((a, b) => b.term.length - a.term.length);
+                const vocabRanges = []; allTerms.forEach(({ term, vocab }) => { let index = 0; while ((index = text.indexOf(term, index)) !== -1) { const end = index + term.length; const overlaps = vocabRanges.some(m => (index >= m.start && index < m.end) || (end > m.start && end <= m.end)); if (!overlaps) vocabRanges.push({ start: index, end, term, vocab }); index = end; } });
+                const points = new Set([0, text.length]); blockHighlights.forEach(h => { points.add(h.start); points.add(h.end); }); vocabRanges.forEach(v => { points.add(v.start); points.add(v.end); });
+                const sortedPoints = Array.from(points).sort((a, b) => a - b); const segments = [];
+                for (let i = 0; i < sortedPoints.length - 1; i++) { const start = sortedPoints[i]; const end = sortedPoints[i+1]; const mid = (start + end) / 2; let activeHighlightColor = null; for (let j = blockHighlights.length - 1; j >= 0; j--) { const h = blockHighlights[j]; if (h.start <= mid && h.end >= mid) { activeHighlightColor = h.color; break; } } const activeVocab = vocabRanges.find(v => v.start <= mid && v.end >= mid); segments.push({ key: `${start}-${end}`, text: text.slice(start, end), highlightColor: activeHighlightColor, isVocab: !!activeVocab, vocabData: activeVocab ? activeVocab.vocab : null }); }
+                return segments.map(seg => { 
+                    let className = "transition-colors duration-200 decoration-clone "; 
+                    if (seg.highlightColor) className += `marker-${seg.highlightColor} `; 
+                    if (seg.isVocab) { 
+                        className += "cursor-pointer font-semibold text-gray-700 hover:text-black hover:bg-gray-100 rounded px-0.5 "; 
+                        const isActive = (popup.show && popup.data && popup.data.term === seg.vocabData.term) || (showVocab && activeVocabTerm === seg.vocabData.term); 
+                        if (isActive) className += `text-black bg-gray-100 ring-1 ring-gray-200 `; 
+                    } else { 
+                        if (!seg.highlightColor) className += "text-gray-800 "; 
+                    } 
+                    return (<span key={seg.key} className={className} onMouseEnter={seg.isVocab ? (e) => handleVocabEnter(e, seg.vocabData) : undefined} onMouseLeave={seg.isVocab ? handleVocabLeave : undefined} onClick={seg.isVocab ? (e) => handleVocabClick(e, seg.vocabData) : undefined}>{seg.text}</span>); 
+                });
+            };
+
+            return (
+                <div className="flex flex-col lg:flex-row h-full relative print:flex print:flex-row print:overflow-visible">
+                    <VocabPopup popup={popup} onGlobalClick={handleGlobalClick} />
+                    <div className={`flex-1 flex flex-col h-full bg-white transition-all duration-300 ${showVocab ? 'lg:pr-0' : ''} print:w-[80%] print:flex-none print:h-auto print:overflow-visible`}>
+                        <div className="h-14 px-6 border-b border-gray-50 flex items-center justify-between bg-white sticky top-0 z-20 print:hidden">
+                            <div className="flex items-center gap-4"><LevelBadge levelCode={currentReading.level} /><div className="flex items-center gap-2 ml-4">{READING_DATA.map((reading) => (<button key={reading.id} onClick={() => setActiveReadingId(reading.id)} className={`text-xs font-bold font-sans px-2 py-1 ${activeReadingId === reading.id ? 'text-black underline underline-offset-4' : 'text-gray-400 hover:text-gray-600'}`}>읽기 자료 {reading.id}</button>))}</div></div>
+                            <div className="flex items-center gap-4">
+                                <div className="flex items-center gap-2">
+                                    <button onClick={() => setIsHighlightMode(!isHighlightMode)} className={`p-1 ${isHighlightMode ? 'text-black' : 'text-gray-300 hover:text-gray-500'}`}><HighlighterIcon className="w-5 h-5" style={{ color: isHighlightMode ? (highlightColor === 'yellow' ? '#facc15' : (highlightColor === 'red' ? '#f87171' : (highlightColor === 'green' ? '#4ade80' : '#9ca3af'))) : 'currentColor' }} /></button>
+                                    {isHighlightMode && (<div className="flex items-center gap-2 pl-2 border-l border-gray-200 animate-fade-in"><button onClick={() => setHighlightColor('yellow')} className={`w-3 h-3 rounded-full bg-yellow-300 ring-1 ring-gray-200 ${highlightColor === 'yellow' ? 'ring-offset-1 ring-black' : ''}`} /><button onClick={() => setHighlightColor('red')} className={`w-3 h-3 rounded-full bg-red-300 ring-1 ring-gray-200 ${highlightColor === 'red' ? 'ring-offset-1 ring-black' : ''}`} /><button onClick={() => setHighlightColor('green')} className={`w-3 h-3 rounded-full bg-green-300 ring-1 ring-gray-200 ${highlightColor === 'green' ? 'ring-offset-1 ring-black' : ''}`} /><button onClick={() => setHighlightColor('eraser')} className={`text-gray-400 hover:text-black ${highlightColor === 'eraser' ? 'text-black' : ''}`}><EraserIcon className="w-4 h-4" /></button></div>)}
+                                </div>
+                                <div className="w-px h-3 bg-gray-200"></div>
+                                <div className="relative">
+                                    <button onClick={() => setShowDictionary(!showDictionary)} className={`flex items-center gap-2 text-xs font-bold font-sans uppercase tracking-wider transition-colors ${showDictionary ? 'text-blue-600' : 'text-gray-400 hover:text-gray-600'}`}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg><span>사전</span></button>
+                                    {showDictionary && (
+                                        <div className="absolute top-full right-0 mt-4 w-80 bg-white border border-gray-200 shadow-xl p-5 rounded-lg z-50 animate-fade-in font-sans">
+                                            <div className="flex justify-between items-center mb-3"><h3 className="text-sm font-bold text-gray-900">AI 문맥 사전 <span className="font-normal text-xs text-gray-500">(AI Context Dictionary)</span></h3><button onClick={() => setShowDictionary(false)} className="text-gray-400 hover:text-gray-600"><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg></button></div>
+                                            <form onSubmit={handleDictionarySearch} className="flex gap-2 mb-4"><input type="text" value={dictSearchTerm} onChange={(e) => setDictSearchTerm(e.target.value)} placeholder="단어를 입력하세요..." className="flex-1 bg-gray-50 border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500" /><button type="submit" className="bg-black text-white px-3 py-2 rounded text-sm font-bold hover:bg-gray-800">검색</button></form>
+                                            {isDictLoading ? (<div className="flex justify-center py-6"><div className="animate-spin rounded-full h-6 w-6 border-2 border-gray-200 border-t-blue-600"></div></div>) : dictResult ? (<div className="space-y-3 animate-fade-in"><div className="flex justify-between items-start"><h3 className="text-lg font-bold text-gray-900 font-serif">{dictResult.term}{showDictTranslation && <span className="text-sm font-medium text-gray-500 ml-2 font-sans animate-fade-in">({dictResult.termTranslation})</span>}</h3><TranslateButton onClick={() => setShowDictTranslation(!showDictTranslation)} isShowing={showDictTranslation} /></div><div className="text-sm text-gray-800 leading-relaxed font-serif border-l-2 border-blue-500 pl-3">{dictResult.definition}</div>{showDictTranslation && (<div className="text-xs text-gray-500 italic animate-fade-in">{dictResult.definitionTranslation}</div>)}<div className="pt-3 mt-3 border-t border-gray-100 bg-gray-50 p-3 rounded"><p className="text-xs font-bold text-gray-500 mb-1 font-sans uppercase">Example</p><p className="text-sm text-gray-800 font-serif">{dictResult.example}</p></div></div>) : (<p className="text-xs text-gray-400 text-center py-4 leading-relaxed">본문의 내용을 바탕으로 단어를 설명해드립니다.<br/>현재 Gemini 웹에서만 가능합니다. <a href="https://gemini.google.com" target="_blank" rel="noreferrer" className="underline hover:text-black inline-flex items-center gap-1">Gemini에서 열기 <ExternalLinkIcon className="w-3 h-3"/></a></p>)}
+                                        </div>
+                                    )}
+                                </div>
+                                <div className="w-px h-3 bg-gray-200"></div>
+                                <button onClick={() => setShowVocab(!showVocab)} className={`flex items-center gap-2 text-xs font-bold font-sans uppercase ${showVocab ? 'text-black' : 'text-gray-400 hover:text-gray-600'}`}><OpenBookSolidIcon className="w-4 h-4" /> <span>어휘 목록</span></button>
+                            </div>
+                        </div>
+                        <div className={`flex-1 overflow-y-auto px-6 py-12 md:px-12 print:overflow-visible print:h-auto print:p-0 print:pr-6 ${isHighlightMode ? (highlightColor === 'eraser' ? 'cursor-eraser' : `highlight-${highlightColor}`) : ''}`}>
+                            <div className="max-w-3xl mx-auto">
+                                <div className="mb-10 flex flex-col items-center text-center print:mb-6">
+                                    <h1 className="text-3xl md:text-4xl font-serif font-bold text-gray-900 mb-4 leading-tight print:text-[18px] print:mb-2 whitespace-pre-wrap" data-block-index="title" onMouseUp={handleTextMouseUp}>{renderTextWithVocabAndHighlights(currentReading.title, 'title')}</h1>
+                                    <h2 className="text-xl font-serif text-gray-600 mb-6 print:text-[14px] print:mb-2" data-block-index="subtitle" onMouseUp={handleTextMouseUp}>{renderTextWithVocabAndHighlights(currentReading.subtitle, 'subtitle')}</h2>
+                                    <div className="flex items-center justify-center text-xs font-sans text-gray-400 print:hidden">
+                                        <a href={currentReading.source} target="_blank" rel="noreferrer" className="hover:text-black flex items-center gap-1">원문 링크 <ExternalLinkIcon className="w-3 h-3"/></a>
+                                    </div>
+                                    <div className="w-[1px] h-6 bg-gray-200 mt-8 print:hidden"></div>
+                                </div>
+                                <div className="space-y-0 print:space-y-0">
+                                    {currentReading.content.map((paragraphData, idx) => {
+                                        const isHeading = paragraphData.isHeading;
+                                        const isQuote = paragraphData.isQuote;
+                                        const isBlank = paragraphData.isBlank;
+                                        
+                                        let containerClass = `relative print:mb-4 `;
+                                        if (isBlank) {
+                                            // 빈 줄일 경우 텍스트 높이(1.9em)만큼의 공간만 차지하도록 설정
+                                            return <div key={idx} className="h-[1.9em]" />;
+                                        } else if (isHeading) {
+                                            containerClass += 'mt-12 mb-4';
+                                        } else if (isQuote) {
+                                            containerClass += 'mb-0 p-6 bg-gray-50 border-l-4 border-gray-200 rounded-r-md';
+                                        } else {
+                                            // CSS margin 대신 명시적 빈 객체를 사용하므로, 요소 자체의 margin은 0으로 설정
+                                            containerClass += 'mb-0';
+                                        }
+                                        
+                                        return (
+                                            <div key={idx} className={containerClass} data-block-index={idx} onMouseUp={handleTextMouseUp}>
+                                                {isHeading ? (
+                                                    <h3 className="text-2xl md:text-[26px] font-serif font-bold text-gray-900 leading-tight tracking-tight">
+                                                        {renderTextWithVocabAndHighlights(paragraphData.text, idx)}
+                                                        <span className="inline-block ml-3 print:hidden relative -top-1">
+                                                            <TranslateButton onClick={() => toggleTranslation(idx)} isShowing={visibleTranslations[idx]} />
+                                                        </span>
+                                                    </h3>
+                                                ) : isQuote ? (
+                                                    <p className="whitespace-pre-wrap text-[17px] md:text-[18px] leading-[1.9] text-gray-600 font-serif tracking-wide text-justify italic print:text-[12px] print:leading-relaxed">
+                                                        {renderTextWithVocabAndHighlights(paragraphData.text, idx)}
+                                                        <span className="inline-block ml-3 print:hidden relative -top-0.5">
+                                                            <TranslateButton onClick={() => toggleTranslation(idx)} isShowing={visibleTranslations[idx]} />
+                                                        </span>
+                                                    </p>
+                                                ) : (
+                                                    <p className="whitespace-pre-wrap text-[17px] md:text-[18px] leading-[1.9] text-[#222] font-serif tracking-wide text-justify print:text-[12px] print:leading-relaxed">
+                                                        {renderTextWithVocabAndHighlights(paragraphData.text, idx)}
+                                                        <span className="inline-block ml-3 print:hidden relative -top-0.5">
+                                                            <TranslateButton onClick={() => toggleTranslation(idx)} isShowing={visibleTranslations[idx]} />
+                                                        </span>
+                                                    </p>
+                                                )}
+                                                {visibleTranslations[idx] && (
+                                                    <div className={`flex flex-col mt-3 ${isHeading ? 'mb-4' : ''}`}>
+                                                        <p className="text-sm font-sans text-gray-500 bg-gray-50 p-4 rounded-sm w-full animate-fade-in leading-relaxed text-left print:text-[10px] print:p-2">{paragraphData.trans}</p>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                                <div className="h-24 print:hidden"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div className={`w-80 flex-col border-l border-black bg-white shrink-0 z-10 ${showVocab ? 'hidden lg:flex animate-fade-in' : 'hidden'} print:flex print:w-[20%] print:border-l print:border-gray-200 print:h-auto print:overflow-visible`}>
+                        <div className="h-14 px-5 border-b border-gray-200 flex items-center bg-gray-50 print:h-auto print:py-0 print:px-1 print:bg-white print:border-none print:mb-0.5">
+                            <span className="text-xs font-bold font-sans text-black uppercase tracking-widest print:text-[10px]">핵심 어휘 (읽기 자료 {activeReadingId})</span>
+                        </div>
+                        <div className="flex-1 overflow-y-auto px-5 py-2 print:overflow-visible print:h-auto print:p-0 print:px-1">
+                            {currentVocabData.map((word, idx) => (
+                                <SidebarVocabCard key={idx} word={word} activeVocabTerm={activeVocabTerm} sidebarVocabRefs={sidebarVocabRefs} />
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const SectionHeader = ({ title, subtitle, description }) => (
+            <div className="mb-16 flex flex-col items-center text-center print:mb-8">
+                <h2 className="text-[32px] md:text-[36px] font-bold text-[#1a1a1a] leading-tight font-serif mb-3 tracking-tight print:text-[18px]">
+                    {title}
+                </h2>
+                {subtitle && (
+                    <p className="text-[13px] text-[#888888] font-normal font-sans tracking-widest uppercase mb-2 print:text-[12px]">
+                        {subtitle}
+                    </p>
+                )}
+                {description && (
+                    <p className="text-[16px] text-[#444444] font-serif leading-relaxed mt-2 max-w-2xl print:text-[12px]">
+                        {description}
+                    </p>
+                )}
+                <div className="w-[1px] h-6 bg-gray-200 mt-8 print:hidden"></div>
+            </div>
+        );
+
+        const VocabItem = ({ word }) => {
+            const [showTrans, setShowTrans] = useState(false); const trans = word.translations?.en;
+            return (
+                <div className="border border-gray-200 hover:border-gray-300 transition-colors p-6 flex flex-col group bg-white h-full print:p-4 break-inside-avoid">
+                    <div className="flex justify-between items-start mb-4 print:mb-2">
+                        <h3 className="text-3xl font-bold font-serif text-[#1a1a1a] group-hover:text-gray-600 transition-colors print:text-[14px]">{word.term}</h3>
+                        <div className="flex flex-col items-end gap-1"><TranslateButton onClick={() => setShowTrans(!showTrans)} isShowing={showTrans} className="print:hidden" />{showTrans && trans?.term && <span className="font-serif text-sm text-gray-400 italic animate-fade-in text-right print:text-[10px]">{trans.term}</span>}</div>
+                    </div>
+                    <div className="mb-6 flex-1 print:mb-3"><p className="text-[17px] text-[#444] font-serif leading-relaxed print:text-[12px]">{word.mainDef}</p>{showTrans && trans?.mainDef && (<p className="text-sm text-gray-500 font-sans mt-2 animate-fade-in leading-relaxed print:text-[10px]">{trans.mainDef}</p>)}</div>
+                    {word.examples && word.examples.length > 0 && (<div className="bg-gray-50 p-5 mt-auto border-l-2 border-transparent group-hover:border-gray-300 transition-all print:p-3 print:border-gray-200"><p className="text-[15px] text-[#1a1a1a] font-serif leading-snug print:text-[11px]">{word.examples[0].kor}</p>{showTrans && (<p className="text-[13px] text-gray-500 font-sans mt-2 pt-2 border-t border-gray-200 animate-fade-in print:text-[10px]">{word.examples[0].eng}</p>)}</div>)}
+                </div>
+            );
+        };
+        const VocabView = ({ updateProgress }) => { 
+            const [activeVocabTab, setActiveVocabTab] = useState(1);
+            useEffect(() => { updateProgress('vocab'); }, []); 
+            
+            const currentVocabData = VOCAB_DATA[activeVocabTab] || [];
+
+            return (
+                <div className="max-w-4xl mx-auto w-full px-6 py-16 animate-fade-in print:py-0">
+                    <SectionHeader title="핵심 어휘" description="각 읽기 자료에 등장하는 주요 어휘를 탭별로 학습해 보세요." />
+                    
+                    {/* 어휘 탭 메뉴 */}
+                    <div className="flex items-center justify-center gap-6 mb-12 border-b border-gray-200 print:hidden">
+                        {[1, 2, 3].map(id => (
+                            <button 
+                                key={id} 
+                                onClick={() => setActiveVocabTab(id)} 
+                                className={`text-sm font-bold font-sans pb-4 transition-colors relative ${activeVocabTab === id ? 'text-black' : 'text-gray-400 hover:text-gray-600'}`}
+                            >
+                                읽기 자료 {id}
+                                {activeVocabTab === id && <div className="absolute -bottom-[1px] left-0 w-full h-0.5 bg-black"></div>}
+                            </button>
+                        ))}
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 print:gap-4">
+                        {currentVocabData.map((word, idx) => (<VocabItem key={idx} word={word} />))}
+                    </div>
+                </div>
+            ); 
+        };
+
+        const QuizSentence = ({ quiz, onAttempt, onShuffle }) => {
+            const [userInput, setUserInput] = useState(''); const [result, setResult] = useState(null); const [showHint, setShowHint] = useState(false); const [showTranslation, setShowTranslation] = useState(false);
+            const handleCheck = () => { const isCorrect = userInput.trim() === quiz.answer; setResult(isCorrect ? 'correct' : 'incorrect'); setShowHint(false); if (onAttempt) onAttempt(quiz.id, isCorrect); if (onShuffle) onShuffle(); };
+            const handleShowAnswer = () => { setUserInput(quiz.answer); setResult(null); setShowHint(false); if (onShuffle) onShuffle(); }; 
+            
+            const textLength = Math.max(userInput.length, quiz.answer ? quiz.answer.length : 0);
+            const safeWidth = Math.max(100, textLength * 25);
+
+            return (
+                <div className="mb-10 pb-10 border-b border-gray-200 last:border-0 print:mb-6 print:pb-6 break-inside-avoid">
+                    <div className="flex items-baseline gap-4 mb-4 print:mb-2"><span className="text-xs font-bold font-sans text-black border border-black px-1.5 py-0.5 print:text-[10px]">Q.{quiz.id}</span></div>
+                    <div className="text-xl font-serif text-gray-900 leading-loose mb-6 print:text-[12px] print:mb-2"><span>{quiz.textParts[0]}</span><input type="text" value={userInput} onChange={(e) => { setUserInput(e.target.value); setResult(null); }} className={`mx-2 px-2 py-0 border-b-2 font-bold text-center outline-none bg-transparent transition-colors font-serif ${result === 'correct' ? 'border-green-500 text-green-700' : result === 'incorrect' ? 'border-red-500 text-red-700' : 'border-gray-300 text-black focus:border-black'} print:border-b print:border-gray-300 print:text-[12px]`} style={{ width: `${safeWidth}px` }} /><span>{quiz.textParts[1]}</span></div>
+                    <div className="flex flex-wrap gap-3 items-center print:hidden"><button onClick={handleCheck} className="px-4 py-2 bg-black text-white text-xs font-bold font-sans hover:bg-gray-800 transition-colors">정답 확인</button><button onClick={handleShowAnswer} className="px-4 py-2 bg-white border border-gray-300 text-gray-600 text-xs font-bold font-sans hover:border-black hover:text-black transition-colors">정답 보기</button><button onClick={() => setShowHint(!showHint)} className="text-xs font-bold font-sans text-gray-400 hover:text-gray-600 underline">힌트</button><TranslateButton onClick={() => setShowTranslation(!showTranslation)} isShowing={showTranslation} /></div>
+                    {showTranslation && (<p className="mt-4 text-sm font-sans text-gray-500 bg-gray-50 p-3 print:text-[10px] print:mt-2 print:p-2">{quiz.textParts_eng.join(' ... ')}</p>)}{showHint && (<p className="mt-4 text-sm font-sans text-gray-500 italic print:text-[10px] print:mt-2">💡 Hint: {quiz.hint}</p>)}{result === 'correct' && (<p className="mt-4 text-sm font-sans text-green-700 font-medium print:text-[12px] print:mt-2">✓ 정답입니다! {quiz.explanation}</p>)}{result === 'incorrect' && (<p className="mt-4 text-sm font-sans text-red-600 font-medium print:text-[12px] print:mt-2">✕ 다시 시도해 보세요.</p>)}
+                </div>
+            );
+        };
+        const QuizView = ({ updateProgress }) => {
+            const [attempts, setAttempts] = useState({}); const [shuffledChoices, setShuffledChoices] = useState(ANSWER_CHOICES); const totalQuestions = QUIZ_LIST.length; const correctCount = Object.values(attempts).filter(v => v).length; const currentScore = Math.round((correctCount / totalQuestions) * 100);
+            useEffect(() => { const totalAttempts = Object.keys(attempts).length; if (totalAttempts === 0) return; updateProgress('quiz', currentScore); }, [attempts, currentScore, updateProgress]);
+            const handleAttempt = (quizId, isCorrect) => { setAttempts(prev => { if (prev.hasOwnProperty(quizId)) return prev; const newAttempts = { ...prev, [quizId]: isCorrect }; return newAttempts; }); };
+            const shuffleChoices = useCallback(() => { setShuffledChoices(prev => { const newArray = [...prev]; for (let i = newArray.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [newArray[i], newArray[j]] = [newArray[j], newArray[i]]; } return newArray; }); }, []);
+            return (
+                <div className="max-w-4xl mx-auto w-full px-6 py-12 flex flex-col md:flex-row gap-12 animate-fade-in print:flex-col print:gap-6 print:py-0">
+                    <div className="w-full md:w-64 shrink-0 print:w-full">
+                        <div className="sticky top-24 print:static"> 
+                            <div className="md:sticky md:top-24 print:static"> 
+                                <h2 className="text-3xl font-serif font-bold text-gray-900 mb-2 print:text-[18px]">내용 확인 퀴즈</h2><p className="text-sm font-sans text-gray-500 mb-6 print:text-[12px] print:mb-4">학습 자료에 대한 이해도를 확인해 보세요.</p><div className="border-t border-gray-200 pt-4 mb-8 print:hidden"><span className="text-xs font-bold font-sans text-black uppercase block mb-2">정답률</span><span className="text-4xl font-serif font-bold text-gray-900">{currentScore}%</span></div><div className="bg-gray-50 p-4 border border-gray-100 print:bg-transparent print:border-none print:p-0"><h4 className="text-xs font-bold font-sans text-gray-500 uppercase mb-3 border-b border-gray-200 pb-2 print:hidden">정답 목록</h4><div className="flex flex-wrap gap-2 print:gap-1"><span className="hidden print:block text-[12px] font-bold text-gray-700 mr-2 mt-1">정답 목록:</span>{shuffledChoices.map((choice, idx) => (<span key={idx} className="text-xs font-serif text-gray-600 bg-white border border-gray-200 px-2 py-1 select-all print:text-[12px] print:border-gray-400 print:px-1 print:py-0">{choice}</span>))}</div></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="flex-1">{QUIZ_LIST.map((quiz) => (<QuizSentence key={quiz.id} quiz={quiz} onAttempt={handleAttempt} onShuffle={shuffleChoices} />))}</div>
+                </div>
+            );
+        };
+
+        const DiscussQuestionItem = ({ item }) => {
+            const [text, setText] = useState(''); 
+            const [showTranslation, setShowTranslation] = useState(false);
+            const [feedback, setFeedback] = useState(null); 
+            const [isLoading, setIsLoading] = useState(false);
+            const [showFeedbackTrans, setShowFeedbackTrans] = useState(false);
+
+            const handleGetFeedback = async () => {
+                if (!text.trim()) return;
+                setIsLoading(true);
+                setFeedback(null);
+                setShowFeedbackTrans(false);
+                
+                const prompt = `당신은 친절하고 전문적인 AI 한국어 도우미입니다. 학생이 다음 질문에 대해 한국어로 답변을 작성했습니다.
+질문: ${item.questionKor}
+학생의 답변: "${text}"
+
+학생의 답변을 읽고 다음 지시사항에 따라 '-요' 체로 친절하게 피드백을 작성해주세요:
+1. 전체적인 총평과 잘한 점을 먼저 한국어로 작성하고, 그에 대한 영어 번역을 제공합니다.
+2. 학생의 문장을 하나씩 확인하며, 교정이 필요한 문장을 찾아냅니다. (완벽한 문장이라도 더 자연스러운 고급(C1) 표현이 있다면 제안해주세요.)
+3. 교정이 필요한 경우, '원래 문장', '교정된 문장', 그리고 '왜 그렇게 수정해야 하는지(문법적 오류나 경제 용어의 정확한 사용법 포함)'를 상세히 한국어로 설명하고, 그 설명에 대한 영어 번역을 제공합니다.`;
+
+                try {
+                    const payload = { 
+                        contents: [{ parts: [{ text: prompt }] }],
+                        generationConfig: {
+                            responseMimeType: "application/json",
+                            responseSchema: {
+                                type: "OBJECT",
+                                properties: {
+                                    overallComment: { type: "STRING", description: "학생의 답변에 대한 전체적인 칭찬 및 격려 (한국어, 2~3문장)" },
+                                    overallCommentTrans: { type: "STRING", description: "overallComment의 자연스러운 영어 번역" },
+                                    corrections: {
+                                        type: "ARRAY",
+                                        description: "문장별 상세 교정 내역",
+                                        items: {
+                                            type: "OBJECT",
+                                            properties: {
+                                                original: { type: "STRING", description: "학생이 작성한 원래 문장" },
+                                                corrected: { type: "STRING", description: "자연스럽고 올바르게 교정된 문장" },
+                                                explanation: { type: "STRING", description: "무엇이 잘못되거나 어색했는지에 대한 상세한 설명 (한국어)" },
+                                                explanationTrans: { type: "STRING", description: "explanation의 자연스러운 영어 번역" }
+                                            },
+                                            required: ["original", "corrected", "explanation", "explanationTrans"]
+                                        }
+                                    }
+                                },
+                                required: ["overallComment", "overallCommentTrans", "corrections"]
+                            }
+                        }
+                    };
+                    const result = await callGeminiWithBackoff(payload);
+                    const parsedData = JSON.parse(result.candidates[0].content.parts[0].text);
+                    setFeedback(parsedData);
+                } catch (error) {
+                    setFeedback({ error: "앗, 피드백을 가져오는 중에 오류가 발생했어요. 잠시 후 다시 시도해주세요." });
+                } finally {
+                    setIsLoading(false);
+                }
+            };
+
+            return (
+                <div className="mb-16 group print:mb-8 break-inside-avoid">
+                    <div className="flex items-center gap-4 mb-6 print:mb-3"><span className="text-4xl font-serif font-bold text-gray-200 transition-colors duration-300 group-hover:text-gray-900 print:text-[14px] print:text-black">{item.id < 10 ? '0' + item.id : item.id}.</span><h3 className="text-xl font-serif font-bold text-gray-900 leading-normal print:text-[12px]">{item.questionKor}</h3></div>
+                    <div className="pl-0 md:pl-14 print:pl-6">
+                        <div className="flex gap-2 mb-4 print:hidden"><TranslateButton onClick={() => setShowTranslation(!showTranslation)} isShowing={showTranslation} />{showTranslation && (<p className="text-sm font-sans text-gray-500 animate-fade-in">{item.questionEng}</p>)}</div>
+                        <div className="bg-gray-50 p-5 mb-6 border-l-2 border-black print:p-3 print:mb-3"><span className="text-xs font-bold font-sans text-gray-400 uppercase mb-2 block print:text-[10px]">핵심 어휘</span><div className="space-y-1 print:space-y-0">{item.vocab.map((v, i) => (<p key={i} className="text-sm font-serif text-gray-700 print:text-[10px]"><span className="font-bold text-black mr-2 print:text-[10px]">{v.term}</span>{v.def}</p>))}</div></div>
+                        <textarea value={text} onChange={(e) => setText(e.target.value)} placeholder="여기에 경제/사회적 관점을 담아 생각을 적어보세요..." className="w-full p-4 border border-gray-300 font-serif text-base text-gray-900 focus:border-black focus:ring-0 outline-none min-h-[150px] bg-white resize-y mb-3 transition-colors placeholder:text-gray-300 print:hidden"></textarea>
+                        <div className="flex justify-end print:hidden"><button disabled={!text.trim() || isLoading} onClick={handleGetFeedback} className={`px-6 py-2 text-xs font-bold font-sans uppercase tracking-widest border transition-colors ${!text.trim() || isLoading ? 'border-gray-200 text-gray-300 cursor-not-allowed' : 'border-black bg-black text-white hover:bg-white hover:text-black'}`}>{isLoading ? '피드백 작성 중...' : 'AI 피드백 받기'}</button></div>
+                        
+                        {(isLoading || feedback) && (
+                            <div className="mt-8 border-t border-gray-200 pt-8 animate-fade-in print:hidden">
+                                <div className="flex items-center gap-2 mb-6">
+                                    <SparklesIcon className="w-4 h-4 text-black" />
+                                    <span className="text-xs font-bold font-sans text-black uppercase tracking-widest">AI 한국어 도우미</span>
+                                </div>
+                                {isLoading ? (
+                                    <div className="flex justify-center py-10"><div className="animate-spin rounded-full h-6 w-6 border-2 border-gray-200 border-t-black"></div></div>
+                                ) : feedback.error ? (
+                                    <div className="p-4 bg-red-50 text-red-600 text-[14px] font-sans rounded-sm">{feedback.error}</div>
+                                ) : (
+                                    <div className="space-y-6">
+                                        <div className="bg-gray-50 p-5 border-l-2 border-black">
+                                            <span className="text-[11px] font-bold font-sans text-gray-500 uppercase tracking-widest mb-2 block">총평 및 잘한 점</span>
+                                            <p className="text-[15px] font-serif text-gray-900 leading-relaxed whitespace-pre-wrap">{feedback.overallComment}</p>
+                                            {showFeedbackTrans && feedback.overallCommentTrans && (
+                                                <p className="text-[13px] font-sans text-gray-500 mt-2 pt-2 border-t border-gray-200 animate-fade-in leading-relaxed">{feedback.overallCommentTrans}</p>
+                                            )}
+                                        </div>
+                                        
+                                        {feedback.corrections && feedback.corrections.length > 0 && (
+                                            <div>
+                                                <span className="text-[11px] font-bold font-sans text-gray-500 uppercase tracking-widest mb-3 block">문장별 교정 및 설명</span>
+                                                <div className="space-y-4">
+                                                    {feedback.corrections.map((corr, idx) => (
+                                                        <div key={idx} className="bg-white border border-gray-200 p-5 transition-colors hover:border-gray-300">
+                                                            <div className="mb-4">
+                                                                <div className="flex items-start gap-3 mb-2">
+                                                                    <span className="shrink-0 mt-0.5 text-[10px] font-sans font-bold text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded-sm uppercase tracking-wider">수정 전</span>
+                                                                    <p className="text-[15px] font-serif text-gray-400 line-through decoration-gray-300">{corr.original}</p>
+                                                                </div>
+                                                                <div className="flex items-start gap-3">
+                                                                    <span className="shrink-0 mt-0.5 text-[10px] font-sans font-bold text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded-sm uppercase tracking-wider">수정 후</span>
+                                                                    <p className="text-[15px] font-serif text-gray-900 font-medium">{corr.corrected}</p>
+                                                                </div>
+                                                            </div>
+                                                            <div className="pt-3 border-t border-gray-100">
+                                                                <p className="text-[14px] font-serif text-gray-700 leading-relaxed"><span className="font-sans font-bold text-[11px] text-gray-400 mr-2 uppercase tracking-widest">💡 설명</span>{corr.explanation}</p>
+                                                                {showFeedbackTrans && corr.explanationTrans && (
+                                                                    <p className="text-[12px] font-sans text-gray-500 mt-2 animate-fade-in">{corr.explanationTrans}</p>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
+                                        <div className="flex justify-end mt-4">
+                                            <TranslateButton 
+                                                onClick={() => setShowFeedbackTrans(!showFeedbackTrans)} 
+                                                isShowing={showFeedbackTrans} 
+                                            />
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
+        };
+        const DiscussView = ({ updateProgress }) => (
+            <div className="max-w-3xl mx-auto w-full px-6 py-12 animate-fade-in print:py-0">
+                <div className="mb-6 pb-6 text-center print:mb-4 print:pb-2"><h2 className="text-3xl font-serif font-bold text-gray-900 mb-2 print:text-[18px]">생각해 보기</h2><p className="text-sm font-sans text-gray-500 print:text-[12px]">학습 자료에 대해 심층적으로 생각해 보세요.</p></div>
+                <div className="bg-gray-50 border border-gray-200 p-4 mb-10 flex items-start gap-3 print:hidden"><div className="shrink-0 mt-0.5"><SparklesIcon className="w-4 h-4 text-gray-400" /></div><p className="text-xs font-sans text-gray-600 leading-relaxed">답변을 작성한 후 <strong>'AI 피드백 받기'</strong> 버튼을 누르면 AI 한국어 도우미의 친절한 첨삭과 조언을 받을 수 있습니다.</p></div>
+                {DISCUSS_DATA.map((item) => (<DiscussQuestionItem key={item.id} item={item} />))}
+            </div>
+        );
+
+        const App = () => {
+            const [activeTab, setActiveTab] = useState('home'); 
+            const [activeReadingId, setActiveReadingId] = useState(1);
+            const [userLevel] = useState("C1+"); // 시작페이지 전체 레벨 C1+ 설정
+            const [showVocab, setShowVocab] = useState(false); const [progress, setProgress] = useState({ learn: false, vocab: false, quiz: 0, discuss: false });
+            const updateProgress = useCallback((key, value = true) => { setProgress(prev => { if (prev[key] === value) return prev; return { ...prev, [key]: value }; }); }, []);
+            const renderContent = () => { switch(activeTab) { case 'home': return <HomeView setActiveTab={setActiveTab} setActiveReadingId={setActiveReadingId} userLevel={userLevel} />; case 'reading': return <ReadingView updateProgress={updateProgress} showVocab={showVocab} setShowVocab={setShowVocab} userLevel={userLevel} activeReadingId={activeReadingId} setActiveReadingId={setActiveReadingId} />; case 'vocab': return <VocabView updateProgress={updateProgress} />; case 'quiz': return <QuizView updateProgress={updateProgress} />; case 'discuss': return <DiscussView updateProgress={updateProgress} />; default: return <HomeView setActiveTab={setActiveTab} setActiveReadingId={setActiveReadingId} userLevel={userLevel} />; } };
+            const isReadingTab = activeTab === 'reading';
+            return (
+                <div className={`flex flex-col bg-white text-gray-900 selection:bg-gray-200 selection:text-black font-sans ${isReadingTab ? 'h-screen overflow-hidden print:h-auto print:overflow-visible' : 'min-h-screen print:min-h-0'}`}>
+                    <Header activeTab={activeTab} setActiveTab={setActiveTab} />
+                    <div className="lg:hidden h-14 border-b border-gray-100 flex items-center justify-center sticky top-0 bg-white z-40 print:hidden"><span className="text-lg font-bold font-sans tracking-tighter">OpenKoreanLearningLab</span></div>
+                    <main className={`flex-1 relative flex flex-col ${isReadingTab ? 'overflow-x-hidden lg:overflow-hidden lg:h-full print:overflow-visible print:h-auto' : ''}`}>{renderContent()}</main>
+                    <nav className="lg:hidden fixed bottom-0 w-full bg-white border-t border-gray-100 flex justify-around p-3 z-50 print:hidden">{NAV_ITEMS.map((item) => (<button key={item.id} onClick={() => setActiveTab(item.id)} className={`p-2 ${activeTab === item.id ? 'text-black' : 'text-gray-300'}`}><item.icon className="w-6 h-6" /></button>))}</nav>
+                </div>
+            );
+        };
+        const root = ReactDOM.createRoot(document.getElementById('root')); root.render(<App />);
+    </script>
+</body>
+</html>
