@@ -168,8 +168,7 @@
                 </div>
             );
         };
-
-        // --- Component: Category Badge ---
+        // --- Category Badge Component ---
         const CategoryBadge = ({ tag, onClick, isSelected }) => {
             return (
                 <span 
@@ -188,6 +187,7 @@
         const Sidebar = ({ activeTab, setActiveTab, isCollapsed, toggleSidebar, userLevel, themeColor }) => {
             const menus = [
                 { id: 'home', levelCode: 'ALL', label: '전체 학습 자료', subLabel: 'All Learning Content' },
+                { id: 'B1+', levelCode: 'B1+', label: '중급 (입문) 학습자', subLabel: 'Pre-Intermediate' },
                 { id: 'B2', levelCode: 'B2', label: '중급 학습자', subLabel: 'Intermediate' },
                 { id: 'B2+', levelCode: 'B2+', label: '중급(상) 학습자', subLabel: 'Upper Intermediate' },
                 { id: 'C1', levelCode: 'C1', label: '고급 학습자', subLabel: 'Advanced' },
@@ -382,23 +382,26 @@
             const [latestTooltip, setLatestTooltip] = useState({ show: false, x: 0, y: 0 });
 
             const LEVEL_TITLES = {
-                "B2": "중급 수준 학습 자료", "B2+": "중급(상) 수준 학습 자료",
+                "B1+": "중급 (입문) 수준 학습 자료", "B2": "중급 수준 학습 자료", "B2+": "중급(상) 수준 학습 자료",
                 "C1": "고급 수준 학습 자료", "C1+": "고급(상) 수준 학습 자료", "C2": "최상급 수준 학습 자료"
             };
 
             const LEVEL_SUBTITLES = {
-            "B2": "Intermediate Level Learning Content", "B2+": "Upper Intermediate Level Learning Content",
-            "C1": "Advanced Level Learning Content", "C1+": "Upper Advanced Level Learning Content", "C2": "Proficient Level Learning Content"
-        };
+                "B1+": "Pre-Intermediate Level Learning Content", "B2": "Intermediate Level Learning Content", "B2+": "Upper Intermediate Level Learning Content",
+                "C1": "Advanced Level Learning Content", "C1+": "Upper Advanced Level Learning Content", "C2": "Proficient Level Learning Content"
+            };
 
-        const MATERIALS_DATA = [
-            { level: "C2", tags: ["경제", "정치"], title: "코스피 5000 시대, 앞으로 어떤 길을 가야 하는가?", link: "c2-kospi-5000-era.html" },
-            { level: "C1", tags: ["경제", "정치"], title: "코스피 5000’의 의미와 전망", link: "c1-kospi-5000-meaning.html" },
-            { level: "B2+", tags: ["문화", "음악"], title: "팝송에서 '페이드 아웃'이 사라진 이유", link: "b2plus-fade-out-in-pop-songs.html" },
-            { level: "B2+", tags: ["문화", "음식", "과학"], title: "두바이 쫀득 쿠키가 맛있는 과학적인 이유", link: "b2plus-dubai-cookie-science.html" },
-            { level: "B1+", tags: ["문화", "생활"], title: "두바이 쫀득 쿠키, 뭐길래 인기가 많을까요?", link: "b1plus-dubai-chewy-cookie.html" },
-            { level: "B2+", tags: ["언어", "문화"], title: "우리는 왜 “같아요”라고 할까?", link: "b2plus-why-we-say-gata-yo.html" },
-                { level: "C1+", tags: ["문화", "역사"], title: "<굳이 알 필요 없는 사소한 지식> 한국의 크리스마스 케익의 기원", link: "c1plus-korean-christmas-cake-origin.html" },
+            const MATERIALS_DATA = [
+                { level: "B1+", tags: ["스케치 코미디", "일상"], title: "릴스 중독: 벌써 세 시간 째", link: "b1plus-reels-addiction.html" },
+                { level: "B2", tags: ["스케치 코미디", "일상"], title: "릴스 중독: 벌써 세 시간 째", link: "b2-reels-addiction.html" },
+                { level: "C2", tags: ["경제", "정치"], title: "코스피 5000 시대, 앞으로 어떤 길을 가야 하는가?", link: "c2-kospi-5000-era.html" },
+                { level: "C1", tags: ["경제", "정치"], title: "'코스피 5000'의 의미와 전망", link: "c1-kospi-5000-meaning.html" },
+                { level: "C1", tags: ["과학", "음식"], title: "두바이 쫀득 쿠키가 맛있는 과학적인 이유", link: "c1-dubai-cookie-science.html" },
+                { level: "B2+", tags: ["문화", "음악"], title: "팝송에서 '페이드 아웃'이 사라진 이유", link: "b2plus-fade-out-in-pop-songs.html" },
+                { level: "B2+", tags: ["문화", "음식"], title: "한국인은 쫀득한 식감을 왜 좋아할까요?", link: "b2plus-why-koreans-like-chewy-texture.html" },
+                { level: "B1+", tags: ["문화", "생활"], title: "두바이 쫀득 쿠키, 뭐길래 인기가 많을까요?", link: "b1plus-dubai-chewy-cookie.html" },
+                { level: "B2+", tags: ["언어", "문화"], title: "우리는 왜 \"같아요\"라고 할까?", link: "b2plus-why-we-say-gata-yo.html" },
+                { level: "C1+", tags: ["문화", "역사"], title: "한국의 크리스마스 케익의 기원", link: "c1plus-korean-christmas-cake-origin.html" },
                 { level: "B2+", tags: ["문화"], title: "한국 박물관 및 미술관 입장료 이야기", link: "b2plus-museum-admission.html" },
                 { level: "B2+", tags: ["문화", "생활"], title: "술보다 대마 음료가 건강에 좋을까요?", link: "b2plus-cannabis-drink.html" },
                 { level: "B2+", tags: ["사회", "문화"], title: "천원의 재능마켓", link: "b2plus-1000won-talent-market.html" },
