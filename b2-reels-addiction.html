@@ -78,82 +78,1652 @@
         const { createPortal } = ReactDOM;
 
         const VIDEO_CONFIG = {
-            YOUTUBE_VIDEO_ID: 'htzfNwDM7II',
+            YOUTUBE_VIDEO_ID: 'nSqNLM5orPo',
             DEFAULT_PLAYBACK_RATE: 1.0,
         };
 
         const VIDEO_SCRIPT_DATA = [
-            { id: 's1', speaker: '우창윤', kor: '인류학자들이 하는 이야기가 있는데, 이게 아삭하다라는 소리가 나는 건요.', time: [0.00, 4.44], eng: "Anthropologists have a theory that this crunching sound..." },
-            { id: 's2', speaker: '우창윤', kor: '우리가 어떤 과일이나 어떤 채소를 먹었을 때 신선하다는 거.', time: [4.47, 9.10], eng: "...indicates that the fruit or vegetable we are eating is fresh." },
-            { id: 's3', speaker: '우창윤', kor: '그럼 그게 안전하다는 뜻이고요.', time: [9.12, 10.48], eng: "And that means it's safe." },
-            { id: 's4', speaker: '항성', kor: '오, 본능적인 거군요. 약간.', time: [10.58, 12.75], eng: "Oh, so it's kind of instinctive." },
-            { id: 's5', speaker: '우창윤', kor: '그래서 그런 것도 우리가 좋아하게 되어 있는데, 악용하는 거예요.', time: [12.78, 16.48], eng: "So we are wired to like those things, but this is abusing that instinct." },
-            { id: 's6', speaker: '김범준', kor: '먹어야 되겠어요? 안 먹어야 되겠어요?', time: [17.55, 19.08], eng: "Should we eat it? Or should we not?" },
-            { id: 's7', speaker: '김범준', kor: '맛있다.', time: [20.57, 22.10], eng: "It's delicious." }
+            { id: 's1', speaker: '윤태용', kor: '이게 뭐야?', time: [11.700, 12.600], eng: "What is this?" },
+            { id: 's2', speaker: '윤태용', kor: '저기요, 누구 없어요?', time: [13.970, 16.170], eng: "Excuse me, is anyone there?" },
+            { id: 's3', speaker: '윤태용', kor: '살려 주세요.', time: [16.200, 17.300], eng: "Help me." },
+            { id: 's4', speaker: '직쏘', kor: '아이씨, 윤태용.', time: [22.700, 36.100], eng: "Damn it, Yoon Tae-yong." },
+            { id: 's5', speaker: '윤태용', kor: '누구세요? 저 아세요?', time: [36.800, 39.000], eng: "Who are you? Do you know me?" },
+            { id: 's6', speaker: '직쏘', kor: '네가 왜 여기 있는지 궁금하겠지?', time: [39.570, 41.100], eng: "You're probably wondering why you're here." },
+            { id: 's7', speaker: '윤태용', kor: '모르겠어요.', time: [43.300, 44.400], eng: "I don't know." },
+            { id: 's8', speaker: '윤태용', kor: '살려 주세요.', time: [44.870, 46.350], eng: "Help me." },
+            { id: 's9', speaker: '직쏘', kor: '넌 시간을 소중히 여기지 않았어.', time: [46.560, 49.600], eng: "You didn't value your time." },
+            { id: 's10', speaker: '윤태용', kor: '네...? 그게 무슨 말씀이세요?', time: [49.800, 52.730], eng: "What...? What do you mean by that?" },
+            { id: 's11', speaker: '직쏘', kor: '오늘 넌 네가 버린 시간만큼 벌을 받게 될 거다.', time: [52.770, 55.600], eng: "Today, you will be punished for the amount of time you've wasted." },
+            { id: 's12', speaker: '윤태용', kor: '그게 무슨 말씀이세요?', time: [55.900, 57.900], eng: "What do you mean by that?" },
+            { id: 's13', speaker: '윤태용', kor: '제가 무슨 시간을 버려요?!', time: [57.940, 59.500], eng: "What time did I waste?!" },
+            { id: 's14', speaker: '윤태용', kor: '저... 시간 아끼려고 밥도 10분 만에 먹고, 샤워도 20분 넘겨 본 적이 없어요!', time: [59.800, 64.560], eng: "I... to save time, I eat my meals in 10 minutes and never take showers longer than 20 minutes!" },
+            { id: 's15', speaker: '직쏘', kor: '그럼 나랑 내기할까?', time: [65.080, 66.580], eng: "Then shall we make a bet?" },
+            { id: 's16', speaker: '윤태용', kor: '내기?', time: [67.460, 68.160], eng: "A bet?" },
+            { id: 's17', speaker: '직쏘', kor: '네가 내기에서 이긴다면 당장 널 풀어 주도록 하겠다.', time: [68.210, 71.490], eng: "If you win the bet, I will release you immediately." },
+            { id: 's18', speaker: '직쏘', kor: '하지만 네가 진다면 넌 이곳에서 영원히 갇혀 있게 될 것이다.', time: [71.540, 77.920], eng: "But if you lose, you will be locked up here forever." },
+            { id: 's19', speaker: '윤태용', kor: '좋아요.', time: [82.000, 83.100], eng: "Alright." },
+            { id: 's20', speaker: '직쏘', kor: '좋다. 그럼 게임을 시작하지.', time: [83.300, 87.300], eng: "Good. Let the game begin." },
+            { id: 's21', speaker: '직쏘', kor: '어제 네가 릴스를 본 시간만큼 플랭크를 한다면, 풀어 주도록 하겠다.', time: [89.200, 94.100], eng: "If you do a plank for the amount of time you spent watching Reels yesterday, I will release you." },
+            { id: 's22', speaker: '윤태용', kor: '릴스...? 나 어제 휴대폰 별로 안 봤는데...', time: [94.850, 98.300], eng: "Reels...? I barely looked at my phone yesterday..." },
+            { id: 's23', speaker: '윤태용', kor: '그리고 릴스가 길어 봤자 1분이잖아.', time: [99.200, 101.100], eng: "And Reels are 1 minute long at most." },
+            { id: 's24', speaker: '윤태용', kor: '충분히 가능해...!', time: [101.700, 102.700], eng: "It's totally doable...!" },
+            { id: 's25', speaker: '윤태용', kor: '좋아요.', time: [104.000, 105.300], eng: "Alright." },
+            { id: 's26', speaker: '직쏘', kor: '좋다. 그럼 지금부터 플랭크 3시간 시작.', time: [106.100, 112.390], eng: "Good. Then starting now, a 3-hour plank begins." },
+            { id: 's27', speaker: '윤태용', kor: '잠깐만요..! 3시간이요?', time: [114.410, 116.800], eng: "Wait a minute..! 3 hours?" },
+            { id: 's28', speaker: '윤태용', kor: '제가 릴스를 3시간을 봤다고요?', time: [117.250, 119.190], eng: "You're saying I watched Reels for 3 hours?" },
+            { id: 's29', speaker: '윤태용', kor: '무슨 말도 안 되는 소리예요!', time: [119.490, 121.220], eng: "That's complete nonsense!" },
+            { id: 's30', speaker: '직쏘', kor: '인정하지 못하겠나?', time: [121.270, 122.400], eng: "Can't you admit it?" },
+            { id: 's31', speaker: '윤태용', kor: '당연하죠!', time: [122.440, 123.470], eng: "Of course!" },
+            { id: 's32', speaker: '윤태용', kor: '제가 릴스 보는 시간도 아끼려고 두 배속으로 보는데!', time: [123.800, 136.600], eng: "I even watch them at 2x speed to save time!" },
+            { id: 's33', speaker: '윤태용', kor: '뭐야? 영화 2시간?', time: [135.500, 137.900], eng: "What? A movie is 2 hours?" },
+            { id: 's34', speaker: '윤태용', kor: '지금 보면 11시인데?', time: [138.400, 139.900], eng: "If I watch it now, it'll be 11 o'clock?" },
+            { id: 's35', speaker: '윤태용', kor: '아, 너무 긴데?', time: [140.500, 142.100], eng: "Ah, that's too long." },
+            { id: 's36', speaker: '윤태용', kor: '그냥 릴스나 보자.', time: [143.600, 144.900], eng: "I'll just watch some Reels instead." },
+            { id: 's37', speaker: '직쏘', kor: '잘 보았나?', time: [160.000, 161.900], eng: "Did you watch carefully?" },
+            { id: 's38', speaker: '윤태용', kor: '말도 안 돼.', time: [162.600, 163.600], eng: "No way." },
+            { id: 's39', speaker: '윤태용', kor: '내가 영화 시간보다 릴스를 더 길게 봤다고...?', time: [163.900, 167.620], eng: "I watched Reels longer than the runtime of a movie...?" },
+            { id: 's40', speaker: '직쏘', kor: '자, 그럼 지금부터 플랭크 3시간 시작.', time: [167.660, 173.670], eng: "Now then, your 3-hour plank starts now." },
+            { id: 's41', speaker: '윤태용', kor: '얼마나 남았어요?', time: [178.270, 179.550], eng: "How much time is left?" },
+            { id: 's42', speaker: '직쏘', kor: '릴스를 볼 때는 잘만 가던 시간이 갑자기 플랭크를 하니 잘 안 가는 것 같나?', time: [179.600, 184.300], eng: "Does it feel like the time that flew by when watching Reels is suddenly dragging while planking?" },
+            { id: 's43', speaker: '윤태용', kor: '얼마나 남았냐고요?', time: [184.700, 186.440], eng: "I asked how much time is left!" },
+            { id: 's44', speaker: '직쏘', kor: '소중한 1분 1초가 온 몸으로 느껴지나?', time: [186.480, 189.300], eng: "Can you feel every precious minute and second with your whole body?" },
+            { id: 's45', speaker: '윤태용', kor: '빨리 대답해!', time: [189.610, 191.410], eng: "Answer me quickly!" },
+            { id: 's46', speaker: '직쏘', kor: '이제 1분 지났다.', time: [193.440, 194.410], eng: "1 minute has passed." },
+            { id: 's47', speaker: '직쏘', kor: '나약한 돼지 새끼.', time: [196.900, 198.600], eng: "You weak little pig." },
+            { id: 's48', speaker: '직쏘', kor: '심지어 네가 넷플에서 무슨 영화 볼까 고민하면서 예고편만 본 40분은 포함시키지도 않았다.', time: [200.000, 206.200], eng: "I didn't even include the 40 minutes you spent just watching trailers on Netflix trying to decide what to watch." },
+            { id: 's49', speaker: '직쏘', kor: '이 돼지야.', time: [206.300, 208.200], eng: "You pig." },
+            { id: 's50', speaker: '윤태용', kor: '그냥 영화를 볼 걸...', time: [208.240, 209.700], eng: "I should've just watched the movie..." },
+            { id: 's51', speaker: '윤태용', kor: '뚱돼지같은.', time: [209.720, 210.700], eng: "Like a fat pig." },
+            { id: 's52', speaker: '윤태용', kor: '그 시간이면 영화를 두 개는 봤을 텐데...', time: [210.900, 212.810], eng: "I could have watched two movies in that time..." },
+            { id: 's53', speaker: '직쏘', kor: '평생을 이곳에서 1분 1초 곱씹으면서 살아라.', time: [212.850, 217.970], eng: "Spend the rest of your life here chewing over every minute and second." },
+            { id: 's54', speaker: '직쏘', kor: '아이씨…', time: [221.480, 222.400], eng: "Damn it..." },
+            { id: 's55', speaker: '윤태용', kor: '다시는! 다시는 릴스를 보면서 시간 낭비하지 않겠습니다!', time: [223.440, 229.920], eng: "Never again! I will never waste time watching Reels again!" },
+            { id: 's56', speaker: '윤태용', kor: '제발! 한 번만 더 기회를 주십시오!', time: [230.000, 243.300], eng: "Please! Give me one more chance!" },
+            { id: 's57', speaker: '직쏘', kor: '좋다. 한 번 더 기회를 주지.', time: [243.360, 246.400], eng: "Fine. I'll give you one more chance." },
+            { id: 's58', speaker: '윤태용', kor: '감사합니다. 감사합니다.', time: [246.700, 250.000], eng: "Thank you. Thank you." },
+            { id: 's59', speaker: '직쏘', kor: '네가 어제 배달 어플을 본 시간만큼 투명 의자를 한다면 풀어 주도록 하겠다.', time: [251.100, 256.500], eng: "If you do a wall sit for the amount of time you spent looking at the delivery app yesterday, I will release you." },
+            { id: 's60', speaker: '윤태용', kor: '배달 어플?', time: [256.800, 258.000], eng: "Delivery app?" },
+            { id: 's61', speaker: '윤태용', kor: '나 어제 한 끼밖에 배달 안 시켜 먹었는데...', time: [259.800, 262.000], eng: "I only ordered delivery once yesterday..." },
+            { id: 's62', speaker: '윤태용', kor: '이거 진짜 10분도 안 돼.', time: [262.500, 264.300], eng: "This literally won't even be 10 minutes." },
+            { id: 's63', speaker: '윤태용', kor: '좋아요!', time: [264.400, 265.950], eng: "Alright!" },
+            { id: 's64', speaker: '직쏘', kor: '좋다. 그럼 지금부터 투명 의자 두 시간 시작.', time: [266.000, 272.910], eng: "Good. Then starting now, a 2-hour wall sit begins." },
+            { id: 's65', speaker: '윤태용', kor: '잠깐만요! 2시간이요?', time: [273.000, 276.300], eng: "Wait a minute! 2 hours?" },
+            { id: 's66', speaker: '윤태용', kor: '아, 이거 진짜 말도 안 되는 거잖아요.', time: [276.600, 278.260], eng: "Ah, this makes absolutely no sense." },
+            { id: 's67', speaker: '윤태용', kor: '제가 무슨 배달 어플을 2시간씩이나 봐요!', time: [278.300, 280.700], eng: "How could I look at a delivery app for 2 hours!" },
+            { id: 's68', speaker: '직쏘', kor: '또 믿지 못하는군.', time: [281.100, 282.200], eng: "You don't believe it again." },
+            { id: 's69', speaker: '윤태용', kor: '아, 배고파! 빨리 시켜야겠다.', time: [287.700, 289.700], eng: "Ah I'm hungry! I should order quickly." },
+            { id: 's70', speaker: '윤태용', kor: '그래… 나 어제 배고파서 빨리 시켰다고.', time: [290.000, 292.900], eng: "Right... I was hungry yesterday so I ordered quickly." },
+            { id: 's71', speaker: '윤태용', kor: '오늘 진짜 맛있는 거 먹어야지.', time: [293.000, 295.400], eng: "I need to eat something really good today." },
+            { id: 's72', speaker: '윤태용', kor: '떡볶이는 좀 헤비하고,', time: [295.470, 298.100], eng: "Tteokbokki is a bit heavy," },
+            { id: 's73', speaker: '윤태용', kor: '삼겹살은 식어서 올 것 같고,', time: [298.140, 300.270], eng: "Pork belly will probably arrive cold," },
+            { id: 's74', speaker: '윤태용', kor: '아, 여기는 최소 주문 금액이 안 되네.', time: [300.600, 303.000], eng: "Ah, I don't meet the minimum order amount here." },
+            { id: 's75', speaker: '윤태용', kor: '여기 시켜야겠다!', time: [303.140, 304.060], eng: "I'll order from here!" },
+            { id: 's76', speaker: '윤태용', kor: '뭐야? 리뷰 1점이야.', time: [304.100, 305.370], eng: "What? The review is 1 star." },
+            { id: 's77', speaker: '윤태용', kor: '아씨, 다른 데.', time: [305.410, 306.700], eng: "Damn, somewhere else." },
+            { id: 's78', speaker: '윤태용', kor: '리뷰 이벤트가 없네. 여기는.', time: [306.900, 308.860], eng: "There's no review event here." },
+            { id: 's79', speaker: '윤태용', kor: '말도 안 돼...', time: [308.900, 309.970], eng: "This is ridiculous..." },
+            { id: 's80', speaker: '윤태용', kor: '아, 그래 그냥 떡볶이 시켜 먹어야겠다.', time: [310.000, 311.700], eng: "Ah, fine, I'll just order Tteokbokki." },
+            { id: 's81', speaker: '윤태용', kor: '아, 진짜 배고프다.', time: [312.400, 313.840], eng: "Ah, I'm really hungry." },
+            { id: 's82', speaker: '윤태용', kor: '왜 이렇게 배고파?', time: [313.880, 314.860], eng: "Why am I so hungry?" },
+            { id: 's83', speaker: '윤태용', kor: '2시간이 지나서 배가 고픈 거였어...', time: [315.200, 317.700], eng: "I was hungry because 2 hours had passed..." },
+            { id: 's84', speaker: '윤태용', kor: '아... 이것도 시간의 소중함을 알라는 벌인가요?', time: [326.900, 330.550], eng: "Ah... is this also a punishment to teach me the value of time?" },
+            { id: 's85', speaker: '직쏘', kor: '저건 내가 시킨 거 아닌데.', time: [330.600, 332.220], eng: "I didn't order that to happen." },
+            { id: 's86', speaker: '윤태용', kor: '야, 이 새끼야!', time: [332.260, 333.350], eng: "Hey, you bastard!" },
+            { id: 's87', speaker: '직쏘', kor: '그럼 투명 의자 2시간 시작.', time: [333.390, 337.600], eng: "Then the 2-hour wall sit begins." },
+            { id: 's88', speaker: '직쏘', kor: '네가 정말 메뉴를 고민하느라 두 시간을 썼다고 생각하나?', time: [341.700, 345.300], eng: "Do you really think you spent two hours just pondering the menu?" },
+            { id: 's89', speaker: '윤태용', kor: '당연하죠. 그게 아니면 뭔데요?', time: [345.400, 349.630], eng: "Of course. If not that, what else?" },
+            { id: 's90', speaker: '직쏘', kor: '아니, 너는 아무 생각도 없었어.', time: [349.670, 352.080], eng: "No, you had no thoughts at all." },
+            { id: 's91', speaker: '직쏘', kor: '그저 엄지손가락을 위로 올리는 그 단순한 행위에 중독되어 있었을 뿐이지.', time: [352.120, 357.200], eng: "You were just addicted to the simple act of flicking your thumb upwards." },
+            { id: 's92', speaker: '직쏘', kor: '배달 어플을 보고, 릴스를 보고, 그저 멍하니 시간을 죽이고 있었던 거야.', time: [357.990, 363.400], eng: "Looking at delivery apps, watching Reels, you were just blankly killing time." },
+            { id: 's93', speaker: '윤태용', kor: '잘못했어요. 살려주세요.', time: [363.800, 367.200], eng: "I was wrong. Please save me." },
+            { id: 's94', speaker: '직쏘', kor: '너는 그 두 시간 동안 살아 있었나? 아니면 죽어 있었나?', time: [370.100, 375.300], eng: "Were you alive during those two hours? Or were you dead?" },
+            { id: 's95', speaker: '윤태용', kor: '살아...', time: [375.350, 378.100], eng: "Alive..." },
+            { id: 's96', speaker: '직쏘', kor: '지금 허벅지가 타들어 가는 이 고통, 이게 바로 살아 있다는 감각이다.', time: [379.000, 383.300], eng: "The burning pain in your thighs right now, this is exactly the sensation of being alive." },
+            { id: 's97', speaker: '직쏘', kor: '네가 스마트폰 화면 속에 처박아 버린 그 시간은 죽은 시간이었다. 명심해라.', time: [383.400, 389.800], eng: "The time you dumped into your smartphone screen was dead time. Keep that in mind." },
+            { id: 's98', speaker: '직쏘', kor: '킬링 타임이라며 시간을 죽이다 보면, 결국 죽는 건 시간이 아니라 바로 너 자신이다.', time: [390.000, 397.900], eng: "If you kill time calling it 'killing time', eventually the one dying isn't time, but you yourself." },
+            { id: 's99', speaker: '윤태용', kor: '끄아아아아악!', time: [398.000, 401.580], eng: "Aaaaaagh!" },
+            { id: 's100', speaker: '윤태용', kor: '아, 미친 개꿈 꿨네.', time: [415.000, 417.600], eng: "Ah, what a crazy bad dream." },
+            { id: 's101', speaker: '윤태용', kor: '뭔 꿈에 직쏘가 나오냐.', time: [418.500, 420.500], eng: "Why would Jigsaw appear in my dream." },
+            { id: 's102', speaker: '윤태용', kor: '아, 진짜 릴스를 너무 많이 봤나?', time: [420.520, 423.500], eng: "Ah, did I really watch too many Reels?" },
+            { id: 's103', speaker: '윤태용', kor: '하아... 그래 샤워부터 하자.', time: [423.600, 438.700], eng: "Sigh... right, let's take a shower first." },
+            { id: 's104', speaker: '윤태용', kor: '그래 딱 씻고, 도서관 가서 책도 읽고, 운동도 하고, 오늘 진짜 알차게 시간 보내자.', time: [442.200, 449.400], eng: "Alright, wash up, go to the library to read, exercise, let's really spend time productively today." },
+            { id: 's105', speaker: '윤태용', kor: '그래 얼른 씻자.', time: [450.600, 452.000], eng: "Yeah, let's wash up quickly." },
+            { id: 's106', speaker: '윤태용', kor: '아, 뭐 듣지?', time: [452.300, 454.400], eng: "Ah, what should I listen to?" },
+            { id: 's107', speaker: '윤태용', kor: '아, 이건 아침에 듣기에 너무 신나고.', time: [455.000, 458.400], eng: "Ah, this is too upbeat to listen to in the morning." },
+            { id: 's108', speaker: '윤태용', kor: '아, 이건 너무 감성적이야.', time: [458.600, 460.700], eng: "Ah, this is too emotional." },
+            { id: 's109', speaker: '윤태용', kor: '아, 이건 어제 아침에 들었고.', time: [461.100, 463.500], eng: "Ah, I listened to this yesterday morning." },
+            { id: 's110', speaker: '윤태용', kor: '아, 그냥 유튜브나 볼까?', time: [463.800, 465.300], eng: "Ah, should I just watch YouTube?" },
+            { id: 's111', speaker: '윤태용', kor: '뭐 볼 거 없나?', time: [466.000, 467.300], eng: "Anything to watch?" },
+            { id: 's112', speaker: '윤태용', kor: '뭐야?', time: [469.300, 475.140], eng: "What the?" },
+            { id: 's113', speaker: '직쏘', kor: '아휴, 게임을 시작하지.', time: [475.180, 477.900], eng: "Sigh, let the game begin." }
         ];
 
         const VOCAB_DATA = [
-            { 
-                term: '본능적인', 
-                mainDef: '배우지 않아도 저절로 우러나오는 성질', 
-                translations: { en: { term: 'instinctive', mainDef: 'arising naturally without being learned' } }, 
-                examples: [{ kor: "우리는 본능적으로 단맛을 좋아해요.", eng: "We instinctively like sweet tastes." }, { kor: "아삭한 소리는 본능적으로 신선함을 느끼게 해요.", eng: "Crunchy sounds instinctively make us feel freshness." }], 
-                variants: ['본능적인', '본능적'] 
+            {
+                term: '시간을 소중히 여기다',
+                mainDef: '시간을 함부로 낭비하지 않고 아주 귀하고 중요하게(소중히) 아끼며 다루다(여기다)',
+                subDefs: [
+                    {
+                        subTerm: '• 소중하다',
+                        subDef: '소(所 바) + 중(重 무거울) -> 매우 귀중하여 함부로 대하지 않고 아끼는 마음이 있다'
+                    }
+                ],
+                translations: {
+                    en: {
+                        term: 'to value time / to cherish time',
+                        mainDef: 'to treat time as something precious and important, cherishing it without wasting it.',
+                        subDefs: [
+                            {
+                                term: 'precious / valuable',
+                                def: 'very precious, to be cherished, and not to be treated carelessly.'
+                            }
+                        ]
+                    }
+                },
+                examples: [
+                    {
+                        kor: "스마트폰만 보지 말고, 사랑하는 가족들과 대화하며 하루하루를 소중하게 생각하고 헛되이 보내지 마세요.",
+                        eng: "Don't just look at your smartphone, but cherish each day conversing with your beloved family and don't spend it in vain."
+                    }
+                ],
+                variants: ['시간을 소중히 여기지']
             },
-            { 
-                term: '악용하다', 
-                mainDef: '알맞지 않게 나쁜 일에 쓰다', 
-                translations: { en: { term: 'to abuse / misuse', mainDef: 'to use something for a bad purpose' } }, 
-                examples: [{ kor: "우리의 본능을 악용하는 식품들이 있어요.", eng: "There are foods that abuse our instincts." }, { kor: "지식을 악용하면 안 돼요.", eng: "You should not misuse knowledge." }], 
-                variants: ['악용하는', '악용'] 
+            {
+                term: '벌을 받다',
+                mainDef: '벌(罰 벌) -> 자신이 한 잘못에 대한 대가로 괴롭고 힘든 일을 겪게 되다',
+                translations: {
+                    en: {
+                        term: 'to be punished',
+                        mainDef: 'to suffer a painful and difficult task or pain (punishment) as a price for committing a wrong deed.'
+                    }
+                },
+                examples: [
+                    {
+                        kor: "동생을 때리고 거짓말을 한 아이는 부모님께 매를 맞고 방에서 나오지 못하는 무서운 벌을 받게 되었습니다.",
+                        eng: "The child who hit his younger sibling and lied got spanked by his parents and received a scary punishment of not being allowed to leave his room."
+                    }
+                ],
+                variants: ['벌을 받게']
+            },
+            {
+                term: '시간을 버리다',
+                mainDef: '자신에게 주어진 시간을 의미 있거나 유익한 일에 쓰지 않고 아무 생각 없이 쓰다',
+                translations: {
+                    en: {
+                        term: 'to waste time / to throw time away',
+                        mainDef: 'not using the precious time given to you for meaningful or beneficial things, but wasting it thoughtlessly.'
+                    }
+                },
+                examples: [
+                    {
+                        kor: "시험 기간인데도 하루 종일 소파에 누워 재미없는 텔레비전만 보며 금 같은 아까운 시간을 버렸어요.",
+                        eng: "Even though it was exam period, I lay on the sofa all day watching boring TV, throwing away precious golden time."
+                    }
+                ],
+                variants: ['시간을 버리다', '시간을 버려요', '버린 시간']
+            },
+            {
+                term: '시간을 아끼다',
+                mainDef: '시간이 헛되이 지나가지 않도록 낭비 없이 효율적으로 쓰다',
+                translations: {
+                    en: {
+                        term: 'to save time',
+                        mainDef: 'to use precious time very frugally and efficiently, so it doesn\'t flow away in vain.'
+                    }
+                },
+                examples: [
+                    {
+                        kor: "아침에 늦잠 자지 않고 10분이라도 자는 시간을 아끼려고 어젯밤에 미리 책가방을 꼼꼼하게 다 챙겨두었어요.",
+                        eng: "To save even 10 minutes of sleeping time without oversleeping in the morning, I meticulously packed my school bag in advance last night."
+                    }
+                ],
+                variants: ['시간을 아끼다', '시간 아끼려고', '시간도 아끼려고']
+            },
+            {
+                term: '시간을 넘기다',
+                mainDef: '정해 놓은 약속 시간이나 마감 시간을 지키지 못하고 그 시간이 지나가게 하다',
+                translations: {
+                    en: {
+                        term: 'to go over time / to exceed the time',
+                        mainDef: 'to fail to keep a set appointment time or deadline and pass beyond it.'
+                    }
+                },
+                examples: [
+                    {
+                        kor: "수학 시험을 보다가 어려운 문제에서 낑낑대느라 정해진 시험 시간을 훌쩍 넘겨서 마지막 세 문제는 아예 풀지도 못했습니다.",
+                        eng: "While taking the math test, I struggled with a difficult problem, went well over the set exam time, and couldn't even attempt the last three questions."
+                    }
+                ],
+                variants: ['시간을 넘기다', '시간을 넘겨']
+            },
+            {
+                term: '내기하다',
+                mainDef: '승부나 게임을 해서 이긴 사람이 특정한 보상을 가지거나 약속을 이루기로 정하고 겨루다',
+                translations: {
+                    en: {
+                        term: 'to make a bet',
+                        mainDef: 'to promise that the winner of a match or game will get a certain reward, and compete.'
+                    }
+                },
+                examples: [
+                    {
+                        kor: "쉬는 시간에 친구와 운동장에서 달리기 시합을 해서 지는 사람이 시원한 아이스크림을 사주기로 내기했습니다.",
+                        eng: "During recess, I had a running race with my friend on the playground and made a bet that the loser would buy cool ice cream."
+                    }
+                ],
+                variants: ['내기할까', '내기', '내기에서']
+            },
+            {
+                term: '풀어 주도록 하겠다',
+                mainDef: '갇혀 있는 사람을 밖으로 자유롭게 나갈 수 있게(풀어 주다) 만들겠다(-도록 하겠다)는 뜻',
+                subDefs: [
+                    {
+                        subTerm: '• 풀어 주다',
+                        subDef: '얽히거나 묶인 것을 풀어서 자유롭게 움직일 수 있게 하다'
+                    },
+                    {
+                        subTerm: '• -도록 하다',
+                        subDef: '앞의 행동을 하게 만들거나, 기필코 그렇게 하겠다는 의지를 나타내는 말'
+                    }
+                ],
+                translations: {
+                    en: {
+                        term: '(I) will let you go / will release you',
+                        mainDef: 'words of determination that I am firmly resolved to make (-도록 하겠다) someone locked in a room able to freely go outside (풀어 주다).',
+                        subDefs: [
+                            {
+                                term: 'to untie / to release',
+                                def: 'to gently undo what is tangled or tied tightly to give freedom to move at will.'
+                            },
+                            {
+                                term: 'will make sure to / promise to',
+                                def: 'a phrase indicating making the preceding action happen, or one\'s will and promise to definitely do so.'
+                            }
+                        ]
+                    }
+                },
+                examples: [
+                    {
+                        kor: "엄마가 화가 나서 방에 가두었지만, 이번 숙제를 다 끝내면 밖으로 나가서 놀 수 있도록 곧 풀어 주실 거예요.",
+                        eng: "Mom locked me in the room out of anger, but once I finish this homework, she will soon let me go so I can go out and play."
+                    }
+                ],
+                variants: ['풀어 주도록 하겠다']
+            },
+            {
+                term: '영원히',
+                mainDef: '영(永 길) + 원(遠 멀) -> 시간이 아무리 오래 지나도 끝이 없이 계속해서',
+                translations: {
+                    en: {
+                        term: 'forever / eternally',
+                        mainDef: 'continuing continuously without an end, no matter how much time passes.'
+                    }
+                },
+                examples: [
+                    {
+                        kor: "우리가 초등학교 때 새끼손가락을 걸며 맺은 이 아름다운 우정이 어른이 되어도 영원히 변치 않았으면 좋겠습니다.",
+                        eng: "I hope this beautiful friendship we formed hooking pinkies in elementary school never changes and lasts forever even when we become adults."
+                    }
+                ],
+                variants: ['영원히']
+            },
+            {
+                term: '갇혀 있다',
+                mainDef: '어떤 공간에 들어가서 밖으로 자기 마음대로 나오지 못하는 상태로 계속 있다',
+                translations: {
+                    en: {
+                        term: 'to be trapped / to be locked up',
+                        mainDef: 'to be stuck motionless in a space, continuing in a frustrating state unable to come out at will.'
+                    }
+                },
+                examples: [
+                    {
+                        kor: "어젯밤 낡은 엘리베이터가 갑자기 쾅 하고 고장 나는 바람에 사람들이 좁은 공간 안에 한 시간 동안 갇혀 있어서 몹시 무서워했어요.",
+                        eng: "Because the old elevator suddenly broke down with a bang last night, people were trapped in the narrow space for an hour and were very terrified."
+                    }
+                ],
+                variants: ['갇혀 있게']
+            },
+            {
+                term: '플랭크',
+                mainDef: 'Plank -> 바닥에 엎드린 자세에서 팔꿈치와 발끝만으로 몸의 무게를 버티며 배와 허리 근육을 기르는 운동',
+                translations: {
+                    en: {
+                        term: 'plank (exercise)',
+                        mainDef: 'a bodyweight exercise that builds belly and waist (core) muscles by supporting the entire body\'s weight with only elbows and toes in a face-down position on a hard floor.'
+                    }
+                },
+                examples: [
+                    {
+                        kor: "매일 아침 일어나자마자 배가 부들부들 떨릴 때까지 1분씩 플랭크를 꾹 참고 했더니 배에 아주 단단한 근육이 생겼어요.",
+                        eng: "Every morning as soon as I woke up, I endured doing a plank for 1 minute until my stomach trembled violently, and I developed very solid muscles in my belly."
+                    }
+                ],
+                variants: ['플랭크']
+            },
+            {
+                term: '길어 봤자 1분이잖아',
+                mainDef: '동영상의 길이가 아무리 길다고 하더라도 1분밖에 되지 않는다는 사실을 자시에게 확인시켜 주며 하는 말',
+                subDefs: [
+                    {
+                        subTerm: '• -아/어 봤자',
+                        subDef: '아무리 최선을 다하거나 상황을 가정해도 결과가 대수롭지 않음을 나타냄'
+                    },
+                    {
+                        subTerm: '• -잖아(요)',
+                        subDef: '듣는 사람도 이미 알고 있는 사실을 확인하거나 일깨워 줄 때 쓰는 표현'
+                    }
+                ],
+                translations: {
+                    en: {
+                        term: 'it\'s 1 minute at most, you know',
+                        mainDef: 'confirming to the other person the obvious fact that no matter how long the video is assumed to be, it is only 1 minute at most.',
+                        subDefs: [
+                            {
+                                term: 'even if (one) tries to...',
+                                def: 'indicating that no matter how one tries or assumes a situation, the outcome is insignificant.'
+                            },
+                            {
+                                term: 'as you know / isn\'t it',
+                                def: 'a suffix pointing out and reminding once again that you, who are listening to me, already know that fact.'
+                            }
+                        ]
+                    }
+                },
+                examples: [
+                    {
+                        kor: "먹구름이 끼긴 했지만 지금 비가 많이 쏟아져 봤자 오후에는 금방 그칠 테니 우산 없다고 너무 걱정하지 마, 어차피 금방 그치잖아.",
+                        eng: "Although there are dark clouds, even if it pours heavily now, it will stop soon in the afternoon, so don't worry too much about not having an umbrella, it stops soon anyway, you know."
+                    }
+                ],
+                variants: ['길어 봤자 1분이잖아']
+            },
+            {
+                term: '인정하다',
+                mainDef: '인(認 알) + 정(定 정할) -> 어떤 사실이 맞다거나 자신이 잘못을 했다는 것을 확실하게 받아들이다',
+                translations: {
+                    en: {
+                        term: 'to admit / to acknowledge',
+                        mainDef: 'to clearly accept that a certain fact is correct or that one made a mistake.'
+                    }
+                },
+                examples: [
+                    {
+                        kor: "거짓말을 하던 동생은 엄마가 확실한 증거를 보여주자, 자기가 몰래 냉장고에 있던 내 초코 케이크를 훔쳐 먹었다는 사실을 결국 눈물을 흘리며 솔직하게 인정했어요.",
+                        eng: "When Mom showed clear evidence, the younger brother who was lying eventually shed tears and honestly admitted the fact that he secretly stole and ate my chocolate cake in the fridge."
+                    }
+                ],
+                variants: ['인정하지']
+            },
+            {
+                term: '두 배속',
+                mainDef: '두 배(두 번 곱한 크기) + 속(速 빠를) -> 동영상이나 오디오를 재생할 때 원래 속도보다 2배 더 빠르게 재생하는 것',
+                translations: {
+                    en: {
+                        term: '2x speed / double speed',
+                        mainDef: 'when playing a video or audio, playing it 2 times faster than the original speed.'
+                    }
+                },
+                examples: [
+                    {
+                        kor: "내일이 바로 시험인데 아직 봐야 할 인터넷 수학 강의가 너무 많이 남아서, 선생님 말이 랩하는 것처럼 들리도록 두 배속으로 아주 빠르게 돌려 보며 간신히 공부를 다 끝냈습니다.",
+                        eng: "Tomorrow is the exam but there are still too many internet math lectures left to watch, so I barely finished studying by running it very fast at 2x speed so the teacher's words sounded like rapping."
+                    }
+                ],
+                variants: ['두 배속']
+            },
+            {
+                term: '잘만 가던 시간',
+                mainDef: '재미있는 일을 할 때 지루함 없이 아주 빠르게 잘 흘러가던(잘만 가던) 시간',
+                subDefs: [
+                    {
+                        subTerm: '• 시간이 잘 가다',
+                        subDef: '지금 하는 일이 지루하지 않아서 시간이 아주 빠르게 흘러가다'
+                    },
+                    {
+                        subTerm: '• -던',
+                        subDef: '과거에 계속해서 반복해서 일어났거나 진행 중이던 일을 떠올리며 말할 때 쓰는 표현'
+                    }
+                ],
+                translations: {
+                    en: {
+                        term: 'the time that used to fly by',
+                        mainDef: 'the time that used to fly by quickly and well without boredom when doing something fun.',
+                        subDefs: [
+                            {
+                                term: 'time flies / passes quickly',
+                                def: 'for time to flow fast because what one is doing now is not boring.'
+                            },
+                            {
+                                term: 'used to / was doing',
+                                def: 'attached when recalling something that happened repeatedly in the past or was in progress.'
+                            }
+                        ]
+                    }
+                },
+                examples: [
+                    {
+                        kor: "친구들과 놀이공원에서 신나게 롤러코스터를 탈 때는 시간이 참 눈 깜짝할 새 잘만 가더니, 집에 돌아와 혼자 조용히 수학 숙제를 하려니 1분이 1시간처럼 너무 지루해요.",
+                        eng: "When I was excitedly riding roller coasters at the amusement park with friends, time flew by in the blink of an eye, but now that I came home and try to do math homework quietly alone, 1 minute feels like 1 hour, it's so boring."
+                    }
+                ],
+                variants: ['잘만 가던 시간이']
+            },
+            {
+                term: '시간이 잘 안 가다',
+                mainDef: '지금 하고 있는 일이 재미없고 지루해서 시간이 아주 느리고 더디게 흘러가는 것 같다',
+                translations: {
+                    en: {
+                        term: 'time drags / time goes by slowly',
+                        mainDef: 'feeling like 1 minute flows very slowly and sluggishly like 1 hour because what I am doing now is boring.'
+                    }
+                },
+                examples: [
+                    {
+                        kor: "무서운 치과 의자에 누워 내 이빨을 뽑을 차례를 기다리는 10분 동안에는, 너무 심장이 뛰고 긴장돼서 그런지 정말 평소보다 백 배는 더 시간이 안 갔어요.",
+                        eng: "During the 10 minutes waiting for my turn to get my tooth pulled lying in the scary dentist's chair, my heart was pounding and I was so nervous that time really dragged a hundred times more than usual."
+                    }
+                ],
+                variants: ['시간이 잘 안 가다', '잘 안 가는']
+            },
+            {
+                term: '나약하다',
+                mainDef: '나(懦 게으를) + 약(弱 약할) -> 의지가 무르고 마음의 힘이 약해서 힘든 일을 만나면 쉽게 포기하는 성질이 있다',
+                translations: {
+                    en: {
+                        term: 'to be weak / to be feeble-minded',
+                        mainDef: 'having a nature of easily giving up when meeting hard things because one\'s will is soft and the strength of mind is weak.'
+                    }
+                },
+                examples: [
+                    {
+                        kor: "추운 날씨에 달리기를 하다가 숨이 차다고 조금만 힘들어도 금세 포기하고 바닥에 드러눕는 나약한 마음을 당장 쓰레기통에 버리고, 끝까지 씩씩하게 일어서서 도전해 보세요.",
+                        eng: "Throw right into the trash that feeble mind that gives up immediately and lies on the floor even at slight hardship of being out of breath while running in cold weather, and stand up bravely and challenge till the end."
+                    }
+                ],
+                variants: ['나약한']
+            },
+            {
+                term: '넷플',
+                mainDef: '영화나 드라마를 볼 수 있는 인터넷 서비스인 \'넷플릭스\'를 줄여서 부르는 말',
+                translations: {
+                    en: {
+                        term: 'Netflix (abbr.)',
+                        mainDef: 'an abbreviation used for \'Netflix\', an internet service where you can watch movies and dramas.'
+                    }
+                },
+                examples: [
+                    {
+                        kor: "이번 주말에는 밖에 비가 오니 밖으로 나가지 말고, 따뜻한 전기장판 위에서 이불을 덮고 귤을 까먹으며 넷플릭스에 새로 올라온 좀비 드라마를 하루 종일 몰아서 보았어요.",
+                        eng: "It's raining outside this weekend so don't go out, I binge-watched the newly uploaded zombie drama on Netflix all day long while eating tangerines under the blanket on the warm electric blanket."
+                    }
+                ],
+                variants: ['넷플']
+            },
+            {
+                term: '예고편',
+                mainDef: '예(豫 미리) + 고(告 알릴) + 편(篇 엮을) -> 영화나 드라마가 정식으로 나오기 전에, 사람들의 호기심을 끌기 위해 중요한 장면만 뽑아서 짧게 보여주는 영상',
+                translations: {
+                    en: {
+                        term: 'trailer / preview',
+                        mainDef: 'a very short video showing only the important scenes to grab people\'s curiosity before a movie or drama starts its real broadcast.'
+                    }
+                },
+                examples: [
+                    {
+                        kor: "극장에서 팝콘을 먹으며 기다리다 곧 개봉할 새 슈퍼히어로 영화의 화려한 예고편을 보자마자, 이건 무조건 재미있을 것 같아서 친구와 함께 박수를 치며 소리를 질렀어요.",
+                        eng: "Waiting while eating popcorn in the theater, as soon as I saw the flashy trailer of the new superhero movie about to be released, I clapped and screamed with my friend thinking this must definitely be fun."
+                    }
+                ],
+                variants: ['예고편']
+            },
+            {
+                term: '포함시키다',
+                mainDef: '포(包 안을) + 함(含 머금을) -> 어떤 물건, 사람, 시간을 일정한 범위나 묶음 안에 들어가게 하다',
+                translations: {
+                    en: {
+                        term: 'to include',
+                        mainDef: 'to put an object, person, or time into a certain range or bundle.'
+                    }
+                },
+                examples: [
+                    {
+                        kor: "우리가 내일 제주도로 떠날 완벽한 여행 계획표에, 꼭 가보고 싶었던 바닷가 옆 커다란 미술관 방문 시간도 잊지 말고 꼭 포함시켜서 다 같이 구경하자.",
+                        eng: "In our perfect travel itinerary leaving for Jeju Island tomorrow, don't forget to definitely include the visiting time for the large art museum next to the sea that we really wanted to go to, and let's see it all together."
+                    }
+                ],
+                variants: ['포함시키지도']
+            },
+            {
+                term: '뚱돼지',
+                mainDef: '살이 아주 많이 찐 돼지를 뜻하거나, 게으르고 뚱뚱한 사람을 장난스럽게 놀리거나 낮잡아 부르는 말',
+                translations: {
+                    en: {
+                        term: 'fat pig',
+                        mainDef: 'meaning a pig that has gained a lot of weight, or a term playfully or meanly teasing a lazy and fat person.'
+                    }
+                },
+                examples: [
+                    {
+                        kor: "저녁밥을 잔뜩 먹고 바로 침대에 누워만 있으면 배가 남산만 한 뚱돼지가 될 테니, 제발 얼른 일어나서 밖으로 나가 가볍게 산책이라도 좀 하자.",
+                        eng: "If you just lie on the bed right after eating a full dinner, you'll become a fat pig with a belly as big as Namsan mountain, so please get up quickly and let's go outside for at least a light walk."
+                    }
+                ],
+                variants: ['뚱돼지']
+            },
+            {
+                term: '봤을 텐데',
+                mainDef: '만약 다른 행동을 하지 않았다면 그 시간에 분명히 영상이나 영화를 볼 수 있었을 것이라고 지나간 사실에 대해 아쉬워하며 짐작하는 말',
+                subDefs: [
+                    {
+                        subTerm: '• -ㄹ/을 텐데',
+                        subDef: '어떤 상황을 추측하거나 짐작하면서, 그에 대한 아쉬움이나 다른 의견을 덧붙일 때 쓰는 표현'
+                    }
+                ],
+                translations: {
+                    en: {
+                        term: 'would have watched / must have watched',
+                        mainDef: 'guessing and feeling regretful about a past fact that if you hadn\'t done other things, you definitely could have watched videos or movies in that time.',
+                        subDefs: [
+                            {
+                                term: 'would / must be (and/but...)',
+                                def: 'used when guessing or imagining a situation, and subsequently adding a feeling of regret or another opinion.'
+                            }
+                        ]
+                    }
+                },
+                examples: [
+                    {
+                        kor: "네가 어제 밤늦게까지 게임만 안 하고 일찍 일어나서 아빠를 따라갔더라면 산꼭대기에서 진짜 예쁘고 붉은 일출을 분명히 봤을 텐데 네가 못 봐서 아빠가 참 아쉽다.",
+                        eng: "If you hadn't played games late last night and woke up early to follow dad, you definitely would have watched the really pretty red sunrise from the mountaintop, so dad is very sorry you missed it."
+                    }
+                ],
+                variants: ['봤을 텐데']
+            },
+            {
+                term: '곱씹다',
+                mainDef: '예전에 있었던 일이나 들은 말을 마음속으로 여러 번 반복해서 깊이 생각하다',
+                translations: {
+                    en: {
+                        term: 'to dwell on / to chew over',
+                        mainDef: 'repeating and thinking deeply over and over in one\'s mind about past events or words heard.'
+                    }
+                },
+                examples: [
+                    {
+                        kor: "미술 대회에서 상을 받고 무대에서 선생님이 제게 몰래 해주신 따뜻한 칭찬의 말을 집으로 돌아오는 버스 안에서 내내 곱씹으며 혼자서 배시시 웃으며 행복해했습니다.",
+                        eng: "I kept chewing over the warm words of praise the teacher secretly gave me on stage after winning an award at the art contest all the way back home on the bus, smiling happily to myself."
+                    }
+                ],
+                variants: ['곱씹으면서']
+            },
+            {
+                term: '살아라',
+                mainDef: '목숨을 유지하며 생활하라는 뜻으로 강하게 명령하는 말',
+                subDefs: [
+                    {
+                        subTerm: '• -라',
+                        subDef: '윗사람이 아랫사람에게 어떤 행동을 하라고 강하게 명령할 때 문장 끝에 붙이는 말'
+                    }
+                ],
+                translations: {
+                    en: {
+                        term: 'live! (imperative)',
+                        mainDef: 'a word strongly commanding to maintain one\'s life and live.',
+                        subDefs: [
+                            {
+                                term: '(imperative suffix)',
+                                def: 'a suffix attached to the end of a sentence when a superior strongly commands a subordinate to do an action.'
+                            }
+                        ]
+                    }
+                },
+                examples: [
+                    {
+                        kor: "부모님은 항상 저의 손을 꼭 잡고 거짓말하지 말고 남을 도우며 정직하고 성실한 훌륭한 사람으로 세상에 부끄럼 없이 살아라고 엄하게 강조하셨습니다.",
+                        eng: "My parents always held my hand tightly and strictly emphasized that I live without shame in the world as an excellent, honest, and sincere person helping others without lying."
+                    }
+                ],
+                variants: ['살아라']
+            },
+            {
+                term: '시간을 낭비하다',
+                mainDef: '낭(浪 물결/함부로) + 비(費 쓸) -> 소중한 시간을 아무런 쓸모나 보람이 없는 일에 헛되이 써 버리다',
+                translations: {
+                    en: {
+                        term: 'to waste time',
+                        mainDef: 'to spend precious time vainly on useless and unrewarding things.'
+                    }
+                },
+                examples: [
+                    {
+                        kor: "날씨 좋은 주말에 밖에서 운동도 안 하고, 하루 종일 더러운 소파에 찰싹 누워 핸드폰으로 재미없는 텔레비전만 보며 황금 같은 내 소중한 시간을 쓰레기처럼 낭비했습니다.",
+                        eng: "On a weekend with good weather, without exercising outside, I wasted my precious golden time like trash lying flat on the dirty sofa all day watching boring TV on my phone."
+                    }
+                ],
+                variants: ['시간 낭비하지']
+            },
+            {
+                term: '기회를 주십시오',
+                mainDef: '실수를 만회하거나 다시 도전할 수 있는 좋은 때(기회)를 저에게 한 번 허락해 달라고 예의 바르게 부탁하는 말',
+                subDefs: [
+                    {
+                        subTerm: '• -십시오',
+                        subDef: '윗사람에게 존댓말을 쓰며, 정중하게 명령하거나 부탁할 때 단어 끝에 붙이는 말'
+                    }
+                ],
+                translations: {
+                    en: {
+                        term: 'please give me a chance',
+                        mainDef: 'a polite request begging to please allow me just once a good time (chance) to make up for a mistake or challenge again.',
+                        subDefs: [
+                            {
+                                term: 'please do (formal polite)',
+                                def: 'a suffix attached to the end of a word when politely commanding or requesting someone older or higher in rank using honorifics.'
+                            }
+                        ]
+                    }
+                },
+                examples: [
+                    {
+                        kor: "제가 오늘 긴장해서 피아노 연주를 크게 망쳤지만, 내일 무대에서 다시 한번 완벽하게 연습한 멋진 연주를 보여드릴 수 있도록 제발 저에게 한 번만 더 기회를 주십시오.",
+                        eng: "I messed up the piano performance a lot today because I was nervous, but please give me a chance just one more time so I can show you a wonderfully practiced perfect performance again on stage tomorrow."
+                    }
+                ],
+                variants: ['기회를 주십시오']
+            },
+            {
+                term: '기회를 주지',
+                mainDef: '상대방이 원하니 다시 한번 해볼 수 있는 때(기회)를 허락해 주겠다고 약속하거나 다짐하듯 하는 말',
+                subDefs: [
+                    {
+                        subTerm: '• -지',
+                        subDef: '스스로 다짐하거나, 아랫사람에게 어떤 일을 해주겠다고 약속할 때 쓰는 꼬리말'
+                    }
+                ],
+                translations: {
+                    en: {
+                        term: 'I will give you a chance',
+                        mainDef: 'words promising or resolving to allow a time (chance) to try again since the other person wants it.',
+                        subDefs: [
+                            {
+                                term: 'will do (promising/soliloquy)',
+                                def: 'a suffix used when resolving to oneself or promising a subordinate to do something.'
+                            }
+                        ]
+                    }
+                },
+                examples: [
+                    {
+                        kor: "너의 지난번 시험 성적은 엉망이지만, 네가 눈물을 닦으며 그렇게 열심히 공부하겠다고 간절히 원하니 내가 이번 한 번만 특별히 반장 선거에 나갈 기회를 주지.",
+                        eng: "Your last test score was a mess, but since you desperately want it saying you will study so hard wiping your tears, I will give you a chance to run for class president specially just this once."
+                    }
+                ],
+                variants: ['기회를 주지']
+            },
+            {
+                term: '배달 어플',
+                mainDef: '스마트폰을 이용해 음식을 집으로 배달시킬 수 있도록 만든 프로그램(앱)',
+                translations: {
+                    en: {
+                        term: 'delivery app',
+                        mainDef: 'a program (app) made to have food delivered home using a smartphone.'
+                    }
+                },
+                examples: [
+                    {
+                        kor: "밖에 무서운 천둥 치며 비가 너무 많이 와서 한 발짝도 나가기 귀찮아, 따뜻한 방 안에서 배달 어플로 치즈가 듬뿍 들어간 따뜻한 피자를 편하게 시켰어요.",
+                        eng: "It rained so much with scary thunder outside that I was too lazy to step a foot out, so I comfortably ordered a warm pizza with plenty of cheese using a delivery app from inside a warm room."
+                    }
+                ],
+                variants: ['배달 어플']
+            },
+            {
+                term: '투명 의자',
+                mainDef: '보이지 않는 의자가 있는 것처럼 상상하고 두 무릎을 구부린 채 공중에 앉은 자세를 버티는 힘든 기합이나 운동',
+                subDefs: [
+                    {
+                        subTerm: '• 투명',
+                        subDef: '투(透 통할) + 명(明 밝을) -> 맑은 유리창처럼 빛이 통과해서 아무것도 보이지 않는 상태'
+                    }
+                ],
+                translations: {
+                    en: {
+                        term: 'invisible chair (wall sit exercise)',
+                        mainDef: 'a hard punishment or exercise where you have to hold a posture sitting in the air with both knees bent, imagining an invisible chair.',
+                        subDefs: [
+                            {
+                                term: 'transparency / invisible',
+                                def: 'a state where light passes through like a clear glass window, making nothing visible.'
+                            }
+                        ]
+                    }
+                },
+                examples: [
+                    {
+                        kor: "무서운 체육 선생님께 수업 시간에 몰래 장난을 치다 딱 걸려서, 차가운 복도에서 10분 동안 투명 의자 벌을 벌벌 떨며 서느라 다리가 터질 것처럼 후들거렸습니다.",
+                        eng: "I was caught playing around secretly during class by the scary PE teacher, so my legs trembled as if they would burst while trembling and doing the invisible chair punishment for 10 minutes in the cold hallway."
+                    }
+                ],
+                variants: ['투명 의자']
+            },
+            {
+                term: '한 끼',
+                mainDef: '아침, 점심, 저녁과 같이 정해진 시간에 밥을 한 번 먹는 횟수',
+                translations: {
+                    en: {
+                        term: 'one meal',
+                        mainDef: 'the occurrence of eating a meal once at a set time like morning, lunch, or evening.'
+                    }
+                },
+                examples: [
+                    {
+                        kor: "제가 여름 바다에 가려고 무리해서 다이어트를 하느라 하루 종일 물만 마시고 밥을 딱 한 끼만 먹었더니, 저녁에는 뱃속에서 꼬르륵 소리가 나고 배가 찢어질 듯이 너무 고파요.",
+                        eng: "I dieted too hard to go to the summer sea, drinking only water all day and eating exactly one meal, so in the evening my stomach rumbles and I am so hungry as if my stomach would tear."
+                    }
+                ],
+                variants: ['한 끼']
+            },
+            {
+                term: '믿지 못하는군',
+                mainDef: '상대방이 내 말을 사실로 생각하지 않고 의심한다는 사실을 깨닫고 혼잣말처럼 감탄하며 내뱉는 말',
+                subDefs: [
+                    {
+                        subTerm: '• -는군',
+                        subDef: '눈앞에 벌어진 상황을 새로 깨닫고 혼잣말하듯 감탄하며 나타낼 때 쓰는 꼬리말'
+                    }
+                ],
+                translations: {
+                    en: {
+                        term: 'you don\'t believe me',
+                        mainDef: 'words spat out admiringly like a soliloquy, realizing the fact that the listener doubts and doesn\'t consider my words as true.',
+                        subDefs: [
+                            {
+                                term: 'I see that... / Oh, it is...',
+                                def: 'a suffix used to express with admiration like a soliloquy after newly realizing a situation unfolding before one\'s eyes.'
+                            }
+                        ]
+                    }
+                },
+                examples: [
+                    {
+                        kor: "내가 어제 밤새워 혼자 이 엄청나게 어려운 수학 문제를 다 풀었다고 진지하게 말했는데도 콧방귀를 뀌니, 너는 아직도 내 훌륭한 실력을 전혀 믿지 못하는군.",
+                        eng: "Even though I seriously said I solved all these incredibly difficult math problems alone staying up all night yesterday, seeing you snort, you still absolutely don't believe my excellent skills."
+                    }
+                ],
+                variants: ['믿지 못하는군']
+            },
+            {
+                term: '헤비하다',
+                mainDef: 'Heavy(무거운) -> 음식의 양이 너무 많거나 기름기가 많아서, 가볍게 먹기에는 속이 부담스럽고 무거운 느낌이 든다',
+                translations: {
+                    en: {
+                        term: 'to be heavy (usually about food)',
+                        mainDef: 'feeling burdensome and heavy to eat lightly because the amount of food is too much or it is too greasy.'
+                    }
+                },
+                examples: [
+                    {
+                        kor: "모두가 자는 조용한 밤 11시에 기름진 삼겹살에 치즈 볶음밥까지 싹싹 비벼 먹는 것은, 간단한 야식으로는 위장에 너무 헤비해서 내일 아침에 무조건 끔찍한 배탈이 날 것 같아요.",
+                        eng: "Thoroughly mixing and eating greasy pork belly and cheese fried rice at a quiet 11 PM when everyone is sleeping is too heavy for the stomach as a simple late-night snack, so I feel like I will definitely get a terrible stomachache tomorrow morning."
+                    }
+                ],
+                variants: ['헤비하고']
+            },
+            {
+                term: '최소 주문 금액',
+                mainDef: '배달 어플로 음식을 주문할 때 배달을 해주기 위해 식당에서 정해 놓은 가장 적은 금액',
+                subDefs: [
+                    {
+                        subTerm: '• 최소',
+                        subDef: '최(最 가장) + 소(小 적을) -> 더 이상 작아질 수 없을 만큼 가장 작고 적은 정도'
+                    },
+                    {
+                        subTerm: '• 금액',
+                        subDef: '금(金 돈) + 액(額 액수) -> 계산해야 할 돈의 액수'
+                    }
+                ],
+                translations: {
+                    en: {
+                        term: 'minimum order amount',
+                        mainDef: 'the smallest amount of money set by the restaurant to deliver when ordering food via a delivery app.',
+                        subDefs: [
+                            {
+                                term: 'minimum',
+                                def: 'the smallest and least degree where it can no longer get smaller.'
+                            },
+                            {
+                                term: 'amount of money',
+                                def: 'the amount of money to be calculated.'
+                            }
+                        ]
+                    }
+                },
+                examples: [
+                    {
+                        kor: "제가 너무 배가 고파서 김밥 1인분만 달랑 시키고 싶었는데 식당의 얄미운 최소 주문 금액을 만 원을 넘기지 못해서, 억지로 안 먹고 싶던 군만두 두 접시도 같이 시켰습니다.",
+                        eng: "I was so hungry that I wanted to order just 1 portion of gimbap, but because I couldn't exceed the restaurant's mean minimum order amount of ten thousand won, I forcedly ordered two plates of fried dumplings that I didn't want to eat together."
+                    }
+                ],
+                variants: ['최소 주문 금액']
+            },
+            {
+                term: '시간의 소중함을 알라는 벌',
+                mainDef: '낭비했던 시간의 진짜 가치(소중함)를 깨닫고 반성하라고(-라) 내리는 벌',
+                subDefs: [
+                    {
+                        subTerm: '• 소중함',
+                        subDef: '매우 귀중하고 아끼며 대할 만한 속성'
+                    },
+                    {
+                        subTerm: '• -라',
+                        subDef: '남에게 어떤 행동을 하라고 명령하거나 뜻을 전할 때 단어 끝에 붙이는 말 (-라고 하는)'
+                    }
+                ],
+                translations: {
+                    en: {
+                        term: 'a punishment to make you realize the preciousness of time',
+                        mainDef: 'a punishment given to make you realize the true value (preciousness) of wasted time and reflect on it.',
+                        subDefs: [
+                            {
+                                term: 'preciousness / importance',
+                                def: 'an attribute worthy of considering very precious and cherishing.'
+                            },
+                            {
+                                term: 'telling someone to (imperative)',
+                                def: 'a word attached to the end of a word when commanding or conveying to someone to do an action.'
+                            }
+                        ]
+                    }
+                },
+                examples: [
+                    {
+                        kor: "매일 아침 학교에 늦잠 자고 지각을 한 게으른 학생은, 시간의 소중함을 알라는 선생님의 무서운 벌로 방과 후에 남아서 넓은 교실 청소를 혼자 땀을 뻘뻘 흘리며 다 해야만 했습니다.",
+                        eng: "The lazy student who overslept and was late to school every morning had to stay after school and clean the large classroom all by himself sweating profusely, as the teacher's scary punishment to make him realize the preciousness of time."
+                    }
+                ],
+                variants: ['시간의 소중함을 알라는 벌']
+            },
+            {
+                term: '고민하느라',
+                mainDef: '고(苦 쓸/괴로울) + 민(悶 번민할) -> 마음속으로 여러 가지를 따져보고 깊게 생각하는 바람에 다른 것을 할 시간이나 여유가 없어서(-느라)',
+                subDefs: [
+                    {
+                        subTerm: '• -느라',
+                        subDef: '앞의 어떤 일을 열심히 하거나 원인이 생기는 바람에, 뒤의 다른 행동을 하지 못했음을 핑계 대듯 말할 때 씀'
+                    }
+                ],
+                translations: {
+                    en: {
+                        term: 'because of worrying/pondering over...',
+                        mainDef: 'because one has no time or room to do other things due to pondering and thinking deeply in one\'s mind.',
+                        subDefs: [
+                            {
+                                term: 'because of doing (an action)',
+                                def: 'used when making excuses that one couldn\'t do the following action because of working hard on a preceding action or a cause occurring.'
+                            }
+                        ]
+                    }
+                },
+                examples: [
+                    {
+                        kor: "내일 좋아하는 친구 생일 파티에 도대체 무슨 예쁜 옷을 입고 갈지 밤새워 거울 앞에서 고민하느라, 정작 오늘 꼭 해야 할 수학 숙제를 단 한 글자도 못 해서 선생님께 혼났어요.",
+                        eng: "Because I was worrying all night in front of the mirror about what pretty clothes on earth I should wear to my favorite friend's birthday party tomorrow, I couldn't do a single letter of the math homework I really had to do today, so I got scolded by the teacher."
+                    }
+                ],
+                variants: ['고민하느라']
+            },
+            {
+                term: '두 시간을 썼다고 생각하나?',
+                mainDef: '두 시간이라는 긴 시간을 정말로 의미 있고 가치 있게 소비했다고(썼다고) 스스로 판단하느냐고 묻는 말',
+                subDefs: [
+                    {
+                        subTerm: '• -나?',
+                        subDef: '친한 사이이거나 윗사람이 아랫사람에게 어떤 사실을 부드럽지만 조금 위압적으로 물어볼 때 쓰는 꼬리말'
+                    }
+                ],
+                translations: {
+                    en: {
+                        term: 'do you think you spent two hours...?',
+                        mainDef: 'asking if you judge yourself that you truly consumed (spent) the long time of two hours meaningfully and valuably.',
+                        subDefs: [
+                            {
+                                term: 'do you? / are you?',
+                                def: 'a suffix used when close friends or a superior asks a subordinate a fact softly but slightly overbearingly.'
+                            }
+                        ]
+                    }
+                },
+                examples: [
+                    {
+                        kor: "매일 밤 늦게까지 피시방에 앉아서 총싸움 게임만 하면서, 네가 정말 미래의 빛나는 성공을 위해 귀하고 소중한 시간을 알차게 썼다고 생각하나?",
+                        eng: "While sitting in the PC bang playing gunfight games until late every night, do you really think you spent your precious and valuable time fruitfully for a shining success in the future?"
+                    }
+                ],
+                variants: ['두 시간을 썼다고 생각하나']
+            },
+            {
+                term: '엄지손가락을 위로 올리는 그 단순한 행위',
+                mainDef: '스마트폰 화면을 볼 때 깊은 생각 없이 무의식적으로 엄지손가락을 위로 쓸어 올리기만 하는 쉽고 단순한 행동',
+                subDefs: [
+                    {
+                        subTerm: '• 엄지손가락',
+                        subDef: '손가락 다섯 개 중에 제일 굵고 짧은 첫 번째 손가락'
+                    },
+                    {
+                        subTerm: '• 행위',
+                        subDef: '행(行 다닐) + 위(爲 할) -> 사람이 의지를 가지고 무언가를 하는 행동'
+                    }
+                ],
+                translations: {
+                    en: {
+                        term: 'that simple act of swiping up with the thumb',
+                        mainDef: 'an easy and simple action of just unconsciously swiping the thumb up without deep thought when looking at a smartphone screen.',
+                        subDefs: [
+                            {
+                                term: 'thumb',
+                                def: 'the first finger that is the thickest and shortest among the five fingers.'
+                            },
+                            {
+                                term: 'act / action',
+                                def: 'an action a person does with a will.'
+                            }
+                        ]
+                    }
+                },
+                examples: [
+                    {
+                        kor: "침대에 누워 낄낄거리며 쇼츠 영상을 보면서 엄지손가락을 위로 올리는 그 단순한 행위를 의미 없이 수백 번 반복하다 보니 어느새 창밖으로 해가 뜨고 벌써 아침이 되었습니다.",
+                        eng: "While lying in bed giggling and watching shorts videos, meaninglessly repeating that simple act of swiping up with the thumb hundreds of times, the sun rose outside the window before I knew it and it was already morning."
+                    }
+                ],
+                variants: ['엄지손가락을 위로 올리는 그 단순한 행위']
+            },
+            {
+                term: '중독되어 있었을 뿐이지',
+                mainDef: '자극적인 일에 너무 깊이 빠져서 스스로 멈추지 못하는 상태(중독)에 걸려 있었던 것이 사실의 전부라는 뜻',
+                subDefs: [
+                    {
+                        subTerm: '• 중독되다',
+                        subDef: '중(中 가운데/맞을) + 독(毒 독) -> 어떤 약물이나 쾌락에 깊이 빠져들어 스스로 멈출 수 없는 상태가 되다'
+                    },
+                    {
+                        subTerm: '• -ㄹ/을 뿐이다',
+                        subDef: '다른 이유는 사실이 아니고, 오직 방금 말한 그것만이 진실이라고 단정 지어 말할 때 씀'
+                    }
+                ],
+                translations: {
+                    en: {
+                        term: 'you were just addicted to it',
+                        mainDef: 'meaning that being caught in a state of being too deeply immersed in a stimulating thing to stop oneself (addiction) is the entire truth.',
+                        subDefs: [
+                            {
+                                term: 'to be addicted / poisoned',
+                                def: 'falling so deeply into a drug or pleasure that one cannot stop on their own.'
+                            },
+                            {
+                                term: 'only / just ... nothing else',
+                                def: 'used when concluding that other reasons are not true, and only what was just said is the truth.'
+                            }
+                        ]
+                    }
+                },
+                examples: [
+                    {
+                        kor: "너는 달콤한 빵을 진짜 좋아해서 계속 먹은 게 아니라, 그저 빵 속에 잔뜩 들어 있는 몸에 나쁜 설탕의 쾌락에 무섭게 중독되어 있었을 뿐이지.",
+                        eng: "You didn't keep eating sweet bread because you really liked it, you were just scarily addicted to the pleasure of the unhealthy sugar packed inside the bread."
+                    }
+                ],
+                variants: ['중독되어 있었을 뿐이지']
+            },
+            {
+                term: '멍하니',
+                mainDef: '시선의 초점이 풀리고 아무런 생각 없이 넋을 잃고 가만히 있는 모습으로',
+                subDefs: [
+                    {
+                        subTerm: '• 멍하다',
+                        subDef: '갑자기 놀라거나 너무 피곤해서 생각이나 반응 없이 정신이 나간 상태이다'
+                    },
+                    {
+                        subTerm: '• -니',
+                        subDef: '형용사 뒤에 붙어서 어떠어떠한 모습이나 상태를 나타내는 부사로 만들어 주는 꼬리말'
+                    }
+                ],
+                translations: {
+                    en: {
+                        term: 'blankly / absentmindedly',
+                        mainDef: 'in an appearance of staying still losing one\'s mind without any thought and with unfocused eyes.',
+                        subDefs: [
+                            {
+                                term: 'blank / spaced out',
+                                def: 'to be in a state of losing one\'s mind without thought or reaction due to sudden surprise or fatigue.'
+                            },
+                            {
+                                term: '(adverbial suffix)',
+                                def: 'a suffix attached to adjectives making them into adverbs indicating a certain appearance or state.'
+                            }
+                        ]
+                    }
+                },
+                examples: [
+                    {
+                        kor: "너무 자신 있던 시험을 완전히 빵점으로 망치고 나서 충격이 너무 커서 눈물이 나고 너무 슬퍼서, 한 시간 동안 밥도 안 먹고 방안의 하얀 벽만 멍하니 넋 놓고 쳐다보고 있었습니다.",
+                        eng: "After completely ruining the test I was so confident in with a zero score, the shock was so great that tears came out and I was so sad, I stared blankly at the white wall in the room losing my mind for an hour without even eating."
+                    }
+                ],
+                variants: ['멍하니']
+            },
+            {
+                term: '시간을 죽이다',
+                mainDef: '딱히 해야 할 중요한 일이 없어서, 의미 없는 행동을 하며 시간이 그저 빨리 흘러가게 만들다',
+                translations: {
+                    en: {
+                        term: 'to kill time',
+                        mainDef: 'making time just flow quickly by doing meaningless actions because there is no important work to do.'
+                    }
+                },
+                examples: [
+                    {
+                        kor: "극장에서 영화가 시작하기 전까지 친구가 오지 않아 밖에서 혼자 한 시간이 붕 떠버려서, 팝콘을 우적우적 씹어 먹으며 오락실에서 게임기로 멍하니 시간을 죽였습니다.",
+                        eng: "My friend didn't come until the movie started at the theater, so one hour was left hanging alone outside, so I munched on popcorn and killed time blankly with a game machine in the arcade."
+                    }
+                ],
+                variants: ['시간을 죽이고']
+            },
+            {
+                term: '허벅지가 타들어 가는 고통',
+                mainDef: '다리 운동을 할 때 허벅지 근육이 불에 타는 것처럼 매우 뜨겁고 아픈 극심한 괴로움',
+                subDefs: [
+                    {
+                        subTerm: '• 허벅지',
+                        subDef: '엉덩이 바로 아래에서 무릎 위까지 이어지는 넓적한 다리 부분'
+                    },
+                    {
+                        subTerm: '• 타들어 가다',
+                        subDef: '뜨거운 불길이 속으로 번져 타는 것처럼 몹시 아프고 괴로운 느낌이 번지다'
+                    },
+                    {
+                        subTerm: '• 고통',
+                        subDef: '고(苦 쓸/괴로울) + 통(痛 아플) -> 몸이나 마음이 참기 힘들 정도로 아프고 괴로운 기분'
+                    }
+                ],
+                translations: {
+                    en: {
+                        term: 'this burning pain in the thighs',
+                        mainDef: 'the extreme agony of feeling very hot and painful as if the thigh muscles are on fire when doing leg exercises.',
+                        subDefs: [
+                            {
+                                term: 'thigh',
+                                def: 'the broad leg part extending from right under the buttocks to above the knee.'
+                            },
+                            {
+                                term: 'to burn into / to scorch',
+                                def: 'for a very painful and agonizing feeling to spread as if hot flames are spreading and burning inside.'
+                            },
+                            {
+                                term: 'pain / agony',
+                                def: 'a feeling where the body or mind hurts and suffers so much that it is hard to endure.'
+                            }
+                        ]
+                    }
+                },
+                examples: [
+                    {
+                        kor: "올림픽 100미터 달리기 시합에서 젖 먹던 마지막 힘까지 쥐어짜 내어 전력으로 뛰었더니, 결승선에 도착하자마자 허벅지가 타들어 가는 고통에 숨을 헐떡이며 그 자리에 바닥에 털썩 주저앉고 말았습니다.",
+                        eng: "I ran at full sprint squeezing out every last ounce of strength I had since nursing in the Olympic 100m running race, and as soon as I arrived at the finish line, panting for breath from the burning pain in my thighs, I ended up collapsing flat on the ground right there."
+                    }
+                ],
+                variants: ['허벅지가 타들어 가는 이 고통']
+            },
+            {
+                term: '살아 있다는 감각',
+                mainDef: '강렬한 자극을 피부나 마음으로 확실하게 느끼면서, 내가 지금 세상에 존재하고 있음을 온몸으로 깨닫는 느낌',
+                subDefs: [
+                    {
+                        subTerm: '• 감각',
+                        subDef: '감(感 느낄) + 각(覺 깨닫다) -> 오감을 통해 밖에서 들어오는 자극을 몸이 알아채고 느끼는 것'
+                    }
+                ],
+                translations: {
+                    en: {
+                        term: 'the sensation of being alive',
+                        mainDef: 'the feeling of realizing with one\'s whole body that I am existing in the world now, while definitely feeling intense stimuli with skin or mind.',
+                        subDefs: [
+                            {
+                                term: 'sensation / sense',
+                                def: 'the body noticing and feeling stimuli coming from outside through the five senses.'
+                            }
+                        ]
+                    }
+                },
+                examples: [
+                    {
+                        kor: "얼음이 둥둥 떠다니는 한겨울 차가운 겨울 바다에 벌거벗고 뛰어들어 미친 듯이 수영을 하니 뼈가 얼어붙는 찌릿찌릿한 추위 속에서 오히려 내가 짐승처럼 펄떡펄떡 살아 있다는 감각을 머리끝까지 찌릿하게 느꼈습니다.",
+                        eng: "I jumped naked into the freezing winter sea with ice floating around and swam crazily, and in the tingling cold that freezes bones, I rather felt tinglingly up to the top of my head the sensation of being alive and jumping like a beast."
+                    }
+                ],
+                variants: ['살아 있다는 감각']
+            },
+            {
+                term: '스마트폰 화면 속에 처박아 버린 그 시간',
+                mainDef: '소중한 시간을 의미 있게 쓰지 않고, 스마트폰 화면만 쳐다보며 함부로 낭비해서 모두 내버린 행동',
+                subDefs: [
+                    {
+                        subTerm: '• 화면',
+                        subDef: '화(畵 그림) + 면(面 낯/면) -> 텔레비전이나 스마트폰에서 글자나 영상이 나오는 평평한 겉부분'
+                    },
+                    {
+                        subTerm: '• 처박아 버리다',
+                        subDef: '어떤 물건이나 사람을 구석이나 쓰레기통에 거칠게 밀어 넣어서 내버리고 잊어버리다'
+                    }
+                ],
+                translations: {
+                    en: {
+                        term: 'that time you shoved into the smartphone screen',
+                        mainDef: 'the action of entirely throwing away precious time by carelessly wasting it just staring at the smartphone screen, rather than using it meaningfully.',
+                        subDefs: [
+                            {
+                                term: 'screen',
+                                def: 'the flat outer part of a television or smartphone where letters or images appear.'
+                            },
+                            {
+                                term: 'to shove away / to chuck away',
+                                def: 'to roughly push an object or person into a corner or trash can, throw it away, and forget about it.'
+                            }
+                        ]
+                    }
+                },
+                examples: [
+                    {
+                        kor: "화가 머리끝까지 난 동생이 내일 시험 봐야 해서 꼭 읽기 싫은 두꺼운 수학 교과서를 침대 밑 컴컴한 방구석에 마구 발로 차서 처박아 버리고는 화를 내며 집 밖으로 쾅 문을 닫고 나가버렸어요.",
+                        eng: "My brother, who was angry to the top of his head, wildly kicked and shoved the thick math textbook he really didn't want to read for tomorrow's exam into the dark corner under the bed, and went outside the house angrily slamming the door shut."
+                    }
+                ],
+                variants: ['스마트폰 화면 속에 처박아 버린 그 시간']
+            },
+            {
+                term: '명심해라',
+                mainDef: '명(銘 새길) + 심(心 마음) -> 중요한 경고나 가르침을 잊어버리지 말고 마음속 깊이 새겨서 똑똑히 기억하라고 단호하게 명령하는 말',
+                subDefs: [
+                    {
+                        subTerm: '• 명심하다',
+                        subDef: '잊지 않기 위해 마음속 깊은 곳에 단단히 새겨 두고 기억하다'
+                    },
+                    {
+                        subTerm: '• -라',
+                        subDef: '윗사람이 아랫사람에게 어떤 행동을 당장 하라고 강하고 단호하게 명령할 때 문장 끝에 붙이는 말'
+                    }
+                ],
+                translations: {
+                    en: {
+                        term: 'keep this in mind! / remember this! (imperative)',
+                        mainDef: 'words firmly commanding not to forget an important warning or teaching, but to carve it deep in the mind and remember it clearly.',
+                        subDefs: [
+                            {
+                                term: 'to bear in mind / to keep in mind',
+                                def: 'to firmly carve and remember in the deepest part of the mind so as not to forget.'
+                            },
+                            {
+                                term: '(imperative suffix)',
+                                def: 'a suffix attached to the end of a sentence when a superior strongly and firmly commands a subordinate to do an action right away.'
+                            }
+                        ]
+                    }
+                },
+                examples: [
+                    {
+                        kor: "남의 물건을 몰래 훔치거나 뻔뻔하게 거짓말을 하면 경찰에 잡혀가서 언젠가는 꼭 들통이 나 세상 사람들의 손가락질을 받고 무척 큰 벌을 받는다는 진리의 사실을 평생 네 가슴속에 피가 나도록 단단히 명심해라.",
+                        eng: "Keep firmly in your heart so it bleeds for your whole life the truth that if you secretly steal others' things or lie brazenly, you will be caught by the police, definitely be found out someday, be pointed at by people of the world, and receive a very big punishment."
+                    }
+                ],
+                variants: ['명심해라']
+            },
+            {
+                term: '킬링 타임',
+                mainDef: 'Killing Time -> 약속 시간 전이나 할 일이 없을 때 남는 지루한 시간을, 별 의미 없는 가벼운 행동을 하며 빨리 흘려보내는 일',
+                translations: {
+                    en: {
+                        term: 'killing time',
+                        mainDef: 'the act of letting boring time remaining before an appointment or when there\'s nothing to do flow away quickly by doing light, meaningless actions.'
+                    }
+                },
+                examples: [
+                    {
+                        kor: "극장에서 내가 예매한 엄청 재밌는 슈퍼히어로 영화가 시작하기 전까지 딱 30분이 애매하게 남아서, 킬링 타임으로 시끄러운 오락실에 들어가 천 원을 넣고 신나게 인형 뽑기 게임을 즐기며 지루함을 달랬습니다.",
+                        eng: "Exactly 30 minutes were left ambiguously before the super fun superhero movie I booked at the theater started, so as killing time I went into the noisy arcade, put in a thousand won, and enjoyed the claw machine game excitingly to soothe my boredom."
+                    }
+                ],
+                variants: ['킬링 타임이라며']
+            },
+            {
+                term: '시간을 죽이다 보면',
+                mainDef: '아무런 의미 없이 시간을 낭비하는 행동을 계속해서 반복하다가 어느 날 문득 결과를 맞이하게 되면',
+                subDefs: [
+                    {
+                        subTerm: '• -다 보면',
+                        subDef: '어떤 행동을 포기하지 않고 계속해서 되풀이하다가 마침내 어떤 결과나 깨달음에 이르게 될 때 쓰는 말'
+                    }
+                ],
+                translations: {
+                    en: {
+                        term: 'as you keep killing time...',
+                        mainDef: 'if you continue to repeat actions that waste time meaninglessly and suddenly face the result one day...',
+                        subDefs: [
+                            {
+                                term: 'if you keep doing... / as you continue to...',
+                                def: 'a phrase used when continuously repeating an action without giving up and finally reaching a certain result or realization.'
+                            }
+                        ]
+                    }
+                },
+                examples: [
+                    {
+                        kor: "운동은 하나도 안 하고 매일 밤 야식으로 기름진 피자나 햄버거만 시켜서 우적우적 먹다 보면 결국 거울 속에는 배가 볼록 나오는 못생긴 뚱돼지가 서 있을 테니 제발 오늘부터라도 다이어트를 조심하세요.",
+                        eng: "If you don't exercise at all and keep ordering and munching on greasy pizza or hamburgers as a late-night snack every night, eventually an ugly fat pig with a bulging belly will be standing in the mirror, so please be careful with your diet starting today."
+                    }
+                ],
+                variants: ['시간을 죽이다 보면']
+            },
+            {
+                term: '개꿈 꾸다',
+                mainDef: '자면서 앞뒤 논리가 맞지 않고, 일어나면 기분이 찝찝하거나 현실에서 아무런 의미가 없는 쓸데없는 꿈을 꾸다',
+                translations: {
+                    en: {
+                        term: 'to have a ridiculous dream / to have a nonsense dream',
+                        mainDef: 'to dream a useless dream where the logic doesn\'t fit while sleeping, and when you wake up, it makes you feel uncomfortable or has no meaning in reality.'
+                    }
+                },
+                examples: [
+                    {
+                        kor: "어젯밤 늦게 무서운 공포 영화를 보고 잤더니, 밤새 피 흘리는 좀비들에게 쫓기며 비명을 지르고 낭떠러지에서 떨어지는 이상한 개꿈을 꾸느라 아침에 화들짝 깨어 일어나니 온몸이 식은땀 투성이였어요.",
+                        eng: "Because I slept after watching a scary horror movie late last night, I had a strange ridiculous dream all night being chased by bleeding zombies screaming and falling off a cliff, so when I woke up with a start in the morning, my whole body was covered in cold sweat."
+                    }
+                ],
+                variants: ['개꿈 꿨네']
+            },
+            {
+                term: '뭔 꿈에 직쏘가 나오냐',
+                mainDef: '편안해야 할 내 꿈속에 왜 공포 영화에 나오는 무서운 살인마 캐릭터(직쏘)가 갑자기 튀어나온 건지 도무지 이해할 수 없다며 황당해하는 말',
+                subDefs: [
+                    {
+                        subTerm: '• 뭔 ☐☐에',
+                        subDef: '황당하고 어이없는 상황에서 \'무슨\'의 뜻으로 명사 앞에 붙여서 화를 내거나 따지듯이 하는 말'
+                    },
+                    {
+                        subTerm: '• 직쏘',
+                        subDef: '사람들을 가두고 잔인한 게임을 시키는 공포 영화 \'쏘우(Saw)\' 시리즈에 나오는 살인마 캐릭터 이름'
+                    }
+                ],
+                translations: {
+                    en: {
+                        term: 'what kind of dream has Jigsaw in it?',
+                        mainDef: 'words expressing bewilderment and complete lack of understanding as to why a scary murderer character (Jigsaw) from a horror movie suddenly popped into my dream which should be comfortable.',
+                        subDefs: [
+                            {
+                                term: 'what kind of [noun] is this?',
+                                def: 'a word attached in front of a noun with the meaning of \'what\' in an absurd and ridiculous situation, as if getting angry or arguing.'
+                            },
+                            {
+                                term: 'Jigsaw',
+                                def: 'the name of the murderer character from the horror movie series \'Saw\' who locks people up and makes them play cruel games.'
+                            }
+                        ]
+                    }
+                },
+                examples: [
+                    {
+                        kor: "오늘 일 년에 딱 한 번 있는 내 소중한 생일 파티인데, 뭔 파티에 내가 제일 싫어하고 징그러워하는 커다란 거미 벌레 장난감 선물이 박스에서 나오냐며 짓궂은 친구에게 주먹을 쥐고 화를 냈습니다.",
+                        eng: "Today is my precious birthday party that comes exactly once a year, and I clenched my fist and got angry at my mischievous friend saying what kind of party has a large spider bug toy gift that I hate the most and find gross come out of a box."
+                    }
+                ],
+                variants: ['뭔 꿈에 직쏘가 나오냐']
+            },
+            {
+                term: '알차게 시간 보내다',
+                mainDef: '하루 종일 게으름 피우지 않고, 공부나 운동 등 자신에게 유익하고 보람찬 일을 하며 낭비 없이 훌륭하게 시간을 쓰다',
+                translations: {
+                    en: {
+                        term: 'to spend time fruitfully / to spend time well',
+                        mainDef: 'to spend time excellently without waste, doing beneficial and rewarding things like studying or exercising without being lazy all day.'
+                    }
+                },
+                examples: [
+                    {
+                        kor: "이번 여름휴가 주말에는 아침 일찍 높은 산에 올라가 상쾌하게 등산을 하고, 오후에는 조용한 도서관 구석 자리에서 두꺼운 역사책을 세 권이나 읽으며 하루를 누구보다 정말 알차게 시간 보냈습니다.",
+                        eng: "On this summer vacation weekend, I spent the day truly fruitfully more than anyone by climbing a high mountain early in the morning and hiking refreshingly, and in the afternoon reading as many as three thick history books in a quiet corner seat of the library."
+                    }
+                ],
+                variants: ['알차게 시간 보내자']
+            },
+            {
+                term: '아침에 듣기에',
+                mainDef: '상쾌하게 잠에서 깬 아침이라는 시간대의 분위기에 맞추어 보거나, 그 이른 시간에 음악이나 소리를 듣는 행동을 기준으로 판단해 볼 때',
+                subDefs: [
+                    {
+                        subTerm: '• -기에',
+                        subDef: '앞의 어떤 행동이나 상황을 기준으로 놓고 볼 때, 뒤에 따르는 말이 어떠한지 평가하거나 이유를 댈 때 쓰는 말 (-하기에)'
+                    }
+                ],
+                translations: {
+                    en: {
+                        term: 'for listening to in the morning',
+                        mainDef: 'when carefully matching the atmosphere of the morning time zone when waking up refreshingly, or judging based on the action of listening to music or sound at that early time.',
+                        subDefs: [
+                            {
+                                term: 'for doing / to do',
+                                def: 'used when evaluating how the following words are or giving a reason, setting a preceding action or situation as a standard.'
+                            }
+                        ]
+                    }
+                },
+                examples: [
+                    {
+                        kor: "이토록 눈물이 날 만큼 조용하고 우울한 슬픈 피아노 음악은, 해가 쨍쨍한 상쾌한 아침에 듣기에 눈꺼풀이 무거워지고 너무 졸려서 운전하다 사고가 날 것 같아, 당장 아이돌의 신나는 댄스 곡으로 스피커를 바꾸었습니다.",
+                        eng: "This quiet, depressing, and sad piano music enough to bring tears is too sleepy for listening to in the refreshing morning with the sun blazing, making my eyelids heavy and feeling like I'll get in a car accident driving, so I immediately changed the speaker to an idol's exciting dance song."
+                    }
+                ],
+                variants: ['아침에 듣기에']
+            },
+            {
+                term: '감성적',
+                mainDef: '감(感 느낄) + 성(性 성질) + 적(的 과녁) -> 차갑고 이성적으로 계산하지 않고, 마음속의 감정이 부드럽고 풍부하게 자극받아 따뜻해지거나 슬퍼지는 등 감수성이 예민한 성질',
+                translations: {
+                    en: {
+                        term: 'emotional / sentimental',
+                        mainDef: 'a sensitive quality where emotions in the heart are softly and richly stimulated, becoming warm or sad, rather than coldly and rationally calculating.'
+                    }
+                },
+                examples: [
+                    {
+                        kor: "창밖으로 비가 주룩주룩 내리는 우울한 날, 예쁜 조명이 켜진 분위기 좋은 카페 창가에 기대어 앉아 김이 모락모락 나는 따뜻한 핫초코를 마시니, 왠지 굳어있던 마음이 촉촉한 스펀지처럼 젖어들고 눈물이 날 만큼 아주 감성적으로 변해서 옛날 첫사랑이 떠올랐어요.",
+                        eng: "On a gloomy day with rain pouring down outside the window, sitting leaning against the window of an atmospheric cafe with pretty lights on and drinking steaming warm hot chocolate, somehow my hardened heart got wet like a moist sponge and became so very emotional enough to cry, making me recall my old first love."
+                    }
+                ],
+                variants: ['감성적이야']
             }
         ];
 
         const QUIZ_LIST = [
-            { 
-                id: 1, 
-                textParts: ["'같아요'는 원래 동일함을 뜻하지만, 어느새 ", "을/를 나타내는 뜻으로 말끝에 따라붙게 되었어요."], 
-                answer: '불확실함', 
-                hint: '어떤 것이 확실하지 않은 상태를 말해요.', 
-                explanation: "맞아요. 기분이 좋다면서도 '좋은 것 같아요'라고 말하는 것은 불확실함을 담고 있습니다.", 
-                textParts_eng: ["'Gattayo' originally means identical, but it has now come to follow words to indicate ", "."], 
-                answer_eng: 'uncertainty' 
-            }, 
-            { 
-                id: 2, 
-                textParts: ["우리가 모든 선택을 100% 완벽하게 하려고 노력하는 이유는 마음속에 있는 ", " 때문이에요."], 
-                answer: '강박', 
-                hint: '어떤 생각이나 행동을 꼭 해야만 할 것 같은 심리적 압박을 말해요.', 
-                explanation: "맞아요. 완벽한 선택을 하려는 마음이 오히려 선택을 더 힘들게 만듭니다.", 
-                textParts_eng: ["The reason we try to make every choice 100% perfectly is because of the ", " in our hearts."], 
-                answer_eng: 'compulsion' 
+            {
+              id: 1,
+              textParts: ["직쏘는 태용에게 넌 시간을 ", " 않았기 때문에 벌을 받는 것이라고 말해요."],
+              answer: '소중히 여기지',
+              hint: '매우 귀중하게 대하다. (기본형 "소중히 여기다"를 부정형 어미와 결합하게 변형하세요)',
+              explanation: "맞아요! 원형 '소중히 여기다'가 부정 표현 '-지 않다'와 결합하기 위해 '소중히 여기지'로 알맞게 변형되었네요.",
+              textParts_eng: ["Jigsaw tells Taeyong that he is being punished because he didn't ", " his time."],
+              answer_eng: "cherish"
+            },
+            {
+              id: 2,
+              textParts: ["영화를 고를 때 예고편만 보며 40분을 흘려보낸 태용에게 직쏘는 ", " 돼지라며 비난해요."],
+              answer: '나약한',
+              hint: '의지나 성격이 약하다. (기본형 "나약하다"를 명사를 수식하는 관형사형으로 변형하세요)',
+              explanation: "정답! 원형 '나약하다'가 명사 '돼지'를 수식하도록 관형사형 어미 '-ㄴ'이 붙어 '나약한'이 되었습니다.",
+              textParts_eng: ["Jigsaw criticizes Taeyong as a ", " pig for letting 40 minutes slip by just watching trailers while picking a movie."],
+              answer_eng: "weak"
+            },
+            {
+              id: 3,
+              textParts: ["평생을 이곳에 갇혀 1분 1초를 ", " 살라는 직쏘의 말에 태용은 후회해요."],
+              answer: '곱씹으면서',
+              hint: '어떤 일을 여러 번 깊이 생각하다. (기본형 "곱씹다"를 동시 행동을 나타내는 어미 \'-으면서\'를 붙여 변형하세요)',
+              explanation: "훌륭해요! 원형 '곱씹다'에 두 가지 이상의 동작이 동시에 일어남을 뜻하는 '-으면서'가 결합했어요.",
+              textParts_eng: ["Taeyong regrets it when Jigsaw tells him to live trapped here forever, ", " every single minute and second."],
+              answer_eng: "chewing over"
+            },
+            {
+              id: 4,
+              textParts: ["태용은 악몽에서 깬 후 다시는 릴스를 보며 시간을 ", " 않겠다고 굳게 다짐해요."],
+              answer: '낭비하지',
+              hint: '돈, 시간, 물건 등을 헛되이 쓰다. (기본형 "낭비하다"를 부정형 어미 \'-지 않다\'와 결합하도록 변형하세요)',
+              explanation: "딩동댕! 원형 '낭비하다'가 부정 표현 '-지 않다'의 앞부분으로 쓰여 '낭비하지'로 올바르게 변형되었어요.",
+              textParts_eng: ["After waking up from the nightmare, Taeyong firmly resolves never to ", " his time watching Reels again."],
+              answer_eng: "waste"
+            },
+            {
+              id: 5,
+              textParts: ["태용은 배달 앱에서 어떤 메뉴를 시킬지 ", " 무려 두 시간이나 허비했어요."],
+              answer: '고민하느라',
+              hint: '마음속으로 괴로워하고 애를 태우다. (기본형 "고민하다"를 원인이나 이유를 나타내는 연결 어미 \'-느라\'와 결합해 변형하세요)',
+              explanation: "정확해요! 원형 '고민하다'가 원인이나 이유를 나타내는 연결 어미 '-느라'와 만나 '고민하느라'로 완벽하게 활용되었어요.",
+              textParts_eng: ["Taeyong wasted a whopping two hours ", " about what menu to order on the delivery app."],
+              answer_eng: "deliberating"
+            },
+            {
+              id: 6,
+              textParts: ["태용은 메뉴를 고른 게 아니라, 단순히 화면을 넘기는 행위에 ", " 있었던 거였어요."],
+              answer: '중독되어',
+              hint: '어떤 것에 깊이 빠져 정상적인 생활을 할 수 없게 되다. (기본형 "중독되다"를 상태를 나타내는 연결 어미 \'-아/어\'와 결합해 변형하세요)',
+              explanation: "그렇죠! 원형 '중독되다'가 상태의 지속을 나타내는 '-아/어 있다'와 결합하기 위해 '중독되어'로 변형되었습니다.",
+              textParts_eng: ["Taeyong wasn't picking a menu; he was simply ", " to the act of swiping the screen."],
+              answer_eng: "addicted"
+            },
+            {
+              id: 7,
+              textParts: ["직쏘는 허벅지가 타들어 가는 이 고통이야말로 살아있다는 ", "(이)라고 일침을 가해요."],
+              answer: '감각',
+              hint: '몸의 기관을 통해 외부의 자극을 알아차리는 것. (기본형 그대로 명사를 사용하세요)',
+              explanation: "퍼펙트! 명사 '감각'은 형태의 변형 없이 조사 '이(라고)' 앞에 그대로 쓰였습니다.",
+              textParts_eng: ["Jigsaw points out sharply that this burning pain in the thighs is exactly the ", " of being alive."],
+              answer_eng: "sensation"
+            },
+            {
+              id: 8,
+              textParts: ["직쏘는 네가 스마트폰 화면 속에 ", " 시간은 곧 죽은 시간이라고 강조해요."],
+              answer: '처박아버린',
+              hint: '함부로 쑤셔 넣다. (기본형 "처박다"에 완료/강조를 나타내는 보조동사 \'-아/어 버리다\'를 결합하고 관형사형으로 변형하세요)',
+              explanation: "맞습니다! 원형 '처박다'에 아쉬움이나 강조를 나타내는 보조동사 '-아 버리다'가 결합한 후, 뒤의 명사를 수식하는 관형형 '처박아버린'으로 자연스럽게 변형되었네요.",
+              textParts_eng: ["Jigsaw emphasizes that the time you ", " into the smartphone screen is dead time."],
+              answer_eng: "shoved away"
+            },
+            {
+              id: 9,
+              textParts: ["직쏘는 킬링타임이라며 시간을 죽이다 보면 결국 죽는 것은 너 자신이라는 사실을 ", "라고 경고했어요."],
+              answer: '명심해라',
+              hint: '마음에 깊이 새기어 두다. (기본형 "명심하다"를 명령형 어미 \'-아/어라\'로 변형하세요)',
+              explanation: "잘하셨어요! 원형 '명심하다'가 강한 명령을 나타내는 어미 '-아/어라'와 만나 '명심해라'로 올바르게 변형되었습니다.",
+              textParts_eng: ["Jigsaw warned that if you keep 'killing time,' you'll end up being the one who's dead, so you'd better ", "."],
+              answer_eng: "Keep in mind"
+            },
+            {
+              id: 10,
+              textParts: ["끔찍한 악몽에서 깬 태용은 오늘 하루를 정말 ", " 보내겠다고 굳게 다짐하지만, 다시 끝없이 스마트폰 화면을 스크롤링했어요."],
+              answer: '알차게',
+              hint: '내용이 속까지 꽉 차 있거나 실속이 있다. (기본형 "알차다"를 뒤의 동사 \'보내겠다\'를 수식하는 부사형 어미 \'-게\'로 변형하세요)',
+              explanation: "정답입니다! 원형 '알차다'가 뒤에 오는 동사 '보내겠다'를 꾸며주기 위해 부사형 어미 '-게'와 결합하여 '알차게'가 되었습니다.",
+              textParts_eng: ["Taeyong wakes up from the nightmare and swears to spend his day ", ", but he ends up scrolling through his phone again anyway."],
+              answer_eng: "fruitfully"
             }
         ];
 
         const ANSWER_CHOICES = [
-            '불확실함', '강박', '확신', '여지를 남기는', '회피', 
-            '고맥락', '뜻을 전하는', '무례', '공손', '단정적', 
-            '선택 과부하', '망설이다', '저맥락', '완충'
+            '소중히 여기다', '나약하다', '곱씹다', '낭비하다', '고민하다', '중독되다', '감각', '처박다', '명심하다', '알차다', '무시하다', '합리화하다'
         ];
         
         const DISCUSS_DATA = [
-            { 
-                id: 1, 
-                questionKor: "여러분도 일상생활에서 '같아요'라는 표현을 자주 사용해요?", 
-                questionEng: "Do you also use the expression 'seems like' often in your daily life?", 
+            {
+                id: 1,
+                questionKor: "여러분도 릴스 같은 숏폼 영상을 보다가 시간 가는 줄 몰랐던 경험이 있어요?",
+                questionEng: "Have you ever lost track of time while watching short-form videos like Reels?",
                 vocab: [
-                    { term: "일상생활", def: "평소의 생활.", engTerm: "Daily life", engDef: "Everyday life." }, 
-                    { term: "표현", def: "생각이나 느낌을 언어나 몸짓으로 나타냄.", engTerm: "Expression", engDef: "Representing thoughts or feelings through language or gestures." }
-                ] 
-            }, 
-            { 
-                id: 2, 
-                questionKor: "왜 어떤 사람들은 ‘비가 이미 오고 있는 상황’처럼 분명한 사실에 대해서도 “비가 오는 것 같아요”라는 추측의 표현을 사용할까요?", 
-                questionEng: "Why do some people use speculative expressions like 'It seems to be raining' even for clear facts like 'It is already raining'?", 
+                    {
+                        term: "-다가",
+                        termEng: "while doing ~ (and then)",
+                        def: "어떤 행동을 하던 중에 다른 행동이나 상태로 바뀔 때 쓰는 문법이에요.\n(예: 영상을 보다가 잠이 들었다.)",
+                        defEng: "A grammatical structure used when an action is interrupted and changes to another action or state.\n(e.g., I fell asleep while watching a video.)"
+                    }
+                ]
+            },
+            {
+                id: 2,
+                questionKor: "동영상에서 태용은 밥도 10분 만에 먹고 샤워 시간까지 아끼면서, 정작 릴스에는 3시간을 썼어요.\n이런 모순이 태용만의 문제일까요, 아니면 요즘 많은 사람들에게 공통적으로 나타나는 현상이라고 생각해요?",
+                questionEng: "In the video, Tae-yong wolfs down his meal in 10 minutes and cuts his shower short to save time, yet he ends up blowing 3 hours on Reels.\nDo you think this irony is just a 'him' problem, or is it a common phenomenon that many people experience these days?",
                 vocab: [
-                    { term: "분명한 사실", def: "의심할 여지 없이 확실한 실제 일.", engTerm: "Clear fact", engDef: "An actual event that is certain without a doubt." }, 
-                    { term: "추측", def: "미루어 생각하여 헤아림.", engTerm: "Guess / Speculation", engDef: "To guess or infer." }
-                ] 
+                    {
+                        term: "모순",
+                        termEng: "contradiction / irony",
+                        def: "행동이나 앞뒤의 말이 서로 맞지 않는 것을 뜻해요. (시간을 아끼려다 오히려 낭비하는 상황)",
+                        defEng: "A situation where actions or words don't make sense together."
+                    },
+                    {
+                        term: "현상",
+                        termEng: "phenomenon",
+                        def: "우리 눈앞에 나타나서 관찰할 수 있는 일이나 상태를 말해요.",
+                        defEng: "An event or situation that can be observed to happen or exist."
+                    }
+                ]
+            },
+            {
+                id: 3,
+                questionKor: "태용은 평소에 밥을 10분 만에 먹고 샤워도 20분 안에 끝내는 등 극도의 효율성을 추구해요. 릴스 역시 시간을 아끼려고 두 배속으로 보지만 결국 3시간이나 보게 되죠.\n현대인들이 일상에서 이렇게 쫓기듯 시간을 아끼려고 하는 진짜 이유는 무엇이고, 왜 이런 모순이 발생할까요?",
+                questionEng: "Tae-yong pursues extreme efficiency, like eating in 10 minutes and showering in under 20. He even watches Reels at 2x speed to save time, yet ends up watching them for 3 hours.\nWhat is the real reason modern people try to save time as if they're constantly pressed for time, and why does this contradiction happen?",
+                vocab: [
+                    {
+                        term: "극도의 효율성",
+                        termEng: "extreme efficiency",
+                        def: "아주 적은 시간과 노력으로 가장 큰 결과를 얻으려는 태도가 매우 심한 상태를 뜻해요.",
+                        defEng: "An intense attitude of trying to get the biggest result with the least amount of time and effort."
+                    },
+                    {
+                        term: "시간에 쫓기다",
+                        termEng: "to be pressed for time",
+                        def: "할 일은 많은데 시간이 부족해서 마음이 아주 급하고 불안한 상태를 말해요.",
+                        defEng: "Feeling very rushed and anxious because there is not enough time to do what needs to be done."
+                    },
+                    {
+                        term: "두 배속",
+                        termEng: "double speed (2x speed)",
+                        def: "영상이나 소리를 원래 속도보다 두 배 빠르게 재생하는 것을 말해요.",
+                        defEng: "Playing a video or audio twice as fast as its normal speed."
+                    }
+                ]
+            },
+            {
+                id: 4,
+                questionKor: "태용은 '영화 2시간? 너무 길다'고 했는데, 1분 릴스는 왜 3시간이나 봤을까요?\n왜 같은 '동영상 시청'인데 영화 2시간은 길게 느끼고 릴스 3시간은 짧게 느낀다고 생각해요?",
+                questionEng: "Tae-yong complained, 'A 2-hour movie? That's way too long,' yet he spent 3 hours watching 1-minute Reels.\nEven though they're both 'watching videos,' why do you think a 2-hour movie feels so long while 3 hours of Reels fly by in a flash?",
+                vocab: [
+                    {
+                        term: "시청",
+                        termEng: "watching / viewing",
+                        def: "텔레비전이나 영상 콘텐츠 등을 눈으로 보고 귀로 듣는 것을 말해요.",
+                        defEng: "The act of watching and listening to television or video content."
+                    }
+                ]
+            },
+            {
+                id: 5,
+                questionKor: "태용은 숏폼 콘텐츠와 배달 앱에서 뭘 선택할지 고민하면서 무한 스크롤링을 해요.\n여러분이 이런 경험을 해 봤어요? 그런 행동을 하는 이유는 뭘까요?",
+                questionEng: "Tae-yong endlessly scrolls through short-form content and delivery apps, agonizing over what to pick.\nHave you ever caught yourself doing this? What do you think makes us act this way?",
+                vocab: [
+                    {
+                        term: "무한",
+                        termEng: "infinite / endless",
+                        def: "끝이나 한계가 없이 계속 이어지는 것을 뜻해요.",
+                        defEng: "Continuing without any end or limit."
+                    },
+                    {
+                        term: "스크롤링을 하다",
+                        termEng: "to scroll (endlessly)",
+                        def: "스마트폰 화면을 손가락으로 계속 위아래로 내리며 구경하는 행동을 말해요.",
+                        defEng: "The action of continuously swiping up and down on a smartphone screen to browse."
+                    }
+                ]
+            },
+            {
+                id: 6,
+                questionKor: "만약 직쏘가 여러분에게 '어제 스마트폰을 보며 버린 시간만큼 벌을 주겠다'고 하면, 여러분은 직쏘에게 어떻게 대답할 거예요?",
+                questionEng: "If Jigsaw told you, 'I'm going to punish you for the exact amount of time you wasted looking at your phone yesterday,' how would you answer him?",
+                vocab: [
+                    {
+                        term: "벌을 주다",
+                        termEng: "to punish",
+                        def: "잘못한 일에 대해 대가를 치르게 하거나 고통을 주는 것을 말해요.",
+                        defEng: "To make someone pay a price or suffer for doing something wrong."
+                    }
+                ]
+            },
+            {
+                id: 7,
+                questionKor: "직쏘는 '킬링 타임이라며 시간을 죽이다 보면, 결국 죽는 건 너 자신이다.'라고 말했어요.\n여러분은 항상 시간을 의미 있게 써야 한다고 생각해요? 아니면 킬링 타임도 필요하다고 생각해요?",
+                questionEng: "Jigsaw said, 'If you keep killing time, the one who eventually dies is you.'\nDo you think we always need to spend our time meaningfully, or is 'killing time' necessary sometimes too?",
+                vocab: [
+                    {
+                        term: "킬링 타임",
+                        termEng: "killing time",
+                        def: "심심할 때 특별한 목적 없이 시간을 보내기 위해 하는 가벼운 활동을 뜻해요.",
+                        defEng: "A light activity done simply to pass the time when bored, without any specific purpose."
+                    },
+                    {
+                        term: "시간을 죽이다",
+                        termEng: "to waste time",
+                        def: "소중한 시간을 아무 의미 없이 낭비하거나 흘려보낸다는 뜻이에요.",
+                        defEng: "To waste or let precious time pass by meaninglessly."
+                    },
+                    {
+                        term: "시간을 의미 있게 쓰다",
+                        termEng: "to spend time meaningfully",
+                        def: "나에게 도움이 되거나 가치 있는 일에 시간을 알차게 사용한다는 뜻이에요.",
+                        defEng: "To use time productively for something valuable or helpful to oneself."
+                    }
+                ]
+            },
+            {
+                id: 8,
+                questionKor: "직쏘는 태용에게 '너는 그 두 시간 동안 살아 있었나? 아니면 죽어 있었나?'라고 질문해요.\n여러분은 '반복적 스크롤링은 죽은 상태'이고 '고통은 살아 있다는 감각'이라는 비유에 대해 어떻게 생각해요?",
+                questionEng: "Jigsaw asks Tae-yong, 'Were you alive during those two hours, or were you dead?'\nWhat are your thoughts on the metaphor that 'mindless scrolling is a dead state' while 'feeling pain is the sensation of being alive'?",
+                vocab: [
+                    {
+                        term: "반복적",
+                        termEng: "repetitive",
+                        def: "같은 일이나 행동을 계속해서 여러 번 되풀이하는 것을 말해요.",
+                        defEng: "Doing the same thing or action over and over again."
+                    },
+                    {
+                        term: "비유",
+                        termEng: "metaphor / comparison",
+                        def: "어떤 것을 설명할 때, 그것과 비슷한 다른 것에 빗대어 설명하는 방법이에요.",
+                        defEng: "Explaining something by comparing it to something else that is similar."
+                    }
+                ]
+            },
+            {
+                id: 9,
+                questionKor: "동영상 마지막에 태용은 '다시는 릴스를 안 보겠다'고 다짐했지만, 결국 또 숏폼을 소비했어요.\n여러분은 현대인들이 숏폼을 보며 시간을 보내는 행위가 중독이라고 생각해요? 아니면 단순한 습관이라고 생각해요?",
+                questionEng: "At the end of the video, Tae-yong swore he'd never watch Reels again, but he ended up consuming short-form content anyway.\nDo you think the way modern people spend time on short-form videos is an addiction, or is it just a simple habit?",
+                vocab: [
+                    {
+                        term: "다짐하다",
+                        termEng: "to resolve / to swear",
+                        def: "마음속으로 굳게 결심하거나 스스로 약속하는 것을 말해요.",
+                        defEng: "To make a firm resolution or promise to oneself."
+                    },
+                    {
+                        term: "행위",
+                        termEng: "act / behavior",
+                        def: "사람이 의지를 가지고 어떤 목적을 위해 하는 행동을 뜻해요.",
+                        defEng: "An action or deed done by a person with a specific will or purpose."
+                    },
+                    {
+                        term: "중독",
+                        termEng: "addiction",
+                        def: "어떤 것에 너무 깊이 빠져서 스스로 멈추거나 조절하지 못하는 상태를 말해요.",
+                        defEng: "A state of being so deeply obsessed with something that you cannot stop or control it yourself."
+                    }
+                ]
+            },
+            {
+                id: 10,
+                questionKor: "여러분은 하루를 '가장 알차게' 보내기 위해 보통 어떤 계획을 세워요?",
+                questionEng: "What kind of plans do you usually make to spend your day as 'productively and meaningfully' as possible?",
+                vocab: [
+                    {
+                        term: "알차게 시간을 보내다",
+                        termEng: "to spend time productively / meaningfully",
+                        def: "시간을 낭비하지 않고, 보람 있고 꽉 찬 느낌으로 사용한다는 뜻이에요.",
+                        defEng: "To use time without wasting it, feeling fulfilled and productive."
+                    }
+                ]
             }
         ];
 
@@ -281,7 +1851,8 @@
                 <div className="animate-fade-in max-w-5xl mx-auto w-full px-6 lg:px-0 pt-[3.75rem] pb-8 flex flex-col items-center h-full justify-center print:pt-4">
                     <div className="flex flex-col items-center justify-center text-center w-full mb-16 print:mb-8">
                         <div className="flex items-center gap-3 mb-6 print:mb-4"> 
-                            <span className="px-3 py-1 bg-gray-900 text-white text-[10px] font-sans font-bold tracking-widest uppercase print:text-[12px]">과학</span>
+                            <span className="px-3 py-1 bg-gray-900 text-white text-[10px] font-sans font-bold tracking-widest uppercase print:text-[12px]">스케치 코미디</span>
+                            <span className="px-3 py-1 bg-gray-900 text-white text-[10px] font-sans font-bold tracking-widest uppercase print:text-[12px]">일상</span>
                             <div className="flex items-center border border-gray-900 px-3 py-1 text-[10px] font-sans tracking-widest uppercase text-gray-900 print:text-[12px]">
                                 <span className="font-bold">{userLevel}</span>
                                 <span className="mx-2 w-px h-2.5 bg-gray-300"></span>
@@ -289,10 +1860,10 @@
                             </div>
                         </div>
                         <h1 className="font-serif text-3xl md:text-5xl lg:text-6xl text-black leading-tight mb-4 font-bold print:text-[22px] print:leading-tight">
-                            두바이 쫀득 쿠키가 맛있는 <br className="print:hidden" /> 과학적인 이유
+                            릴스 중독: 벌써 세 시간째
                         </h1>
                         <p className="font-serif text-gray-500 text-sm md:text-base italic mb-8 max-w-2xl leading-relaxed print:text-[16px] print:mb-4">
-                            물리학자와 의사가 분석한 두바이 초콜릿 쿠키의 식감과 맛의 비밀.
+                            숏폼 영상에 빠져 시간을 허비하는 현대인의 일상을 담은 스케치 코미디.
                         </p>
                         
                         <div 
@@ -800,8 +2371,8 @@
                             <div className="space-y-2 print:space-y-0.5">
                                 {item.vocab.map((v, i) => (
                                     <div key={i} className="flex flex-col">
-                                        <p className="text-sm font-serif text-gray-700 print:text-[10px]"><span className="font-bold text-black mr-2 print:text-[10px] print:mr-1">{v.term}</span>{v.def}</p>
-                                        <p className={`text-xs font-sans text-gray-500 mt-1 ${showTranslation ? 'animate-fade-in block' : 'hidden'} print:hidden`}><span className="font-semibold text-gray-600 mr-1">{v.engTerm} :</span>{v.engDef}</p>
+                                        <p className="text-sm font-serif text-gray-700 whitespace-pre-line print:text-[10px]"><span className="font-bold text-black mr-2 print:text-[10px] print:mr-1">{v.term}</span>{v.def}</p>
+                                        <p className={`text-xs font-sans text-gray-500 mt-1 whitespace-pre-line ${showTranslation ? 'animate-fade-in block' : 'hidden'} print:hidden`}><span className="font-semibold text-gray-600 mr-1">{v.termEng} :</span>{v.defEng}</p>
                                     </div>
                                 ))}
                             </div>
@@ -889,16 +2460,13 @@
         const DiscussView = ({ updateProgress }) => (
             <div className="max-w-3xl mx-auto w-full px-6 py-12 animate-fade-in print:pt-4 print:px-0">
                 <div className="mb-6 pb-6 text-center print:mb-4 print:pb-2"><h2 className="text-[32px] md:text-[36px] font-serif font-bold text-gray-900 mb-2 print:text-[18px]">생각해 보기</h2><p className="text-sm font-sans text-gray-500 print:text-[12px]">학습 자료에 대해 심층적으로 생각해 보세요.</p></div>
-                <div className="bg-gray-50 border border-gray-200 p-4 mb-10 flex items-start gap-3 print:hidden">
-                    <div className="shrink-0 mt-0.5"><SparklesIcon className="w-4 h-4 text-gray-400" /></div>
-                    <p className="text-xs font-sans text-gray-600 leading-relaxed">AI 한국어 도우미의 친절한 문장 교정과 피드백을 받을 수 있습니다.</p>
-                </div>
+                <div className="bg-gray-50 border border-gray-200 p-4 mb-10 flex items-start gap-3 print:hidden"><div className="shrink-0 mt-0.5"><SparklesIcon className="w-4 h-4 text-gray-400" /></div><p className="text-xs font-sans text-gray-600 leading-relaxed">AI 피드백은 현재 Gemini 웹에서만 가능합니다. <a href="https://gemini.google.com/share/3ffe92d53a6e" target="_blank" rel="noreferrer" className="underline decoration-gray-400 underline-offset-2 hover:text-black inline-flex items-center gap-1">Gemini에서 열기 <ExternalLinkIcon className="w-3 h-3" /></a></p></div>
                 {DISCUSS_DATA.map((item) => (<DiscussQuestionItem key={item.id} item={item} />))}
             </div>
         );
 
         const App = () => {
-            const [activeTab, setActiveTab] = useState('home'); const [userLevel] = useState("B2+"); const [showVocab, setShowVocab] = useState(false); const [progress, setProgress] = useState({ learn: false, vocab: false, quiz: 0, discuss: false });
+            const [activeTab, setActiveTab] = useState('home'); const [userLevel] = useState("B2"); const [showVocab, setShowVocab] = useState(false); const [progress, setProgress] = useState({ learn: false, vocab: false, quiz: 0, discuss: false });
             const [isHeaderExpanded, setIsHeaderExpanded] = useState(true);
 
             useEffect(() => {
