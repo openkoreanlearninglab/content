@@ -5604,6 +5604,103 @@
             }
         ];
 
+        const ANSWER_CHOICES = [
+            '급등하다', '돌파하다', '수익률', '실적', '증시', '차익 실현', '양도소득세', '시행하다', '상장되다', '조정', '하락하다', '규제', '폭락'
+        ];
+
+        const QUIZ_LIST = [
+            {
+                id: 1,
+                textParts: ["최근 10여 년간 박스권에 머물던 코스피 지수가 눈에 띄게 ", " 시작한 배경에는 정부의 정책과 기대감이 있어요."],
+                answer: '급등하기',
+                hint: "물가나 시세 따위가 갑자기 오르다. (뒤의 보조동사 '시작한'과 어울리도록 명사형 어미 '-기'와 결합하세요)",
+                explanation: "기본형 '급등하다'에 명사형 어미 '-기'가 결합하여 '급등하기 시작하다'의 형태로 자연스럽게 쓰였습니다.",
+                textParts_eng: ["The background behind the KOSPI index, which had been stuck in a box for the past 10 years, starting to noticeably ", " lies in government policies and expectations."],
+                answer_eng: "surge"
+            },
+            {
+                id: 2,
+                textParts: ["새 정부가 들어서며 자본시장 선진화 정책을 밀어붙인 결과, 코스피는 지난해 10월 4000선을 ", "."],
+                answer: ['돌파했어요', '돌파했습니다'],
+                hint: "어떤 기점이나 목표, 한계 따위를 깨뜨리고 지나가다. (문장을 끝맺는 과거형 서술어로 변형하세요)",
+                explanation: "기본형 '돌파하다'를 과거 사실을 나타내는 서술어인 '돌파했어요(돌파했습니다)'로 변형해야 문맥에 맞습니다.",
+                textParts_eng: ["As the new government pushed forward with capital market advancement policies, the KOSPI ", " the 4000 mark last October."],
+                answer_eng: "broke through"
+            },
+            {
+                id: 3,
+                textParts: ["코스피는 지난 한 해 동안 무려 75.9%나 올라 전 세계 증시 ", " 1위를 기록하는 놀라운 성과를 거두었어요."],
+                answer: '수익률',
+                hint: "투자한 자본에 대한 수익의 비율. (명사형 그대로 사용하세요)",
+                explanation: "명사 '수익률'은 별도의 변형 없이 문맥에 완벽하게 들어맞습니다.",
+                textParts_eng: ["The KOSPI surged by a whopping 75.9% over the past year, achieving the remarkable result of ranking 1st in global stock market ", "."],
+                answer_eng: "return rate"
+            },
+            {
+                id: 4,
+                textParts: ["우리나라 주식 시장 상승의 중심에는 반도체와 자동차 산업 등에서 우수한 ", "을(를) 내고 있는 기업들이 있습니다."],
+                answer: '실적',
+                hint: "사업이나 일 따위에서 이룩한 실제의 업적이나 공적. (명사형 그대로 사용하세요)",
+                explanation: "명사 '실적'은 기업이 창출한 이익이나 결과를 나타내는 단어로 형태 변형 없이 쓰입니다.",
+                textParts_eng: ["At the center of the rise in the Korean stock market are companies generating excellent ", " in industries such as semiconductors and automobiles."],
+                answer_eng: "performance"
+            },
+            {
+                id: 5,
+                textParts: ["똑같은 가치를 지닌 기업임에도 불구하고, 한국에 ", " 이유만으로 주가가 낮게 평가받는 현상을 '코리아 디스카운트'라고 부릅니다."],
+                answer: ['상장됐다는', '상장되었다는'],
+                hint: "증권 거래소에서 주식이 매매 대상으로 등록되다. (과거 시제를 사용하여 이유를 나타내는 간접인용 '-다는'과 결합하세요)",
+                explanation: "기본형 '상장되다'에 과거 시제 '-었-'과 간접인용 어미 '-다는'이 결합하여 '상장됐다는(상장되었다는)'으로 변형되었습니다.",
+                textParts_eng: ["The phenomenon where a company's stock price is undervalued simply because it ", " in Korea, despite having the same value, is called the 'Korea Discount'."],
+                answer_eng: "was listed"
+            },
+            {
+                id: 6,
+                textParts: ["최근 주가가 급등하자, 이익을 현금화하기 위해 기관과 외국인 투자자들이 대규모로 ", "에 나설 수 있다는 우려도 존재해요."],
+                answer: '차익 실현',
+                hint: "산 가격보다 비싸게 팔아 이익을 얻는 일. (명사형 그대로 사용하세요)",
+                explanation: "주식을 팔아 이익을 확정 짓는 '차익 실현' 명사구가 변형 없이 그대로 사용되었습니다.",
+                textParts_eng: ["With the recent surge in stock prices, there are concerns that institutional and foreign investors may engage in massive ", " to cash in their profits."],
+                answer_eng: "profit-taking"
+            },
+            {
+                id: 7,
+                textParts: ["정부는 해외 주식을 팔고 국내 시장에 장기 투자하는 사람들에게 ", "를(을) 면제해 주는 제도를 도입할 예정이에요."],
+                answer: '양도소득세',
+                hint: "재산이나 주식의 소유권을 남에게 넘길 때 생기는 이익에 대하여 부과하는 세금. (명사형 그대로 사용하세요)",
+                explanation: "세금의 한 종류인 '양도소득세'가 형태 변형 없이 문장의 목적어로 사용되었습니다.",
+                textParts_eng: ["The government plans to introduce a system that exempts ", " for those who sell foreign stocks and invest long-term in the domestic market."],
+                answer_eng: "capital gains tax"
+            },
+            {
+                id: 8,
+                textParts: ["정부는 앞으로 결제 주기 단축, 주가 조작 근절 등 자본시장을 정상화하기 위한 다양한 정책들을 ", " 계획이에요."],
+                answer: '시행할',
+                hint: "실제로 행하다. (뒤의 명사 '계획'을 수식하는 미래/예정 관형사형 어미 '-ㄹ/을'과 결합하세요)",
+                explanation: "기본형 '시행하다'가 미래의 예정을 나타내는 관형사형 어미 '-ㄹ'과 만나 '시행할'로 변형되었습니다.",
+                textParts_eng: ["The government plans to ", " various policies to normalize the capital market, such as shortening the settlement cycle and eradicating stock manipulation."],
+                answer_eng: "implement"
+            },
+            {
+                id: 9,
+                textParts: ["기업의 이익이 늘어나더라도 이것이 투자와 고용 확대로 이어지지 않는다면, ", " 상승이 서민 경제에 미치는 긍정적 효과는 제한적이에요."],
+                answer: '증시',
+                hint: "주식을 사고파는 시장. (명사형 그대로 사용하세요)",
+                explanation: "'주식 시장'을 줄여 이르는 명사 '증시'가 변형 없이 주어의 일부로 쓰였습니다.",
+                textParts_eng: ["Even if corporate profits increase, if this does not lead to expanded investment and employment, the positive effect of the ", " rise on the everyday economy is limited."],
+                answer_eng: "stock market"
+            },
+            {
+                id: 10,
+                textParts: ["단기간에 주가가 급등한 후 일시적으로 가격이 정체되며 숨을 고르는 ", " 과정은 오히려 건강한 시장의 자연스러운 신호라고 볼 수 있어요."],
+                answer: '조정',
+                hint: "어떤 기준이나 실정에 맞게 바로잡음. (여기서는 주가가 일시적으로 하락하거나 정체되는 현상) (명사형 그대로 사용하세요)",
+                explanation: "시장이 과열을 식히는 과정을 뜻하는 금융 용어 '조정'이 명사형 그대로 수식어('조정 과정')로 쓰였습니다.",
+                textParts_eng: ["A ", " process where prices temporarily stagnate and catch their breath after a short-term surge in stock prices can actually be seen as a natural sign of a healthy market."],
+                answer_eng: "correction"
+            }
+        ];
+
         const DISCUSS_DATA = [
             {
                 id: 1,
