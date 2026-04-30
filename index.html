@@ -338,20 +338,25 @@
         // 2) Google Drive files → use Drive's thumbnail endpoint.
         // 3) Fallback → minimal monochrome block with the level code.
         const HTML_THUMBNAIL_MAP = {
-            "b1plus-reels-addiction.html":              { type: "youtube", id: "nSqNLM5orPo" },
-            "b2-reels-addiction.html":                  { type: "youtube", id: "nSqNLM5orPo" },
+            "b1plus-reels-addiction.html":                { type: "youtube", id: "nSqNLM5orPo" },
+            "b2-reels-addiction.html":                    { type: "youtube", id: "nSqNLM5orPo" },
             "b2plus-why-koreans-like-chewy-texture.html": { type: "youtube", id: "Q3xPFQgDG4E" },
-            "c1-dubai-cookie-science.html":             { type: "youtube", id: "htzfNwDM7II" },
-            "c1-kospi-5000-meaning.html":               { type: "youtube", id: "Ehz6n9RxMsc" },
-            "b1plus-dubai-chewy-cookie.html":           { type: "youtube", id: "sVm4-Jd5bp4" },
-            "b2plus-why-we-say-gata-yo.html":           { type: "youtube", id: "nb-L3S8AFh8" },
-            "c1plus-korean-christmas-cake-origin.html": { type: "youtube", id: "YoIbPhMETD8" },
-            "b2plus-museum-admission.html":             { type: "youtube", id: "ljr7gKBXpKA" },
-            "b2plus-cannabis-drink.html":               { type: "youtube", id: "sEit34nId58" },
-            "b2plus-fade-out-in-pop-songs.html":        { type: "image",   url: "https://raw.githubusercontent.com/openkoreanlearninglab/hub/refs/heads/main/Number%20of%20songs%20that%20fade%20out%20in%20the%20top%2010%20-%20by%20Vox%20%22Why%20more%20pop%20songs%20should%20end%20with%20a%20fade%20out%22.png" },
-            "c2-kospi-5000-era.html":                   { type: "youtube", id: "w1VjzSCA9-g" },
-            "b2plus-1000won-talent-market.html":        { type: "youtube", id: "kQAg3Gg3MLI" },
-            "https://drive.google.com/open?id=1H4sX-PBfDQY9MVPzbgAzSxCDkeFjHPnojjm3tuA8MwU&usp=drive_copy": { type: "youtube", id: "qrIZ9Yo1CaA" }
+            "c1-dubai-cookie-science.html":               { type: "youtube", id: "htzfNwDM7II" },
+            "c1-kospi-5000-meaning.html":                 { type: "youtube", id: "Ehz6n9RxMsc" },
+            "b1plus-dubai-chewy-cookie.html":             { type: "youtube", id: "sVm4-Jd5bp4" },
+            "b2plus-why-we-say-gata-yo.html":             { type: "youtube", id: "nb-L3S8AFh8" },
+            "c1plus-korean-christmas-cake-origin.html":   { type: "youtube", id: "YoIbPhMETD8" },
+            "b2plus-museum-admission.html":               { type: "youtube", id: "ljr7gKBXpKA" },
+            "b2plus-cannabis-drink.html":                 { type: "youtube", id: "sEit34nId58" },
+            "b2plus-fade-out-in-pop-songs.html":          { type: "image",   url: "https://raw.githubusercontent.com/openkoreanlearninglab/hub/refs/heads/main/Number%20of%20songs%20that%20fade%20out%20in%20the%20top%2010%20-%20by%20Vox%20%22Why%20more%20pop%20songs%20should%20end%20with%20a%20fade%20out%22.png" },
+            // 시작 페이지 미리보기로 직접 만든 썸네일 (텍스트 전용 자료)
+            "c2-kospi-5000-era.html":                     { type: "image",   url: "thumbnails/c2-kospi-5000-era.png" },
+            "b2plus-1000won-talent-market.html":          { type: "image",   url: "thumbnails/b2plus-1000won-talent-market.png" }
+        };
+
+        // Google Drive 자료 중 Drive 썸네일이 비어 있는 항목용 직접 만든 시작 페이지 미리보기
+        const DRIVE_THUMBNAIL_OVERRIDES = {
+            "1H4sX-PBfDQY9MVPzbgAzSxCDkeFjHPnojjm3tuA8MwU": "thumbnails/drive-bumeokjjikmeok.png"
         };
 
         const getThumbnail = (link) => {
@@ -359,7 +364,11 @@
             // Google Drive (any drive.google.com URL with id=...)
             if (link.includes("drive.google.com")) {
                 const m = link.match(/[?&]id=([A-Za-z0-9_-]+)/);
-                if (m) return `https://drive.google.com/thumbnail?id=${m[1]}&sz=w400`;
+                if (m) {
+                    const id = m[1];
+                    if (DRIVE_THUMBNAIL_OVERRIDES[id]) return DRIVE_THUMBNAIL_OVERRIDES[id];
+                    return `https://drive.google.com/thumbnail?id=${id}&sz=w400`;
+                }
             }
             // Local HTML mapped to a YouTube ID or image URL
             if (HTML_THUMBNAIL_MAP[link]) {
