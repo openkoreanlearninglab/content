@@ -1,90 +1,56 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OpenKorean - 학습 자료 (Learning Content)</title>
+    <title>OpenKoreanLab — 학습 자료 (Learning Content)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- 폰트 링크 -->
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=Jua&family=Noto+Sans+KR:wght@400;500;700;900&family=Sunflower:wght@300;500;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Noto Sans KR"', 'sans-serif'],
+                        serif: ['"Noto Serif KR"', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        /* Root Font Size Setting using clamp and vw */
-        html {
-            font-size: clamp(12px, 1vw, 16px);
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #ffffff;
+            color: #1a1a1a;
         }
 
-        /* NoonnuBasicGothic (기본 글꼴) */
-        @font-face {
-            font-family: 'NoonnuBasicGothic';
-            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noon-2410@1.0/NoonnuBasicGothicRegular.woff2') format('woff2');
-            font-weight: normal;
-            font-display: swap;
-        }
-        body { font-family: 'NoonnuBasicGothic', sans-serif; background-color: #f9fafb; color: #334155; }
-        
-        /* 폰트 유틸리티 클래스 */
-        .font-basic { font-family: 'NoonnuBasicGothic', sans-serif; }
-        .font-jua { font-family: 'Jua', sans-serif; }
-        .font-noto { font-family: 'Noto Sans KR', sans-serif; }
-        .font-sunflower { font-family: 'Sunflower', sans-serif; }
-        
-        /* Cafe24 폰트 시리즈 */
-        @font-face { font-family: 'Cafe24SurroundAir'; src: url('https://gcore.jsdelivr.net/gh/projectnoonnu/noonfonts_2105_2@1.0/Cafe24SsurroundAir.woff') format('woff'); font-weight: normal; font-display: swap; }
-        .font-cafe24 { font-family: 'Cafe24SurroundAir', sans-serif; }
+        .font-sans { font-family: 'Noto Sans KR', sans-serif; }
+        .font-serif { font-family: 'Noto Serif KR', serif; }
 
-        @font-face { font-family: 'Cafe24Surround'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2105_2@1.0/Cafe24Ssurround.woff') format('woff'); font-weight: normal; font-display: swap; }
-        .font-cafe24-surround { font-family: 'Cafe24Surround', sans-serif; }
-
-        @font-face { font-family: 'Cafe24Decoshadow'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2405-3@1.1/Cafe24Decoshadow.woff2') format('woff2'); font-weight: normal; font-display: swap; }
-        .font-cafe24-deco { font-family: 'Cafe24Decoshadow', sans-serif; }
-
-        @font-face { font-family: 'Cafe24Decoschool'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2405-3@1.1/Cafe24Decoschool.woff2') format('woff2'); font-weight: normal; font-display: swap; }
-        .font-cafe24-school { font-family: 'Cafe24Decoschool', sans-serif; }
-
-        @font-face { font-family: 'Cafe24Anemone'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/Cafe24Ohsquare.woff') format('woff'); font-weight: normal; font-display: swap; }
-        .font-cafe24-anemone { font-family: 'Cafe24Anemone', sans-serif; }
-
-        /* SchoolSafetyMustache (학교안심 콧수염) */
-        @font-face {
-            font-family: 'SchoolSafetyMustache';
-            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2402_keris@1.0/TTHakgyoansimKossuyeomR.woff2') format('woff2');
-            font-weight: normal;
-            font-display: swap;
-        }
-        .font-school-mustache { font-family: 'SchoolSafetyMustache', sans-serif; }
-
-        /* SchoolSafetyOcarina (학교안심 오카리나) - 제목용 */
-        @font-face {
-            font-family: 'SchoolSafetyOcarina';
-            src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2511-1@1.0/HakgyoansimOcarinaR.woff2') format('woff2');
-            font-weight: normal;
-            font-display: swap;
-        }
-        .font-ocarina { font-family: 'SchoolSafetyOcarina', sans-serif; }
-
-        @font-face { font-family: 'SchoolSafetyRoundedSmile'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-5@1.0/HakgyoansimDunggeunmisoTTF-R.woff2') format('woff2'); font-weight: normal; font-display: swap; }
-        @font-face { font-family: 'SchoolSafetyRoundedSmile'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/2408-5@1.0/HakgyoansimDunggeunmisoTTF-B.woff2') format('woff2'); font-weight: 700; font-display: swap; }
-        .font-school-smile { font-family: 'SchoolSafetyRoundedSmile', sans-serif; }
-
-        @font-face { font-family: 'Juache'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_one@1.0/BMJUA.woff') format('woff'); font-weight: normal; font-display: swap; }
-        .font-juache { font-family: 'Juache', sans-serif; }
-
-        /* 스크롤바 */
-        ::-webkit-scrollbar { width: 0.375rem; height: 0.375rem; }
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 0.1875rem; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 0; }
+        ::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
 
-        /* 애니메이션 */
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(0.625rem); } to { opacity: 1; transform: translateY(0); } }
-        .animate-fade-in { animation: fadeIn 0.3s ease-out forwards; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in { animation: fadeIn 0.35s ease-out forwards; }
+
+        ::selection { background-color: #f3f4f6; color: #000; }
     </style>
 </head>
+
 <body>
     <div id="root"></div>
 
@@ -92,61 +58,38 @@
         const { useState, useEffect, useMemo } = React;
         const { createPortal } = ReactDOM;
 
-        // --- Data: Level Definitions & Styles (Global scope for better performance) ---
+        // --- Level Definitions ---
         const LEVEL_DEFINITIONS = {
             "ALL": { title: "All Levels", desc: "All Learning Content" },
-            "A1": { title: "Novice", desc: "Can use and understand very simple everyday expressions." },
-            "A1+": { title: "Pre-Beginner", desc: "Still beginner, but can handle slightly more than A1." },
-            "A2": { title: "Beginner", desc: "Can understand frequently used sentences (family, shopping, work)." },
-            "A2+": { title: "Upper Beginner", desc: "Between A2 and B1. Can speak a bit more smoothly about daily life." },
-            "B1": { title: "Pre-Intermediate", desc: "Can understand the main points of clear standard speech." },
-            "B1+": { title: "Lower Intermediate", desc: "Stronger B1. More comfortable carrying conversations." },
-            "B2": { title: "Intermediate", desc: "Can understand the main ideas of complex texts." },
-            "B2+": { title: "Upper Intermediate", desc: "Near C1. Can argue a point logically." },
-            "C1": { title: "Advanced", desc: "Can understand long, demanding texts and implied meanings." },
-            "C1+": { title: "Upper Advanced", desc: "Very strong C1, approaching native-like flexibility." },
-            "C2": { title: "Proficient", desc: "Can understand virtually everything heard or read." }
-        };
-
-        const getLevelTheme = (level) => {
-            switch (level) {
-                case 'ALL': return 'slate';
-                case 'A1': case 'A1+': return 'lime';
-                case 'A2': case 'A2+': return 'green';
-                case 'B1': case 'B1+': return 'sky';
-                case 'B2': case 'B2+': return 'blue';
-                case 'C1': case 'C1+': case 'C2': return 'violet';
-                default: return 'green';
-            }
-        };
-
-        const LEVEL_STYLES = {
-            "ALL": "bg-slate-50 text-black border-slate-200 shadow-sm",
-            "A1": "bg-lime-50 text-lime-600 border-lime-100 shadow-sm", 
-            "A1+": "bg-lime-50 text-lime-600 border-lime-100 shadow-sm", 
-            "A2": "bg-green-50 text-green-600 border-green-100 shadow-sm",    
-            "A2+": "bg-green-50 text-green-600 border-green-100 shadow-sm",    
-            "B1": "bg-sky-50 text-sky-600 border-sky-100 shadow-sm",        
-            "B1+": "bg-sky-50 text-sky-600 border-sky-100 shadow-sm",        
-            "B2": "bg-blue-50 text-blue-600 border-blue-100 shadow-sm", 
-            "B2+": "bg-blue-50 text-blue-600 border-blue-100 shadow-sm", 
-            "C1": "bg-violet-50 text-violet-600 border-violet-100 shadow-sm", 
-            "C1+": "bg-violet-50 text-violet-600 border-violet-100 shadow-sm", 
-            "C2": "bg-violet-50 text-violet-600 border-violet-100 shadow-sm",        
+            "A1":  { title: "Novice",            desc: "Basic everyday expressions." },
+            "A1+": { title: "Pre-Beginner",      desc: "Slightly more than A1." },
+            "A2":  { title: "Beginner",          desc: "Frequently used sentences." },
+            "A2+": { title: "Upper Beginner",    desc: "More smoothly about daily life." },
+            "B1":  { title: "Pre-Intermediate",  desc: "Standard speech main points." },
+            "B1+": { title: "Lower Intermediate",desc: "More comfortable conversations." },
+            "B2":  { title: "Intermediate",      desc: "Complex text main ideas." },
+            "B2+": { title: "Upper Intermediate",desc: "Can argue a point logically." },
+            "C1":  { title: "Advanced",          desc: "Long, demanding texts." },
+            "C1+": { title: "Upper Advanced",    desc: "Very strong C1." },
+            "C2":  { title: "Proficient",        desc: "Understands virtually everything." }
         };
 
         const LEVEL_TITLES = {
+            "ALL": "전체 학습 자료",
             "B1+": "중급 (입문) 수준 학습 자료", "B2": "중급 수준 학습 자료", "B2+": "중급(상) 수준 학습 자료",
             "C1": "고급 수준 학습 자료", "C1+": "고급(상) 수준 학습 자료", "C2": "최상급 수준 학습 자료"
         };
 
         const LEVEL_SUBTITLES = {
-            "B1+": "Pre-Intermediate Level Learning Content", "B2": "Intermediate Level Learning Content", "B2+": "Upper Intermediate Level Learning Content",
-            "C1": "Advanced Level Learning Content", "C1+": "Upper Advanced Level Learning Content", "C2": "Proficient Level Learning Content"
+            "ALL": "All Learning Content",
+            "B1+": "Pre-Intermediate Level Learning Content", "B2": "Intermediate Level Learning Content",
+            "B2+": "Upper Intermediate Level Learning Content",
+            "C1": "Advanced Level Learning Content", "C1+": "Upper Advanced Level Learning Content",
+            "C2": "Proficient Level Learning Content"
         };
 
+        // --- Materials Data ---
         const MATERIALS_DATA = [
-            { level: "C1", tags: ["사회", "철학", "과학"], title: "뒷담화에 대해서 - 뒷담화는 자제할 수 없는 인간 본성인가?", link: "https://docs.google.com/document/d/1hWysNw_TrVlrWHhLyvLaIprazQWejXJsqZrfaTXRO2E/edit?usp=sharing" },
             { level: "B1+", tags: ["스케치 코미디", "일상"], title: "릴스 중독: 벌써 세 시간 째", link: "b1plus-reels-addiction.html" },
             { level: "B2", tags: ["스케치 코미디", "일상"], title: "릴스 중독: 벌써 세 시간 째", link: "b2-reels-addiction.html" },
             { level: "C2", tags: ["경제", "정치"], title: "코스피 5000 시대, 앞으로 어떤 길을 가야 하는가?", link: "c2-kospi-5000-era.html" },
@@ -289,7 +232,6 @@
             { level: "C1", tags: ["사회"], title: "죽음을 선택할 권리 Feat. “올리버 색스” 교수의 죽음을 받아들이는 방법.pdf", link: "https://drive.google.com/open?id=17ZPOjWdFYgjpG6_aqVBvkGXpAu6pya8e" },
             { level: "C1", tags: ["사회", "경제"], title: "전 세계에서 왜 집값이 천정부지로 치솟을까요? - 집값 잡기 위해서 어떤 노력이 필요할까요?", link: "https://drive.google.com/open?id=1Z_Wft1geb7Gv_ejYOU6--xDgKlLJ7KhvB84zSoRyKsM&usp=drive_copy" },
             { level: "C1", tags: ["사회", "과학"], title: "로봇에도 인권이 있을까?", link: "https://drive.google.com/open?id=1iiLokuf48w_KqOHPqrRSuQwLSGuJIOJVQO9JoZEq1ow&usp=drive_copy" },
-            { level: "C1", tags: ["사회", "기술"], title: "카카오톡이 멈추자 벌어진 일 - 마비된 대한민국", link: "https://drive.google.com/open?id=15pN9vmLDk_0Wxjz0CyEYdAMBPGoDDDSa70fRM3zBtcg&usp=drive_copy" },
             { level: "C1", tags: ["사회", "문화"], title: "읽을 책, 볼 영상이 쌓인 당신에게", link: "https://drive.google.com/open?id=1m81U2wNQ6S5kg9UmF9QhWswJ39wxccULZgyHFnOa6PA&usp=drive_copy" },
             { level: "C1", tags: ["사회", "환경"], title: "명작에 수프를 뒤집어씌우는 사람들 — 환경 운동가인가 ？ 테러리스트인가 ？", link: "https://drive.google.com/open?id=1uveDBLGxMfmgTS0pxuc7kuCg2QbgAspV4Hw5xgsrIpw&usp=drive_copy" },
             { level: "C1", tags: ["수학", "사회"], title: "알고보면 완전 소중한 수학 - 어떻게 배우고 평가해야 할까요?", link: "https://drive.google.com/open?id=1JgSOji6eJSeak8GkUVQSle5VvmayBUg8i4jT6bLzPYc&usp=drive_copy" },
@@ -338,9 +280,6 @@
             { level: "C2", tags: ["과학", "철학"], title: "과학과 은유, 생산적 활용과 위험", link: "https://drive.google.com/open?id=1TYsKDatbowL8vGUm6ANPBBNuAWc9ws48zkm1IN1xok8&usp=drive_copy" },
             { level: "C2", tags: ["과학", "철학"], title: "ADHD에 대한 논쟁 - “정상”과 “비정상\"의 경계는 어떻게 형성될까요?", link: "https://drive.google.com/open?id=1W5rUykUampyxxedALZkNiZcxyeT9XR_Vhzl9KfNGONU&usp=drive_copy" },
             { level: "C2", tags: ["과학", "철학"], title: "인본주의 과학: 과학, 철학을 만나다 - 장하석 교수", link: "https://drive.google.com/open?id=1lT-WYIgMiw9zouBPKtrJgabo3I5pcqRgoUBkDFvgP7E&usp=drive_copy" },
-            { level: "C2", tags: ["국제관계"], title: "미국과 중국 사이의 한국 - \"강대국 각축전에서 한국이 살아남을 길은\"", link: "https://drive.google.com/open?id=1JwZHGdB5wdlk_m9hXxLB5CamyRbyYrEkGSlW3ijtpTk&usp=drive_copy" },
-            { level: "C2", tags: ["국제관계"], title: "미국과 중국 사이의 한국_\"신냉전\"", link: "https://drive.google.com/open?id=1i2fBll_7P2N96RP6VnjiNaZsQTAo3wkTROw-_4J4nQQ&usp=drive_copy" },
-            { level: "C2", tags: ["국제관계"], title: "미국이 떠난 아프가니스탄에서 어떤 상황이 전개될까요?", link: "https://drive.google.com/open?id=1yxISHuubWxDKtmj1t4d-UNB4AVxVIqgGaeMNEj5fraY&usp=drive_copy" },
             { level: "C2", tags: ["문학", "사회"], title: "소설 <82년생 김지영>로 본 한국 사회", link: "https://drive.google.com/open?id=1fpkuAsBklc2ACXbfNlwC_mCsmkc0PNQyvnD2afoZcG8&usp=drive_copy" },
             { level: "C2", tags: ["문학", "사회"], title: "한국인의 발견 - 소설 <고등어>에 속에 나타난 한국인의 정체성", link: "https://drive.google.com/open?id=1PXCG2cK-22wAOvuqqkqycUvPmNKetqphAX_swLdZNwE&usp=drive_copy" },
             { level: "C2", tags: ["문화"], title: "영화 <미나리>를 통해 본 한국인의 미국 이민 역사 - <미나리>는 미국 영화인가? 한국영화 인가?", link: "https://drive.google.com/open?id=1_ijD703tIgvVSlEj7xKn04X966VfS6OD3Y8tJe03NcU&usp=drive_copy" },
@@ -394,324 +333,312 @@
             { level: "C2", tags: ["철학", "언어", "역사"], title: "<역사를 읽는 방법> - 1장 서론：그들의 방식으로 바라보기", link: "https://drive.google.com/open?id=1bWysDNo3szA9MIWAv0Ud-oPGGG3ovkop6YMa4pnTLLU&usp=drive_copy" }
         ];
 
+        // --- Thumbnail Resolver ---
+        // 1) Local HTML files → use the YouTube ID embedded in that page (auto-extracted at build time).
+        // 2) Google Drive files → use Drive's thumbnail endpoint.
+        // 3) Fallback → minimal monochrome block with the level code.
+        const HTML_THUMBNAIL_MAP = {
+            "b1plus-reels-addiction.html":              { type: "youtube", id: "nSqNLM5orPo" },
+            "b2-reels-addiction.html":                  { type: "youtube", id: "nSqNLM5orPo" },
+            "b2plus-why-koreans-like-chewy-texture.html": { type: "youtube", id: "Q3xPFQgDG4E" },
+            "c1-dubai-cookie-science.html":             { type: "youtube", id: "htzfNwDM7II" },
+            "c1-kospi-5000-meaning.html":               { type: "youtube", id: "Ehz6n9RxMsc" },
+            "b1plus-dubai-chewy-cookie.html":           { type: "youtube", id: "sVm4-Jd5bp4" },
+            "b2plus-why-we-say-gata-yo.html":           { type: "youtube", id: "nb-L3S8AFh8" },
+            "c1plus-korean-christmas-cake-origin.html": { type: "youtube", id: "YoIbPhMETD8" },
+            "b2plus-museum-admission.html":             { type: "youtube", id: "ljr7gKBXpKA" },
+            "b2plus-cannabis-drink.html":               { type: "youtube", id: "sEit34nId58" },
+            "b2plus-fade-out-in-pop-songs.html":        { type: "image",   url: "https://raw.githubusercontent.com/openkoreanlearninglab/hub/refs/heads/main/Number%20of%20songs%20that%20fade%20out%20in%20the%20top%2010%20-%20by%20Vox%20%22Why%20more%20pop%20songs%20should%20end%20with%20a%20fade%20out%22.png" },
+            "c2-kospi-5000-era.html":                   { type: "youtube", id: "w1VjzSCA9-g" },
+            "b2plus-1000won-talent-market.html":        { type: "youtube", id: "kQAg3Gg3MLI" },
+            "https://drive.google.com/open?id=1H4sX-PBfDQY9MVPzbgAzSxCDkeFjHPnojjm3tuA8MwU&usp=drive_copy": { type: "youtube", id: "qrIZ9Yo1CaA" }
+        };
+
+        const getThumbnail = (link) => {
+            if (!link) return null;
+            // Google Drive (any drive.google.com URL with id=...)
+            if (link.includes("drive.google.com")) {
+                const m = link.match(/[?&]id=([A-Za-z0-9_-]+)/);
+                if (m) return `https://drive.google.com/thumbnail?id=${m[1]}&sz=w400`;
+            }
+            // Local HTML mapped to a YouTube ID or image URL
+            if (HTML_THUMBNAIL_MAP[link]) {
+                const m = HTML_THUMBNAIL_MAP[link];
+                if (m.type === "youtube") return `https://img.youtube.com/vi/${m.id}/mqdefault.jpg`;
+                if (m.type === "image")   return m.url;
+            }
+            return null;
+        };
+
         // --- Icons ---
-        const ChevronLeft = ({ className }) => (<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="m15 18-6-6 6-6" /></svg>);
-        const ChevronRight = ({ className }) => (<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="m9 18 6-6-6-6" /></svg>);
-        const SearchIcon = ({ className }) => (<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>);
-        const XIcon = ({ className }) => (<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>);
+        const SearchIcon = ({ className }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
+                <circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" />
+            </svg>
+        );
+        const XIcon = ({ className }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
+                <path d="M18 6 6 18" /><path d="m6 6 12 12" />
+            </svg>
+        );
+        const ArrowRightIcon = ({ className }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
+                <path d="M5 12h14" /><path d="m12 5 7 7-7 7" />
+            </svg>
+        );
+        const PlayIcon = ({ className }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className={className}>
+                <path d="M8 5v14l11-7z" />
+            </svg>
+        );
 
-        // --- Component: Level Badge ---
-        const LevelBadge = ({ levelCode }) => {
-            const [isHovered, setIsHovered] = useState(false);
-            const info = LEVEL_DEFINITIONS[levelCode] || LEVEL_DEFINITIONS["A2+"];
-            const badgeStyle = LEVEL_STYLES[levelCode] || "bg-gray-50 text-slate-600 border-gray-100";
-
+        // --- Top Navigation ---
+        const TopNav = ({ activeLevel, setActiveLevel }) => {
+            const items = [
+                { id: 'home', label: '전체' },
+                { id: 'B1+',  label: 'B1+' },
+                { id: 'B2',   label: 'B2' },
+                { id: 'B2+',  label: 'B2+' },
+                { id: 'C1',   label: 'C1' },
+                { id: 'C1+',  label: 'C1+' },
+                { id: 'C2',   label: 'C2' }
+            ];
             return (
-                <div className="relative inline-flex items-center cursor-help z-50 shrink-0" onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
-                    <span className={`px-2 py-0.5 rounded text-[1.225rem] font-bold border uppercase tracking-wide font-basic ${badgeStyle}`}>{levelCode}</span>
-                    {isHovered && (
-                        <div className="absolute top-full left-0 mt-2 w-72 bg-slate-900/95 backdrop-blur text-white text-[1rem] rounded-xl p-4 shadow-xl z-[100] animate-fade-in text-left">
-                            <p className={`font-bold mb-1.5 text-[1.1rem] ${badgeStyle.split(' ')[1]}`}>{levelCode} – {info.title}</p>
-                            <p className="opacity-90 leading-relaxed font-medium">{info.desc}</p>
-                            <div className="absolute -top-1 left-4 w-2 h-2 bg-slate-900/95 rotate-45"></div>
+                <header className="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-gray-100">
+                    <div className="max-w-6xl mx-auto px-6 lg:px-8 h-16 flex items-center justify-between gap-6">
+                        <a href="#" onClick={(e) => { e.preventDefault(); setActiveLevel('home'); }} className="flex items-center gap-2 shrink-0">
+                            <span className="font-serif text-lg md:text-xl font-bold text-black tracking-tight">OpenKoreanLab</span>
+                        </a>
+                        <nav className="flex items-center gap-1 overflow-x-auto scrollbar-none">
+                            {items.map(item => {
+                                const isActive = activeLevel === item.id;
+                                return (
+                                    <button
+                                        key={item.id}
+                                        onClick={() => setActiveLevel(item.id)}
+                                        className={`relative shrink-0 px-3 md:px-4 py-2 text-xs md:text-sm font-sans tracking-wide transition-colors duration-200
+                                            ${isActive ? 'text-black font-bold' : 'text-gray-400 hover:text-gray-700 font-medium'}`}
+                                    >
+                                        {item.label}
+                                        {isActive && <span className="absolute left-3 right-3 -bottom-px h-px bg-black"></span>}
+                                    </button>
+                                );
+                            })}
+                        </nav>
+                    </div>
+                </header>
+            );
+        };
+
+        // --- Card Thumbnail ---
+        const CardThumbnail = ({ item }) => {
+            const url = getThumbnail(item.link);
+            const isVideo = item.link && (item.link.endsWith('.html')) && HTML_THUMBNAIL_MAP[item.link] && HTML_THUMBNAIL_MAP[item.link].type === 'youtube';
+            return (
+                <div className="w-1/3 sm:w-1/4 min-w-[120px] sm:min-w-[180px] md:min-w-[220px] relative overflow-hidden bg-gray-900 shrink-0">
+                    {url ? (
+                        <img
+                            src={url}
+                            alt={item.title}
+                            loading="lazy"
+                            referrerPolicy="no-referrer"
+                            onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                            className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-95 group-hover:opacity-100"
+                        />
+                    ) : (
+                        <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-gray-700 to-gray-950">
+                            <span className="font-serif text-white text-2xl md:text-3xl tracking-[0.25em] opacity-70">{item.level}</span>
+                        </div>
+                    )}
+                    {isVideo && (
+                        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                            <div className="w-9 h-9 md:w-10 md:h-10 bg-black/55 rounded-full flex items-center justify-center backdrop-blur-sm group-hover:bg-black/75 transition-colors">
+                                <PlayIcon className="w-3.5 h-3.5 md:w-4 md:h-4 text-white ml-0.5" />
+                            </div>
                         </div>
                     )}
                 </div>
             );
         };
 
-        // --- Component: Category Badge ---
-        const CategoryBadge = ({ tag, onClick, isSelected }) => {
+        // --- Material Card ---
+        const MaterialCard = ({ item, onSelectTag, selectedTag }) => {
+            const isExternal = item.link && item.link.startsWith('http');
+            const linkProps = isExternal ? { target: '_blank', rel: 'noreferrer' } : {};
             return (
-                <span onClick={onClick} className={`inline-flex items-center px-2 py-0.5 rounded text-[1.225rem] font-bold border uppercase tracking-wide shadow-sm font-basic cursor-pointer transition-colors shrink-0 ${isSelected ? 'bg-slate-800 text-white border-slate-800' : 'bg-white text-slate-500 border-slate-200 hover:border-slate-400 hover:text-slate-700'}`}>
-                    {tag}
-                </span>
-            );
-        };
-
-        // --- Sidebar Component ---
-        const Sidebar = ({ activeTab, setActiveTab, isCollapsed, toggleSidebar, userLevel, themeColor }) => {
-            const menus = [
-                { id: 'home', levelCode: 'ALL', label: '전체 학습 자료', subLabel: 'All Learning Content' },
-                { id: 'B1+', levelCode: 'B1+', label: '중급 (입문) 학습자', subLabel: 'Pre-Intermediate' },
-                { id: 'B2', levelCode: 'B2', label: '중급 학습자', subLabel: 'Intermediate' },
-                { id: 'B2+', levelCode: 'B2+', label: '중급(상) 학습자', subLabel: 'Upper Intermediate' },
-                { id: 'C1', levelCode: 'C1', label: '고급 학습자', subLabel: 'Advanced' },
-                { id: 'C1+', levelCode: 'C1+', label: '고급(상) 학습자', subLabel: 'Upper Advanced' },
-                { id: 'C2', levelCode: 'C2', label: '최상급 학습자', subLabel: 'Proficient' },
-            ];
-            
-            const [tooltip, setTooltip] = useState({ show: false, x: 0, y: 0, info: null });
-
-            const handleLevelTextEnter = (e) => {
-                const rect = e.target.getBoundingClientRect();
-                setTooltip({ show: true, x: rect.right, y: rect.top, info: LEVEL_DEFINITIONS[userLevel] });
-            };
-
-            const handleLevelTextLeave = () => setTooltip(prev => ({ ...prev, show: false }));
-
-            const sidebarWidth = isCollapsed ? 'w-[5.5rem]' : 'w-[18.4rem]';
-            const logoSize = isCollapsed ? 'w-[3rem] h-[3rem]' : 'w-[4.31rem] h-[4.31rem]';
-
-            const textTitle = isCollapsed ? 'text-[1.25rem]' : 'text-[1.44rem]';
-            const textSubtitle = isCollapsed ? 'text-[0.6875rem]' : 'text-[0.79rem]';
-            const textMenu = isCollapsed ? 'text-[1rem]' : 'text-[1.15rem]';
-            const textMenuSub = isCollapsed ? 'text-[0.625rem]' : 'text-[0.72rem]';
-            const boxSize = isCollapsed ? 'w-[2.5rem] h-[2.5rem]' : 'w-[2.875rem] h-[2.875rem]';
-            const boxText = isCollapsed ? 'text-[0.75rem]' : 'text-[0.86rem]';
-            const footerTextBig = isCollapsed ? 'text-[1rem]' : 'text-[1.15rem]';
-            const footerTextLabel = isCollapsed ? 'text-[0.875rem]' : 'text-[1.0rem]';
-            const footerTextSmall = isCollapsed ? 'text-[0.625rem]' : 'text-[0.72rem]';
-
-            const currentStyle = LEVEL_STYLES[userLevel] ? LEVEL_STYLES[userLevel] : LEVEL_STYLES["ALL"];
-            const bgClass = currentStyle.split(' ')[0];
-
-            return (
-                <aside className={`bg-white border-r border-gray-200 fixed h-full hidden md:flex flex-col z-50 transition-all duration-300 ease-in-out font-cafe24-anemone ${sidebarWidth}`}>
-                    <div className={`p-6 flex items-center gap-3 relative ${isCollapsed ? 'justify-center px-0' : ''}`}>
-                        <img src="https://raw.githubusercontent.com/openkoreanlearninglab/hub/refs/heads/main/OpenKoreanLearningLab_Logo.jpeg" alt="Logo" className={`rounded-2xl shadow-lg shrink-0 transition-all duration-300 object-cover ${logoSize}`} />
-                        {!isCollapsed && (
-                            <div className="animate-fade-in overflow-hidden whitespace-nowrap flex flex-col justify-center">
-                                <span className={`font-extrabold leading-tight font-cafe24-deco ${textTitle} text-black`}>Open</span>
-                                <span className={`leading-tight font-school-mustache ${textSubtitle} ${userLevel === 'ALL' ? 'text-black font-black' : `text-${themeColor}-600 font-bold`}`}>KoreanLearningLab</span>
-                            </div>
-                        )}
-                        <button onClick={toggleSidebar} className="absolute -right-3 top-1/2 -translate-y-1/2 bg-white border border-gray-200 rounded-full p-1 shadow-sm text-slate-500 hover:text-slate-700 hover:bg-gray-50 transition-colors z-10">
-                            {isCollapsed ? <ChevronRight className="w-3 h-3" /> : <ChevronLeft className="w-3 h-3" />}
-                        </button>
-                    </div>
-                    
-                    <nav className={`flex-1 space-y-3 mt-4 ${isCollapsed ? 'px-3' : 'px-3'}`}>
-                        {menus.map((menu) => {
-                            const isActive = activeTab === menu.id;
-                            const activeFontClass = isActive ? "font-cafe24-surround" : "font-cafe24";
-                            
-                            const itemTheme = getLevelTheme(menu.levelCode);
-                            const levelStyleStr = LEVEL_STYLES[menu.levelCode];
-                            const parts = levelStyleStr.split(' ');
-                            const boxBg = parts[0];
-                            const boxBorder = parts[2];
-                            const boxTextClass = menu.levelCode === 'ALL' ? 'text-black' : parts[1];
-
-                            let buttonBgClass = '';
-                            let buttonTextClass = '';
-                            let indicatorBgClass = '';
-                            
-                            if (isActive) {
-                                if (menu.id === 'home') {
-                                    buttonBgClass = 'bg-slate-50';
-                                    buttonTextClass = 'text-black';
-                                    indicatorBgClass = 'bg-black';
-                                } else {
-                                    buttonBgClass = `bg-${itemTheme}-50`;
-                                    buttonTextClass = `text-${itemTheme}-600`;
-                                    indicatorBgClass = `bg-${itemTheme}-500`;
-                                }
-                            } else {
-                                buttonTextClass = 'text-slate-700 hover:bg-gray-50 hover:text-slate-900';
-                            }
-
-                            return (
-                                <button key={menu.id} onClick={() => { setActiveTab(menu.id); if (isCollapsed) toggleSidebar(); }} onDoubleClick={toggleSidebar}
-                                    className={`w-full flex items-center transition-all duration-200 group relative ${isCollapsed ? 'justify-center h-14 rounded-2xl' : 'gap-3 px-3 py-4 rounded-2xl'} ${isActive ? buttonBgClass : ''} ${buttonTextClass}`}>
-                                    {isActive && isCollapsed && (<div className={`absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 ${indicatorBgClass} rounded-r-lg`}></div>)}
-                                    {isActive && !isCollapsed && (<div className={`absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 ${indicatorBgClass} rounded-r-lg`}></div>)}
-                                    
-                                    <div className={`${boxSize} rounded-xl flex items-center justify-center border shrink-0 transition-transform duration-200 group-hover:scale-105 ${boxBg} ${boxBorder}`}>
-                                        <span className={`font-extrabold font-school-smile ${boxText} ${boxTextClass}`}>{menu.levelCode}</span>
-                                    </div>
-                                    
-                                    {!isCollapsed && (
-                                        <div className="flex flex-col items-start animate-fade-in overflow-hidden whitespace-nowrap">
-                                            <span className={`leading-tight transition-all ${textMenu} ${activeFontClass} ${isActive ? `font-extrabold ${buttonTextClass}` : 'font-medium text-slate-700 group-hover:font-semibold group-hover:text-slate-900'}`}>{menu.label}</span>
-                                            {menu.subLabel && <span className={`${textMenuSub} font-cafe24 font-normal text-slate-400 mt-0.5 leading-tight`}>{menu.subLabel}</span>}
-                                        </div>
-                                    )}
-                                    
-                                    {isCollapsed && (
-                                        <div className="absolute left-full ml-3 px-3 py-1.5 bg-slate-900 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50 shadow-xl flex flex-col items-start">
-                                            <span className="text-xs font-bold">{menu.label}</span>
-                                            {menu.subLabel && <span className="text-[10px] opacity-80">{menu.subLabel}</span>}
-                                            <div className="absolute top-1/2 -left-1 -translate-y-1/2 w-2 h-2 bg-slate-900 rotate-45"></div>
-                                        </div>
-                                    )}
+                <a
+                    href={item.link || '#'}
+                    {...linkProps}
+                    className="group relative flex items-stretch w-full bg-white border border-gray-200 hover:border-black transition-all duration-300 text-left overflow-hidden rounded-xl"
+                >
+                    <CardThumbnail item={item} />
+                    <div className="flex-1 p-5 md:p-6 flex flex-col justify-center min-w-0">
+                        <div className="flex items-center flex-wrap gap-2 mb-3">
+                            <span className="px-2 py-0.5 border border-gray-900 text-gray-900 text-[10px] font-sans font-bold tracking-widest uppercase rounded-sm">
+                                {item.level}
+                            </span>
+                            {item.tags && item.tags.map(tag => (
+                                <button
+                                    key={tag}
+                                    onClick={(e) => { e.preventDefault(); onSelectTag(tag); }}
+                                    className={`px-2 py-0.5 text-[10px] font-sans font-bold tracking-widest uppercase rounded-sm transition-colors
+                                        ${selectedTag === tag
+                                            ? 'bg-gray-900 text-white border border-gray-900'
+                                            : 'bg-gray-100 text-gray-600 border border-gray-100 hover:bg-gray-200'}`}
+                                >
+                                    {tag}
                                 </button>
-                            );
-                        })}
-                    </nav>
-
-                    <div className="p-2 border-t border-gray-100">
-                        <div className={`flex items-center gap-3 p-2 rounded-xl transition-colors hover:bg-gray-50 cursor-pointer ${isCollapsed ? 'justify-center' : ''}`}>
-                            <div className={`w-[2.75rem] h-[2.75rem] rounded-xl flex items-center justify-center shrink-0 transition-colors duration-300 ${bgClass} border ${currentStyle.split(' ')[2]}`}>
-                                <span className={`${footerTextBig} font-extrabold font-school-smile ${userLevel === 'ALL' ? 'text-black' : currentStyle.replace('bg-', 'text-').replace('50', '600')}`}>{userLevel}</span>
-                            </div>
-                            {!isCollapsed && (
-                                <div className="animate-fade-in overflow-hidden whitespace-nowrap flex-1">
-                                    <p className={`${footerTextLabel} font-bold text-slate-900 mb-[1px] font-cafe24-anemone`}>학습자(Learner)</p>
-                                    <div className="mt-[1px]">
-                                        <span className={`block w-fit px-[3px] py-0.5 rounded ${footerTextSmall} font-semibold border uppercase tracking-wide shadow-sm text-left cursor-help font-cafe24-anemone ${currentStyle}`} onMouseEnter={handleLevelTextEnter} onMouseLeave={handleLevelTextLeave}>
-                                            Level: {LEVEL_DEFINITIONS[userLevel].title}
-                                        </span>
-                                    </div>
-                                </div>
-                            )}
+                            ))}
+                        </div>
+                        <h3 className="font-serif text-base md:text-lg lg:text-xl font-bold text-gray-900 leading-snug line-clamp-3 group-hover:text-black">
+                            {item.title}
+                        </h3>
+                        <div className="mt-3 hidden md:flex items-center gap-1.5 text-gray-400 group-hover:text-black text-xs font-sans transition-colors">
+                            <span>자료 보기</span>
+                            <ArrowRightIcon className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
                         </div>
                     </div>
-
-                    {tooltip.show && tooltip.info && createPortal(
-                        <div className="fixed z-[9999] pointer-events-none animate-fade-in" style={{ left: tooltip.x, top: tooltip.y }}>
-                            <div className="relative bg-slate-900/95 backdrop-blur text-white text-[0.875rem] rounded-xl p-4 shadow-2xl transform -translate-y-full -translate-x-6 -mt-3 w-64 border border-slate-700/50">
-                                <p className={`font-bold mb-1.5 text-[1rem] text-${themeColor}-300`}>{userLevel} – {tooltip.info.title}</p>
-                                <p className="opacity-90 leading-relaxed font-medium text-slate-200">{tooltip.info.desc}</p>
-                                <div className="absolute -bottom-1.5 left-4 w-3 h-3 bg-slate-900/95 border-r border-b border-slate-700/50 rotate-45"></div>
-                            </div>
-                        </div>, document.body
-                    )}
-                </aside>
+                </a>
             );
         };
 
-        // --- View Components ---
-
-        const HomeView = ({ setActiveTab, themeColor, currentLevel }) => {
+        // --- Home View ---
+        const HomeView = ({ activeLevel, setActiveLevel }) => {
             const [selectedTag, setSelectedTag] = useState("전체");
             const [searchQuery, setSearchQuery] = useState("");
-            const [latestTooltip, setLatestTooltip] = useState({ show: false, x: 0, y: 0 });
 
-            // Extract tags from global data
             const allTags = useMemo(() => {
                 const tags = new Set(["전체", "최신"]);
                 MATERIALS_DATA.forEach(item => {
-                    if (currentLevel !== 'home' && item.level !== currentLevel) return;
+                    if (activeLevel !== 'home' && item.level !== activeLevel) return;
                     if (item.tags) item.tags.forEach(t => tags.add(t));
                 });
                 return Array.from(tags);
-            }, [currentLevel]);
+            }, [activeLevel]);
 
-            // Filter logic using global data
-            const filteredMaterials = useMemo(() => {
+            const filtered = useMemo(() => {
                 let result = MATERIALS_DATA;
-                // Level filter
-                if (currentLevel !== 'home') result = result.filter(item => item.level === currentLevel);
-                // Tag filter
-                if (selectedTag === "최신") {
-                    result = result.slice(0, 5);
-                } else if (selectedTag !== "전체") {
-                    result = result.filter(item => item.tags && item.tags.includes(selectedTag));
-                }
-                // Search filter
+                if (activeLevel !== 'home') result = result.filter(i => i.level === activeLevel);
+                if (selectedTag === "최신") result = result.slice(0, 5);
+                else if (selectedTag !== "전체") result = result.filter(i => i.tags && i.tags.includes(selectedTag));
                 if (searchQuery) {
                     const q = searchQuery.toLowerCase();
-                    result = result.filter(item => item.title.toLowerCase().includes(q) || (item.tags && item.tags.some(t => t.toLowerCase().includes(q))));
+                    result = result.filter(i =>
+                        i.title.toLowerCase().includes(q) ||
+                        (i.tags && i.tags.some(t => t.toLowerCase().includes(q)))
+                    );
                 }
                 return result;
-            }, [selectedTag, currentLevel, searchQuery]);
+            }, [activeLevel, selectedTag, searchQuery]);
 
-            useEffect(() => { setSelectedTag("전체"); setSearchQuery(""); }, [currentLevel]);
+            useEffect(() => { setSelectedTag("전체"); setSearchQuery(""); }, [activeLevel]);
 
-            const pageTitle = currentLevel === 'home' ? '전체 학습 자료' : (LEVEL_TITLES[currentLevel] || `Level ${currentLevel} 학습 자료`);
-            const pageSubtitle = currentLevel === 'home' ? 'All Learning Content' : (LEVEL_SUBTITLES[currentLevel] || `Learning Content for ${currentLevel}`);
-            const getPageBadgeText = (level) => (level === 'home' || level === 'ALL') ? 'All Levels' : `Level ${level}`;
+            const pageTitle    = LEVEL_TITLES[activeLevel === 'home' ? 'ALL' : activeLevel] || `Level ${activeLevel} 학습 자료`;
+            const pageSubtitle = LEVEL_SUBTITLES[activeLevel === 'home' ? 'ALL' : activeLevel] || `Learning Content for ${activeLevel}`;
+            const levelInfo    = LEVEL_DEFINITIONS[activeLevel === 'home' ? 'ALL' : activeLevel];
+            const levelLabel   = activeLevel === 'home' ? 'ALL' : activeLevel;
 
             return (
-                <div className="space-y-12 animate-fade-in max-w-7xl mx-auto pt-8">
-                    <div className="space-y-4 text-center md:text-left">
-                        <div className="flex flex-wrap items-center gap-2 justify-center md:justify-start">
-                            <span className={`px-3 py-1 bg-white border border-slate-200 text-[1.05rem] rounded-lg tracking-wider shadow-sm font-juache text-slate-950 ${currentLevel === 'home' || currentLevel === 'ALL' ? 'font-black' : ''}`}>{getPageBadgeText(currentLevel)}</span>
-                            <a 
-                                href="https://www.italki.com/ko/teacher/3553151" 
-                                target="_blank" 
-                                rel="noopener noreferrer" 
-                                className="px-3 py-1 bg-blue-50 border border-blue-100 text-[1.05rem] text-blue-600 rounded-lg tracking-wider shadow-sm font-juache hover:bg-blue-100 hover:text-blue-700 transition-all flex items-center gap-1.5 hover:scale-105"
-                            >
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                                italki Profile
-                            </a>
+                <main className="max-w-6xl mx-auto px-6 lg:px-8 pt-16 md:pt-24 pb-24 animate-fade-in">
+                    {/* Hero */}
+                    <div className="flex flex-col items-start mb-12 md:mb-16">
+                        <div className="flex items-center gap-3 mb-6">
+                            <div className="flex items-center border border-gray-900 px-3 py-1 text-[10px] font-sans tracking-widest uppercase text-gray-900">
+                                <span className="font-bold">{levelLabel}</span>
+                                <span className="mx-2 w-px h-2.5 bg-gray-300"></span>
+                                <span className="font-medium">{levelInfo ? levelInfo.title : 'All Levels'}</span>
+                            </div>
                         </div>
-                        <h1 className="text-[3.15rem] leading-tight font-black text-slate-900 tracking-tight font-cafe24-surround">{pageTitle}</h1>
-                        <p className="text-slate-500 text-[1.575rem] font-cafe24-surround">{pageSubtitle}</p>
+                        <h1 className="font-serif text-3xl md:text-5xl lg:text-6xl text-black font-bold leading-tight mb-3 tracking-tight">
+                            {pageTitle}
+                        </h1>
+                        <p className="font-serif text-gray-500 text-sm md:text-base italic">
+                            {pageSubtitle}
+                        </p>
                     </div>
 
-                    <div className="relative w-full md:w-[30rem]">
-                        <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"><SearchIcon className="w-5 h-5" /></div>
-                        <input type="text" placeholder="제목 또는 태그로 검색..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className={`w-full pl-12 pr-12 py-3.5 rounded-2xl border border-slate-200 bg-white text-slate-800 text-[1.1rem] placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-${themeColor}-500 focus:border-transparent transition-all shadow-sm font-basic`} />
-                        {searchQuery && (<button onClick={() => setSearchQuery("")} className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 rounded-full hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors"><XIcon className="w-5 h-5" /></button>)}
+                    {/* Search + Tags */}
+                    <div className="flex flex-col gap-5 mb-10 md:mb-12">
+                        <div className="relative w-full md:max-w-md">
+                            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
+                                <SearchIcon className="w-4 h-4" />
+                            </div>
+                            <input
+                                type="text"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                placeholder="제목 또는 태그로 검색..."
+                                className="w-full pl-11 pr-10 py-3 bg-white border border-gray-200 text-sm font-sans text-gray-800 placeholder-gray-400 focus:outline-none focus:border-black transition-colors rounded-lg"
+                            />
+                            {searchQuery && (
+                                <button
+                                    onClick={() => setSearchQuery("")}
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-black transition-colors"
+                                >
+                                    <XIcon className="w-4 h-4" />
+                                </button>
+                            )}
+                        </div>
+
+                        <div className="flex flex-wrap gap-2">
+                            {allTags.map(tag => {
+                                const isActive = selectedTag === tag;
+                                return (
+                                    <button
+                                        key={tag}
+                                        onClick={() => setSelectedTag(tag)}
+                                        className={`px-3.5 py-1.5 text-xs font-sans font-bold tracking-widest uppercase rounded-sm transition-colors duration-200
+                                            ${isActive
+                                                ? 'bg-gray-900 text-white border border-gray-900'
+                                                : 'bg-white text-gray-500 border border-gray-200 hover:border-gray-900 hover:text-gray-900'}`}
+                                    >
+                                        {tag}
+                                    </button>
+                                );
+                            })}
+                        </div>
                     </div>
 
-                    <div className="flex flex-wrap gap-3 justify-center md:justify-start">
-                        {allTags.map(tag => (
-                            <button key={tag} onClick={() => setSelectedTag(tag)}
-                                onMouseEnter={(e) => { if (tag === '최신') { const rect = e.target.getBoundingClientRect(); setLatestTooltip({ show: true, x: rect.left + rect.width / 2, y: rect.bottom + 10 }); } }}
-                                onMouseLeave={() => { if (tag === '최신') setLatestTooltip(prev => ({ ...prev, show: false })); }}
-                                className={`px-6 py-3 rounded-2xl text-[1.4rem] font-bold transition-all duration-200 ${selectedTag === tag ? `bg-slate-900 text-white shadow-md transform scale-105 font-cafe24-surround` : 'bg-white text-slate-500 border border-slate-200 hover:bg-slate-50 hover:text-slate-800 font-cafe24'}`}
-                            >{tag}</button>
+                    {/* Single-column Card list */}
+                    <div className="flex flex-col gap-4">
+                        {filtered.map((item, idx) => (
+                            <MaterialCard
+                                key={idx}
+                                item={item}
+                                selectedTag={selectedTag}
+                                onSelectTag={(t) => setSelectedTag(t)}
+                            />
                         ))}
+
+                        {filtered.length === 0 && (
+                            <div className="text-center py-16 text-gray-400 text-sm font-sans border border-dashed border-gray-200 rounded-xl">
+                                해당 조건에 맞는 자료가 없습니다.
+                            </div>
+                        )}
                     </div>
 
-                    {latestTooltip.show && createPortal(
-                        <div className="fixed z-[100] pointer-events-none animate-fade-in" style={{ left: latestTooltip.x, top: latestTooltip.y }}>
-                            <div className="relative bg-slate-900/95 backdrop-blur text-white text-[0.9rem] rounded-xl px-4 py-2.5 shadow-xl transform -translate-x-1/2 border border-slate-700/50 font-medium whitespace-nowrap">최근에 업데이트된 학습자료 5개<div className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-slate-900/95 border-t border-l border-slate-700/50 rotate-45"></div></div>
-                        </div>, document.body
-                    )}
-
-                    <div className="grid grid-cols-1 gap-6">
-                        {filteredMaterials.map((item, index) => {
-                            let hoverColorClass = '';
-                            if (['C1', 'C1+', 'C2'].includes(item.level)) { hoverColorClass = 'group-hover:text-violet-600'; } 
-                            else if (['B2', 'B2+'].includes(item.level)) { hoverColorClass = 'group-hover:text-blue-600'; } 
-                            else { const itemTheme = getLevelTheme(item.level); hoverColorClass = itemTheme === 'slate' ? 'group-hover:text-black' : `group-hover:text-${itemTheme}-600`; }
-
-                            return (
-                                <a key={index} href={item.link} className="group block bg-white rounded-3xl border border-gray-100 p-7 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-                                    <div className="flex flex-col md:flex-row md:items-center gap-6">
-                                        <div className="flex flex-wrap items-center gap-3">
-                                            <LevelBadge levelCode={item.level} />
-                                            {item.tags && item.tags.map(tag => (
-                                                <CategoryBadge key={tag} tag={tag} onClick={(e) => { e.preventDefault(); setSelectedTag(tag); }} isSelected={selectedTag === tag} />
-                                            ))}
-                                        </div>
-                                        <h3 className={`text-[1.75rem] font-bold text-slate-800 transition-colors font-ocarina leading-tight flex-1 group-hover:font-black ${hoverColorClass}`}>{item.title}</h3>
-                                        <div className={`ml-auto opacity-0 group-hover:opacity-100 transition-opacity hidden md:block ${hoverColorClass}`}><span className="text-[2rem]">→</span></div>
-                                    </div>
-                                </a>
-                            );
-                        })}
+                    <div className="mt-20 pt-8 border-t border-gray-100 text-center text-xs font-sans text-gray-400 tracking-widest uppercase">
+                        © Open Korean Learning Lab. All rights reserved.
                     </div>
-                    {filteredMaterials.length === 0 && (<div className="text-center py-12 text-slate-400 text-[1.4rem] font-cafe24-anemone bg-white rounded-3xl border border-dashed border-gray-200">해당 레벨/카테고리에 자료가 없습니다.</div>)}
-                    
-                    <div className="text-center text-slate-400 text-[1.05rem] mt-16 mb-8 font-cafe24-anemone flex flex-col items-center gap-1.5">
-                        <p>© 2025 - 2026 Sangbin Lee (OpenKoreanLearningLap). All rights reserved.</p>
-                        <a href="https://www.italki.com/ko/teacher/3553151" target="_blank" rel="noopener noreferrer" className="hover:text-slate-600 transition-colors underline underline-offset-4">
-                            Visit Sangbin's italki profile
-                        </a>
-                    </div>
-                </div>
+                </main>
             );
         };
 
+        // --- App ---
         const App = () => {
-            const [activeTab, setActiveTab] = useState('home');
-            const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-            const userLevel = activeTab === 'home' ? 'ALL' : activeTab;
-            const themeColor = useMemo(() => getLevelTheme(userLevel), [userLevel]);
-
-            useEffect(() => {
-                const handleResize = () => setIsSidebarCollapsed(window.innerWidth < 1024);
-                window.addEventListener('resize', handleResize); handleResize();
-                return () => window.removeEventListener('resize', handleResize);
-            }, []);
-
+            const [activeLevel, setActiveLevel] = useState('home');
+            useEffect(() => { window.scrollTo({ top: 0, behavior: 'smooth' }); }, [activeLevel]);
             return (
-                <div className="flex min-h-screen bg-[#f9fafb]">
-                    <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} isCollapsed={isSidebarCollapsed} toggleSidebar={() => setIsSidebarCollapsed(!isSidebarCollapsed)} userLevel={userLevel} themeColor={themeColor} />
-                    <div className={`flex-1 flex flex-col transition-all duration-300 ease-in-out ${isSidebarCollapsed ? 'md:ml-[5.5rem]' : 'md:ml-[18.4rem]'}`}>
-                        <main className="flex-1 p-[1.25rem] overflow-y-auto flex flex-col"><HomeView setActiveTab={setActiveTab} themeColor={themeColor} currentLevel={activeTab} /></main>
-                    </div>
+                <div className="min-h-screen bg-white">
+                    <TopNav activeLevel={activeLevel} setActiveLevel={setActiveLevel} />
+                    <HomeView activeLevel={activeLevel} setActiveLevel={setActiveLevel} />
                 </div>
             );
         };
+
         const root = ReactDOM.createRoot(document.getElementById('root'));
         root.render(<App />);
     </script>
 </body>
+
 </html>
