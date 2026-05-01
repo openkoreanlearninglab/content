@@ -348,35 +348,46 @@
             "c1plus-korean-christmas-cake-origin.html":   { type: "youtube", id: "YoIbPhMETD8" },
             "b2plus-museum-admission.html":               { type: "youtube", id: "ljr7gKBXpKA" },
             "b2plus-cannabis-drink.html":                 { type: "youtube", id: "sEit34nId58" },
-            "b2plus-fade-out-in-pop-songs.html":          { type: "image",   url: "https://raw.githubusercontent.com/openkoreanlearninglab/hub/refs/heads/main/Number%20of%20songs%20that%20fade%20out%20in%20the%20top%2010%20-%20by%20Vox%20%22Why%20more%20pop%20songs%20should%20end%20with%20a%20fade%20out%22.png" },
-            // 시작 페이지 미리보기로 직접 만든 썸네일 (텍스트 전용 자료)
-            "c2-kospi-5000-era.html":                     { type: "image",   url: "thumbnails/c2-kospi-5000-era.png" },
-            "b2plus-1000won-talent-market.html":          { type: "image",   url: "thumbnails/b2plus-1000won-talent-market.png" }
-        };
-
-        // Google Drive 자료 중 Drive 썸네일이 비어 있는 항목용 직접 만든 시작 페이지 미리보기
-        const DRIVE_THUMBNAIL_OVERRIDES = {
-            "1H4sX-PBfDQY9MVPzbgAzSxCDkeFjHPnojjm3tuA8MwU": "thumbnails/drive-bumeokjjikmeok.png"
+            "b2plus-fade-out-in-pop-songs.html":          { type: "image",   url: "https://raw.githubusercontent.com/openkoreanlearninglab/hub/refs/heads/main/Number%20of%20songs%20that%20fade%20out%20in%20the%20top%2010%20-%20by%20Vox%20%22Why%20more%20pop%20songs%20should%20end%20with%20a%20fade%20out%22.png" }
         };
 
         const getThumbnail = (link) => {
             if (!link) return null;
-            // Google Drive (any drive.google.com URL with id=...)
+            // Google Drive — Drive의 첫 페이지 썸네일을 직접 사용
             if (link.includes("drive.google.com")) {
                 const m = link.match(/[?&]id=([A-Za-z0-9_-]+)/);
-                if (m) {
-                    const id = m[1];
-                    if (DRIVE_THUMBNAIL_OVERRIDES[id]) return DRIVE_THUMBNAIL_OVERRIDES[id];
-                    return `https://drive.google.com/thumbnail?id=${id}&sz=w400`;
-                }
+                if (m) return `https://drive.google.com/thumbnail?id=${m[1]}&sz=w400`;
             }
-            // Local HTML mapped to a YouTube ID or image URL
+            // 같은 폴더의 학습 페이지 — 페이지 안에 박혀 있는 YouTube/이미지 썸네일 재사용
             if (HTML_THUMBNAIL_MAP[link]) {
                 const m = HTML_THUMBNAIL_MAP[link];
                 if (m.type === "youtube") return `https://img.youtube.com/vi/${m.id}/mqdefault.jpg`;
                 if (m.type === "image")   return m.url;
             }
             return null;
+        };
+
+        // 페이지에 박힌 썸네일이 없을 때 — 그 페이지의 '시작 화면' 자체(태그 + 제목)를
+        // 인라인 JSX로 즉석 그려서 썸네일 자리에 넣는다. 별도 파일을 만들지 않는다.
+        const HomePreview = ({ item }) => {
+            const tags = (item.tags || []).slice(0, 3);
+            const levelTitle = LEVEL_DEFINITIONS[item.level] ? LEVEL_DEFINITIONS[item.level].title : "";
+            return (
+                <div className="absolute inset-0 bg-white border-r border-gray-100 flex flex-col items-center justify-center text-center px-3 sm:px-4 py-5">
+                    <div className="flex items-center justify-center flex-wrap gap-1 mb-3">
+                        {tags.map((t, i) => (
+                            <span key={i} className="bg-gray-900 text-white text-[9px] font-bold font-sans tracking-widest uppercase px-1.5 py-0.5">{t}</span>
+                        ))}
+                        <span className="border border-gray-900 text-gray-900 text-[9px] font-bold font-sans tracking-widest uppercase px-1.5 py-0.5">
+                            {item.level}{levelTitle ? ` · ${levelTitle}` : ""}
+                        </span>
+                    </div>
+                    <h4 className="font-serif text-[13px] sm:text-sm md:text-base font-bold text-gray-900 leading-snug line-clamp-4 break-keep">
+                        {item.title}
+                    </h4>
+                    <div className="mt-3 w-6 h-px bg-gray-200"></div>
+                </div>
+            );
         };
 
         // --- Icons ---
@@ -440,24 +451,30 @@
         };
 
         // --- Card Thumbnail ---
+        // 1) 그 페이지 안에 박혀 있는 썸네일(YouTube ID / 임베디드 이미지 / Drive 첫 페이지)이 있으면 그걸 사용
+        // 2) 없거나 로드 실패하면, 그 페이지의 시작 화면(태그 + 한글 제목)을 그대로 본뜬
+        //    인라인 JSX 미리보기를 보여준다. 별도 이미지 파일은 만들지 않는다.
         const CardThumbnail = ({ item }) => {
-            const url = getThumbnail(item.link);
-            const isVideo = item.link && (item.link.endsWith('.html')) && HTML_THUMBNAIL_MAP[item.link] && HTML_THUMBNAIL_MAP[item.link].type === 'youtube';
+            const externalUrl = getThumbnail(item.link);
+            const [errored, setErrored] = useState(false);
+            const useFallback = !externalUrl || errored;
+            const isVideo = !useFallback
+                && item.link && item.link.endsWith('.html')
+                && HTML_THUMBNAIL_MAP[item.link]
+                && HTML_THUMBNAIL_MAP[item.link].type === 'youtube';
             return (
-                <div className="w-1/3 sm:w-1/4 min-w-[120px] sm:min-w-[180px] md:min-w-[220px] relative overflow-hidden bg-gray-900 shrink-0">
-                    {url ? (
+                <div className={`w-1/3 sm:w-1/4 min-w-[120px] sm:min-w-[180px] md:min-w-[220px] relative overflow-hidden shrink-0 ${useFallback ? 'bg-white' : 'bg-gray-900'}`}>
+                    {useFallback ? (
+                        <HomePreview item={item} />
+                    ) : (
                         <img
-                            src={url}
+                            src={externalUrl}
                             alt={item.title}
                             loading="lazy"
                             referrerPolicy="no-referrer"
-                            onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                            onError={() => setErrored(true)}
                             className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-95 group-hover:opacity-100"
                         />
-                    ) : (
-                        <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-gray-700 to-gray-950">
-                            <span className="font-serif text-white text-2xl md:text-3xl tracking-[0.25em] opacity-70">{item.level}</span>
-                        </div>
                     )}
                     {isVideo && (
                         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
