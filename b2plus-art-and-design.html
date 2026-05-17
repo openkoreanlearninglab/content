@@ -1,0 +1,1653 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenKoreanLearningLab</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Noto Sans KR"', 'sans-serif'],
+                        serif: ['"Noto Serif KR"', 'serif'],
+                        ui: ['"Noto Sans KR"', 'sans-serif'],
+                    },
+                    colors: {
+                        gray: {
+                            50: '#f9fafb',
+                            100: '#f3f4f6',
+                            200: '#e5e7eb',
+                            300: '#d1d5db',
+                            400: '#9ca3af',
+                            500: '#6b7280',
+                            600: '#4b5563',
+                            700: '#374151',
+                            800: '#1f2937',
+                            900: '#111827',
+                            950: '#030712',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: #ffffff; color: #1a1a1a; -webkit-font-smoothing: antialiased; }
+        .font-sans { font-family: 'Noto Sans KR', sans-serif; }
+        .font-serif { font-family: 'Noto Serif KR', serif; }
+        .font-ui { font-family: 'Noto Sans KR', sans-serif; }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 4px; height: 4px; } 
+        ::-webkit-scrollbar-track { background: transparent; } 
+        ::-webkit-scrollbar-thumb { background: #e5e7eb; border-radius: 0px; } 
+        ::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
+
+        /* Animation */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } } 
+        .animate-fade-in { animation: fadeIn 0.4s ease-out forwards; }
+
+        /* Range Input */
+        input[type=range] { -webkit-appearance: none; background: transparent; } 
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 12px; width: 12px; border-radius: 0%; background: #1a1a1a; cursor: pointer; margin-top: -5px; border: none; } 
+        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 2px; cursor: pointer; background: #e5e7eb; }
+
+        ::selection { background-color: #f3f4f6; color: #000; }
+
+        /* Print Specific Adjustments */
+        @media print {
+            @page { margin: 12mm; }
+            body { background-color: #ffffff !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            ::-webkit-scrollbar { display: none !important; }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+        const { useState, useEffect, useRef, useMemo, useCallback } = React;
+        const { createPortal } = ReactDOM;
+
+        const VIDEO_CONFIG = {
+            YOUTUBE_VIDEO_ID: 'Q4O-bondzOk',
+            DEFAULT_PLAYBACK_RATE: 1.0,
+        };
+
+        const VIDEO_SCRIPT_DATA = [
+            { id: 's1', speaker: '널 위한 문화예술', kor: '앉을 수 없는 의자, 앉을 수 있는 예술 작품.', time: [0.1, 3.437], eng: "A chair you can't sit on, an artwork you can sit on." },
+            { id: 's2', speaker: '널 위한 문화예술', kor: '디자인과 예술은 어떻게 다를까요?', time: [3.47, 5.9], eng: "How are design and art different?" },
+            { id: 's3', speaker: '널 위한 문화예술', kor: '흔히 사람들은 예술과 디자인의 차이를 사고방식에서 찾습니다.', time: [5.939, 9.977], eng: "People often find the difference between art and design in their mindset." },
+            { id: 's4', speaker: '널 위한 문화예술', kor: '예술적 사고방식은 \'내 안의 주제를 밖으로 표현하는 것\',', time: [10.01, 13.347], eng: "Artistic thinking is 'expressing the themes inside me to the outside'," },
+            { id: 's5', speaker: '널 위한 문화예술', kor: '디자인적 사고방식을 \'내 밖의 문제를 제품을 통해 해결하는 것\'이라 말하죠.', time: [13.38, 17.918], eng: "Design thinking is called 'solving external problems through products'." },
+            { id: 's6', speaker: '널 위한 문화예술', kor: '하지만 두 사고방식이 융합되는 경우도 허다합니다.', time: [17.951, 21.021], eng: "However, there are many cases where the two mindsets merge." },
+            { id: 's7', speaker: '널 위한 문화예술', kor: '또한 예술가 같은 디자이너, 디자이너 같은 예술가들도 많이 존재하죠.', time: [21.054, 25.559], eng: "Also, there are many designers who are like artists, and artists who are like designers." },
+            { id: 's8', speaker: '널 위한 문화예술', kor: '때때론 ‘실용성’을 예술과 디자인의 차이로 이야기하기도 하는데요.', time: [25.592, 29.63], eng: "Sometimes 'practicality' is discussed as the difference between art and design." },
+            { id: 's9', speaker: '널 위한 문화예술', kor: '흔히 사람들은 예술 작품이 그 자체가 목적인 것이라 말합니다.', time: [29.663, 33.534], eng: "People often say that a work of art is an end in itself." },
+            { id: 's10', speaker: '널 위한 문화예술', kor: '반대로 디자인 제품은 수단적이라고 말하죠.', time: [33.567, 36.236], eng: "Conversely, design products are said to be instrumental." },
+            { id: 's11', speaker: '널 위한 문화예술', kor: '하지만 최근 들어 실용성에 주목한 작품들이 등장하기도 하고,', time: [36.27, 39.84], eng: "However, recently, works focusing on practicality have appeared," },
+            { id: 's12', speaker: '널 위한 문화예술', kor: '반대로 실용적이지 않은 모습에 디자인이 등장하기도 하죠.', time: [39.873, 43.243], eng: "conversely, designs appear in impractical forms." },
+            { id: 's13', speaker: '널 위한 문화예술', kor: '다시 말해, 근래 들어 이 경계가 흐려지고 있는데요.', time: [43.277, 46.179], eng: "In other words, this boundary has been blurring in recent years." },
+            { id: 's14', speaker: '널 위한 문화예술', kor: '사실 과거에는 예술과 디자인의 차이점이 비교적 뚜렷했습니다.', time: [46.213, 50.517], eng: "In fact, in the past, the difference between art and design was relatively clear." },
+            { id: 's15', speaker: '널 위한 문화예술', kor: '공예품을 비롯해 실생활에 쓰이는 제품을 만드는 장인들과', time: [50.55, 54.221], eng: "Craftsmen who make products used in real life, including crafts," },
+            { id: 's16', speaker: '널 위한 문화예술', kor: '감상을 위한 작품을 만드는 예술가들은 선명하게 구분됐죠.', time: [54.254, 57.858], eng: "and artists who create works for appreciation were clearly distinguished." },
+            { id: 's17', speaker: '널 위한 문화예술', kor: '하지만 현대 들어 디자인에 새로운 바람이 불기 시작합니다.', time: [57.891, 61.461], eng: "However, in modern times, a new wind begins to blow in design." },
+            { id: 's18', speaker: '널 위한 문화예술', kor: '1919년 독일 바우하우스,', time: [61.495, 63.73], eng: "1919, Bauhaus in Germany," },
+            { id: 's19', speaker: '널 위한 문화예술', kor: '이곳에선 여러 예술가들이 학생들에게 미술을 가르쳤는데요.', time: [63.764, 67.334], eng: "Here, various artists taught art to students." },
+            { id: 's20', speaker: '널 위한 문화예술', kor: '바우하우스에서 가르치던 예술가 중엔', time: [67.367, 69.403], eng: "Among the artists who taught at the Bauhaus," },
+            { id: 's21', speaker: '널 위한 문화예술', kor: '칸딘스키와 몬드리안 같은 작가들이 있었죠.', time: [69.436, 72.239], eng: "there were artists like Kandinsky and Mondrian." },
+            { id: 's22', speaker: '널 위한 문화예술', kor: '바우하우스의 최종 목표는 각기 분산된 모든 미술 분야를 통합하는 것,', time: [72.272, 76.743], eng: "The ultimate goal of the Bauhaus was to integrate all scattered art fields," },
+            { id: 's23', speaker: '널 위한 문화예술', kor: '그러면서 공예와 미술의 결합을 추구했습니다.', time: [76.777, 79.947], eng: "pursuing the combination of crafts and fine art." },
+            { id: 's24', speaker: '널 위한 문화예술', kor: '당시 바우하우스의 예술가들은 \'조형의 아름다움을 지배하는 단일한 원리가 있다\' 믿었죠.', time: [79.98, 85.152], eng: "At that time, Bauhaus artists believed that 'there is a single principle governing the beauty of formative arts'." },
+            { id: 's25', speaker: '널 위한 문화예술', kor: '그 결과 직선이나 원 같은 단순한 조형을 토대로 추상화를 그려냈는데요.', time: [85.185, 89.823], eng: "As a result, they drew abstract paintings based on simple shapes like straight lines or circles." },
+            { id: 's26', speaker: '널 위한 문화예술', kor: '이런 정신은 바우하우스를 통해 디자인에 적용됐죠.', time: [89.856, 93.226], eng: "This spirit was applied to design through the Bauhaus." },
+            { id: 's27', speaker: '널 위한 문화예술', kor: '구체적인 비유나 상징을 억제하고 단순하면서 실용적인 제품들.', time: [93.26, 97.731], eng: "Simple and practical products that suppress concrete metaphors or symbols." },
+            { id: 's28', speaker: '널 위한 문화예술', kor: '바우하우스의 예술가들은 "기능적인 것이 아름답다"는 정신 아래', time: [97.764, 101.635], eng: "Under the spirit that 'functional is beautiful', Bauhaus artists" },
+            { id: 's29', speaker: '널 위한 문화예술', kor: '가장 우수한 표준을 만드는 데 전념했죠.', time: [102.668, 104.204], eng: "dedicated themselves to creating the best standards." },
+            { id: 's30', speaker: '널 위한 문화예술', kor: '이러한 정신은 장인의 시대에서 산업 시대로 넘어가는 시기에,', time: [104.237, 107.808], eng: "This spirit, in the transition from the era of craftsmen to the industrial era," },
+            { id: 's31', speaker: '널 위한 문화예술', kor: '새로운 디자인들을 탄생시키며 현대 디자인의 모태가 되었는데요.', time: [107.841, 111.912], eng: "gave birth to new designs and became the matrix of modern design." },
+            { id: 's32', speaker: '널 위한 문화예술', kor: '다시 말해 예술가들의 생각이 현대 디자인을 탄생시킨 것입니다.', time: [111.945, 116.016], eng: "In other words, the ideas of artists gave birth to modern design." },
+            { id: 's33', speaker: '널 위한 문화예술', kor: '최근 들어서는 포스트모던 디자인이 등장했는데요.', time: [116.049, 119.319], eng: "Recently, postmodern design has emerged." },
+            { id: 's34', speaker: '널 위한 문화예술', kor: '‘포스트모던’이란 한 가지 패턴이나 개념으로 묶는 것을 경계하며', time: [119.353, 123.123], eng: "'Postmodern' warns against binding things into a single pattern or concept," },
+            { id: 's35', speaker: '널 위한 문화예술', kor: '이러한 흐름으로부터 탈출하는 움직임을 말하죠.', time: [123.156, 125.926], eng: "and refers to the movement to escape from this flow." },
+            { id: 's36', speaker: '널 위한 문화예술', kor: '단일한 원리를 쫓던 바우하우스 디자인과 달리,', time: [125.959, 128.829], eng: "Unlike Bauhaus design, which chased a single principle," },
+            { id: 's37', speaker: '널 위한 문화예술', kor: '포스트모던 디자인은 “아름다움의 원칙 같은 건 존재하지 않는다”고 생각했죠.', time: [128.862, 133.567], eng: "postmodern design thought that 'principles of beauty do not exist'." },
+            { id: 's38', speaker: '널 위한 문화예술', kor: '따라서 단순한 패턴이나 조형성을 넘어', time: [133.6, 136.103], eng: "Therefore, beyond simple patterns or formativeness," },
+            { id: 's39', speaker: '널 위한 문화예술', kor: '제작자만이 가진 스토리를 디자인에 담아내는 시도들이 이어졌는데요.', time: [136.136, 140.173], eng: "attempts to capture the creator's unique story in design continued." },
+            { id: 's40', speaker: '널 위한 문화예술', kor: '그러면서 예술과 마찬가지로 디자이너의 생각이 작품에 담기기 시작했죠.', time: [140.207, 144.845], eng: "In doing so, like art, the designer's thoughts began to be embodied in the work." },
+            { id: 's41', speaker: '널 위한 문화예술', kor: '더불어 현대 들어 일상과 예술의 경계가 허물어지고 있는데요.', time: [144.878, 148.548], eng: "In addition, in modern times, the boundary between daily life and art is collapsing." },
+            { id: 's42', speaker: '널 위한 문화예술', kor: '예술을 다양한 영역에 접목하는 시도가 늘어났고,', time: [148.582, 151.718], eng: "Attempts to graft art into various fields have increased," },
+            { id: 's43', speaker: '널 위한 문화예술', kor: '덕분에 디자인과 예술의 경계는 더욱 더 흐려지고 있죠.', time: [151.752, 154.988], eng: "thanks to this, the boundary between design and art is blurring even more." },
+            { id: 's44', speaker: '널 위한 문화예술', kor: '또한 최근에는 디자인을 담는 미술관 전시가 나타나면서', time: [155.022, 158.725], eng: "Also, recently, as museum exhibitions featuring design have appeared," },
+            { id: 's45', speaker: '널 위한 문화예술', kor: '작품이 된 디자인을 심심치 않게 볼 수 있죠.', time: [158.759, 161.628], eng: "we can often see designs that have become artworks." },
+            { id: 's46', speaker: '널 위한 문화예술', kor: '현대에도 많은 예술가와 디자이너에 의해', time: [161.662, 164.164], eng: "Even in modern times, by many artists and designers," },
+            { id: 's47', speaker: '널 위한 문화예술', kor: '예술과 디자인의 경계는 계속해서 재정의되고 있습니다.', time: [164.197, 167.834], eng: "the boundary between art and design continues to be redefined." },
+            { id: 's48', speaker: '널 위한 문화예술', kor: '또한 그러한 과정에서 새로운 디자인 그리고 새로운 작품들이 탄생하고 있죠.', time: [167.868, 172.606], eng: "Also, in that process, new designs and new works are being born." },
+            { id: 's49', speaker: '널 위한 문화예술', kor: '점점 더 모호해지는 예술과 디자인의 관계,', time: [172.639, 175.609], eng: "The increasingly ambiguous relationship between art and design," },
+            { id: 's50', speaker: '널 위한 문화예술', kor: '앞으로 또 어떤 제품과 작품이 우리 앞에 펼쳐질까요?', time: [175.642, 180.0], eng: "what products and works will unfold before us in the future?" }
+        ];
+
+        const VOCAB_DATA = [
+            {
+                term: '예술 작품',
+                mainDef: '예(藝 재주) + 술(術 기술) + 작(作 만들다) + 품(品 물건) -> 사람이 아름다움이나 생각을 표현하기 위해 만든 그림, 조각, 음악 같은 결과물',
+                translations: { en: { term: 'work of art / artwork', mainDef: 'a piece created by a person to express beauty or ideas, such as a painting, sculpture, or piece of music.' } },
+                examples: [{ kor: '미술관에서 인상 깊은 예술 작품을 봤어요.', eng: 'I saw an impressive work of art at the museum.' }],
+                variants: ['예술 작품']
+            },
+            {
+                term: '흔히',
+                mainDef: '평소에 자주, 보통 사람들이 많이 그렇게',
+                translations: { en: { term: 'commonly / often', mainDef: 'usually, in a way that many people typically do.' } },
+                examples: [{ kor: '한국에서는 명절에 떡국을 흔히 먹어요.', eng: 'In Korea, people commonly eat tteokguk on holidays.' }],
+                variants: ['흔히']
+            },
+            {
+                term: '사고방식',
+                mainDef: '사(思 생각하다) + 고(考 생각하다) + 방(方 방법) + 식(式 방식) -> 어떤 일을 바라보고 판단하는 한 사람의 생각하는 방법',
+                translations: { en: { term: 'mindset / way of thinking', mainDef: 'a person\'s way of viewing and judging things.' } },
+                examples: [{ kor: '나이가 들면서 사고방식이 많이 바뀌었어요.', eng: 'My way of thinking has changed a lot as I grew older.' }],
+                variants: ['사고방식']
+            },
+            {
+                term: '내 안의 주제',
+                mainDef: '주(主 주인) + 제(題 제목) -> 내 마음속에 있는 중심이 되는 생각이나 이야깃거리',
+                translations: { en: { term: 'a theme within me', mainDef: 'the central idea or subject that exists inside one\'s own mind.' } },
+                examples: [{ kor: '예술가는 내 안의 주제를 작품으로 보여줘요.', eng: 'Artists show the themes within them through their work.' }],
+                variants: ['내 안의 주제', '내 안의 주제를']
+            },
+            {
+                term: '표현하다',
+                mainDef: '표(表 겉) + 현(現 나타나다) -> 마음속에 있는 생각이나 느낌을 다른 사람이 알 수 있게 밖으로 나타내다',
+                translations: { en: { term: 'to express', mainDef: 'to show one\'s inner thoughts or feelings outwardly so others can perceive them.' } },
+                examples: [{ kor: '말로 다 표현하기 어려운 감정이 있어요.', eng: 'There are feelings that are hard to express fully in words.' }],
+                variants: ['표현하다', '표현하는']
+            },
+            {
+                term: '내 밖의 문제',
+                mainDef: '문(問 묻다) + 제(題 제목) -> 내 마음이 아니라 세상이나 사회에 있는 풀어야 할 어려운 일',
+                translations: { en: { term: 'a problem outside of me', mainDef: 'a difficult issue in the world or society, not inside one\'s own mind.' } },
+                examples: [{ kor: '디자이너는 내 밖의 문제를 해결하려고 노력해요.', eng: 'Designers try to solve problems outside of themselves.' }],
+                variants: ['내 밖의 문제', '내 밖의 문제를']
+            },
+            {
+                term: '▢▢을/를 통해 해결하다',
+                mainDef: '해(解 풀다) + 결(決 결단하다) -> 어떤 수단이나 방법을 거쳐서 문제를 풀거나 답을 찾다',
+                translations: { en: { term: 'to solve through [X]', mainDef: 'to resolve a problem or find an answer by means of something.' } },
+                examples: [{ kor: '많은 문제는 대화를 통해 해결할 수 있어요.', eng: 'Many problems can be solved through conversation.' }],
+                variants: ['통해 해결하는', '제품을 통해 해결하는'],
+                subDefs: [
+                    { subTerm: '• ▢▢을/를 통해', subDef: '어떤 사람이나 수단을 거쳐서 일이 이루어지다' }
+                ]
+            },
+            {
+                term: '융합되다',
+                mainDef: '융(融 녹다) + 합(合 합하다) -> 서로 다른 둘 이상의 것이 녹아 하나로 합쳐지다',
+                translations: { en: { term: 'to be fused / blended', mainDef: 'for two or more different things to merge into one.' } },
+                examples: [{ kor: '요즘은 동양과 서양의 음식이 융합된 메뉴가 인기예요.', eng: 'These days, menus that fuse Eastern and Western food are popular.' }],
+                variants: ['융합되다', '융합되는']
+            },
+            {
+                term: '허다하다',
+                mainDef: '허(許 매우) + 다(多 많다) -> 어떤 일이 매우 많이 있어서 흔하다',
+                translations: { en: { term: 'to be very common / numerous', mainDef: 'for something to happen so often that it is unremarkable.' } },
+                examples: [{ kor: '한국에서는 야근하는 회사원이 허다해요.', eng: 'In Korea, office workers working overtime are very common.' }],
+                variants: ['허다하다', '허다합니다']
+            },
+            {
+                term: '존재하다',
+                mainDef: '존(存 있다) + 재(在 있다) -> 사람이나 사물이 실제로 이 세상에 있다',
+                translations: { en: { term: 'to exist', mainDef: 'for a person or thing to actually be present in the world.' } },
+                examples: [{ kor: '우주에는 우리가 모르는 별이 셀 수 없이 존재해요.', eng: 'Countless unknown stars exist in the universe.' }],
+                variants: ['존재하다', '존재하죠']
+            },
+            {
+                term: '때때로',
+                mainDef: '어떤 일이 일정하지 않지만 가끔씩',
+                translations: { en: { term: 'sometimes / from time to time', mainDef: 'occasionally, not regularly but every now and then.' } },
+                examples: [{ kor: '바쁘게 살다 보면 때때로 휴식이 필요해요.', eng: 'When living busily, sometimes you need a rest.' }],
+                variants: ['때때로', '때때론']
+            },
+            {
+                term: '실용성',
+                mainDef: '실(實 실제) + 용(用 쓰다) + 성(性 성질) -> 실제 생활에서 쓸모가 있는 성질',
+                translations: { en: { term: 'practicality / utility', mainDef: 'the quality of being useful in real life.' } },
+                examples: [{ kor: '이 가방은 디자인보다 실용성이 뛰어나요.', eng: 'This bag excels in practicality more than in design.' }],
+                variants: ['실용성']
+            },
+            {
+                term: '그 자체가 목적인 것',
+                mainDef: '목(目 눈/뜻) + 적(的 과녁) -> 다른 무엇을 위해서가 아니라 그것 자체가 이루려는 목표인 일',
+                translations: { en: { term: 'something that is an end in itself', mainDef: 'something whose purpose is itself, not a means to another goal.' } },
+                examples: [{ kor: '취미는 그 자체가 목적인 활동이라서 즐거워요.', eng: 'Hobbies are fun because they are activities that are ends in themselves.' }],
+                variants: ['그 자체가 목적인 것'],
+                subDefs: [
+                    { subTerm: '• 그 자체', subDef: '다른 것이 아닌 바로 그것만을 가리키는 말' }
+                ]
+            },
+            {
+                term: '수단적',
+                mainDef: '수(手 손) + 단(段 층계/방법) + 적(的 ~한 것) -> 어떤 다른 목적을 이루기 위한 방법이나 도구로 쓰이는 성질',
+                translations: { en: { term: 'instrumental / serving as a means', mainDef: 'having the quality of being a tool or method used to achieve some other purpose.' } },
+                examples: [{ kor: '돈은 행복을 위한 수단적인 도구일 뿐이에요.', eng: 'Money is just an instrumental tool for happiness.' }],
+                variants: ['수단적']
+            },
+            {
+                term: '주목하다',
+                mainDef: '주(注 부어 쏟다) + 목(目 눈) -> 어떤 사람이나 사물에 시선이나 관심을 깊게 두다',
+                translations: { en: { term: 'to pay attention to / to focus on', mainDef: 'to direct one\'s gaze or attention deeply on a person or thing.' } },
+                examples: [{ kor: '요즘 사람들은 환경 문제에 크게 주목하고 있어요.', eng: 'Lately, people are paying great attention to environmental issues.' }],
+                variants: ['주목하다', '주목한']
+            },
+            {
+                term: '등장하다',
+                mainDef: '등(登 오르다) + 장(場 마당) -> 어떤 무대나 자리에 새로 모습을 드러내며 나타나다',
+                translations: { en: { term: 'to appear / to emerge', mainDef: 'to newly show up on some stage or scene.' } },
+                examples: [{ kor: '시장에 새로운 전기차가 등장했어요.', eng: 'A new electric car has appeared on the market.' }],
+                variants: ['등장하다', '등장하기도']
+            },
+            {
+                term: '근래',
+                mainDef: '근(近 가깝다) + 래(來 오다) -> 가까운 과거부터 지금까지의 짧은 시기',
+                translations: { en: { term: 'recent times / lately', mainDef: 'the short period from the near past up to now.' } },
+                examples: [{ kor: '근래 들어 K-팝의 인기가 더욱 높아졌어요.', eng: 'Lately, the popularity of K-pop has grown even more.' }],
+                variants: ['근래']
+            },
+            {
+                term: '경계',
+                mainDef: '경(境 지경) + 계(界 경계) -> 서로 다른 두 지역이나 분야를 나누는 선이나 구분',
+                translations: { en: { term: 'boundary / borderline', mainDef: 'the line or division that separates two different areas or fields.' } },
+                examples: [{ kor: '일과 휴식의 경계가 점점 사라지고 있어요.', eng: 'The boundary between work and rest is gradually disappearing.' }],
+                variants: ['경계']
+            },
+            {
+                term: '차이점',
+                mainDef: '차(差 다르다) + 이(異 다르다) + 점(點 점) -> 서로 다른 것끼리 비교했을 때 다른 부분',
+                translations: { en: { term: 'point of difference', mainDef: 'the part that is different when comparing two or more things.' } },
+                examples: [{ kor: '쌍둥이라도 성격에 차이점이 많이 있어요.', eng: 'Even twins have many points of difference in personality.' }],
+                variants: ['차이점', '차이점이']
+            },
+            {
+                term: '뚜렷하다',
+                mainDef: '흐릿하지 않고 아주 분명하게 잘 보이거나 알 수 있다',
+                translations: { en: { term: 'to be clear / distinct', mainDef: 'to be very obvious and clearly visible or understandable, not blurry.' } },
+                examples: [{ kor: '그 사진은 오래됐지만 아직도 뚜렷해요.', eng: 'That photo is old, but it is still clear.' }],
+                variants: ['뚜렷하다', '뚜렷했습니다']
+            },
+            {
+                term: '공예품',
+                mainDef: '공(工 장인) + 예(藝 재주) + 품(品 물건) -> 사람이 손으로 솜씨 부려서 만든, 실용성과 예술성을 함께 가진 물건',
+                translations: { en: { term: 'craft / handcrafted item', mainDef: 'an object made by hand that has both practical use and artistic value.' } },
+                examples: [{ kor: '시장에서 전통 공예품을 구경했어요.', eng: 'I looked around at traditional crafts in the market.' }],
+                variants: ['공예품']
+            },
+            {
+                term: '실생활에 쓰이는',
+                mainDef: '실(實 실제) + 생(生 살다) + 활(活 살다) -> 우리가 매일 살아가는 보통의 생활에서 실제로 사용되는',
+                translations: { en: { term: 'used in real / daily life', mainDef: 'actually used in our everyday lives.' } },
+                examples: [{ kor: '실생활에 쓰이는 한국어를 배우고 싶어요.', eng: 'I want to learn Korean used in daily life.' }],
+                variants: ['실생활에 쓰이는'],
+                subDefs: [
+                    { subTerm: '• 쓰이다', subDef: '"쓰다"의 피동형으로, 어떤 물건이 사람들에게 이용되다' }
+                ]
+            },
+            {
+                term: '장인',
+                mainDef: '장(匠 장인) + 인(人 사람) -> 오랜 시간 한 가지 기술을 갈고닦아 손으로 물건을 만드는 솜씨가 뛰어난 사람',
+                translations: { en: { term: 'artisan / master craftsman', mainDef: 'a person with outstanding skill who has spent a long time honing one craft and makes things by hand.' } },
+                examples: [{ kor: '이 가구는 50년 경력의 장인이 만든 거예요.', eng: 'This furniture was made by an artisan with 50 years of experience.' }],
+                variants: ['장인', '장인들과']
+            },
+            {
+                term: '감상',
+                mainDef: '감(鑑 거울) + 상(賞 칭찬하다) -> 그림, 음악, 영화 같은 작품을 보거나 들으며 그 의미와 아름다움을 느끼는 일',
+                translations: { en: { term: 'appreciation / viewing', mainDef: 'the act of looking at or listening to a work like a painting, music, or film and feeling its meaning and beauty.' } },
+                examples: [{ kor: '주말에 영화 감상을 하면서 시간을 보냈어요.', eng: 'I spent the weekend watching and appreciating movies.' }],
+                variants: ['감상']
+            },
+            {
+                term: '구분되다',
+                mainDef: '구(區 구분하다) + 분(分 나누다) -> 어떤 것들이 일정한 기준에 따라 종류나 영역이 서로 나누어지다',
+                translations: { en: { term: 'to be distinguished / separated', mainDef: 'for things to be divided into kinds or areas according to some standard.' } },
+                examples: [{ kor: '한국어 동사는 동사와 형용사로 구분돼요.', eng: 'Korean predicates are distinguished as verbs and adjectives.' }],
+                variants: ['구분되다', '구분됐죠']
+            },
+            {
+                term: '새로운 바람이 불다',
+                mainDef: '어떤 분야에 지금까지 없던 새로운 흐름이나 변화가 생기다',
+                translations: { en: { term: 'a new wind blows / a new trend emerges', mainDef: 'for a new flow or change that did not exist before to appear in some field.' } },
+                examples: [{ kor: '한국 패션계에 친환경 디자인이라는 새로운 바람이 불고 있어요.', eng: 'A new wind of eco-friendly design is blowing in the Korean fashion world.' }],
+                variants: ['새로운 바람이 불다', '새로운 바람이 불기']
+            },
+            {
+                term: '최종',
+                mainDef: '최(最 가장) + 종(終 끝) -> 어떤 일에서 가장 마지막이 되는 단계나 결과',
+                translations: { en: { term: 'final / ultimate', mainDef: 'the very last stage or outcome of something.' } },
+                examples: [{ kor: '오랜 회의 끝에 최종 결정이 내려졌어요.', eng: 'After a long meeting, the final decision was made.' }],
+                variants: ['최종']
+            },
+            {
+                term: '분산되다',
+                mainDef: '분(分 나누다) + 산(散 흩어지다) -> 한군데 모여 있지 않고 여러 곳으로 나뉘어 흩어지다',
+                translations: { en: { term: 'to be dispersed / scattered', mainDef: 'to be divided and spread out to many places instead of being gathered in one spot.' } },
+                examples: [{ kor: '회사가 커지면서 사무실이 여러 도시로 분산되었어요.', eng: 'As the company grew, the offices became dispersed across multiple cities.' }],
+                variants: ['분산되다', '분산된']
+            },
+            {
+                term: '통합하다',
+                mainDef: '통(統 거느리다) + 합(合 합치다) -> 흩어져 있는 것들을 모아 하나의 큰 덩어리로 합치다',
+                translations: { en: { term: 'to integrate / unify', mainDef: 'to gather scattered things and combine them into one larger whole.' } },
+                examples: [{ kor: '여러 부서를 통합해서 새로운 팀을 만들었어요.', eng: 'They integrated several departments to make a new team.' }],
+                variants: ['통합하다', '통합하는']
+            },
+            {
+                term: '결합',
+                mainDef: '결(結 맺다) + 합(合 합치다) -> 둘 이상이 만나 서로 단단하게 묶여 하나가 되는 것',
+                translations: { en: { term: 'combination / union', mainDef: 'the act of two or more things meeting and being firmly bound into one.' } },
+                examples: [{ kor: '이 음식은 동서양 맛의 완벽한 결합이에요.', eng: 'This dish is a perfect combination of Eastern and Western flavors.' }],
+                variants: ['결합']
+            },
+            {
+                term: '추구하다',
+                mainDef: '추(追 쫓다) + 구(求 구하다) -> 어떤 목표나 이상을 얻기 위해 끊임없이 따라가며 노력하다',
+                translations: { en: { term: 'to pursue / to seek after', mainDef: 'to constantly chase and work toward a goal or ideal.' } },
+                examples: [{ kor: '많은 사람들이 안정된 삶을 추구해요.', eng: 'Many people pursue a stable life.' }],
+                variants: ['추구하다', '추구했습니다']
+            },
+            {
+                term: '조형',
+                mainDef: '조(造 만들다) + 형(形 모양) -> 재료를 이용해 어떤 모양이나 형태를 만들어 내는 일',
+                translations: { en: { term: 'formative arts / shaping', mainDef: 'the act of creating shapes or forms out of materials.' } },
+                examples: [{ kor: '이 미술관은 조형 예술 작품으로 유명해요.', eng: 'This museum is famous for its formative art works.' }],
+                variants: ['조형', '조형의']
+            },
+            {
+                term: '지배하다',
+                mainDef: '지(支 가르다) + 배(配 짝/나누다) -> 어떤 사람이나 사물 위에서 큰 힘을 가지고 모든 것을 좌우하다',
+                translations: { en: { term: 'to rule / to govern', mainDef: 'to hold great power over a person or thing and control everything.' } },
+                examples: [{ kor: '한 가지 생각이 그의 인생 전체를 지배했어요.', eng: 'A single idea governed his entire life.' }],
+                variants: ['지배하다', '지배하는']
+            },
+            {
+                term: '단일한',
+                mainDef: '단(單 홑) + 일(一 하나) -> 둘 이상이 아니라 오직 하나로만 이루어진',
+                translations: { en: { term: 'single / unified', mainDef: 'consisting of only one and not two or more.' } },
+                examples: [{ kor: '이 회사는 단일한 디자인 원칙을 따라요.', eng: 'This company follows a single design principle.' }],
+                variants: ['단일한']
+            },
+            {
+                term: '원리',
+                mainDef: '원(原 근원) + 리(理 이치) -> 어떤 현상이나 일의 가장 기본이 되는 이치나 규칙',
+                translations: { en: { term: 'principle', mainDef: 'the most basic rule or logic underlying some phenomenon or matter.' } },
+                examples: [{ kor: '비행기가 날아가는 원리를 배웠어요.', eng: 'I learned the principle by which airplanes fly.' }],
+                variants: ['원리', '원리가']
+            },
+            {
+                term: '직선',
+                mainDef: '직(直 곧다) + 선(線 줄) -> 굽지 않고 곧게 뻗은 선',
+                translations: { en: { term: 'straight line', mainDef: 'a line that extends straight without bending.' } },
+                examples: [{ kor: '자를 대고 직선을 그어 봤어요.', eng: 'I drew a straight line using a ruler.' }],
+                variants: ['직선']
+            },
+            {
+                term: '원',
+                mainDef: '원(圓 둥글다) -> 한가운데 점에서 거리가 똑같은 점들이 모여 만들어진 둥근 모양',
+                translations: { en: { term: 'circle', mainDef: 'a round shape made of points all equidistant from a center point.' } },
+                examples: [{ kor: '컴퍼스로 깔끔한 원을 그렸어요.', eng: 'I drew a clean circle using a compass.' }],
+                variants: ['원']
+            },
+            {
+                term: '▢▢을/를 토대로',
+                mainDef: '토(土 흙) + 대(臺 받침대) -> 어떤 것을 바탕이나 기초로 삼아',
+                translations: { en: { term: 'based on [X]', mainDef: 'using something as the foundation or basis.' } },
+                examples: [{ kor: '경험을 토대로 책을 한 권 썼어요.', eng: 'I wrote a book based on my experience.' }],
+                variants: ['토대로', '조형을 토대로']
+            },
+            {
+                term: '적용되다',
+                mainDef: '적(適 맞다) + 용(用 쓰다) -> 어떤 규칙, 이론, 방법이 실제 상황에 맞게 쓰이다',
+                translations: { en: { term: 'to be applied', mainDef: 'for some rule, theory, or method to be put into actual use in a real situation.' } },
+                examples: [{ kor: '새로운 법이 다음 달부터 적용돼요.', eng: 'The new law will be applied starting next month.' }],
+                variants: ['적용되다', '적용됐죠']
+            },
+            {
+                term: '비유',
+                mainDef: '비(比 견주다) + 유(喩 깨우치다) -> 어떤 사물을 직접 설명하지 않고 비슷한 다른 것에 빗대어 표현하는 방법',
+                translations: { en: { term: 'metaphor / analogy', mainDef: 'a way of expressing something not directly but by comparing it to something similar.' } },
+                examples: [{ kor: '시인은 사랑을 꽃에 비유했어요.', eng: 'The poet expressed love through the metaphor of a flower.' }],
+                variants: ['비유']
+            },
+            {
+                term: '상징',
+                mainDef: '상(象 모양) + 징(徵 부르다) -> 눈에 보이지 않는 생각이나 개념을 보여주기 위해 사용되는 구체적인 표시',
+                translations: { en: { term: 'symbol', mainDef: 'a concrete sign used to represent an invisible idea or concept.' } },
+                examples: [{ kor: '비둘기는 평화의 상징으로 여겨져요.', eng: 'The dove is regarded as a symbol of peace.' }],
+                variants: ['상징', '상징을']
+            },
+            {
+                term: '억제하다',
+                mainDef: '억(抑 누르다) + 제(制 억제하다) -> 어떤 감정이나 행동이 일어나거나 커지지 않도록 누르고 막다',
+                translations: { en: { term: 'to suppress / to restrain', mainDef: 'to press down and prevent some feeling or action from arising or growing.' } },
+                examples: [{ kor: '화가 났지만 감정을 억제하려고 노력했어요.', eng: 'I was angry, but I tried to suppress my emotions.' }],
+                variants: ['억제하다', '억제하고']
+            },
+            {
+                term: '실용적',
+                mainDef: '실(實 실제) + 용(用 쓰다) + 적(的 ~한 것) -> 보기 좋은 것보다 실제 생활에서 쓸모가 있는 것을 더 중요하게 여기는',
+                translations: { en: { term: 'practical', mainDef: 'valuing real-life usefulness over appearance.' } },
+                examples: [{ kor: '저는 예쁜 물건보다 실용적인 물건을 좋아해요.', eng: 'I prefer practical things over pretty ones.' }],
+                variants: ['실용적', '실용적인']
+            },
+            {
+                term: '기능적',
+                mainDef: '기(機 틀) + 능(能 능하다) + 적(的 ~한 것) -> 어떤 물건이 본래 해야 하는 일을 잘하는 데 초점을 둔',
+                translations: { en: { term: 'functional', mainDef: 'focused on performing well at what an object is meant to do.' } },
+                examples: [{ kor: '이 의자는 디자인은 단순하지만 아주 기능적이에요.', eng: 'This chair has a simple design but is very functional.' }],
+                variants: ['기능적', '기능적인']
+            },
+            {
+                term: '정신',
+                mainDef: '정(精 정성) + 신(神 정신) -> 어떤 일을 대하는 마음 자세나 그 안에 담긴 생각',
+                translations: { en: { term: 'spirit / mindset / philosophy', mainDef: 'the attitude or thinking behind how one approaches something.' } },
+                examples: [{ kor: '바우하우스의 정신은 지금도 디자인에 영향을 줘요.', eng: 'The spirit of Bauhaus still influences design today.' }],
+                variants: ['정신']
+            },
+            {
+                term: '표준',
+                mainDef: '표(標 표시) + 준(準 평평하다) -> 모두가 따라야 할 기본이 되는 기준이나 본보기',
+                translations: { en: { term: 'standard', mainDef: 'the basic criterion or model that everyone should follow.' } },
+                examples: [{ kor: '서울 말이 한국어의 표준이에요.', eng: 'Seoul speech is the standard for Korean.' }],
+                variants: ['표준', '표준을']
+            },
+            {
+                term: '전념하다',
+                mainDef: '전(專 오로지) + 념(念 생각하다) -> 다른 것은 생각하지 않고 오직 한 가지 일에만 마음을 쏟다',
+                translations: { en: { term: 'to devote oneself / to be dedicated to', mainDef: 'to pour one\'s heart into only one thing without thinking about anything else.' } },
+                examples: [{ kor: '시험을 앞두고 공부에만 전념하고 있어요.', eng: 'With the exam coming up, I am devoting myself only to studying.' }],
+                variants: ['전념하다', '전념했죠']
+            },
+            {
+                term: '장인의 시대',
+                mainDef: '시(時 때) + 대(代 시대) -> 모든 물건을 손으로 한 사람의 솜씨에 의지해 만들던 옛 시기',
+                translations: { en: { term: 'the era of artisans', mainDef: 'the old period when all objects were made by hand, relying on individual craftsmanship.' } },
+                examples: [{ kor: '장인의 시대에는 한 물건을 만들기까지 오랜 시간이 걸렸어요.', eng: 'In the era of artisans, it took a long time to make a single item.' }],
+                variants: ['장인의 시대']
+            },
+            {
+                term: '산업 시대',
+                mainDef: '산(産 낳다) + 업(業 일) -> 공장에서 기계로 같은 물건을 많이 만들어 내는 것이 중심이 된 시기',
+                translations: { en: { term: 'the industrial age', mainDef: 'the period centered around mass-producing identical goods with machines in factories.' } },
+                examples: [{ kor: '산업 시대 이후 사람들의 생활 방식이 크게 변했어요.', eng: 'After the industrial age, people\'s lifestyles changed greatly.' }],
+                variants: ['산업 시대']
+            },
+            {
+                term: '모태가 되다',
+                mainDef: '모(母 어머니) + 태(胎 아이를 배다) -> 어떤 것이 생겨나는 데 바탕이 되어 그것을 자라게 하다',
+                translations: { en: { term: 'to become the foundation / matrix', mainDef: 'to serve as the basis from which something is born and grows.' } },
+                examples: [{ kor: '이 작은 회사가 큰 그룹의 모태가 되었어요.', eng: 'This small company became the foundation of a large group.' }],
+                variants: ['모태가 되다', '모태가 되었는데요']
+            },
+            {
+                term: '탄생시키다',
+                mainDef: '탄(誕 태어나다) + 생(生 나다) -> 무엇이 새로 만들어지거나 세상에 나오게 하다',
+                translations: { en: { term: 'to give birth to / to bring into being', mainDef: 'to cause something new to be created or to come into the world.' } },
+                examples: [{ kor: '그 작은 아이디어가 결국 새로운 산업을 탄생시켰어요.', eng: 'That small idea eventually gave birth to a new industry.' }],
+                variants: ['탄생시키다', '탄생시키며', '탄생시킨']
+            },
+            {
+                term: '개념',
+                mainDef: '개(槪 대개) + 념(念 생각) -> 어떤 사물이나 현상에 대한 일반적인 이해나 생각',
+                translations: { en: { term: 'concept / notion', mainDef: 'a general understanding or idea about some thing or phenomenon.' } },
+                examples: [{ kor: '사랑이라는 개념은 사람마다 다르게 정의돼요.', eng: 'The concept of love is defined differently by each person.' }],
+                variants: ['개념']
+            },
+            {
+                term: '묶다',
+                mainDef: '여러 가지를 끈이나 어떤 기준으로 한곳에 모아 하나로 만들다',
+                translations: { en: { term: 'to tie / to group', mainDef: 'to gather many things together into one with a string or by some criterion.' } },
+                examples: [{ kor: '비슷한 책들을 주제별로 묶어서 정리했어요.', eng: 'I grouped similar books by topic and organized them.' }],
+                variants: ['묶다', '묶는']
+            },
+            {
+                term: '경계하다',
+                mainDef: '경(警 경계하다) + 계(戒 경계하다) -> 어떤 일이 잘못되지 않도록 미리 조심하고 주의하다',
+                translations: { en: { term: 'to be wary of / to be on guard against', mainDef: 'to be careful and attentive in advance so that something does not go wrong.' } },
+                examples: [{ kor: '편견에 빠지지 않도록 늘 자신을 경계해야 해요.', eng: 'You must always be wary of yourself so as not to fall into prejudice.' }],
+                variants: ['경계하다', '경계하며']
+            },
+            {
+                term: '흐름',
+                mainDef: '어떤 일이나 사회가 시간에 따라 흘러가는 방향이나 분위기',
+                translations: { en: { term: 'flow / trend', mainDef: 'the direction or atmosphere in which something or society moves over time.' } },
+                examples: [{ kor: '시대의 흐름을 잘 읽는 사람이 성공해요.', eng: 'People who read the flow of the times well succeed.' }],
+                variants: ['흐름', '흐름으로부터']
+            },
+            {
+                term: '탈출',
+                mainDef: '탈(脫 벗다) + 출(出 나가다) -> 갇혀 있거나 매여 있는 상태에서 빠져나오는 일',
+                translations: { en: { term: 'escape', mainDef: 'the act of getting out of a trapped or restricted state.' } },
+                examples: [{ kor: '일상에서 잠시 탈출하고 싶어서 여행을 떠났어요.', eng: 'I took a trip because I wanted a brief escape from daily life.' }],
+                variants: ['탈출', '탈출하는']
+            },
+            {
+                term: '쫓다',
+                mainDef: '앞서 가는 사람이나 목표를 따라잡거나 잡으려고 뒤를 따라가다',
+                translations: { en: { term: 'to chase / to pursue', mainDef: 'to follow after a person or goal in order to catch up or seize it.' } },
+                examples: [{ kor: '유행만 쫓다 보면 자기 스타일을 잃어요.', eng: 'If you only chase trends, you lose your own style.' }],
+                variants: ['쫓다', '쫓던']
+            },
+            {
+                term: '원칙',
+                mainDef: '원(原 근원) + 칙(則 법칙) -> 어떤 행동이나 일을 할 때 반드시 지켜야 하는 기본적인 규칙',
+                translations: { en: { term: 'principle / rule', mainDef: 'the basic rule that must be kept when doing some action or task.' } },
+                examples: [{ kor: '저는 약속을 꼭 지키는 것을 원칙으로 삼아요.', eng: 'I make it a principle to always keep my promises.' }],
+                variants: ['원칙']
+            },
+            {
+                term: '조형성',
+                mainDef: '조(造 만들다) + 형(形 모양) + 성(性 성질) -> 모양이나 형태를 만들어 보여 주는 예술적인 성질',
+                translations: { en: { term: 'formativeness / plasticity', mainDef: 'the artistic quality of creating and presenting shapes or forms.' } },
+                examples: [{ kor: '이 조각은 단순하지만 뛰어난 조형성을 가지고 있어요.', eng: 'This sculpture is simple, but it has outstanding formativeness.' }],
+                variants: ['조형성', '조형성을']
+            },
+            {
+                term: '제작자',
+                mainDef: '제(製 만들다) + 작(作 만들다) + 자(者 사람) -> 어떤 작품이나 물건, 동영상을 직접 만든 사람',
+                translations: { en: { term: 'creator / maker / producer', mainDef: 'the person who personally made some work, item, or video.' } },
+                examples: [{ kor: '이 영화의 제작자가 직접 무대 인사를 했어요.', eng: 'The producer of this film personally came out to greet the audience.' }],
+                variants: ['제작자', '제작자만이']
+            },
+            {
+                term: '담아내다',
+                mainDef: '어떤 생각, 감정, 이야기를 작품이나 글 속에 잘 표현해서 보여 주다',
+                translations: { en: { term: 'to capture / to incorporate (into)', mainDef: 'to express thoughts, feelings, or stories well within a work or piece of writing.' } },
+                examples: [{ kor: '이 사진은 시골의 풍경을 잘 담아냈어요.', eng: 'This photograph beautifully captures the rural scenery.' }],
+                variants: ['담아내다', '담아내는']
+            },
+            {
+                term: '담기다',
+                mainDef: '어떤 내용이나 감정이 작품, 글, 그릇 속에 들어 있게 되다',
+                translations: { en: { term: 'to be contained / to be put into', mainDef: 'for some content or feeling to come to be inside a work, piece of writing, or container.' } },
+                examples: [{ kor: '이 시에는 작가의 깊은 슬픔이 담겨 있어요.', eng: 'The poet\'s deep sorrow is contained in this poem.' }],
+                variants: ['담기다', '담기기']
+            },
+            {
+                term: '시도',
+                mainDef: '시(試 시험하다) + 도(圖 그리다) -> 어떤 일을 이루어 보려고 처음으로 해 보는 것',
+                translations: { en: { term: 'attempt / trial', mainDef: 'a first effort made to achieve something.' } },
+                examples: [{ kor: '실패해도 새로운 시도를 멈추지 마세요.', eng: 'Even if you fail, don\'t stop making new attempts.' }],
+                variants: ['시도', '시도들이']
+            },
+            {
+                term: '더불어',
+                mainDef: '어떤 일과 함께, 또는 그것에 덧붙여',
+                translations: { en: { term: 'together with / in addition to', mainDef: 'along with something, or in addition to it.' } },
+                examples: [{ kor: '경제 성장과 더불어 환경 문제도 심각해졌어요.', eng: 'Together with economic growth, environmental problems have also become serious.' }],
+                variants: ['더불어']
+            },
+            {
+                term: '현대 들어',
+                mainDef: '현(現 지금) + 대(代 시대) -> 옛날과 달리 지금의 시대로 접어들면서',
+                translations: { en: { term: 'entering modern times / in modern times', mainDef: 'as we enter the present era, unlike the past.' } },
+                examples: [{ kor: '현대 들어 사람들의 평균 수명이 크게 길어졌어요.', eng: 'In modern times, the average human lifespan has become much longer.' }],
+                variants: ['현대 들어', '현대들어']
+            },
+            {
+                term: '허물어지다',
+                mainDef: '쌓여 있거나 세워져 있던 것이 무너져서 사라지다',
+                translations: { en: { term: 'to collapse / to break down', mainDef: 'for something that was built up or standing to fall apart and disappear.' } },
+                examples: [{ kor: '오랜 편견이 점점 허물어지고 있어요.', eng: 'Long-standing prejudices are gradually breaking down.' }],
+                variants: ['허물어지다', '허물어지고']
+            },
+            {
+                term: '접목하다',
+                mainDef: '접(接 잇다) + 목(木 나무) -> 원래 다른 두 가지를 이어 붙여 새로운 것을 만들어 내다',
+                translations: { en: { term: 'to graft / to combine', mainDef: 'to join two originally different things together to create something new.' } },
+                examples: [{ kor: '전통과 현대 기술을 접목한 제품이 인기예요.', eng: 'Products that graft tradition with modern technology are popular.' }],
+                variants: ['접목하다', '접목하는']
+            },
+            {
+                term: '덕분에',
+                mainDef: '덕(德 덕) + 분(分 나누다) -> 어떤 사람이나 일의 도움이나 영향으로 좋은 결과를 얻어',
+                translations: { en: { term: 'thanks to', mainDef: 'as a result of the help or influence of some person or thing, in a positive sense.' } },
+                examples: [{ kor: '친구 덕분에 시험을 잘 봤어요.', eng: 'Thanks to my friend, I did well on the exam.' }],
+                variants: ['덕분에']
+            },
+            {
+                term: '디자인을 담는 미술관 전시',
+                mainDef: '전(展 펴다) + 시(示 보이다) -> 디자인 제품을 작품처럼 모아서 보여 주는 미술관의 행사',
+                translations: { en: { term: 'museum exhibition that features design', mainDef: 'a museum event that gathers and displays design products as if they were artworks.' } },
+                examples: [{ kor: '서울에서 유명 가구 브랜드의 디자인을 담는 미술관 전시가 열렸어요.', eng: 'A museum exhibition featuring designs from a famous furniture brand was held in Seoul.' }],
+                variants: ['디자인을 담는 미술관 전시'],
+                subDefs: [
+                    { subTerm: '• 미술관', subDef: '미(美 아름답다) + 술(術 기술) + 관(館 큰 집) -> 그림이나 조각 같은 예술 작품을 모아서 보여 주는 곳' }
+                ]
+            },
+            {
+                term: '심심치 않게',
+                mainDef: '드물지 않게, 꽤 자주 일어나는 정도로',
+                translations: { en: { term: 'quite often / not rarely', mainDef: 'often enough that it is not rare.' } },
+                examples: [{ kor: '요즘 거리에서 외국인을 심심치 않게 볼 수 있어요.', eng: 'These days you can see foreigners on the street quite often.' }],
+                variants: ['심심치 않게']
+            },
+            {
+                term: '재정의',
+                mainDef: '재(再 다시) + 정(定 정하다) + 의(義 뜻) -> 이미 알려진 어떤 것의 의미나 기준을 다시 새롭게 정하는 일',
+                translations: { en: { term: 'redefinition', mainDef: 'the act of newly setting again the meaning or criteria of something already known.' } },
+                examples: [{ kor: '시대가 바뀌면서 성공의 재정의가 필요해요.', eng: 'As times change, a redefinition of success is needed.' }],
+                variants: ['재정의', '재정의되고']
+            },
+            {
+                term: '과정',
+                mainDef: '과(過 지나다) + 정(程 길) -> 어떤 일이 시작해서 끝날 때까지 지나가는 단계나 흐름',
+                translations: { en: { term: 'process', mainDef: 'the stages or flow that something goes through from beginning to end.' } },
+                examples: [{ kor: '결과보다 과정이 더 중요할 때가 많아요.', eng: 'Often the process is more important than the result.' }],
+                variants: ['과정', '과정에서']
+            },
+            {
+                term: '모호해지다',
+                mainDef: '모(摸 모으다) + 호(糊 풀) -> 의미나 구분이 분명하지 않고 흐릿하게 변해 가다',
+                translations: { en: { term: 'to become ambiguous / vague', mainDef: 'for meaning or distinctions to gradually become unclear and blurry.' } },
+                examples: [{ kor: '온라인과 오프라인의 경계가 점점 모호해지고 있어요.', eng: 'The boundary between online and offline is gradually becoming ambiguous.' }],
+                variants: ['모호해지다', '모호해지는']
+            },
+            {
+                term: '펼쳐지다',
+                mainDef: '접혀 있거나 좁게 있던 것이 활짝 열리거나 눈앞에 넓게 나타나다',
+                translations: { en: { term: 'to unfold / to spread out', mainDef: 'for something folded or compact to open wide or appear broadly before one\'s eyes.' } },
+                examples: [{ kor: '산 위에 올라가니 멋진 풍경이 펼쳐졌어요.', eng: 'When I climbed up the mountain, a wonderful scene unfolded.' }],
+                variants: ['펼쳐지다', '펼쳐질까요']
+            }
+        ];
+
+        const QUIZ_LIST = [
+            {
+                id: 1,
+                textParts: ["과거에는 실생활에 쓰이는 제품을 만드는 장인과 감상을 위한 작품을 만드는 예술가들이 선명하게 ", "."],
+                answer: '구분됐어요',
+                hint: '서로 다른 것들이 종류나 영역에 따라 분명하게 나누어지다. (단어 은행의 기본형 "구분되다"를 과거형 문장으로 자연스럽게 변형하세요)',
+                explanation: "맞아요! 원형 '구분되다'가 과거형 어미와 결합하여 '구분됐어요'로 알맞게 쓰였네요. 과거에는 장인과 예술가의 영역이 분명하게 나누어져 있었다는 의미예요.",
+                textParts_eng: ["In the past, craftsmen who made everyday products and artists who created works for appreciation were clearly ", "."],
+                answer_eng: "distinguished"
+            },
+            {
+                id: 2,
+                textParts: ["바우하우스는 흩어져 있던 미술 분야를 통합하면서 공예와 미술의 결합을 ", "."],
+                answer: '추구했어요',
+                hint: '어떤 목표나 이상을 얻기 위해 끊임없이 따라가며 노력하다. (기본형 "추구하다"를 과거형으로 자연스럽게 변형하세요)',
+                explanation: "정확해요! 원형 '추구하다'가 과거형 어미 '-았/었어요'와 결합하여 '추구했어요'로 완벽하게 활용되었어요. 바우하우스가 적극적으로 두 영역을 결합하려 노력했다는 점을 보여줘요.",
+                textParts_eng: ["The Bauhaus, while integrating scattered art fields, ", " the combination of crafts and fine art."],
+                answer_eng: "pursued"
+            },
+            {
+                id: 3,
+                textParts: ["바우하우스의 예술가들은 조형의 아름다움을 지배하는 ", " 원리가 있다고 믿었어요."],
+                answer: '단일한',
+                hint: '둘 이상이 아니라 오직 하나로만 이루어진. (기본형 그대로 뒤의 명사 "원리"를 수식해요)',
+                explanation: "그렇죠! '단일한'이 그대로 뒤의 명사 '원리'를 자연스럽게 꾸며 주고 있어요. 바우하우스가 아름다움을 지배하는 '하나의' 원리를 믿었다는 핵심 사상을 담고 있어요.",
+                textParts_eng: ["The Bauhaus artists believed there was a ", " principle governing the beauty of formative arts."],
+                answer_eng: "single"
+            },
+            {
+                id: 4,
+                textParts: ["바우하우스 디자인은 구체적인 ", "나 상징을 억제하고 단순하면서 실용적인 제품을 만들었어요."],
+                answer: '비유',
+                hint: '어떤 사물을 직접 설명하지 않고 비슷한 다른 것에 빗대어 표현하는 방법.',
+                explanation: "정답! 원형 '비유' 그대로 빈칸에 들어가요. 바우하우스는 직접적인 형태를 추구했기에 무엇을 다른 것에 빗대는 방식을 의도적으로 줄였다는 점을 보여줘요.",
+                textParts_eng: ["Bauhaus design suppressed concrete ", " and symbols, creating simple and practical products."],
+                answer_eng: "metaphors"
+            },
+            {
+                id: 5,
+                textParts: ["바우하우스의 디자인은 구체적인 비유나 ", "을/를 억제하고, 형태 그 자체에 집중했어요."],
+                answer: '상징',
+                hint: '눈에 보이지 않는 생각이나 개념을 보여주기 위해 사용되는 구체적인 표시.',
+                explanation: "딩동댕! 원형 '상징'이 정답이에요. 비둘기가 평화를 의미하는 것처럼, 어떤 개념을 다른 사물로 나타내는 표시를 가리켜요. 바우하우스는 이런 장식적 요소를 의도적으로 배제했죠.",
+                textParts_eng: ["Bauhaus design suppressed concrete metaphors and ", ", focusing on form itself."],
+                answer_eng: "symbols"
+            },
+            {
+                id: 6,
+                textParts: ["바우하우스는 \"기능적인 것이 아름답다\"는 정신 아래 단순하면서 ", " 제품들을 만들었어요."],
+                answer: '실용적인',
+                hint: '보기 좋은 것보다 실제 생활에서 쓸모가 있는 것을 더 중요하게 여기는. (기본형 "실용적"을 뒤의 명사 "제품"을 수식하게 변형하세요)',
+                explanation: "훌륭해요! 원형 '실용적'이 뒤의 명사 '제품'을 꾸미도록 '-인' 어미와 결합해 '실용적인'으로 자연스럽게 변형되었어요. 바우하우스가 추구한 핵심 가치 중 하나죠.",
+                textParts_eng: ["Under the spirit of 'the functional is beautiful', Bauhaus made simple and ", " products."],
+                answer_eng: "practical"
+            },
+            {
+                id: 7,
+                textParts: ["바우하우스의 예술가들은 가장 우수한 ", "을/를 만드는 데 전념했어요."],
+                answer: '표준',
+                hint: '모두가 따라야 할 기본이 되는 기준이나 본보기.',
+                explanation: "잘하셨어요! 원형 '표준' 그대로 정답이에요. 바우하우스는 산업 시대로 넘어가던 시기에 모든 사람들이 따를 수 있는 '기준'을 세우는 일에 몰두했다는 점을 보여줘요.",
+                textParts_eng: ["The Bauhaus artists devoted themselves to creating the most excellent ", "."],
+                answer_eng: "standard"
+            },
+            {
+                id: 8,
+                textParts: ["현대 들어 일상과 예술의 경계가 점점 ", " 있어요."],
+                answer: '허물어지고',
+                hint: '쌓여 있거나 세워져 있던 것이 무너져 사라지다. (기본형 "허물어지다"를 진행형 "-고 있다" 구조에 맞게 변형하세요)',
+                explanation: "퍼펙트! 원형 '허물어지다'가 진행형 구조 '-고 있다'와 결합하기 위해 '허물어지고'로 올바르게 활용되었어요. 일상과 예술 사이의 벽이 점점 무너지고 있다는 현대의 변화를 강조해요.",
+                textParts_eng: ["In modern times, the boundary between daily life and art is gradually ", "."],
+                answer_eng: "breaking down"
+            },
+            {
+                id: 9,
+                textParts: ["예술과 디자인의 경계는 현대에도 많은 예술가와 디자이너에 의해 계속해서 ", "되고 있어요."],
+                answer: '재정의',
+                hint: '이미 알려진 어떤 것의 의미나 기준을 다시 새롭게 정하는 일. (단어 은행의 기본형 그대로 들어가요)',
+                explanation: "맞아요! 원형 '재정의'가 그대로 들어가서 '재정의되고 있어요'라는 진행형을 만들어요. 한 번 정해진 의미가 시대에 따라 끊임없이 새롭게 정의된다는 흐름을 잘 표현해 주죠.",
+                textParts_eng: ["Even today, the boundary between art and design continues to be ", " by many artists and designers."],
+                answer_eng: "redefined"
+            },
+            {
+                id: 10,
+                textParts: ["점점 더 ", " 예술과 디자인의 관계는 앞으로 우리에게 어떤 새로운 작품을 보여줄까요?"],
+                answer: '모호해지는',
+                hint: '의미나 구분이 분명하지 않고 흐릿하게 변해 가다. (기본형 "모호해지다"를 뒤의 명사 "관계"를 수식하게 변형하세요)',
+                explanation: "정확해요! 원형 '모호해지다'가 뒤의 명사 '관계'를 꾸미도록 관형사형 어미 '-는'과 결합해 '모호해지는'으로 완벽하게 변형되었어요. 영상이 마무리하며 던지는 핵심 메시지를 담고 있어요.",
+                textParts_eng: ["What new works will the increasingly ", " relationship between art and design show us in the future?"],
+                answer_eng: "ambiguous"
+            }
+        ];
+
+        const ANSWER_CHOICES = [
+            '구분되다', '추구하다', '단일한', '비유', '상징',
+            '실용적', '표준', '허물어지다', '재정의', '모호해지다',
+            '융합되다', '분산되다'
+        ];
+        
+        const DISCUSS_DATA = [
+            {
+                id: 1,
+                questionKor: "동영상에서는 예술적 사고방식을 '내 안의 주제를 표현하는 것', 디자인적 사고방식을 '내 밖의 문제를 해결하는 것'이라고 정의했어요.\n여러분은 이 전통적인 정의가 오늘날에도 여전히 유효하다고 생각하나요? 그 이유는 무엇인가요?",
+                questionEng: "The video defined the artistic mindset as 'expressing themes within me' and the design mindset as 'solving problems outside me'.\nDo you think these traditional definitions are still valid today? Why or why not?",
+                vocab: [
+                    { term: "사고방식", def: "mindset / way of thinking" },
+                    { term: "표현하다", def: "to express" },
+                    { term: "해결하다", def: "to solve / resolve" },
+                    { term: "여전히 유효하다", def: "to still be valid" }
+                ]
+            },
+            {
+                id: 2,
+                questionKor: "\"예술은 그 자체가 목적이고, 디자인은 수단적이다\"라는 말에 동의하나요?\n스마트폰이나 자동차처럼 우리가 매일 사용하는 디자인 제품도 그 자체로 예술적 가치를 가질 수 있다고 생각하나요?",
+                questionEng: "Do you agree with the statement \"art is an end in itself, and design is a means\"?\nDo you think design products we use every day, like smartphones or cars, can have artistic value in themselves?",
+                vocab: [
+                    { term: "그 자체가 목적인 것", def: "something that is an end in itself" },
+                    { term: "수단적", def: "instrumental / serving as a means" },
+                    { term: "예술적 가치", def: "artistic value" }
+                ]
+            },
+            {
+                id: 3,
+                questionKor: "바우하우스는 \"기능적인 것이 아름답다\"고 믿으며 비유나 상징을 억제했어요.\n여러분은 제품의 진정한 아름다움이 '기능'에서 온다고 생각하나요, 아니면 '장식', '형태', 혹은 '스토리'에서 온다고 생각하나요?",
+                questionEng: "The Bauhaus believed \"the functional is beautiful\" and suppressed metaphors and symbols.\nDo you think a product's true beauty comes from 'function', or from 'decoration', 'form', or 'storytelling'?",
+                vocab: [
+                    { term: "기능적", def: "functional" },
+                    { term: "억제하다", def: "to suppress / restrain" },
+                    { term: "진정한 아름다움", def: "true beauty" },
+                    { term: "장식", def: "decoration / ornament" }
+                ]
+            },
+            {
+                id: 4,
+                questionKor: "포스트모던 디자인은 \"아름다움의 원칙은 존재하지 않는다\"고 주장하며 제작자만의 스토리를 작품에 담아내려고 했어요.\n여러분은 기능보다 스토리나 개성이 강조된 제품을 구매한 경험이 있나요? 그 제품의 어떤 점이 마음에 들었나요?",
+                questionEng: "Postmodern design claimed \"principles of beauty do not exist\" and tried to capture the creator's own story in the work.\nHave you ever bought a product where the story or personality is emphasized over function? What about that product appealed to you?",
+                vocab: [
+                    { term: "원칙", def: "principle / rule" },
+                    { term: "제작자", def: "creator / maker" },
+                    { term: "담아내다", def: "to capture / incorporate into" },
+                    { term: "강조되다", def: "to be emphasized" }
+                ]
+            },
+            {
+                id: 5,
+                questionKor: "디자인은 예쁜데 빨리 망가지거나 실용성이 떨어지는 제품을 흔히 '예쁜 쓰레기'라고 불러요.\n이러한 '예쁜 쓰레기'를 소비하는 문화는 누구를 위한 것일까요? 그리고 우리 사회나 환경에 어떤 장점과 단점을 가져올까요?",
+                questionEng: "Products that look pretty but break quickly or lack practicality are often called \"pretty trash\".\nWho is this culture of consuming \"pretty trash\" for? And what advantages and disadvantages does it bring to our society or environment?",
+                vocab: [
+                    { term: "실용성", def: "practicality / utility" },
+                    { term: "흔히", def: "commonly / often" },
+                    { term: "장점과 단점", def: "pros and cons / advantages and disadvantages" },
+                    { term: "예쁜 쓰레기", def: "\"pretty trash\" — a beautiful but useless product" }
+                ]
+            },
+            {
+                id: 6,
+                questionKor: "최근에는 칫솔이나 의자 같은 일상적인 디자인 제품이 미술관에 전시되는 일이 심심치 않게 일어나고 있어요.\n이런 현상은 디자인의 위상을 높여주는 긍정적인 변화일까요, 아니면 예술의 가치를 떨어뜨리는 변화일까요? 여러분의 생각은 어떤가요?",
+                questionEng: "Recently, it is not uncommon for everyday design products like toothbrushes or chairs to be exhibited in art museums.\nIs this a positive change that elevates the status of design, or does it diminish the value of art? What do you think?",
+                vocab: [
+                    { term: "심심치 않게", def: "quite often / not rarely" },
+                    { term: "디자인을 담는 미술관 전시", def: "museum exhibition featuring design" },
+                    { term: "위상을 높이다", def: "to raise the status" },
+                    { term: "가치를 떨어뜨리다", def: "to lower the value" }
+                ]
+            },
+            {
+                id: 7,
+                questionKor: "동영상에서는 일상과 예술의 경계가 점점 허물어지고 있다고 했어요.\n이 '경계의 허물어짐'은 우리 일상생활이나 문화에 구체적으로 어떤 영향을 미칠까요? 여러분의 일상에서 그런 예를 찾아볼 수 있나요?",
+                questionEng: "The video said the boundary between daily life and art is gradually breaking down.\nWhat specific influence does this 'breaking down of boundaries' have on our daily lives or culture? Can you find such examples in your daily life?",
+                vocab: [
+                    { term: "경계", def: "boundary / borderline" },
+                    { term: "허물어지다", def: "to collapse / break down" },
+                    { term: "구체적으로", def: "specifically / concretely" },
+                    { term: "영향을 미치다", def: "to have an influence on" }
+                ]
+            },
+            {
+                id: 8,
+                questionKor: "가성비가 좋은 물건을 추구하는 소비자와 비싸지만 디자인이 뛰어난 명품을 추구하는 소비자가 있어요.\n여러분의 나라에서는 이 두 가지 소비 성향 중 어느 쪽이 더 흔한가요? 그 차이는 어디에서 비롯된다고 생각하나요?",
+                questionEng: "There are consumers who pursue cost-effective products, and others who pursue expensive but well-designed luxury items.\nWhich of these two consumption tendencies is more common in your country? Where do you think the difference comes from?",
+                vocab: [
+                    { term: "가성비", def: "cost-effectiveness (가격 대비 성능)" },
+                    { term: "추구하다", def: "to pursue / seek after" },
+                    { term: "소비 성향", def: "consumption tendency" },
+                    { term: "비롯되다", def: "to originate from / stem from" }
+                ]
+            },
+            {
+                id: 9,
+                questionKor: "만약 '보기에는 아름답지만 앉기에 불편한 의자'와 '평범하지만 아주 편안한 의자' 중 하나만 선택해야 한다면 무엇을 고르겠어요?\n그 선택이 여러분의 삶의 가치관에 대해 무엇을 말해 준다고 생각하나요?",
+                questionEng: "If you had to choose only one between 'a beautiful but uncomfortable chair' and 'an ordinary but very comfortable chair', which would you choose?\nWhat do you think that choice says about your values in life?",
+                vocab: [
+                    { term: "평범하다", def: "to be ordinary / unremarkable" },
+                    { term: "편안하다", def: "to be comfortable" },
+                    { term: "가치관", def: "set of values / outlook on life" },
+                    { term: "고르다", def: "to choose / pick" }
+                ]
+            },
+            {
+                id: 10,
+                questionKor: "동영상은 예술과 디자인의 관계가 점점 더 모호해지고 있으며 앞으로도 계속 재정의될 것이라고 했어요.\n먼 미래에는 '예술가'와 '디자이너'라는 직업의 구분이 완전히 사라질까요, 아니면 새로운 형태로 다시 나누어질까요? 여러분의 예측은 무엇인가요?",
+                questionEng: "The video said that the relationship between art and design is becoming increasingly ambiguous and will continue to be redefined.\nIn the distant future, will the distinction between 'artists' and 'designers' disappear entirely, or be divided again in new ways? What is your prediction?",
+                vocab: [
+                    { term: "모호해지다", def: "to become ambiguous / vague" },
+                    { term: "재정의되다", def: "to be redefined" },
+                    { term: "구분이 사라지다", def: "for distinctions to disappear" },
+                    { term: "예측", def: "prediction / forecast" }
+                ]
+            }
+        ];
+
+        const LEVEL_DEFINITIONS = { 
+            "A1": { title: "Novice", desc: "Basic everyday expressions." }, "A1+": { title: "Pre-Beginner", desc: "Can handle slightly more than A1." },
+            "A2": { title: "Beginner", desc: "Frequently used sentences." }, "A2+": { title: "Upper Beginner", desc: "Can speak a bit more smoothly." }, 
+            "B1": { title: "Pre-Intermediate", desc: "Standard speech main points." }, "B1+": { title: "Lower Intermediate", desc: "Stronger B1. More comfortable carrying conversations." },
+            "B2": { title: "Intermediate", desc: "Complex text main ideas." }, "B2+": { title: "Upper Intermediate", desc: "Near C1. Can argue a point logically." },
+            "C1": { title: "Advanced", desc: "Long, demanding texts." }, "C1+": { title: "Upper Advanced", desc: "Very strong C1, approaching native-like flexibility." },
+            "C2": { title: "Proficient", desc: "Can understand virtually everything heard or read." }
+        };
+
+        // --- Icons ---
+        const HomeIcon = ({className}) => (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square" strokeLinejoin="miter" className={className}><rect x="3" y="3" width="18" height="18" rx="0" ry="0" /><path d="M3 9h18" /><path d="M9 21V9" /></svg>);
+        const VocabIcon = ({className}) => (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square" strokeLinejoin="miter" className={className}><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>);
+        const QuizIcon = ({className}) => (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square" strokeLinejoin="miter" className={className}><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>);
+        const DiscussIcon = ({className}) => (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square" strokeLinejoin="miter" className={className}><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>);
+        const VideoIcon = ({className}) => (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square" strokeLinejoin="miter" className={className}><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>);
+        const TranslateIcon = ({className}) => (<svg viewBox="0 0 24 24" fill="currentColor" className={className}><path d="M12.87 15.07l-2.54-2.51.03-.03A17.52 17.52 0 0014.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.09-.02.67-.02zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z" /></svg>);
+        const ExternalLinkIcon = ({className}) => (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square" strokeLinejoin="miter" className={className}><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /><polyline points="15 3 21 3 21 9" /><line x1="10" y1="14" x2="21" y2="3" /></svg>);
+        const SparklesIcon = ({className}) => (<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className={className}><path d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 00-1.423 1.423z" /></svg>);
+        const RewindIcon = ({ className }) => (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square" strokeLinejoin="miter" className={className}><polygon points="11 19 2 12 11 5 11 19"></polygon><polygon points="22 19 13 12 22 5 22 19"></polygon></svg>);
+        const ForwardIcon = ({ className }) => (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square" strokeLinejoin="miter" className={className}><polygon points="13 19 22 12 13 5 13 19"></polygon><polygon points="2 19 11 12 2 5 2 19"></polygon></svg>);
+        const PauseIcon = ({ className }) => (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={className}><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>);
+        const PauseIconSolid = ({ className }) => (<svg viewBox="0 0 24 24" fill="currentColor" className={className}><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>);
+        const PlayIconSolid = ({ className }) => (<svg viewBox="0 0 24 24" fill="currentColor" className={className}><path d="M5 3l14 9-14 9V3z" /></svg>);
+        const MenuIcon = ({ className }) => (
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square" strokeLinejoin="miter" className={className}>
+                <line x1="3" y1="12" x2="21" y2="12"/>
+                <line x1="3" y1="6" x2="21" y2="6"/>
+                <line x1="3" y1="18" x2="21" y2="18"/>
+            </svg>
+        );
+
+        // --- Shared Configurations (Optimized) ---
+        const NAV_ITEMS = [
+            { id: 'home', label: '시작 페이지', icon: HomeIcon },
+            { id: 'video', label: '동영상 자료', icon: VideoIcon },
+            { id: 'vocab', label: '핵심 어휘', icon: VocabIcon },
+            { id: 'quiz', label: '내용 확인 퀴즈', icon: QuizIcon },
+            { id: 'discuss', label: '생각해 보기', icon: DiscussIcon }
+        ];
+
+        const HOME_CARDS = [
+            { tag: "Vocab", title: "핵심 어휘", description: <>본문에 나온 단어와 표현을 <br/>학습해 보세요.</>, target: 'vocab' },
+            { tag: "Quiz", title: "내용 퀴즈", description: <>본문을 제대로 이해했는지 <br/>확인해 보세요.</>, target: 'quiz' },
+            { tag: "Discuss", title: "생각해 보기", description: <>본문에 대해 깊게 생각하고 <br/>표현해 보세요.</>, target: 'discuss' }
+        ];
+
+        // --- Helper Components & Utils ---
+        const callGeminiWithBackoff = async (payload, maxRetries = 5) => {
+            const apiKey = ""; 
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+            const delays = [1000, 2000, 4000, 8000, 16000];
+
+            for (let i = 0; i <= maxRetries; i++) {
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        if (response.status === 401 || response.status === 403) {
+                            throw new Error(`API 인증 오류(HTTP ${response.status})입니다. 유효한 API 키가 필요합니다.\n${errorText}`);
+                        }
+                        if (response.status === 400) {
+                             throw new Error(`잘못된 요청(HTTP 400)입니다.\n${errorText}`);
+                        }
+                        throw new Error(`HTTP Error: ${response.status} - ${errorText}`);
+                    }
+
+                    return await response.json();
+                } catch (error) {
+                    if (error.message.includes('인증 오류') || error.message.includes('잘못된 요청')) {
+                        throw error;
+                    }
+                    if (i === maxRetries) throw error;
+                    await new Promise(resolve => setTimeout(resolve, delays[i]));
+                }
+            }
+        };
+
+        const TransBtn = ({ onClick, isShowing, labelOff='ENG', labelOn='HIDE', className = "" }) => (
+            <button onClick={(e) => { e.stopPropagation(); onClick(e); }} className={`flex items-center gap-1 text-[8px] font-normal text-gray-300 hover:text-gray-500 font-sans transition-colors cursor-pointer border-none p-0 tracking-widest uppercase ${className}`}>
+                <TranslateIcon className="w-2.5 h-2.5 opacity-80" />{isShowing ? labelOn : labelOff}
+            </button>
+        );
+
+        // --- Main Views ---
+        const Header = ({ isExpanded, setIsExpanded, activeTab, setActiveTab }) => (
+            <>
+                <nav className={`sticky top-0 z-50 bg-white border-b border-gray-100 hidden lg:flex items-center justify-between px-8 overflow-hidden transition-all duration-500 ease-in-out ${isExpanded ? 'h-16 opacity-100' : 'h-0 opacity-0 border-none'} print:hidden`}>
+                    <div className="flex items-center cursor-pointer text-left" onClick={() => setActiveTab('home')}><span className="text-lg font-bold font-sans tracking-tighter text-black whitespace-nowrap">OpenKoreanLearningLab</span></div>
+                    <div className="flex items-center justify-end gap-8 pr-12 flex-1">
+                        {NAV_ITEMS.map((menu) => (
+                            <button key={menu.id} onClick={() => setActiveTab(menu.id)} className={`text-sm font-medium transition-colors font-sans relative ${activeTab === menu.id ? 'text-black' : 'text-gray-400 hover:text-gray-600'}`}>{menu.label}{activeTab === menu.id && <div className="absolute -bottom-6 left-0 w-full h-0.5 bg-black"></div>}</button>
+                        ))}
+                    </div>
+                </nav>
+                
+                {/* Fixed Menu Button */}
+                <button 
+                    onClick={() => setIsExpanded(!isExpanded)}
+                    className={`fixed top-0 right-0 z-[60] hidden lg:flex items-center justify-center w-10 h-16 bg-white hover:bg-gray-50 transition-colors ${isExpanded ? 'border-b border-gray-100' : 'border-transparent'} print:hidden`}
+                    title={isExpanded ? "메뉴 접기" : "메뉴 펼치기"}
+                >
+                    <MenuIcon className="w-5 h-5 text-black" />
+                </button>
+            </>
+        );
+
+        const HomeListItem = ({ title, description, onClick }) => (
+            <div className="cursor-pointer group flex flex-col items-center text-center p-8 border border-transparent hover:bg-gray-50 transition-all rounded-sm print:p-2" onClick={onClick}>
+                <h2 className="text-xl font-bold text-[#1a1a1a] mb-3 font-serif group-hover:text-gray-600 transition-colors print:text-[14px] print:mb-1">{title}</h2>
+                <p className="text-sm text-[#444444] leading-relaxed font-serif print:text-[12px]">{description}</p>
+            </div>
+        );
+
+        const HomeView = ({ setActiveTab, userLevel }) => {
+            const levelInfo = LEVEL_DEFINITIONS[userLevel] || { title: "Unknown" };
+            return (
+                <div className="animate-fade-in max-w-5xl mx-auto w-full px-6 lg:px-0 pt-[3.75rem] pb-8 flex flex-col items-center h-full justify-center print:pt-4">
+                    <div className="flex flex-col items-center justify-center text-center w-full mb-16 print:mb-8">
+                        <div className="flex items-center gap-3 mb-6 print:mb-4"> 
+                            <span className="px-3 py-1 bg-gray-900 text-white text-[10px] font-sans font-bold tracking-widest uppercase print:text-[12px]">예술</span>
+                            <div className="flex items-center border border-gray-900 px-3 py-1 text-[10px] font-sans tracking-widest uppercase text-gray-900 print:text-[12px]">
+                                <span className="font-bold">{userLevel}</span>
+                                <span className="mx-2 w-px h-2.5 bg-gray-300"></span>
+                                <span className="font-medium">{levelInfo.title}</span>
+                            </div>
+                        </div>
+                        <h1 className="font-serif text-3xl md:text-5xl lg:text-6xl text-black leading-tight mb-4 font-bold print:text-[22px] print:leading-tight">
+                            예술과 디자인의 차이
+                        </h1>
+                        <p className="font-serif text-gray-500 text-sm md:text-base italic mb-8 max-w-2xl leading-relaxed print:text-[16px] print:mb-4">
+                            예술과 디자인은 어떻게 다를까? [디자인 VS 예술]
+                        </p>
+                        
+                        <div 
+                            onClick={() => setActiveTab('video')}
+                            className="group relative w-full max-w-lg aspect-video cursor-pointer overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 bg-black print:hidden"
+                        >
+                            <img 
+                                src={`https://img.youtube.com/vi/${VIDEO_CONFIG.YOUTUBE_VIDEO_ID}/maxresdefault.jpg`} 
+                                alt="Video Thumbnail" 
+                                className="w-full h-full object-cover opacity-90 group-hover:opacity-60 group-hover:scale-105 transition-all duration-500"
+                            />
+                            <div className="absolute inset-0 flex items-center justify-center">
+                                <div className="w-16 h-16 bg-white/90 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300 backdrop-blur-sm">
+                                    <PlayIconSolid className="w-6 h-6 text-black ml-1" />
+                                </div>
+                            </div>
+                            <div className="absolute bottom-4 left-0 right-0 text-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                <span className="text-white text-xs font-bold font-sans tracking-widest uppercase bg-black px-4 py-2">동영상 보기</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full pt-0 max-w-4xl print:flex print:flex-row print:justify-center print:gap-4">
+                        {HOME_CARDS.map((card, idx) => (<HomeListItem key={idx} title={card.title} description={card.description} onClick={() => setActiveTab(card.target)} />))}
+                    </div>
+                </div>
+            );
+        };
+
+        const VideoSidebarVocabCard = ({ word, activeVocabTerm, sidebarVocabRefs }) => {
+            const [showTrans, setShowTrans] = useState(false);
+            const trans = word.translations?.en;
+            return (
+                <div ref={el => sidebarVocabRefs.current[word.term] = el} className={`p-5 border-b border-gray-100 last:border-0 transition-all duration-500 bg-white print:p-1 print:mb-0.5 print:border-transparent print:break-inside-avoid`}>
+                    <div className="flex justify-between items-baseline mb-2 print:flex-row print:items-baseline print:justify-start print:mb-0 print:leading-none">
+                        <h3 className={`text-lg font-serif font-bold print:text-[10px] print:leading-none ${activeVocabTerm === word.term ? 'text-black underline decoration-1 underline-offset-4 print:no-underline' : 'text-gray-900'}`}>{word.term}</h3>
+                        {/* Only English Term printed, strictly matching criteria */}
+                        {trans?.term && (
+                            <span className="hidden print:inline-block print:text-[6px] print:text-gray-400 print:opacity-20 print:ml-1 print:font-sans print:leading-none">
+                                {trans.term}
+                            </span>
+                        )}
+                        <div className="print:hidden"><TransBtn onClick={() => setShowTrans(!showTrans)} isShowing={showTrans} /></div>
+                    </div>
+                    <p className="text-sm font-serif text-gray-600 mb-3 leading-relaxed print:text-[9px] print:leading-[1.15] print:mb-0">{word.mainDef}</p>
+                    
+                    {/* Screen-only translations */}
+                    {showTrans && trans?.mainDef && (<div className="mt-2 mb-4 pt-2 border-t border-gray-100 animate-fade-in print:hidden"><p className="text-xs font-ui text-gray-500">{trans.mainDef}</p></div>)}
+                    
+                    {word.subDefs && word.subDefs.length > 0 && (
+                        <div className="space-y-2 mt-3 pl-3 border-l border-gray-200 print:mt-0 print:space-y-0 print:border-l-[1px]">
+                            {word.subDefs.map((sub, i) => (
+                                <div key={i} className="print:mb-0">
+                                    <p className="text-xs font-bold text-gray-800 font-ui mb-0.5 print:text-[8px] print:leading-none print:mb-0">{sub.subTerm}</p>
+                                    <p className="text-xs text-gray-500 font-serif print:text-[8px] print:leading-none print:mb-0">{sub.subDef}</p>
+                                    {showTrans && trans?.subDefs?.[i]?.def && (<p className="text-[10px] text-gray-400 font-ui mt-0.5 italic print:hidden">{trans.subDefs[i].def}</p>)}
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        const VideoVocabPopup = ({ popup, onGlobalClick }) => {
+            const [showTrans, setShowTrans] = useState(false);
+            const trans = popup.data?.translations?.en;
+            const popupWidth = 300; const padding = 20; const windowWidth = window.innerWidth;
+            let leftPos = popup.x - (popupWidth / 2);
+            if (leftPos < padding) leftPos = padding; else if (leftPos + popupWidth > windowWidth - padding) leftPos = windowWidth - popupWidth - padding;
+            useEffect(() => { setShowTrans(false); }, [popup.data]);
+            if (!popup.show || !popup.data) return null;
+            return createPortal(
+                <div className={`fixed z-[9999] bg-white border border-gray-200 p-6 w-[300px] shadow-2xl animate-fade-in print:hidden ${!popup.fixed ? 'pointer-events-none' : ''}`} style={{ left: leftPos, top: popup.y + 16 }} onClick={(e) => e.stopPropagation()}>
+                    <div className="flex items-center justify-between mb-4 pb-2 border-b border-gray-100">
+                        <h3 className="text-xl font-serif font-bold text-gray-900">{popup.data.term}</h3>
+                        {popup.fixed && (<TransBtn onClick={() => setShowTrans(!showTrans)} isShowing={showTrans} />)}
+                    </div>
+                    <p className="text-sm font-serif text-gray-700 leading-relaxed mb-4">{popup.data.mainDef}</p>
+                    {showTrans && popup.fixed && trans?.mainDef && (<div className="mb-4 bg-white border border-gray-100 p-3 animate-fade-in"><p className="text-xs font-ui text-gray-600">{trans.mainDef}</p></div>)}
+                    {popup.fixed && popup.data.subDefs && popup.data.subDefs.length > 0 && (<div className="space-y-3 mt-4">{popup.data.subDefs.map((sub, idx) => (<div key={idx}><p className="text-xs font-bold font-ui text-gray-900 mb-1">{sub.subTerm}</p><p className="text-xs font-serif text-gray-600">{sub.subDef}</p></div>))}</div>)}
+                    <div className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-white border-l border-t border-gray-200 rotate-45"></div>
+                </div>, document.body
+            );
+        };
+
+        const LearnView = ({ updateProgress }) => {
+            const playerRef = useRef(null); 
+            const [videoState, setVideoState] = useState({ player: null, currentTime: 0, duration: 0, isPlaying: false });
+            const [activeLine, setActiveLine] = useState(null);
+            const [translations, setTranslations] = useState({});
+            const [popup, setPopup] = useState({ show: false, fixed: false, data: null, x: 0, y: 0 });
+            const [isLoading, setIsLoading] = useState(true);
+            const [activeVocabTerm, setActiveVocabTerm] = useState(null);
+            const sidebarVocabRefs = useRef({});
+            const scriptRefs = useRef({});
+            const intervalRef = useRef(null);
+            const [isSpeedMenuOpen, setIsSpeedMenuOpen] = useState(false);
+            
+            const [layoutMode, setLayoutMode] = useState('split');
+            const [autoScroll, setAutoScroll] = useState(true);
+            const [showVocab, setShowVocab] = useState(false);
+            const [playbackRate, setPlaybackRate] = useState(1.0);
+
+            useEffect(() => {
+                const loadVideo = () => {
+                    if (window.YT && window.YT.Player) {
+                        new window.YT.Player('youtube-player', {
+                            videoId: VIDEO_CONFIG.YOUTUBE_VIDEO_ID, width: '100%', height: '100%',
+                            playerVars: { 'autoplay': 0, 'controls': 1, 'rel': 0, 'disablekb': 1 },
+                            events: {
+                                'onReady': (event) => { playerRef.current = event.target; setVideoState(prev => ({ ...prev, player: event.target, duration: event.target.getDuration() })); setIsLoading(false); },
+                                'onStateChange': (event) => { if (event.data === window.YT.PlayerState.PLAYING) { startInterval(); updateProgress('learn'); setVideoState(prev => ({ ...prev, isPlaying: true })); } else { stopInterval(); if (event.data === window.YT.PlayerState.PAUSED || event.data === window.YT.PlayerState.ENDED) { setVideoState(prev => ({ ...prev, isPlaying: false })); } } }
+                            }
+                        });
+                    }
+                };
+                if (!window.YT) { const tag = document.createElement('script'); tag.src = "https://www.youtube.com/iframe_api"; const firstScriptTag = document.getElementsByTagName('script')[0]; firstScriptTag.parentNode.insertBefore(tag, firstScriptTag); window.onYouTubeIframeAPIReady = loadVideo; } else { loadVideo(); }
+                return () => stopInterval();
+            }, []);
+
+            useEffect(() => { if (videoState.player && videoState.player.setPlaybackRate) videoState.player.setPlaybackRate(playbackRate); }, [playbackRate, videoState.player]);
+
+            const handleGlobalClick = useCallback(() => { if (popup.fixed) setPopup(prev => ({ ...prev, show: false, fixed: false })); }, [popup.fixed]);
+            useEffect(() => { if (popup.fixed) window.addEventListener('click', handleGlobalClick); return () => window.removeEventListener('click', handleGlobalClick); }, [popup.fixed, handleGlobalClick]);
+
+            useEffect(() => {
+                const handleKeyPress = (e) => {
+                    if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) return;
+                    if (e.code === 'Space') { e.preventDefault(); const player = videoState.player; if (player && typeof player.getPlayerState === 'function') { if (player.getPlayerState() === 1) player.pauseVideo(); else player.playVideo(); } }
+                    if (e.code === 'ArrowLeft') { e.preventDefault(); const currentIndex = VIDEO_SCRIPT_DATA.findIndex(line => line.id === activeLine); if (currentIndex > 0) handleLineClick(VIDEO_SCRIPT_DATA[currentIndex - 1].time[0]); }
+                    if (e.code === 'ArrowRight') { e.preventDefault(); const currentIndex = VIDEO_SCRIPT_DATA.findIndex(line => line.id === activeLine); if (currentIndex !== -1 && currentIndex < VIDEO_SCRIPT_DATA.length - 1) handleLineClick(VIDEO_SCRIPT_DATA[currentIndex + 1].time[0]); else if (currentIndex === -1 && VIDEO_SCRIPT_DATA.length > 0) handleLineClick(VIDEO_SCRIPT_DATA[0].time[0]); }
+                };
+                window.addEventListener('keydown', handleKeyPress); return () => window.removeEventListener('keydown', handleKeyPress);
+            }, [videoState.player, activeLine]);
+
+            const startInterval = () => { 
+                stopInterval(); 
+                intervalRef.current = setInterval(() => {
+                    const p = playerRef.current; 
+                    if (p && p.getCurrentTime) { 
+                        const time = p.getCurrentTime(); 
+                        setVideoState(prev => ({ ...prev, currentTime: time })); 
+                        const currentLine = VIDEO_SCRIPT_DATA.find(line => time >= line.time[0] && time < line.time[1]); 
+                        if (currentLine) setActiveLine(currentLine.id); 
+                    }
+                }, 200); 
+            };
+            
+            const stopInterval = () => { 
+                if (intervalRef.current) { 
+                    clearInterval(intervalRef.current); 
+                    intervalRef.current = null; 
+                } 
+            };
+
+            useEffect(() => { 
+                if (popup.show) return; 
+                if (activeLine && autoScroll && scriptRefs.current[activeLine]) {
+                    scriptRefs.current[activeLine].scrollIntoView({ behavior: 'smooth', block: 'center' }); 
+                }
+            }, [activeLine, autoScroll, popup.show, layoutMode]);
+
+            const handleLineClick = (time) => { const player = videoState.player; if (player) { player.seekTo(time, true); player.playVideo(); } };
+            const toggleTranslation = (id) => setTranslations(prev => ({...prev, [id]: !prev[id]}));
+            const scrollToVocab = (term) => { const element = sidebarVocabRefs.current[term]; if (element) element.scrollIntoView({ behavior: 'smooth', block: 'center' }); };
+            
+            const handleVocabEnter = (e, wordData) => { if (popup.fixed) return; const rect = e.target.getBoundingClientRect(); setPopup({ show: true, fixed: false, data: wordData, x: rect.left + rect.width / 2, y: rect.bottom }); if (showVocab) { setActiveVocabTerm(wordData.term); scrollToVocab(wordData.term); } };
+            const handleVocabLeave = () => { if (popup.fixed) return; setPopup(prev => ({ ...prev, show: false })); };
+            const handleVocabClick = (e, wordData) => { e.stopPropagation(); if (popup.fixed && popup.data && popup.data.term === wordData.term) { setPopup(prev => ({ ...prev, show: false, fixed: false })); return; } const rect = e.target.getBoundingClientRect(); setPopup({ show: true, fixed: true, data: wordData, x: rect.left + rect.width / 2, y: rect.bottom }); if (showVocab) { setActiveVocabTerm(wordData.term); scrollToVocab(wordData.term); } };
+
+            const handleSeek = (e) => { const time = parseFloat(e.target.value); if (videoState.player) videoState.player.seekTo(time, true); setVideoState(prev => ({ ...prev, currentTime: time })); };
+            const togglePlay = () => { const player = videoState.player; if (player) { if (videoState.isPlaying) player.pauseVideo(); else player.playVideo(); } };
+            const rewind2 = () => { const player = videoState.player; if (player) { const newTime = Math.max(0, videoState.currentTime - 1.5); player.seekTo(newTime, true); setVideoState(prev => ({ ...prev, currentTime: newTime })); } };
+            const forward2 = () => { const player = videoState.player; if (player) { const newTime = Math.min(videoState.duration, videoState.currentTime + 1.5); player.seekTo(newTime, true); setVideoState(prev => ({ ...prev, currentTime: newTime })); } };
+            const formatTime = (seconds) => { if (isNaN(seconds)) return "00:00"; const date = new Date(seconds * 1000); const mm = date.getUTCMinutes(); const ss = date.getUTCSeconds(); return `${mm.toString().padStart(2, '0')}:${ss.toString().padStart(2, '0')}`; };
+
+            const allVocabTerms = useMemo(() => { return VOCAB_DATA.flatMap(vocab => { const terms = [vocab.term]; if (vocab.variants) terms.push(...vocab.variants); if (vocab.subDefs) terms.push(...vocab.subDefs.map(s => s.subTerm)); return [...new Set(terms)].filter(t => t).map(term => ({ term, vocab })); }).sort((a, b) => b.term.length - a.term.length); }, []);
+
+            const renderTextWithVocab = (text) => {
+                if (!text) return [""];
+                const matches = [];
+                allVocabTerms.forEach(({ term, vocab }) => { let index = 0; while ((index = text.indexOf(term, index)) !== -1) { const end = index + term.length; const overlaps = matches.some(m => (index >= m.start && index < m.end) || (end > m.start && end <= m.end) || (index <= m.start && end >= m.end)); if (!overlaps) matches.push({ start: index, end, term, vocab }); index += 1; } });
+                matches.sort((a, b) => a.start - b.start);
+                const result = []; let lastIndex = 0;
+                matches.forEach((match, idx) => { if (match.start > lastIndex) result.push(text.substring(lastIndex, match.start)); const isActive = (popup.show && popup.data && popup.data.term === match.vocab.term) || (showVocab && activeVocabTerm === match.vocab.term); 
+                result.push(<span key={`${match.term}-${idx}`} className={`cursor-pointer border-b border-dotted transition-all duration-200 font-medium inline-block leading-tight ${isActive ? 'border-black bg-white text-black border-solid print:border-dotted' : 'border-gray-400 text-gray-800 hover:border-black hover:text-black print:text-black'}`} onMouseEnter={(e) => handleVocabEnter(e, match.vocab)} onMouseLeave={handleVocabLeave} onClick={(e) => handleVocabClick(e, match.vocab)}>{match.term}</span>); lastIndex = match.end; });
+                if (lastIndex < text.length) result.push(text.substring(lastIndex));
+                return result;
+            };
+
+            const isScriptMode = layoutMode === 'script';
+            const isVideoOnlyMode = layoutMode === 'video';
+            const isSplitMode = layoutMode === 'split';
+
+            const videoStyle = isSplitMode ? `w-full aspect-video shrink-0 z-20 shadow-md lg:shadow-none lg:h-full lg:aspect-auto ${showVocab ? 'lg:w-[58%] xl:flex-1' : 'lg:w-[58%] xl:w-7/12'}` : (isScriptMode ? 'hidden' : 'flex-1 w-full h-full');
+            const scriptContainerResponsiveClass = isSplitMode ? `w-full lg:w-[42%] lg:h-full lg:flex-none ${showVocab ? 'xl:w-4/12' : 'xl:w-5/12'}` : (isScriptMode ? 'w-full h-full' : 'hidden');
+
+            const LearnToolbar = () => (
+                <div className="sticky top-0 z-40 h-16 flex items-center justify-between px-6 py-3 bg-white border-b border-gray-200 shadow-sm pr-14 print:hidden">
+                    <div className="flex items-center gap-1 shrink-0">
+                        {[{ id: 'split', label: '동영상 & 스크립트' }, { id: 'video', label: '동영상만 보기' }, { id: 'script', label: '스크립트만 보기' }].map((mode) => (
+                            <button key={mode.id} onClick={() => setLayoutMode(mode.id)} className={`px-3 py-1.5 text-xs font-bold font-ui uppercase tracking-widest transition-colors ${mode.id === 'split' ? 'block' : mode.id === 'video' ? 'hidden md:block' : 'hidden sm:block'} ${layoutMode === mode.id ? 'bg-black text-white' : 'text-gray-400 hover:text-black'}`}>
+                                {mode.label}
+                            </button>
+                        ))}
+                    </div>
+                    <div className="flex items-center gap-4 flex-1 justify-end min-w-0">
+                        <div className="hidden sm:flex items-center gap-4 flex-1 max-w-xl justify-end">
+                            <div className="hidden md:flex flex-col flex-1 gap-1 w-full">
+                                <div className="relative group h-2 flex items-center">
+                                    <div className="absolute inset-0 flex items-center">
+                                        <div className="w-full h-[1px] bg-gray-200 group-hover:h-[2px] transition-all"></div>
+                                        <div className="absolute left-0 top-1/2 -translate-y-1/2 h-[2px] bg-black" style={{ width: `${(videoState.currentTime/videoState.duration)*100}%` }}></div>
+                                    </div>
+                                    <input type="range" min="0" max={videoState.duration || 100} value={videoState.currentTime} onChange={handleSeek} className="absolute inset-0 w-full opacity-0 cursor-pointer" />
+                                </div>
+                                <span className="text-[10px] font-mono text-gray-400 text-right leading-none">{formatTime(videoState.currentTime)} / {formatTime(videoState.duration)}</span>
+                            </div>
+                            <div className="hidden sm:flex items-center gap-3 shrink-0">
+                                <button onClick={rewind2} className="text-gray-400 hover:text-black transition-colors"><RewindIcon className="w-4 h-4" /></button>
+                                <button onClick={togglePlay} className="w-6 h-6 border border-black rounded-full flex items-center justify-center hover:bg-black hover:text-white transition-all">
+                                    {videoState.isPlaying ? <PauseIcon className="w-2.5 h-2.5 fill-current" /> : <PlayIconSolid className="w-2.5 h-2.5 fill-current ml-0.5" />}
+                                </button>
+                                <button onClick={forward2} className="text-gray-400 hover:text-black transition-colors"><ForwardIcon className="w-4 h-4" /></button>
+                            </div>
+                        </div>
+                        <div className="h-4 w-px bg-gray-200 hidden sm:block"></div>
+                        <div className="relative shrink-0 hidden sm:flex group">
+                            <button onClick={() => setIsSpeedMenuOpen(!isSpeedMenuOpen)} className="flex items-center gap-1.5 text-xs font-bold font-ui uppercase tracking-wider text-gray-500 hover:text-black">{playbackRate.toFixed(1)}x</button>
+                            {isSpeedMenuOpen && (
+                                <>
+                                <div className="fixed inset-0 z-40" onClick={() => setIsSpeedMenuOpen(false)}></div>
+                                <div className="absolute top-full right-0 mt-2 bg-white border border-gray-200 shadow-xl p-1 z-50 w-20 animate-fade-in">
+                                    {[0.5, 0.75, 1.0, 1.25, 1.5, 2.0].map(speed => (
+                                        <button key={speed} onClick={() => { setPlaybackRate(speed); setIsSpeedMenuOpen(false); }} className={`w-full text-center py-1.5 text-[10px] font-bold font-ui hover:bg-white ${playbackRate === speed ? 'text-black' : 'text-gray-400'}`}>{speed}x</button>
+                                    ))}
+                                </div>
+                                </>
+                            )}
+                        </div>
+                        <button onClick={() => setAutoScroll(!autoScroll)} className={`hidden sm:flex items-center gap-2 text-[10px] font-bold font-ui uppercase tracking-widest transition-colors ${autoScroll ? 'text-black' : 'text-gray-300 hover:text-gray-500'}`}>
+                            <span className={`w-2 h-2 rounded-full ${autoScroll ? 'bg-black' : 'border border-gray-300'}`}></span><span className="md:hidden">스크롤</span><span className="hidden md:inline">자동 스크롤</span>
+                        </button>
+                        <button onClick={() => setShowVocab(!showVocab)} className={`hidden xl:flex items-center gap-2 px-3 py-1.5 border transition-all text-[10px] font-bold font-ui uppercase tracking-widest ${showVocab ? 'bg-black text-white border-black' : 'bg-white border-gray-200 text-gray-500 hover:border-black hover:text-black'}`}>어휘</button>
+                    </div>
+                </div>
+            );
+
+            // Reusable Tail SVG for Script Mode and Print
+            const TailSVG = ({ isLeft, isActive }) => (
+                <svg className={`absolute bottom-[-1px] ${isLeft ? '-left-[7px]' : '-right-[7px]'} w-[8px] h-[8px] z-10 print:block`} viewBox="0 0 8 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d={isLeft ? "M8 0 C 8 4 4 8 0 8 L 8 8 V 0 Z" : "M0 0 C 0 4 4 8 8 8 L 0 8 V 0 Z"} fill="white" />
+                    <path d={isLeft ? "M0 8 C 4 8 8 4 8 0" : "M8 8 C 4 8 0 4 0 0"} stroke={isActive ? "black" : "transparent"} strokeWidth="1" fill="none" className="print:stroke-gray-200" /> 
+                    <path d={isLeft ? "M8 0 V8" : "M0 0 V8"} stroke="white" strokeWidth="2" />
+                </svg>
+            );
+
+            return (
+                <div className="flex flex-col h-full animate-fade-in">
+                    <LearnToolbar />
+                    <div className={`flex flex-col lg:flex-row flex-1 overflow-hidden relative print:flex-row print:w-full print:overflow-visible print:h-auto`}>
+                        <VideoVocabPopup popup={popup} onGlobalClick={handleGlobalClick} />
+                        
+                        <div className={`bg-black overflow-hidden relative transition-all duration-300 ${videoStyle} ${isVideoOnlyMode ? 'h-full flex-1 w-full' : ''} print:hidden`}>
+                            {isLoading && (<div className="absolute inset-0 z-10 bg-black flex items-center justify-center"><div className="w-8 h-8 border-2 border-white/20 border-t-white rounded-full animate-spin"></div></div>)}
+                            <div id="youtube-player" className={`w-full h-full`}></div>
+                        </div>
+                        
+                        <div className={`flex-1 flex flex-col min-h-0 bg-white border-l border-gray-200 transition-all duration-300 ${scriptContainerResponsiveClass} ${isVideoOnlyMode ? 'hidden' : ''} print:flex print:w-[80%] print:border-none print:overflow-visible`}>
+                            <div className={`flex-1 overflow-y-auto bg-white print:overflow-visible`}>
+                                <div className={`${isScriptMode ? "w-full mx-auto p-4 sm:p-8 min-h-full bg-white shadow-sm my-8 max-w-4xl lg:max-w-5xl" : "p-8 space-y-8"} print:p-0 print:my-0 print:shadow-none print:max-w-none print:space-y-0`}>
+                                    {VIDEO_SCRIPT_DATA.map(line => {
+                                        const isActive = activeLine === line.id;
+                                        const isLeft = line.speaker === VIDEO_SCRIPT_DATA[0].speaker;
+                                        const translation = translations[line.id];
+                                        
+                                        return (
+                                            <div key={line.id} ref={el => scriptRefs.current[line.id] = el} className={`w-full transition-all duration-500 ${isScriptMode ? `flex flex-col mb-8 ${isLeft ? 'items-start' : 'items-end'}` : `mb-8 ${isActive ? 'opacity-100' : 'opacity-70 hover:opacity-90'}`} print:flex print:flex-col print:mb-6 print:opacity-100 ${isLeft ? 'print:items-start' : 'print:items-end'}`}>
+                                                <div className={`flex items-center gap-2 mb-2 ${isScriptMode ? (isLeft ? 'ml-1' : 'mr-1') : 'justify-start'} print:justify-start print:m-0 ${isLeft ? 'print:ml-1' : 'print:mr-1'}`}>
+                                                    <span className={`text-xs sm:text-sm md:text-base lg:text-base xl:text-base font-bold font-ui uppercase tracking-widest text-gray-400 print:text-[10px] print:text-gray-500`}>{line.speaker}</span>
+                                                    {!isScriptMode && isActive && <span className="w-1.5 h-1.5 bg-black rounded-full animate-pulse print:hidden"></span>}
+                                                </div>
+                                                
+                                                <div onClick={() => handleLineClick(line.time[0])} className={`cursor-pointer group relative ${isScriptMode ? `px-6 py-5 max-w-[90%] md:max-w-[80%] bg-white border border-transparent rounded-2xl ${isLeft ? 'rounded-bl-none' : 'rounded-br-none'} hover:shadow-md ${isActive ? 'ring-1 ring-black border-black' : ''}` : `bg-transparent border-none`} print:px-4 print:py-3 print:max-w-[85%] print:bg-white print:border print:border-gray-200 print:rounded-2xl print:${isLeft ? 'rounded-bl-none' : 'rounded-br-none'}`}>
+                                                    <p className={`text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-serif leading-[1.8] tracking-wide text-left print:text-[12px] print:leading-relaxed ${(!isScriptMode && isActive) ? 'text-black' : 'text-[#1a1a1a]'} print:text-black`}>
+                                                        {renderTextWithVocab(line.kor)}
+                                                    </p>
+                                                    
+                                                    {translation && (
+                                                        <div className={`${isScriptMode ? 'mt-3 pt-3 border-t border-dashed border-gray-100' : 'mt-2 pl-3 border-l border-gray-200'} animate-fade-in print:hidden`}>
+                                                            <p className={`text-xs sm:text-sm md:text-sm lg:text-sm xl:text-sm font-serif text-gray-500 text-left`}>{line.eng}</p>
+                                                        </div>
+                                                    )}
+                                                    
+                                                    <div className={`flex items-center gap-3 print:hidden ${!isScriptMode ? 'opacity-0 group-hover:opacity-100 justify-start mt-2' : `mt-4 ${isLeft ? 'justify-start' : 'justify-end'}`}`}>
+                                                        <button 
+                                                            onClick={(e) => { 
+                                                                e.stopPropagation(); 
+                                                                if (isActive && videoState.isPlaying) {
+                                                                    if (videoState.player) videoState.player.pauseVideo();
+                                                                } else {
+                                                                    handleLineClick(line.time[0]); 
+                                                                }
+                                                            }} 
+                                                            className="w-4 h-4 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-800 hover:border-gray-800 hover:text-white transition-all text-gray-400 shrink-0"
+                                                        >
+                                                            {(isActive && videoState.isPlaying) ? (
+                                                                <PauseIconSolid className="w-2 h-2" />
+                                                            ) : (
+                                                                <PlayIconSolid className="w-2 h-2 ml-[1.5px]" />
+                                                            )}
+                                                        </button>
+                                                        <TransBtn onClick={() => toggleTranslation(line.id)} isShowing={translation} />
+                                                    </div>
+                                                    
+                                                    <div className={`${isScriptMode ? 'block' : 'hidden'} print:block`}>
+                                                        <TailSVG isLeft={isLeft} isActive={isActive} />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                    <div className="h-32 print:hidden"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Right Vocab List - Conditional render for screen, absolute render for print */}
+                        <div className={`w-80 flex-col bg-white border-l border-gray-200 animate-fade-in ${isScriptMode ? 'fixed right-0 top-[114px] h-[calc(100vh-114px)]' : 'h-full'} ${showVocab ? 'flex' : 'hidden'} print:flex print:static print:w-[20%] print:h-auto print:top-0 print:border-l-0 print:pl-2 print:bg-transparent print:overflow-visible`}>
+                            <div className="p-5 border-b border-gray-100 flex items-center justify-between bg-white print:hidden">
+                                <span className="font-ui text-xs font-bold uppercase tracking-widest text-gray-900">핵심 어휘</span>
+                                <span className="text-xs font-serif text-gray-500 italic">{VOCAB_DATA.length}개</span>
+                            </div>
+                            <div className="flex-1 overflow-y-auto bg-white print:overflow-visible">
+                                {VOCAB_DATA.map((word, idx) => (<VideoSidebarVocabCard key={idx} word={word} activeVocabTerm={activeVocabTerm} sidebarVocabRefs={sidebarVocabRefs} />))}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const SectionHeader = ({ title, subtitle, description }) => (
+            <div className="mb-16 flex flex-col items-center text-center print:mb-8">
+                <h2 className="text-[32px] md:text-[36px] font-bold text-[#1a1a1a] leading-tight font-serif mb-3 tracking-tight print:text-[18px]">
+                    {title}
+                </h2>
+                {subtitle && (
+                    <p className="text-[13px] text-[#888888] font-normal font-sans tracking-widest uppercase mb-2 print:text-[12px]">
+                        {subtitle}
+                    </p>
+                )}
+                {description && (
+                    <p className="text-[16px] text-[#444444] font-serif leading-relaxed mt-2 max-w-2xl print:text-[12px]">
+                        {description}
+                    </p>
+                )}
+                <div className="w-[1px] h-6 bg-gray-200 mt-8 print:hidden"></div>
+            </div>
+        );
+
+        const VocabItem = ({ word }) => {
+            const [showTrans, setShowTrans] = useState(false); const trans = word.translations?.en;
+            return (
+                <div className="border border-gray-200 hover:border-gray-300 transition-colors p-6 flex flex-col group bg-white h-full print:break-inside-avoid print:p-4">
+                    <div className="flex justify-between items-start mb-4">
+                        <h3 className="text-[28px] font-bold font-serif text-[#1a1a1a] group-hover:text-black transition-colors print:text-[14px]">{word.term}</h3>
+                        <div className="flex flex-col items-end gap-1 print:hidden"><TransBtn onClick={() => setShowTrans(!showTrans)} isShowing={showTrans} />{showTrans && trans?.term && <span className="font-serif text-sm text-gray-400 italic animate-fade-in text-right">{trans.term}</span>}</div>
+                        {/* Always display English term in print Mode conditionally */}
+                        {trans?.term && <span className="hidden print:block font-serif text-[10px] text-gray-500 italic mt-1">{trans.term}</span>}
+                    </div>
+                    <div className="mb-6 flex-1 print:mb-2">
+                        <p className="text-[17px] text-[#444] font-serif leading-relaxed print:text-[12px]">{word.mainDef}</p>
+                        <p className={`text-sm text-gray-500 font-sans mt-2 leading-relaxed ${showTrans ? 'animate-fade-in block' : 'hidden'} print:block print:text-[10px]`}>{trans?.mainDef}</p>
+                    </div>
+                    {word.subDefs && word.subDefs.length > 0 && (
+                        <div className="mb-4 space-y-2">
+                            {word.subDefs.map((sub, i) => (
+                                <div key={i}>
+                                    <p className="text-sm font-bold text-gray-800 font-ui print:text-[13px]">{sub.subTerm}</p>
+                                    <p className="text-xs text-gray-500 font-serif print:text-[11px]">{sub.subDef}</p>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                    {word.examples && word.examples.length > 0 && (
+                        <div className="bg-gray-50 p-5 mt-auto border-l-2 border-transparent group-hover:border-gray-300 transition-all print:p-3">
+                            <p className="text-[15px] text-[#1a1a1a] font-serif leading-snug print:text-[11px]">{word.examples[0].kor}</p>
+                            <p className={`text-[13px] text-gray-500 font-sans mt-2 pt-2 border-t border-gray-200 ${showTrans ? 'animate-fade-in block' : 'hidden'} print:block print:text-[10px]`}>{word.examples[0].eng}</p>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+        const VocabView = ({ updateProgress }) => { useEffect(() => { updateProgress('vocab'); }, []); return (<div className="max-w-4xl mx-auto w-full px-6 py-16 animate-fade-in print:pt-4 print:px-0"><SectionHeader title="핵심 어휘" description={`학습 자료에 등장하는 주요 어휘 ${VOCAB_DATA.length}개를 학습해 보세요.`} /><div className="grid grid-cols-1 md:grid-cols-2 gap-6 print:grid print:grid-cols-2 print:gap-4">{VOCAB_DATA.map((word, idx) => (<VocabItem key={idx} word={word} />))}</div></div>); };
+
+        const QuizSentence = ({ quiz, onAttempt, onShuffle }) => {
+            const [userInput, setUserInput] = useState(''); const [result, setResult] = useState(null); const [showHint, setShowHint] = useState(false); const [showTranslation, setShowTranslation] = useState(false);
+            const handleCheck = () => { const isCorrect = userInput.trim() === quiz.answer; setResult(isCorrect ? 'correct' : 'incorrect'); setShowHint(false); if (onAttempt) onAttempt(quiz.id, isCorrect); if (onShuffle) onShuffle(); };
+            const handleShowAnswer = () => { setUserInput(quiz.answer); setResult(null); setShowHint(false); if (onShuffle) onShuffle(); }; 
+            
+            const textLength = Math.max(userInput.length, quiz.answer ? quiz.answer.length : 0);
+            const safeWidth = Math.max(100, textLength * 25);
+
+            return (
+                <div className="mb-10 pb-10 border-b border-gray-200 last:border-0 print:mb-6 print:pb-4 print:break-inside-avoid">
+                    <div className="flex items-baseline gap-4 mb-4 print:mb-2"><span className="text-xs font-bold font-sans text-black border border-black px-1.5 py-0.5 print:text-[10px] print:border-gray-400 print:text-gray-700">Q.{quiz.id}</span></div>
+                    <div className="text-xl font-serif text-gray-900 leading-loose mb-6 print:text-[12px] print:mb-2"><span>{quiz.textParts[0]}</span><input type="text" value={userInput} onChange={(e) => { setUserInput(e.target.value); setResult(null); }} className={`mx-2 px-2 py-0 border-b-2 font-bold text-center outline-none transition-colors font-serif print:text-[12px] print:bg-transparent print:border-black print:text-black ${result === 'correct' ? 'border-green-500 text-green-700' : result === 'incorrect' ? 'border-red-500 text-red-700' : 'border-gray-300 text-black bg-transparent focus:border-black'}`} style={{ width: `${safeWidth}px` }} /><span>{quiz.textParts[1]}</span></div>
+                    <div className="flex flex-wrap gap-3 items-center print:hidden"><button onClick={handleCheck} className="px-4 py-2 bg-black text-white text-xs font-bold font-sans hover:bg-gray-800 transition-colors">정답 확인</button><button onClick={handleShowAnswer} className="px-4 py-2 bg-white border border-gray-300 text-gray-600 text-xs font-bold font-sans hover:border-black hover:text-black transition-colors">정답 보기</button><button onClick={() => setShowHint(!showHint)} className="text-xs font-bold font-sans text-gray-400 hover:text-gray-600 underline">힌트</button><TransBtn onClick={() => setShowTranslation(!showTranslation)} isShowing={showTranslation} /></div>
+                    <p className={`mt-4 text-sm font-sans text-gray-500 bg-gray-50 p-3 ${showTranslation ? 'block animate-fade-in' : 'hidden print:hidden'} print:text-[10px]`}>{quiz.textParts_eng.join(' ... ')}</p>
+                    {showHint && (<p className="mt-4 text-sm font-sans text-gray-500 italic print:text-[10px] print:block">💡 Hint: {quiz.hint}</p>)}
+                    {result === 'correct' && (<p className="mt-4 text-sm font-sans text-green-700 font-medium print:text-[12px] print:text-black">✓ Correct. {quiz.explanation}</p>)}
+                    {result === 'incorrect' && (<p className="mt-4 text-sm font-sans text-red-600 font-medium print:text-[12px] print:text-black">✕ Try again.</p>)}
+                </div>
+            );
+        };
+        const QuizView = ({ updateProgress }) => {
+            const [attempts, setAttempts] = useState({}); const [shuffledChoices, setShuffledChoices] = useState(ANSWER_CHOICES); const totalQuestions = QUIZ_LIST.length; const correctCount = Object.values(attempts).filter(v => v).length; const currentScore = Math.round((correctCount / totalQuestions) * 100);
+            useEffect(() => { const totalAttempts = Object.keys(attempts).length; if (totalAttempts === 0) return; updateProgress('quiz', currentScore); }, [attempts, currentScore, updateProgress]);
+            const handleAttempt = (quizId, isCorrect) => { setAttempts(prev => { if (prev.hasOwnProperty(quizId)) return prev; const newAttempts = { ...prev, [quizId]: isCorrect }; return newAttempts; }); };
+            const shuffleChoices = useCallback(() => { setShuffledChoices(prev => { const newArray = [...prev]; for (let i = newArray.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [newArray[i], newArray[j]] = [newArray[j], newArray[i]]; } return newArray; }); }, []);
+            return (
+                <div className="max-w-4xl mx-auto w-full px-6 py-12 flex flex-col md:flex-row gap-12 animate-fade-in print:block print:p-0 print:py-4">
+                    <div className="w-full md:w-64 shrink-0 print:w-full print:mb-6">
+                        <div className="sticky top-24 print:static"> 
+                            <div className="md:sticky md:top-24 print:static"> 
+                                <h2 className="text-[32px] md:text-[36px] font-serif font-bold text-gray-900 mb-2 print:text-[18px]">내용 확인 퀴즈</h2><p className="text-sm font-sans text-gray-500 mb-6 print:text-[12px] print:mb-4">학습 자료에 대한 이해도를 확인해 보세요.</p><div className="border-t border-gray-200 pt-4 mb-8 print:hidden"><span className="text-xs font-bold font-sans text-black uppercase block mb-2">정답률</span><span className="text-4xl font-serif font-bold text-gray-900">{currentScore}%</span></div><div className="bg-gray-50 p-4 border border-gray-100 print:bg-transparent print:border-none print:p-0"><h4 className="text-xs font-bold font-sans text-gray-500 uppercase mb-3 border-b border-gray-200 pb-2 print:text-[12px] print:border-none print:pb-0">정답 목록</h4><div className="flex flex-wrap gap-2 print:gap-1">{shuffledChoices.map((choice, idx) => (<span key={idx} className="text-xs font-serif text-gray-600 bg-white border border-gray-200 px-2 py-1 select-all print:border-gray-300 print:text-[10px]">{choice}</span>))}</div></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="flex-1">{QUIZ_LIST.map((quiz) => (<QuizSentence key={quiz.id} quiz={quiz} onAttempt={handleAttempt} onShuffle={shuffleChoices} />))}</div>
+                </div>
+            );
+        };
+
+        const DiscussQuestionItem = ({ item }) => {
+            const [text, setText] = useState(''); 
+            const [showTranslation, setShowTranslation] = useState(false);
+            const [feedback, setFeedback] = useState(null);
+            const [isLoadingFeedback, setIsLoadingFeedback] = useState(false);
+            const [feedbackError, setFeedbackError] = useState(null);
+            const [showFeedbackTrans, setShowFeedbackTrans] = useState(false);
+
+            const handleGetFeedback = async () => {
+                if (!text.trim()) return;
+                setIsLoadingFeedback(true);
+                setFeedbackError(null);
+
+                const prompt = `당신은 한국어 학습자를 돕는 'AI 한국어 도우미'입니다.
+학습자가 질문에 대해 작성한 답변을 분석하고, 아래의 JSON 형식으로 피드백을 제공해주세요.
+반드시 마크다운 백틱 문자를 제외하고 순수 JSON 문자열만 반환하세요.
+
+[질문]: ${item.questionKor}
+[학습자 답변]: ${text}
+
+[JSON 응답 포맷]:
+{
+  "overallPraise": "학습자의 답변에 대한 총평과 잘한 점 (한국어)",
+  "overallPraiseTrans": "총평의 영어 번역",
+  "corrections": [
+    {
+      "original": "학습자가 쓴 원래 문장",
+      "corrected": "자연스럽게 문법과 어휘를 수정한 문장",
+      "explanation": "왜 그렇게 수정해야 하는지 상세한 이유와 문법적 설명. 문법적 오류일 경우 쉬운 예시 포함 (한국어)",
+      "explanationTrans": "설명의 영어 번역"
+    }
+  ]
+}`;
+
+                const payload = {
+                    contents: [{ role: "user", parts: [{ text: prompt }] }],
+                    generationConfig: { responseMimeType: "application/json" },
+                    safetySettings: [
+                         { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
+                         { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
+                         { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
+                         { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }
+                    ]
+                };
+
+                try {
+                    const data = await callGeminiWithBackoff(payload);
+                    let resultText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+                    if (!resultText) throw new Error("응답이 비어있습니다.");
+                    
+                    resultText = resultText.replace(/^```json\n?/, '').replace(/\n?```$/, '');
+                    
+                    const parsedFeedback = JSON.parse(resultText);
+                    setFeedback(parsedFeedback);
+                } catch (err) {
+                    setFeedbackError(err.message);
+                } finally {
+                    setIsLoadingFeedback(false);
+                }
+            };
+
+            return (
+                <div className="mb-16 group print:mb-8 print:break-inside-avoid">
+                    <div className="flex items-center gap-4 mb-6 print:mb-2"><span className="text-4xl font-serif font-bold text-gray-200 group-hover:text-gray-900 transition-colors duration-300 print:text-[14px] print:text-black">{item.id < 10 ? '0' + item.id : item.id}</span><h3 className="text-xl font-serif font-bold text-gray-900 leading-normal print:text-[12px]">{item.questionKor}</h3></div>
+                    <div className="pl-0 md:pl-14 print:pl-6">
+                        <div className="flex gap-2 mb-4 print:hidden"><TransBtn onClick={() => setShowTranslation(!showTranslation)} isShowing={showTranslation} />{showTranslation && (<p className="text-sm font-sans text-gray-500 animate-fade-in">{item.questionEng}</p>)}</div>
+                        <div className="bg-gray-50 p-5 mb-6 border-l-2 border-black print:bg-transparent print:p-0 print:border-l-[1px] print:border-gray-300 print:pl-3 print:mb-2">
+                            <span className="text-xs font-bold font-sans text-gray-400 uppercase mb-2 block print:hidden">핵심 어휘</span>
+                            <div className="space-y-2 print:space-y-0.5">
+                                {item.vocab.map((v, i) => (
+                                    <div key={i} className="flex flex-col">
+                                        <p className="text-sm font-serif text-gray-700 whitespace-pre-line print:text-[10px]"><span className="font-bold text-black mr-2 print:text-[10px] print:mr-1">{v.term}</span>{v.def}</p>
+                                        <p className={`text-xs font-sans text-gray-500 mt-1 whitespace-pre-line ${showTranslation ? 'animate-fade-in block' : 'hidden'} print:hidden`}><span className="font-semibold text-gray-600 mr-1">{v.termEng} :</span>{v.defEng}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                        <textarea value={text} onChange={(e) => setText(e.target.value)} placeholder="여기에 생각을 적어보세요..." className="w-full p-4 border border-gray-300 font-serif text-base text-gray-900 focus:border-black focus:ring-0 outline-none min-h-[150px] bg-white resize-y mb-3 transition-colors placeholder:text-gray-300 print:hidden"></textarea>
+                        <div className="flex justify-end print:hidden">
+                            <button onClick={handleGetFeedback} disabled={!text.trim() || isLoadingFeedback} className={`px-6 py-2 text-xs font-bold font-sans uppercase tracking-widest border transition-colors ${!text.trim() || isLoadingFeedback ? 'border-gray-200 text-gray-300 cursor-not-allowed' : 'border-black bg-black text-white hover:bg-white hover:text-black'}`}>
+                                {isLoadingFeedback ? '생성 중...' : 'AI 피드백 받기'}
+                            </button>
+                        </div>
+                        
+                        {isLoadingFeedback && (
+                            <div className="mt-6 p-6 border border-gray-200 flex flex-col items-center justify-center print:hidden">
+                                <div className="w-6 h-6 border-2 border-gray-200 border-t-black rounded-full animate-spin mb-3"></div>
+                                <p className="text-sm font-sans text-gray-500">AI 한국어 도우미가 피드백을 작성 중입니다...</p>
+                            </div>
+                        )}
+                        {feedbackError && (
+                            <div className="mt-6 p-4 bg-red-50 text-red-600 text-sm font-sans print:hidden whitespace-pre-wrap">
+                                {feedbackError}
+                            </div>
+                        )}
+                        {feedback && (
+                            <div className="mt-8 relative print:hidden animate-fade-in">
+                                <div className="flex items-center gap-2 mb-4">
+                                    <SparklesIcon className="w-4 h-4 text-black" />
+                                    <h4 className="text-base font-bold font-sans text-black">AI 한국어 도우미</h4>
+                                </div>
+                                
+                                <div className="bg-gray-50 p-5 mb-6">
+                                    <span className="text-xs font-bold font-sans text-gray-500 uppercase block mb-2">총평 및 잘한 점</span>
+                                    <p className="text-[15px] font-serif text-gray-900 leading-relaxed">{feedback.overallPraise}</p>
+                                    {showFeedbackTrans && feedback.overallPraiseTrans && (
+                                        <p className="text-[13px] font-serif text-gray-500 mt-2 pt-2 border-t border-gray-200 animate-fade-in">{feedback.overallPraiseTrans}</p>
+                                    )}
+                                </div>
+
+                                <div className="space-y-4">
+                                    <span className="text-xs font-bold font-sans text-gray-500 uppercase block mb-1">문장별 교정 및 설명</span>
+                                    {feedback.corrections?.map((c, i) => (
+                                        <div key={i} className="border border-gray-200 p-5 bg-white">
+                                            <div className="flex flex-col gap-3 mb-4">
+                                                <div className="flex items-start gap-3">
+                                                    <span className="shrink-0 px-2 py-0.5 bg-gray-100 text-gray-500 text-[10px] font-bold font-sans rounded-sm mt-0.5">수정 전</span>
+                                                    <p className="text-[15px] font-serif text-gray-400 line-through leading-relaxed">{c.original}</p>
+                                                </div>
+                                                <div className="flex items-start gap-3">
+                                                    <span className="shrink-0 px-2 py-0.5 bg-blue-50 text-blue-600 text-[10px] font-bold font-sans rounded-sm mt-0.5">수정 후</span>
+                                                    <p className="text-[15px] font-serif text-gray-900 font-medium leading-relaxed">{c.corrected}</p>
+                                                </div>
+                                            </div>
+                                            
+                                            <div className="pt-3 border-t border-gray-100">
+                                                <div className="flex items-start gap-2">
+                                                    <span className="shrink-0 text-yellow-500 mt-0.5">💡</span>
+                                                    <div className="flex-1">
+                                                        <p className="text-[14px] font-serif text-gray-700 leading-relaxed">
+                                                            <span className="font-bold text-gray-500 text-xs font-sans mr-2">설명</span>
+                                                            {c.explanation}
+                                                        </p>
+                                                        {showFeedbackTrans && c.explanationTrans && (
+                                                            <p className="text-[13px] font-serif text-gray-500 mt-2 pt-2 border-t border-gray-50 animate-fade-in leading-relaxed">{c.explanationTrans}</p>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                                
+                                {/* 번역 버튼: 하단 우측, opacity-40 */}
+                                <div className="flex justify-end mt-4">
+                                    <TransBtn 
+                                        onClick={() => setShowFeedbackTrans(!showFeedbackTrans)} 
+                                        isShowing={showFeedbackTrans} 
+                                        className="opacity-40 hover:opacity-100 transition-opacity" 
+                                    />
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
+        };
+        const DiscussView = ({ updateProgress }) => (
+            <div className="max-w-3xl mx-auto w-full px-6 py-12 animate-fade-in print:pt-4 print:px-0">
+                <div className="mb-6 pb-6 text-center print:mb-4 print:pb-2"><h2 className="text-[32px] md:text-[36px] font-serif font-bold text-gray-900 mb-2 print:text-[18px]">생각해 보기</h2><p className="text-sm font-sans text-gray-500 print:text-[12px]">학습 자료에 대해 심층적으로 생각해 보세요.</p></div>
+                <div className="bg-gray-50 border border-gray-200 p-4 mb-10 flex items-start gap-3 print:hidden"><div className="shrink-0 mt-0.5"><SparklesIcon className="w-4 h-4 text-gray-400" /></div><p className="text-xs font-sans text-gray-600 leading-relaxed">AI 피드백은 현재 Gemini 웹에서만 가능합니다. <a href="https://gemini.google.com/share/3ffe92d53a6e" target="_blank" rel="noreferrer" className="underline decoration-gray-400 underline-offset-2 hover:text-black inline-flex items-center gap-1">Gemini에서 열기 <ExternalLinkIcon className="w-3 h-3" /></a></p></div>
+                {DISCUSS_DATA.map((item) => (<DiscussQuestionItem key={item.id} item={item} />))}
+            </div>
+        );
+
+        const App = () => {
+            const [activeTab, setActiveTab] = useState('home'); const [userLevel] = useState("B2+"); const [showVocab, setShowVocab] = useState(false); const [progress, setProgress] = useState({ learn: false, vocab: false, quiz: 0, discuss: false });
+            const [isHeaderExpanded, setIsHeaderExpanded] = useState(true);
+
+            useEffect(() => {
+                if (activeTab === 'video') { setIsHeaderExpanded(false); } else { setIsHeaderExpanded(true); }
+            }, [activeTab]);
+
+            const updateProgress = useCallback((key, value = true) => { setProgress(prev => { if (prev[key] === value) return prev; return { ...prev, [key]: value }; }); }, []);
+            
+            const renderContent = () => { 
+                switch(activeTab) { 
+                    case 'home': return <HomeView setActiveTab={setActiveTab} userLevel={userLevel} />; 
+                    case 'video': return <LearnView updateProgress={updateProgress} />;
+                    case 'vocab': return <VocabView updateProgress={updateProgress} />; 
+                    case 'quiz': return <QuizView updateProgress={updateProgress} />; 
+                    case 'discuss': return <DiscussView updateProgress={updateProgress} />; 
+                    default: return <HomeView setActiveTab={setActiveTab} userLevel={userLevel} />; 
+                } 
+            };
+            
+            const isVideoTab = activeTab === 'video';
+            return (
+                <div className={`flex flex-col bg-white text-gray-900 selection:bg-gray-200 selection:text-black font-sans ${isVideoTab ? 'h-screen overflow-hidden' : 'min-h-screen'} print:block print:h-auto print:min-h-0 print:m-0 print:p-0 print:overflow-visible`}>
+                    <Header isExpanded={isHeaderExpanded} setIsExpanded={setIsHeaderExpanded} activeTab={activeTab} setActiveTab={setActiveTab} />
+                    <div className="lg:hidden h-14 border-b border-gray-100 flex items-center justify-center sticky top-0 bg-white z-40 print:hidden"><span className="text-lg font-bold font-sans tracking-tighter">OpenKoreanLearningLab</span></div>
+                    <main className={`flex-1 relative flex flex-col ${isVideoTab ? 'overflow-x-hidden lg:overflow-hidden lg:h-full' : ''} print:block print:overflow-visible print:h-auto`}>{renderContent()}</main>
+                    <nav className="lg:hidden fixed bottom-0 w-full bg-white border-t border-gray-100 flex justify-around p-3 z-50 print:hidden">{NAV_ITEMS.map((item) => (<button key={item.id} onClick={() => setActiveTab(item.id)} className={`p-2 ${activeTab === item.id ? 'text-black' : 'text-gray-300'}`}><item.icon className="w-6 h-6" /></button>))}</nav>
+                </div>
+            );
+        };
+        const root = ReactDOM.createRoot(document.getElementById('root')); root.render(<App />);
+    </script>
+</body>
+</html>
