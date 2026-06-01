@@ -12,7 +12,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@300;400;500;600;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght=300;400;500;700&family=Noto+Serif+KR:wght=300;400;500;600;700&display=swap"
         rel="stylesheet">
     <script>
         tailwind.config = {
@@ -92,6 +92,7 @@
         const MATERIALS_DATA = [
             { level: "C2", tags: ["문학", "철학"], title: "소설 <혼모노>를 통해 살펴보는 진짜와 가짜의 경계", link: "https://docs.google.com/document/d/1ji7VWgB-8yvApxyYLt7H34MYg-lcX0iI6kAb5ZPXTS8/edit?usp=sharing" },
             { level: "C1", tags: ["사회", "철학", "과학"], title: "뒷담화에 대해서 - 뒷담화는 자제할 수 없는 인간 본성인가?", link: "https://docs.google.com/document/d/1hWysNw_TrVlrWHhLyvLaIprazQWejXJsqZrfaTXRO2E/edit?usp=sharing" },
+            { level: "C1", tags: ["문화", "사회"], title: "‘번호 따기’ 성지가 된 서점", link: "c1-bookstore-pickup.html" },
             { level: "C1", tags: ["문화", "사회"], title: "“회귀, 빙의, 환생” 이야기가 인기 있는 이유", link: "c1-regression-possession-reincarnation.html" },
             { level: "B2+", tags: ["스케치 코미디", "일상"], title: "서점: '번호 따기'의 성지?", link: "b2plus-bookstore-pickup.html" },
             { level: "B2", tags: ["스케치 코미디", "일상"], title: "서점: '번호 따기'의 성지?", link: "b2-bookstore-pickup.html" },
@@ -328,7 +329,7 @@
             { level: "C2", tags: ["역사", "국제관계"], title: "혼란의 한일관계 - 강제동원 문제의 주요 쟁점", link: "https://drive.google.com/open?id=1fi-rnZDsMnUaB8p8jS3wnGIxe4Ta9S0V9A5-iVtC9qs&usp=drive_copy" },
             { level: "C2", tags: ["역사"], title: "농업혁명은 인류에게 “역사상 최대의 사기” 또는 “역사상 최악의 실수\"일까? - 사피엔스(유발 하라리, 2015)", link: "https://drive.google.com/open?id=1nDysLaUz3t7P2yItueTC3XQUS75gGJMBfA6gUUVpQkE&usp=drive_copy" },
             { level: "C2", tags: ["영화", "철학"], title: "박찬욱 감독의 복수 3부작을 통해 살펴보는 '복수'의 의미", link: "https://drive.google.com/open?id=1G8QI3S8t-_ivVcDNaHTr7U3ObjoJLqqNwGxmKiFCf9E&usp=drive_copy" },
-            { level: "C2", tags: ["인문"], title: "무소유(無所有, simatiga) - 법정(法頂) 스님", link: "https://drive.google.com/open?id=1h39ygnoizqxMdWRdxVIhWhGz19S1Vuyj4FqMHeqAYrc&usp=drive_copy" },
+            { level: "C2", tags: ["인문"], title: "무소유(無Ohio, simatiga) - 법정(法頂) 스님", link: "https://drive.google.com/open?id=1h39ygnoizqxMdWRdxVIhWhGz19S1Vuyj4FqMHeqAYrc&usp=drive_copy" },
             { level: "C2", tags: ["인문", "철학"], title: "자유의지와 결정론에 대한 고찰", link: "https://drive.google.com/open?id=1Ki-fa1K9ffu27j1A8MCUDp7ky-B0QKNVe3frAxjwDIc&usp=drive_copy" },
             { level: "C2", tags: ["인문학", "철학"], title: "흔들리지 않는 마음 - 아파테이아(apatheia) & 부동심(不動心)", link: "https://drive.google.com/open?id=1QPxvpNit8hpzojZe4OX2CitJHj3QLj15DyS9coA2KAg&usp=drive_copy" },
             { level: "C2", tags: ["정치"], title: "\"소수집단 우대 정책\"은 폐지되어야 할까요? 유지되어야 할까요?", link: "https://drive.google.com/open?id=1siLQ6k4sX6chTANTjRO7NM2TUHMBzMYa1v8HtJ0Bj0A&usp=drive_copy" },
@@ -351,6 +352,7 @@
         // 2) Google Drive files → use Drive's thumbnail endpoint.
         // 3) Fallback → minimal monochrome block with the level code.
         const HTML_THUMBNAIL_MAP = {
+            "c1-bookstore-pickup.html":                   { type: "image",   url: "https://www.heavenraven.com/wp-content/uploads/2024/05/TELEMMGLPICT000181622487_trans_NvBQzQNjv4BqGLLAPY3LddE1Qiv-bsIMYN_NrT6kNvN6YRSyUisEf90.jpg" },
             "b2-bookstore-pickup.html":                   { type: "youtube", id: "fwBGVX5NbsA" },
             "b2plus-bookstore-pickup.html":               { type: "youtube", id: "fwBGVX5NbsA" },
             "b2plus-art-and-design.html":                 { type: "youtube", id: "Q4O-bondzOk" },
