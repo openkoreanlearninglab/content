@@ -6,9 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OpenKoreanLearningLab</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://www.youtube.com/iframe_api"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -148,11 +145,13 @@
 </head>
 
 <body>
-    <div id="root"></div>
-    <script type="text/babel">
-        const { useState, useEffect, useRef, useMemo, useCallback } = React;
-        const { createPortal } = ReactDOM;
+    <noscript><div style="max-width:720px;margin:24px auto;padding:16px;border:1px solid #ddd;border-radius:8px;font-family:sans-serif;font-size:14px;color:#374151">이 학습 자료를 보려면 자바스크립트를 켜 주세요.</div></noscript>
+    <div id="app"></div>
+    <script>
+    (function () {
+        'use strict';
 
+        /* ===== 데이터 (원본 보존) ===== */
         const VIDEO_CONFIG = {
             YOUTUBE_VIDEO_ID: 'fwBGVX5NbsA',
             DEFAULT_PLAYBACK_RATE: 1.0,
@@ -2078,872 +2077,478 @@
             "C2": { title: "Proficient", desc: "Can understand virtually everything heard or read." }
         };
 
-        // --- Icons ---
-        const HomeIcon = ({ className }) => (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square" strokeLinejoin="miter" className={className}><rect x="3" y="3" width="18" height="18" rx="0" ry="0" /><path d="M3 9h18" /><path d="M9 21V9" /></svg>);
-        const VocabIcon = ({ className }) => (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square" strokeLinejoin="miter" className={className}><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" /><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" /></svg>);
-        const QuizIcon = ({ className }) => (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square" strokeLinejoin="miter" className={className}><circle cx="12" cy="12" r="10" /><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" /><path d="M12 17h.01" /></svg>);
-        const DiscussIcon = ({ className }) => (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square" strokeLinejoin="miter" className={className}><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" /></svg>);
-        const VideoIcon = ({ className }) => (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square" strokeLinejoin="miter" className={className}><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>);
-        const TranslateIcon = ({ className }) => (<svg viewBox="0 0 24 24" fill="currentColor" className={className}><path d="M12.87 15.07l-2.54-2.51.03-.03A17.52 17.52 0 0014.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.09-.02.67-.02zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z" /></svg>);
-        const ExternalLinkIcon = ({ className }) => (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square" strokeLinejoin="miter" className={className}><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /><polyline points="15 3 21 3 21 9" /><line x1="10" y1="14" x2="21" y2="3" /></svg>);
-        const SparklesIcon = ({ className }) => (<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className={className}><path d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 00-1.423 1.423z" /></svg>);
-        const RewindIcon = ({ className }) => (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square" strokeLinejoin="miter" className={className}><polygon points="11 19 2 12 11 5 11 19"></polygon><polygon points="22 19 13 12 22 5 22 19"></polygon></svg>);
-        const ForwardIcon = ({ className }) => (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square" strokeLinejoin="miter" className={className}><polygon points="13 19 22 12 13 5 13 19"></polygon><polygon points="2 19 11 12 2 5 2 19"></polygon></svg>);
-        const PauseIcon = ({ className }) => (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={className}><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>);
-        const PauseIconSolid = ({ className }) => (<svg viewBox="0 0 24 24" fill="currentColor" className={className}><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>);
-        const PlayIconSolid = ({ className }) => (<svg viewBox="0 0 24 24" fill="currentColor" className={className}><path d="M5 3l14 9-14 9V3z" /></svg>);
-        const MenuIcon = ({ className }) => (
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square" strokeLinejoin="miter" className={className}>
-                <line x1="3" y1="12" x2="21" y2="12" />
-                <line x1="3" y1="6" x2="21" y2="6" />
-                <line x1="3" y1="18" x2="21" y2="18" />
-            </svg>
-        );
 
-        // --- Shared Configurations ---
+        /* =====================================================================
+           OpenKoreanLearningLab — 동영상 학습자료 (순수 바닐라 JS)
+           단일 state · 부분 렌더 · #app 1회 이벤트 위임 · 안전한 이스케이프
+           React/ReactDOM/Babel 제거. 데이터(위 블록) + YouTube IFrame API만 사용.
+           ===================================================================== */
+
+        const esc = (v) => String(v == null ? '' : v).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+        const qs = (s, r) => (r || document).querySelector(s);
+        const qsa = (s, r) => Array.from((r || document).querySelectorAll(s));
+        const viewRoot = () => document.getElementById('view-root');
+
+        const ICON = {
+            home: '<rect x="3" y="3" width="18" height="18" rx="0" ry="0"/><path d="M3 9h18"/><path d="M9 21V9"/>',
+            video: '<polygon points="5 3 19 12 5 21 5 3"></polygon>',
+            vocab: '<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>',
+            quiz: '<circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/>',
+            discuss: '<path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>',
+            externalLink: '<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>',
+            sparkles: '<path d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/>',
+            rewind: '<polygon points="11 19 2 12 11 5 11 19"></polygon><polygon points="22 19 13 12 22 5 22 19"></polygon>',
+            forward: '<polygon points="13 19 22 12 13 5 13 19"></polygon><polygon points="2 19 11 12 2 5 2 19"></polygon>',
+            pause: '<rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect>',
+            playSolid: '<path d="M5 3l14 9-14 9V3z"/>',
+            menu: '<line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/>'
+        };
+        const svgIcon = (name, cls, opts) => {
+            opts = opts || {};
+            const fill = opts.fill || 'none';
+            const stroke = (fill === 'currentColor') ? '' : 'stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter"';
+            return `<svg viewBox="0 0 24 24" fill="${fill}" ${stroke} class="${cls || ''}">${ICON[name]}</svg>`;
+        };
+        const transIcon = (cls) => `<svg viewBox="0 0 24 24" fill="currentColor" class="${cls || ''}"><path d="M12.87 15.07l-2.54-2.51.03-.03A17.52 17.52 0 0014.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.09-.02.67-.02zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z"/></svg>`;
+        const transBtn = (action, isShowing, extra) => `<button type="button" data-action="${action}" class="flex items-center gap-1 text-[8px] font-normal text-gray-300 hover:text-gray-500 font-sans transition-colors cursor-pointer border-none p-0 bg-transparent tracking-widest uppercase ${extra || ''}">${transIcon('w-2.5 h-2.5 opacity-80')}${isShowing ? 'HIDE' : 'ENG'}</button>`;
+
         const NAV_ITEMS = [
-            { id: 'home', label: '시작 페이지', icon: HomeIcon },
-            { id: 'video', label: '동영상 자료', icon: VideoIcon },
-            { id: 'vocab', label: '핵심 어휘', icon: VocabIcon },
-            { id: 'quiz', label: '내용 확인 퀴즈', icon: QuizIcon },
-            { id: 'discuss', label: '생각해 보기', icon: DiscussIcon }
+            { id: 'home', label: '시작 페이지', icon: 'home' },
+            { id: 'video', label: '동영상 자료', icon: 'video' },
+            { id: 'vocab', label: '핵심 어휘', icon: 'vocab' },
+            { id: 'quiz', label: '내용 확인 퀴즈', icon: 'quiz' },
+            { id: 'discuss', label: '생각해 보기', icon: 'discuss' }
         ];
-
         const HOME_CARDS = [
-            { tag: "Vocab", title: "핵심 어휘", description: <>본문에 나온 단어와 표현을 <br />학습해 보세요.</>, target: 'vocab' },
-            { tag: "Quiz", title: "내용 퀴즈", description: <>본문을 제대로 이해했는지 <br />확인해 보세요.</>, target: 'quiz' },
-            { tag: "Discuss", title: "생각해 보기", description: <>본문에 대해 깊게 생각하고 <br />표현해 보세요.</>, target: 'discuss' }
+            { tag: 'Vocab', title: '핵심 어휘', description: '본문에 나온 단어와 표현을 <br>학습해 보세요.', target: 'vocab' },
+            { tag: 'Quiz', title: '내용 퀴즈', description: '본문을 제대로 이해했는지 <br>확인해 보세요.', target: 'quiz' },
+            { tag: 'Discuss', title: '생각해 보기', description: '본문에 대해 깊게 생각하고 <br>표현해 보세요.', target: 'discuss' }
         ];
 
         const callGeminiWithBackoff = async (payload, maxRetries = 5) => {
-            const apiKey = "";
+            const apiKey = '';
             const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
             const delays = [1000, 2000, 4000, 8000, 16000];
-
             for (let i = 0; i <= maxRetries; i++) {
                 try {
-                    const response = await fetch(url, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-
-                    if (!response.ok) {
-                        const errorText = await response.text();
-                        if (response.status === 401 || response.status === 403) {
-                            throw new Error(`API 인증 오류(HTTP ${response.status})입니다.\n${errorText}`);
-                        }
-                        if (response.status === 400) {
-                            throw new Error(`잘못된 요청(HTTP 400)입니다.\n${errorText}`);
-                        }
-                        throw new Error(`HTTP Error: ${response.status} - ${errorText}`);
-                    }
-
-                    return await response.json();
-                } catch (error) {
-                    if (error.message.includes('인증 오류') || error.message.includes('잘못된 요청')) {
-                        throw error;
-                    }
-                    if (i === maxRetries) throw error;
-                    await new Promise(resolve => setTimeout(resolve, delays[i]));
-                }
+                    const r = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                    if (!r.ok) { const t = await r.text(); if (r.status === 401 || r.status === 403) throw new Error(`API 인증 오류(HTTP ${r.status})입니다.\n${t}`); if (r.status === 400) throw new Error(`잘못된 요청(HTTP 400)입니다.\n${t}`); throw new Error(`HTTP Error: ${r.status} - ${t}`); }
+                    return await r.json();
+                } catch (e) { if (e.message.includes('인증 오류') || e.message.includes('잘못된 요청')) throw e; if (i === maxRetries) throw e; await new Promise(res => setTimeout(res, delays[i])); }
             }
         };
 
-        const TransBtn = ({ onClick, isShowing, labelOff = 'ENG', labelOn = 'HIDE', className = "" }) => (
-            <button onClick={(e) => { e.stopPropagation(); onClick(e); }} className={`flex items-center gap-1 text-[8px] font-normal text-gray-300 hover:text-gray-500 font-sans transition-colors cursor-pointer border-none p-0 tracking-widest uppercase ${className}`}>
-                <TranslateIcon className="w-2.5 h-2.5 opacity-80" />{isShowing ? labelOn : labelOff}
-            </button>
-        );
+        // ---------- 전역 상태 ----------
+        const app = { activeTab: 'home', userLevel: 'B2+', headerExpanded: true };
+        const learn = { player: null, currentTime: 0, duration: 0, isPlaying: false, activeLine: null, layout: 'split', autoScroll: true, showVocab: false, rate: 1.0, trans: {}, intervalId: null, speedMenu: false, loading: true };
+        const vocabState = { query: '', globalTrans: false, itemTrans: {} };
+        const quizState = { attempts: {}, shuffled: ANSWER_CHOICES.slice(), q: {} };
+        const discussState = {};
+        const appEl = document.getElementById('app');
 
-        const Header = ({ isExpanded, setIsExpanded, activeTab, setActiveTab }) => (
-            <>
-                <nav className={`sticky top-0 z-50 bg-white border-b border-gray-100 hidden lg:flex items-center justify-between px-8 overflow-hidden transition-all duration-500 ease-in-out ${isExpanded ? 'h-16 opacity-100' : 'h-0 opacity-0 border-none'} print:hidden`}>
-                    <div className="flex items-center cursor-pointer text-left" onClick={() => setActiveTab('home')}><span className="text-lg font-bold font-sans tracking-tighter text-black whitespace-nowrap">OpenKoreanLearningLab</span></div>
-                    <div className="flex items-center justify-end gap-8 pr-12 flex-1">
-                        {NAV_ITEMS.map((menu) => (
-                            <button key={menu.id} onClick={() => setActiveTab(menu.id)} className={`text-sm font-medium transition-colors font-sans relative ${activeTab === menu.id ? 'text-black' : 'text-gray-400 hover:text-gray-600'}`}>{menu.label}{activeTab === menu.id && <div className="absolute -bottom-6 left-0 w-full h-0.5 bg-black"></div>}</button>
-                        ))}
-                    </div>
-                </nav>
+        function setTab(tab) {
+            if (app.activeTab === 'video' && tab !== 'video') stopTick();
+            app.activeTab = tab; app.headerExpanded = (tab !== 'video'); closeVocabPopup();
+            if (tab !== 'video') { learn.player = null; learn.isPlaying = false; learn.activeLine = null; }
+            buildApp(); window.scrollTo({ top: 0, behavior: 'auto' });
+        }
 
-                {/* Fixed Menu Button */}
-                <button
-                    onClick={() => setIsExpanded(!isExpanded)}
-                    className={`fixed top-0 right-0 z-[60] hidden lg:flex items-center justify-center w-10 h-16 bg-white hover:bg-gray-50 transition-colors ${isExpanded ? 'border-b border-gray-100' : 'border-transparent'} print:hidden`}
-                    title={isExpanded ? "메뉴 접기" : "메뉴 펼치기"}
-                >
-                    <MenuIcon className="w-5 h-5 text-black" />
-                </button>
-            </>
-        );
+        // ---------- 셸 ----------
+        function shellHTML() {
+            const isVideo = app.activeTab === 'video';
+            const navBtns = NAV_ITEMS.map(m => `<button type="button" data-tab="${m.id}" class="text-sm font-medium transition-colors font-sans relative ${app.activeTab === m.id ? 'text-black' : 'text-gray-400 hover:text-gray-600'}">${esc(m.label)}${app.activeTab === m.id ? '<div class="absolute -bottom-6 left-0 w-full h-0.5 bg-black"></div>' : ''}</button>`).join('');
+            const header = `<nav class="sticky top-0 z-50 bg-white border-b border-gray-100 hidden lg:flex items-center justify-between px-8 overflow-hidden transition-all duration-500 ease-in-out ${app.headerExpanded ? 'h-16 opacity-100' : 'h-0 opacity-0 border-none'} print:hidden">
+                <div class="flex items-center cursor-pointer text-left" data-tab="home"><span class="text-lg font-bold font-sans tracking-tighter text-black whitespace-nowrap">OpenKoreanLearningLab</span></div>
+                <div class="flex items-center justify-end gap-8 pr-12 flex-1">${navBtns}</div>
+            </nav>
+            <button type="button" data-action="toggle-header" class="fixed top-0 right-0 z-[60] hidden lg:flex items-center justify-center w-10 h-16 bg-white hover:bg-gray-50 transition-colors ${app.headerExpanded ? 'border-b border-gray-100' : 'border-transparent'} print:hidden">${svgIcon('menu', 'w-5 h-5 text-black')}</button>`;
+            const mobileTop = `<div class="lg:hidden h-14 border-b border-gray-100 flex items-center justify-center sticky top-0 bg-white z-40 print:hidden"><span class="text-lg font-bold font-sans tracking-tighter">OpenKoreanLearningLab</span></div>`;
+            const mobileNav = `<nav class="lg:hidden fixed bottom-0 w-full bg-white border-t border-gray-100 flex justify-around p-3 z-50 print:hidden">${NAV_ITEMS.map(m => `<button type="button" data-tab="${m.id}" class="p-2 ${app.activeTab === m.id ? 'text-black' : 'text-gray-300'}">${svgIcon(m.icon, 'w-6 h-6')}</button>`).join('')}</nav>`;
+            return `${header}${mobileTop}<main id="view-root" class="flex-1 relative flex flex-col ${isVideo ? 'overflow-x-hidden lg:overflow-hidden lg:h-full' : ''}"></main>${mobileNav}`;
+        }
+        function buildApp() {
+            const isVideo = app.activeTab === 'video';
+            appEl.className = `flex flex-col bg-white text-gray-900 selection:bg-gray-200 selection:text-black font-sans ${isVideo ? 'h-screen overflow-hidden' : 'min-h-screen'}`;
+            appEl.innerHTML = shellHTML();
+            paint();
+        }
+        function paint() {
+            const root = viewRoot(); if (!root) return;
+            switch (app.activeTab) {
+                case 'home': root.innerHTML = homeHTML(); break;
+                case 'video': root.innerHTML = videoHTML(); afterVideoPaint(); break;
+                case 'vocab': root.innerHTML = vocabHTML(); break;
+                case 'quiz': root.innerHTML = quizHTML(); break;
+                case 'discuss': root.innerHTML = discussHTML(); break;
+                default: root.innerHTML = homeHTML();
+            }
+        }
 
-        const HomeListItem = ({ title, description, onClick }) => (
-            <div className="cursor-pointer group flex flex-col items-center text-center p-8 border border-transparent hover:bg-gray-50 transition-all rounded-sm print:p-2" onClick={onClick}>
-                <h2 className="text-xl font-bold text-[#1a1a1a] mb-3 font-serif group-hover:text-gray-600 transition-colors print:text-[14px] print:mb-1">{title}</h2>
-                <p className="text-sm text-[#444444] leading-relaxed font-serif print:text-[12px]">{description}</p>
-            </div>
-        );
-
-        const HomeView = ({ setActiveTab, userLevel }) => {
-            const levelInfo = LEVEL_DEFINITIONS[userLevel] || { title: "Unknown" };
-            return (
-                <div className="animate-fade-in max-w-5xl mx-auto w-full px-6 lg:px-0 pt-[3.75rem] pb-8 flex flex-col items-center h-full justify-center print:pt-4">
-                    <div className="flex flex-col items-center justify-center text-center w-full mb-16 print:mb-8">
-                        <div className="flex items-center gap-3 mb-6 print:mb-4">
-                            <span className="px-3 py-1 bg-gray-900 text-white text-[10px] font-sans font-bold tracking-widest uppercase print:text-[12px]">스케치 코미디</span>
-                            <span className="px-3 py-1 bg-gray-900 text-white text-[10px] font-sans font-bold tracking-widest uppercase print:text-[12px]">일상</span>
-                            <div className="flex items-center border border-gray-900 px-3 py-1 text-[10px] font-sans tracking-widest uppercase text-gray-900 print:text-[12px]">
-                                <span className="font-bold">{userLevel}</span>
-                                <span className="mx-2 w-px h-2.5 bg-gray-300"></span>
-                                <span className="font-medium">{levelInfo.title}</span>
-                            </div>
-                        </div>
-                        <h1 className="font-serif text-3xl md:text-5xl lg:text-6xl text-black leading-tight mb-4 font-bold print:text-[22px] print:leading-tight">
-                            서점: '번호 따기'의 성지?
-                        </h1>
-                        <p className="font-serif text-gray-500 text-sm md:text-base italic mb-8 max-w-2xl leading-relaxed print:text-[16px] print:mb-4">
-                            연애 상대를 찾으러 서점에 가는 사람들
-                        </p>
-
-                        <div
-                            onClick={() => setActiveTab('video')}
-                            className="group relative w-full max-w-lg aspect-video cursor-pointer overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 bg-black print:hidden"
-                        >
-                            <img
-                                src={`https://img.youtube.com/vi/${VIDEO_CONFIG.YOUTUBE_VIDEO_ID}/maxresdefault.jpg`}
-                                alt="Video Thumbnail"
-                                className="w-full h-full object-cover opacity-90 group-hover:opacity-60 group-hover:scale-105 transition-all duration-500"
-                            />
-                            <div className="absolute inset-0 flex items-center justify-center">
-                                <div className="w-16 h-16 bg-white/90 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300 backdrop-blur-sm">
-                                    <PlayIconSolid className="w-6 h-6 text-black ml-1" />
-                                </div>
-                            </div>
-                            <div className="absolute bottom-4 left-0 right-0 text-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                <span className="text-white text-xs font-bold font-sans tracking-widest uppercase bg-black px-4 py-2">동영상 보기</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full pt-0 max-w-4xl print:flex print:flex-row print:justify-center print:gap-4">
-                        {HOME_CARDS.map((card, idx) => (<HomeListItem key={idx} title={card.title} description={card.description} onClick={() => setActiveTab(card.target)} />))}
+        // ---------- HOME ----------
+        function homeHTML() {
+            const lvl = app.userLevel, info = LEVEL_DEFINITIONS[lvl] || { title: 'Unknown' };
+            const cards = HOME_CARDS.map(c => `<div class="cursor-pointer group flex flex-col items-center text-center p-8 border border-transparent hover:bg-gray-50 transition-all rounded-sm" data-tab="${c.target}"><h2 class="text-xl font-bold text-[#1a1a1a] mb-3 font-serif group-hover:text-gray-600 transition-colors">${esc(c.title)}</h2><p class="text-sm text-[#444444] leading-relaxed font-serif">${c.description}</p></div>`).join('');
+            return `<div class="animate-fade-in max-w-5xl mx-auto w-full px-6 lg:px-0 pt-[3.75rem] pb-8 flex flex-col items-center h-full justify-center">
+                <div class="flex flex-col items-center justify-center text-center w-full mb-16">
+                    <div class="flex items-center gap-3 mb-6"><span class="px-3 py-1 bg-gray-900 text-white text-[10px] font-sans font-bold tracking-widest uppercase">스케치 코미디</span><span class="px-3 py-1 bg-gray-900 text-white text-[10px] font-sans font-bold tracking-widest uppercase">일상</span><div class="flex items-center border border-gray-900 px-3 py-1 text-[10px] font-sans tracking-widest uppercase text-gray-900"><span class="font-bold">${esc(lvl)}</span><span class="mx-2 w-px h-2.5 bg-gray-300"></span><span class="font-medium">${esc(info.title)}</span></div></div>
+                    <h1 class="font-serif text-3xl md:text-5xl lg:text-6xl text-black leading-tight mb-4 font-bold">서점: '번호 따기'의 성지?</h1>
+                    <p class="font-serif text-gray-500 text-sm md:text-base italic mb-8 max-w-2xl leading-relaxed">연애 상대를 찾으러 서점에 가는 사람들</p>
+                    <div data-tab="video" class="group relative w-full max-w-lg aspect-video cursor-pointer overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 bg-black">
+                        <img src="https://img.youtube.com/vi/${esc(VIDEO_CONFIG.YOUTUBE_VIDEO_ID)}/maxresdefault.jpg" alt="Video Thumbnail" class="w-full h-full object-cover opacity-90 group-hover:opacity-60 group-hover:scale-105 transition-all duration-500" />
+                        <div class="absolute inset-0 flex items-center justify-center"><div class="w-16 h-16 bg-white/90 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300 backdrop-blur-sm">${svgIcon('playSolid', 'w-6 h-6 text-black ml-1', { fill: 'currentColor' })}</div></div>
+                        <div class="absolute bottom-4 left-0 right-0 text-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"><span class="text-white text-xs font-bold font-sans tracking-widest uppercase bg-black px-4 py-2">동영상 보기</span></div>
                     </div>
                 </div>
-            );
-        };
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 w-full pt-0 max-w-4xl">${cards}</div>
+            </div>`;
+        }
 
-        const VideoSidebarVocabCard = ({ word, activeVocabTerm, sidebarVocabRefs }) => {
-            const [showTrans, setShowTrans] = useState(false);
-            const trans = word.translations?.en;
-            return (
-                <div ref={el => sidebarVocabRefs.current[word.term] = el} className={`p-5 border-b border-gray-100 last:border-0 transition-all duration-500 bg-white print:p-1 print:mb-0.5 print:border-transparent print:break-inside-avoid`}>
-                    <div className="flex justify-between items-baseline mb-2 print:flex-row print:items-baseline print:justify-start print:mb-0 print:leading-none">
-                        <h3 className={`text-lg font-serif font-bold print:text-[10px] print:leading-none ${activeVocabTerm === word.term ? 'text-black underline decoration-1 underline-offset-4 print:no-underline' : 'text-gray-900'}`}>{word.term}</h3>
-                        {trans?.term && (
-                            <span className="hidden print:inline-block print:text-[6px] print:text-gray-400 print:opacity-20 print:ml-1 print:font-sans print:leading-none">
-                                {trans.term}
-                            </span>
-                        )}
-                        <div className="print:hidden"><TransBtn onClick={() => setShowTrans(!showTrans)} isShowing={showTrans} /></div>
-                    </div>
-                    <p className="text-sm font-serif text-gray-600 mb-3 leading-relaxed print:text-[9px] print:leading-[1.15] print:mb-0">{word.mainDef}</p>
-
-                    {showTrans && trans?.mainDef && (<div className="mt-2 mb-4 pt-2 border-t border-gray-100 animate-fade-in print:hidden"><p className="text-xs font-ui text-gray-500">{trans.mainDef}</p></div>)}
-
-                    {word.subDefs && word.subDefs.length > 0 && (
-                        <div className="space-y-2 mt-3 pl-3 border-l border-gray-200 print:mt-0 print:space-y-0 print:border-l-[1px]">
-                            {word.subDefs.map((sub, i) => (
-                                <div key={i} className="print:mb-0">
-                                    <p className="text-xs font-bold text-gray-800 font-ui mb-0.5 print:text-[8px] print:leading-none print:mb-0">{sub.subTerm}</p>
-                                    <p className="text-xs text-gray-500 font-serif print:text-[8px] print:leading-none print:mb-0">{sub.subDef}</p>
-                                    {showTrans && trans?.subDefs?.[i]?.def && (<p className="text-[10px] text-gray-400 font-ui mt-0.5 italic print:hidden">{trans.subDefs[i].def}</p>)}
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                </div>
-            );
-        };
-
-        const VideoVocabPopup = ({ popup, onGlobalClick }) => {
-            const [showTrans, setShowTrans] = useState(false);
-            const trans = popup.data?.translations?.en;
-            const popupWidth = 300; const padding = 20; const windowWidth = window.innerWidth;
-            let leftPos = popup.x - (popupWidth / 2);
-            if (leftPos < padding) leftPos = padding; else if (leftPos + popupWidth > windowWidth - padding) leftPos = windowWidth - popupWidth - padding;
-            useEffect(() => { setShowTrans(false); }, [popup.data]);
-            if (!popup.show || !popup.data) return null;
-            return createPortal(
-                <div className={`fixed z-[9999] bg-white border border-gray-200 p-6 w-[300px] shadow-2xl animate-fade-in print:hidden ${!popup.fixed ? 'pointer-events-none' : ''}`} style={{ left: leftPos, top: popup.y + 16 }} onClick={(e) => e.stopPropagation()}>
-                    <div className="flex items-center justify-between mb-4 pb-2 border-b border-gray-100">
-                        <h3 className="text-xl font-serif font-bold text-gray-900">{popup.data.term}</h3>
-                        {popup.fixed && (<TransBtn onClick={() => setShowTrans(!showTrans)} isShowing={showTrans} />)}
-                    </div>
-                    <p className="text-sm font-serif text-gray-700 leading-relaxed mb-4">{popup.data.mainDef}</p>
-                    {showTrans && popup.fixed && trans?.mainDef && (<div className="mb-4 bg-white border border-gray-100 p-3 animate-fade-in"><p className="text-xs font-ui text-gray-600">{trans.mainDef}</p></div>)}
-                    {popup.fixed && popup.data.subDefs && popup.data.subDefs.length > 0 && (<div className="space-y-3 mt-4">{popup.data.subDefs.map((sub, idx) => (<div key={idx}><p className="text-xs font-bold font-ui text-gray-900 mb-1">{sub.subTerm}</p><p className="text-xs font-serif text-gray-600">{sub.subDef}</p></div>))}</div>)}
-                    <div className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-white border-l border-t border-gray-200 rotate-45"></div>
-                </div>, document.body
-            );
-        };
-
-        const LearnView = ({ updateProgress }) => {
-            const playerRef = useRef(null);
-            const [videoState, setVideoState] = useState({ player: null, currentTime: 0, duration: 0, isPlaying: false });
-            const [activeLine, setActiveLine] = useState(null);
-            const [translations, setTranslations] = useState({});
-            const [popup, setPopup] = useState({ show: false, fixed: false, data: null, x: 0, y: 0 });
-            const [isLoading, setIsLoading] = useState(true);
-            const [activeVocabTerm, setActiveVocabTerm] = useState(null);
-            const sidebarVocabRefs = useRef({});
-            const scriptRefs = useRef({});
-            const intervalRef = useRef(null);
-            const [isSpeedMenuOpen, setIsSpeedMenuOpen] = useState(false);
-
-            const [layoutMode, setLayoutMode] = useState('split');
-            const [autoScroll, setAutoScroll] = useState(true);
-            const [showVocab, setShowVocab] = useState(false);
-            const [playbackRate, setPlaybackRate] = useState(1.0);
-
-            useEffect(() => {
-                const loadVideo = () => {
-                    if (window.YT && window.YT.Player) {
-                        new window.YT.Player('youtube-player', {
-                            videoId: VIDEO_CONFIG.YOUTUBE_VIDEO_ID, width: '100%', height: '100%',
-                            playerVars: { 'autoplay': 0, 'controls': 1, 'rel': 0, 'disablekb': 1 },
-                            events: {
-                                'onReady': (event) => { playerRef.current = event.target; setVideoState(prev => ({ ...prev, player: event.target, duration: event.target.getDuration() })); setIsLoading(false); },
-                                'onStateChange': (event) => { if (event.data === window.YT.PlayerState.PLAYING) { startInterval(); updateProgress('learn'); setVideoState(prev => ({ ...prev, isPlaying: true })); } else { stopInterval(); if (event.data === window.YT.PlayerState.PAUSED || event.data === window.YT.PlayerState.ENDED) { setVideoState(prev => ({ ...prev, isPlaying: false })); } } }
-                            }
-                        });
-                    }
-                };
-                if (!window.YT) { const tag = document.createElement('script'); tag.src = "https://www.youtube.com/iframe_api"; const firstScriptTag = document.getElementsByTagName('script')[0]; firstScriptTag.parentNode.insertBefore(tag, firstScriptTag); window.onYouTubeIframeAPIReady = loadVideo; } else { loadVideo(); }
-                return () => stopInterval();
-            }, []);
-
-            useEffect(() => { if (videoState.player && videoState.player.setPlaybackRate) videoState.player.setPlaybackRate(playbackRate); }, [playbackRate, videoState.player]);
-
-            const handleGlobalClick = useCallback(() => { if (popup.fixed) setPopup(prev => ({ ...prev, show: false, fixed: false })); }, [popup.fixed]);
-            useEffect(() => { if (popup.fixed) window.addEventListener('click', handleGlobalClick); return () => window.removeEventListener('click', handleGlobalClick); }, [popup.fixed, handleGlobalClick]);
-
-            useEffect(() => {
-                const handleKeyPress = (e) => {
-                    if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) return;
-                    if (e.code === 'Space') { e.preventDefault(); const player = videoState.player; if (player && typeof player.getPlayerState === 'function') { if (player.getPlayerState() === 1) player.pauseVideo(); else player.playVideo(); } }
-                    if (e.code === 'ArrowLeft') { e.preventDefault(); const currentIndex = VIDEO_SCRIPT_DATA.findIndex(line => line.id === activeLine); if (currentIndex > 0) handleLineClick(VIDEO_SCRIPT_DATA[currentIndex - 1].time[0]); }
-                    if (e.code === 'ArrowRight') { e.preventDefault(); const currentIndex = VIDEO_SCRIPT_DATA.findIndex(line => line.id === activeLine); if (currentIndex !== -1 && currentIndex < VIDEO_SCRIPT_DATA.length - 1) handleLineClick(VIDEO_SCRIPT_DATA[currentIndex + 1].time[0]); else if (currentIndex === -1 && VIDEO_SCRIPT_DATA.length > 0) handleLineClick(VIDEO_SCRIPT_DATA[0].time[0]); }
-                };
-                window.addEventListener('keydown', handleKeyPress); return () => window.removeEventListener('keydown', handleKeyPress);
-            }, [videoState.player, activeLine]);
-
-            const startInterval = () => {
-                stopInterval();
-                intervalRef.current = setInterval(() => {
-                    const p = playerRef.current;
-                    if (p && p.getCurrentTime) {
-                        const time = p.getCurrentTime();
-                        setVideoState(prev => ({ ...prev, currentTime: time }));
-                        const currentLine = VIDEO_SCRIPT_DATA.find(line => time >= line.time[0] && time < line.time[1]);
-                        if (currentLine) setActiveLine(currentLine.id);
-                    }
-                }, 200);
-            };
-
-            const stopInterval = () => {
-                if (intervalRef.current) {
-                    clearInterval(intervalRef.current);
-                    intervalRef.current = null;
+        // ---------- 어휘 매칭 (스크립트 본문 하이라이트) ----------
+        const ALL_VOCAB_TERMS = (() => {
+            return VOCAB_DATA.flatMap(v => {
+                const terms = [v.term];
+                if (v.variants) terms.push(...v.variants);
+                if (v.subDefs) terms.push(...v.subDefs.map(s => s.subTerm));
+                return [...new Set(terms)].filter(Boolean).map(term => ({ term, idx: VOCAB_DATA.indexOf(v) }));
+            }).sort((a, b) => b.term.length - a.term.length);
+        })();
+        function renderTextWithVocab(text) {
+            if (!text) return '';
+            const matches = [];
+            ALL_VOCAB_TERMS.forEach(({ term, idx }) => {
+                let i = 0;
+                while ((i = text.indexOf(term, i)) !== -1) {
+                    const end = i + term.length;
+                    const ov = matches.some(m => (i >= m.start && i < m.end) || (end > m.start && end <= m.end) || (i <= m.start && end >= m.end));
+                    if (!ov) matches.push({ start: i, end, term, idx });
+                    i += 1;
                 }
-            };
+            });
+            matches.sort((a, b) => a.start - b.start);
+            let out = '', last = 0;
+            matches.forEach(mt => {
+                if (mt.start > last) out += esc(text.substring(last, mt.start));
+                out += `<span class="cursor-pointer border-b border-dotted border-gray-400 text-gray-800 hover:border-black hover:text-black transition-all duration-200 font-medium inline-block leading-tight" data-vocab-idx="${mt.idx}">${esc(mt.term)}</span>`;
+                last = mt.end;
+            });
+            if (last < text.length) out += esc(text.substring(last));
+            return out;
+        }
 
-            useEffect(() => {
-                if (popup.show) return;
-                if (activeLine && autoScroll && scriptRefs.current[activeLine]) {
-                    scriptRefs.current[activeLine].scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }
-            }, [activeLine, autoScroll, popup.show, layoutMode]);
-
-            const handleLineClick = (time) => { const player = videoState.player; if (player) { player.seekTo(time, true); player.playVideo(); } };
-            const toggleTranslation = (id) => setTranslations(prev => ({ ...prev, [id]: !prev[id] }));
-            const scrollToVocab = (term) => { const element = sidebarVocabRefs.current[term]; if (element) element.scrollIntoView({ behavior: 'smooth', block: 'center' }); };
-
-            const handleVocabEnter = (e, wordData) => { if (popup.fixed) return; const rect = e.target.getBoundingClientRect(); setPopup({ show: true, fixed: false, data: wordData, x: rect.left + rect.width / 2, y: rect.bottom }); if (showVocab) { setActiveVocabTerm(wordData.term); scrollToVocab(wordData.term); } };
-            const handleVocabLeave = () => { if (popup.fixed) return; setPopup(prev => ({ ...prev, show: false })); };
-            const handleVocabClick = (e, wordData) => { e.stopPropagation(); if (popup.fixed && popup.data && popup.data.term === wordData.term) { setPopup(prev => ({ ...prev, show: false, fixed: false })); return; } const rect = e.target.getBoundingClientRect(); setPopup({ show: true, fixed: true, data: wordData, x: rect.left + rect.width / 2, y: rect.bottom }); if (showVocab) { setActiveVocabTerm(wordData.term); scrollToVocab(wordData.term); } };
-
-            const handleSeek = (e) => { const time = parseFloat(e.target.value); if (videoState.player) videoState.player.seekTo(time, true); setVideoState(prev => ({ ...prev, currentTime: time })); };
-            const togglePlay = () => { const player = videoState.player; if (player) { if (videoState.isPlaying) player.pauseVideo(); else player.playVideo(); } };
-            const rewind2 = () => { const player = videoState.player; if (player) { const newTime = Math.max(0, videoState.currentTime - 1.5); player.seekTo(newTime, true); setVideoState(prev => ({ ...prev, currentTime: newTime })); } };
-            const forward2 = () => { const player = videoState.player; if (player) { const newTime = Math.min(videoState.duration, videoState.currentTime + 1.5); player.seekTo(newTime, true); setVideoState(prev => ({ ...prev, currentTime: newTime })); } };
-            const formatTime = (seconds) => { if (isNaN(seconds)) return "00:00"; const date = new Date(seconds * 1000); const mm = date.getUTCMinutes(); const ss = date.getUTCSeconds(); return `${mm.toString().padStart(2, '0')}:${ss.toString().padStart(2, '0')}`; };
-
-            const allVocabTerms = useMemo(() => { return VOCAB_DATA.flatMap(vocab => { const terms = [vocab.term]; if (vocab.variants) terms.push(...vocab.variants); if (vocab.subDefs) terms.push(...vocab.subDefs.map(s => s.subTerm)); return [...new Set(terms)].filter(t => t).map(term => ({ term, vocab })); }).sort((a, b) => b.term.length - a.term.length); }, []);
-
-            const renderTextWithVocab = (text) => {
-                if (!text) return [""];
-                const matches = [];
-                allVocabTerms.forEach(({ term, vocab }) => { let index = 0; while ((index = text.indexOf(term, index)) !== -1) { const end = index + term.length; const overlaps = matches.some(m => (index >= m.start && index < m.end) || (end > m.start && end <= m.end) || (index <= m.start && end >= m.end)); if (!overlaps) matches.push({ start: index, end, term, vocab }); index += 1; } });
-                matches.sort((a, b) => a.start - b.start);
-                const result = []; let lastIndex = 0;
-                matches.forEach((match, idx) => {
-                    if (match.start > lastIndex) result.push(text.substring(lastIndex, match.start)); const isActive = (popup.show && popup.data && popup.data.term === match.vocab.term) || (showVocab && activeVocabTerm === match.vocab.term);
-                    result.push(<span key={`${match.term}-${idx}`} className={`cursor-pointer border-b border-dotted transition-all duration-200 font-medium inline-block leading-tight ${isActive ? 'border-black bg-white text-black border-solid print:border-dotted' : 'border-gray-400 text-gray-800 hover:border-black hover:text-black print:text-black'}`} onMouseEnter={(e) => handleVocabEnter(e, match.vocab)} onMouseLeave={handleVocabLeave} onClick={(e) => handleVocabClick(e, match.vocab)}>{match.term}</span>); lastIndex = match.end;
+        // ---------- 어휘 팝업 (공용) ----------
+        let popupEl = null;
+        function ensurePopup() {
+            if (!popupEl) {
+                popupEl = document.createElement('div'); popupEl.id = 'vocab-popup'; popupEl.style.display = 'none'; document.body.appendChild(popupEl);
+                popupEl.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const tb = e.target.closest('[data-action="popup-trans"]'); if (!tb) return;
+                    const w = VOCAB_DATA[+popupEl.dataset.idx]; const showing = popupEl.dataset.trans === '1'; popupEl.dataset.trans = showing ? '' : '1'; fillPopup(w, !showing);
                 });
-                if (lastIndex < text.length) result.push(text.substring(lastIndex));
-                return result;
-            };
+            }
+            return popupEl;
+        }
+        function fillPopup(word, showTrans) {
+            const t = (word.translations && word.translations.en) || {};
+            const subDefs = (popupEl.dataset.fixed && word.subDefs) ? `<div class="space-y-3 mt-4">${word.subDefs.map(s => `<div><p class="text-xs font-bold font-ui text-gray-900 mb-1">${esc(s.subTerm)}</p><p class="text-xs font-serif text-gray-600">${esc(s.subDef)}</p></div>`).join('')}</div>` : '';
+            const transBlock = (showTrans && popupEl.dataset.fixed && t.mainDef) ? `<div class="mb-4 bg-white border border-gray-100 p-3 animate-fade-in"><p class="text-xs font-ui text-gray-600">${esc(t.mainDef)}</p></div>` : '';
+            popupEl.innerHTML = `<div class="flex items-center justify-between mb-4 pb-2 border-b border-gray-100"><h3 class="text-xl font-serif font-bold text-gray-900">${esc(word.term)}</h3>${popupEl.dataset.fixed ? transBtn('popup-trans', showTrans) : ''}</div><p class="text-sm font-serif text-gray-700 leading-relaxed mb-4">${esc(word.mainDef)}</p>${transBlock}${subDefs}<div class="absolute -top-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-white border-l border-t border-gray-200 rotate-45"></div>`;
+        }
+        function showVocabPopup(word, x, y, fixed) {
+            const el = ensurePopup(); const width = 300, pad = 20; let left = x - width / 2;
+            if (left < pad) left = pad; else if (left + width > window.innerWidth - pad) left = window.innerWidth - width - pad;
+            el.className = `fixed z-[9999] bg-white border border-gray-200 p-6 w-[300px] shadow-2xl animate-fade-in print:hidden ${fixed ? '' : 'pointer-events-none'}`;
+            el.style.left = left + 'px'; el.style.top = (y + 16) + 'px'; el.style.display = 'block';
+            el.dataset.fixed = fixed ? '1' : ''; el.dataset.idx = String(VOCAB_DATA.indexOf(word)); el.dataset.trans = '';
+            fillPopup(word, false);
+        }
+        function closeVocabPopup() { if (popupEl) { popupEl.style.display = 'none'; popupEl.dataset.fixed = ''; } }
+        document.addEventListener('click', (e) => { if (!popupEl || popupEl.style.display === 'none') return; if (popupEl.dataset.fixed && !popupEl.contains(e.target) && !(e.target.closest && e.target.closest('[data-vocab-idx]'))) closeVocabPopup(); });
 
-            const isScriptMode = layoutMode === 'script';
-            const isVideoOnlyMode = layoutMode === 'video';
-            const isSplitMode = layoutMode === 'split';
-
-            const videoStyle = isSplitMode ? `w-full aspect-video shrink-0 z-20 shadow-md lg:shadow-none lg:h-full lg:aspect-auto ${showVocab ? 'lg:w-[58%] xl:flex-1' : 'lg:w-[58%] xl:w-7/12'}` : (isScriptMode ? 'hidden' : 'flex-1 w-full h-full');
-            const scriptContainerResponsiveClass = isSplitMode ? `w-full lg:w-[42%] lg:h-full lg:flex-none ${showVocab ? 'xl:w-4/12' : 'xl:w-5/12'}` : (isScriptMode ? 'w-full h-full' : 'hidden');
-
-            const LearnToolbar = () => (
-                <div className="sticky top-0 z-40 h-16 flex items-center justify-between px-6 py-3 bg-white border-b border-gray-200 shadow-sm pr-14 print:hidden">
-                    <div className="flex items-center gap-1 shrink-0">
-                        {[{ id: 'split', label: '동영상 & 스크립트' }, { id: 'video', label: '동영상만 보기' }, { id: 'script', label: '스크립트만 보기' }].map((mode) => (
-                            <button key={mode.id} onClick={() => setLayoutMode(mode.id)} className={`px-3 py-1.5 text-xs font-bold font-ui uppercase tracking-widest transition-colors ${mode.id === 'split' ? 'block' : mode.id === 'video' ? 'hidden md:block' : 'hidden sm:block'} ${layoutMode === mode.id ? 'bg-black text-white' : 'text-gray-400 hover:text-black'}`}>
-                                {mode.label}
-                            </button>
-                        ))}
-                    </div>
-                    <div className="flex items-center gap-4 flex-1 justify-end min-w-0">
-                        <div className="hidden sm:flex items-center gap-4 flex-1 max-w-xl justify-end">
-                            <div className="hidden md:flex flex-col flex-1 gap-1 w-full">
-                                <div className="relative group h-2 flex items-center">
-                                    <div className="absolute inset-0 flex items-center">
-                                        <div className="w-full h-[1px] bg-gray-200 group-hover:h-[2px] transition-all"></div>
-                                        <div className="absolute left-0 top-1/2 -translate-y-1/2 h-[2px] bg-black" style={{ width: `${(videoState.currentTime / videoState.duration) * 100}%` }}></div>
-                                    </div>
-                                    <input type="range" min="0" max={videoState.duration || 100} value={videoState.currentTime} onChange={handleSeek} className="absolute inset-0 w-full opacity-0 cursor-pointer" />
-                                </div>
-                                <span className="text-[10px] font-mono text-gray-400 text-right leading-none">{formatTime(videoState.currentTime)} / {formatTime(videoState.duration)}</span>
-                            </div>
-                            <div className="hidden sm:flex items-center gap-3 shrink-0">
-                                <button onClick={rewind2} className="text-gray-400 hover:text-black transition-colors"><RewindIcon className="w-4 h-4" /></button>
-                                <button onClick={togglePlay} className="w-6 h-6 border border-black rounded-full flex items-center justify-center hover:bg-black hover:text-white transition-all">
-                                    {videoState.isPlaying ? <PauseIcon className="w-2.5 h-2.5 fill-current" /> : <PlayIconSolid className="w-2.5 h-2.5 fill-current ml-0.5" />}
-                                </button>
-                                <button onClick={forward2} className="text-gray-400 hover:text-black transition-colors"><ForwardIcon className="w-4 h-4" /></button>
-                            </div>
-                        </div>
-                        <div className="h-4 w-px bg-gray-200 hidden sm:block"></div>
-                        <div className="relative shrink-0 hidden sm:flex group">
-                            <button onClick={() => setIsSpeedMenuOpen(!isSpeedMenuOpen)} className="flex items-center gap-1.5 text-xs font-bold font-ui uppercase tracking-wider text-gray-500 hover:text-black">{playbackRate.toFixed(1)}x</button>
-                            {isSpeedMenuOpen && (
-                                <>
-                                    <div className="fixed inset-0 z-40" onClick={() => setIsSpeedMenuOpen(false)}></div>
-                                    <div className="absolute top-full right-0 mt-2 bg-white border border-gray-200 shadow-xl p-1 z-50 w-20 animate-fade-in">
-                                        {[0.5, 0.75, 1.0, 1.25, 1.5, 2.0].map(speed => (
-                                            <button key={speed} onClick={() => { setPlaybackRate(speed); setIsSpeedMenuOpen(false); }} className={`w-full text-center py-1.5 text-[10px] font-bold font-ui hover:bg-white ${playbackRate === speed ? 'text-black' : 'text-gray-400'}`}>{speed}x</button>
-                                        ))}
-                                    </div>
-                                </>
-                            )}
-                        </div>
-                        <button onClick={() => setAutoScroll(!autoScroll)} className={`hidden sm:flex items-center gap-2 text-[10px] font-bold font-ui uppercase tracking-widest transition-colors ${autoScroll ? 'text-black' : 'text-gray-300 hover:text-gray-500'}`}>
-                            <span className={`w-2 h-2 rounded-full ${autoScroll ? 'bg-black' : 'border border-gray-300'}`}></span><span className="md:hidden">스크롤</span><span className="hidden md:inline">자동 스크롤</span>
-                        </button>
-                        <button onClick={() => setShowVocab(!showVocab)} className={`hidden xl:flex items-center gap-2 px-3 py-1.5 border transition-all text-[10px] font-bold font-ui uppercase tracking-widest ${showVocab ? 'bg-black text-white border-black' : 'bg-white border-gray-200 text-gray-500 hover:border-black hover:text-black'}`}>어휘</button>
-                    </div>
+        // ---------- VIDEO (LearnView) ----------
+        const SPEAKERS_LEFT = ['김원훈', '조진세', '남자1', '남자2', '남자3', '남자4'];
+        function fmt(s) { if (isNaN(s)) return '00:00'; const d = new Date(s * 1000); return `${String(d.getUTCMinutes()).padStart(2, '0')}:${String(d.getUTCSeconds()).padStart(2, '0')}`; }
+        function videoPaneClass() {
+            const split = learn.layout === 'split', vid = learn.layout === 'video', scr = learn.layout === 'script';
+            const base = 'bg-black overflow-hidden relative transition-all duration-300 print:hidden';
+            if (scr) return base + ' hidden';
+            if (vid) return base + ' flex-1 w-full h-full';
+            return base + (learn.showVocab ? ' w-full aspect-video shrink-0 z-20 shadow-md lg:shadow-none lg:h-full lg:aspect-auto lg:w-[58%] xl:flex-1' : ' w-full aspect-video shrink-0 z-20 shadow-md lg:shadow-none lg:h-full lg:aspect-auto lg:w-[58%] xl:w-7/12');
+        }
+        function scriptPaneClass() {
+            const split = learn.layout === 'split', vid = learn.layout === 'video', scr = learn.layout === 'script';
+            const base = 'flex-1 flex flex-col min-h-0 bg-white border-l border-gray-200 transition-all duration-300 print:flex';
+            if (vid) return base + ' hidden';
+            if (scr) return base + ' w-full h-full';
+            return base + (learn.showVocab ? ' w-full lg:w-[42%] lg:h-full lg:flex-none xl:w-4/12' : ' w-full lg:w-[42%] lg:h-full lg:flex-none xl:w-5/12');
+        }
+        function vocabPaneClass() {
+            const scr = learn.layout === 'script';
+            return `w-80 flex-col bg-white border-l border-gray-200 animate-fade-in ${scr ? 'fixed right-0 top-[114px] h-[calc(100vh-114px)]' : 'h-full'} ${learn.showVocab ? 'flex' : 'hidden'}`;
+        }
+        function lineHTML(line) {
+            const isActive = learn.activeLine === line.id;
+            const isLeft = SPEAKERS_LEFT.includes(line.speaker);
+            const scr = learn.layout === 'script';
+            const showT = !!learn.trans[line.id];
+            const wrapCls = scr ? `w-full transition-all duration-500 flex flex-col mb-8 ${isLeft ? 'items-start' : 'items-end'}` : `w-full transition-all duration-500 mb-8 ${isActive ? 'opacity-100' : 'opacity-70 hover:opacity-90'}`;
+            const bubbleCls = scr ? `cursor-pointer group relative px-6 py-5 max-w-[90%] md:max-w-[80%] bg-white border rounded-2xl ${isLeft ? 'rounded-bl-none' : 'rounded-br-none'} hover:shadow-md ${isActive ? 'ring-1 ring-black border-black' : 'border-transparent'}` : 'cursor-pointer group relative bg-transparent border-none';
+            const pTextCls = (!scr && isActive) ? 'text-black' : 'text-[#1a1a1a]';
+            const ctrlCls = scr ? `mt-4 flex items-center gap-3 ${isLeft ? 'justify-start' : 'justify-end'}` : 'flex items-center gap-3 opacity-0 group-hover:opacity-100 justify-start mt-2';
+            const playIcon = (isActive && learn.isPlaying) ? svgIcon('pause', 'w-2 h-2', { fill: 'currentColor' }) : svgIcon('playSolid', 'w-2 h-2 ml-[1.5px]', { fill: 'currentColor' });
+            return `<div id="sl-${line.id}" class="${wrapCls}">
+                <div class="flex items-center gap-2 mb-2 ${scr ? (isLeft ? 'ml-1' : 'mr-1') : 'justify-start'}"><span class="text-xs sm:text-sm md:text-base font-bold font-ui uppercase tracking-widest text-gray-400">${esc(line.speaker)}</span>${(!scr && isActive) ? '<span class="w-1.5 h-1.5 bg-black rounded-full animate-pulse"></span>' : ''}</div>
+                <div class="${bubbleCls}" data-line-seek="${line.time[0]}">
+                    <p class="text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-serif leading-[1.8] tracking-wide text-left ${pTextCls}">${renderTextWithVocab(line.kor)}</p>
+                    <div class="${showT ? 'block' : 'hidden'} ${scr ? 'mt-3 pt-3 border-t border-dashed border-gray-100' : 'mt-2 pl-3 border-l border-gray-200'} animate-fade-in"><p class="text-xs sm:text-sm font-serif text-gray-500 text-left">${esc(line.eng)}</p></div>
+                    <div class="${ctrlCls}"><button type="button" data-line-play="${line.id}" class="w-4 h-4 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-800 hover:border-gray-800 hover:text-white transition-all text-gray-400 shrink-0">${playIcon}</button>${transBtn('line-trans-' + line.id, showT)}</div>
                 </div>
-            );
-
-            const TailSVG = ({ isLeft, isActive }) => (
-                <svg className={`absolute bottom-[-1px] ${isLeft ? '-left-[7px]' : '-right-[7px]'} w-[8px] h-[8px] z-10 print:block`} viewBox="0 0 8 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d={isLeft ? "M8 0 C 8 4 4 8 0 8 L 8 8 V 0 Z" : "M0 0 C 0 4 4 8 8 8 L 0 8 V 0 Z"} fill="white" />
-                    <path d={isLeft ? "M0 8 C 4 8 8 4 8 0" : "M8 8 C 4 8 0 4 0 0"} stroke={isActive ? "black" : "transparent"} strokeWidth="1" fill="none" className="print:stroke-gray-200" />
-                    <path d={isLeft ? "M8 0 V8" : "M0 0 V8"} stroke="white" strokeWidth="2" />
-                </svg>
-            );
-
-            return (
-                <div className="flex flex-col h-full animate-fade-in">
-                    <LearnToolbar />
-                    <div className={`flex flex-col lg:flex-row flex-1 overflow-hidden relative print:flex-row print:w-full print:overflow-visible print:h-auto`}>
-                        <VideoVocabPopup popup={popup} onGlobalClick={handleGlobalClick} />
-
-                        <div className={`bg-black overflow-hidden relative transition-all duration-300 ${videoStyle} ${isVideoOnlyMode ? 'h-full flex-1 w-full' : ''} print:hidden`}>
-                            {isLoading && (<div className="absolute inset-0 z-10 bg-black flex items-center justify-center"><div className="w-8 h-8 border-2 border-white/20 border-t-white rounded-full animate-spin"></div></div>)}
-                            <div id="youtube-player" className={`w-full h-full`}></div>
+            </div>`;
+        }
+        function scriptListHTML() { return VIDEO_SCRIPT_DATA.map(lineHTML).join('') + '<div class="h-32 print:hidden"></div>'; }
+        function toolbarHTML() {
+            const modes = [{ id: 'split', label: '동영상 & 스크립트' }, { id: 'video', label: '동영상만 보기' }, { id: 'script', label: '스크립트만 보기' }];
+            const modeBtns = modes.map(m => `<button type="button" data-layout="${m.id}" class="px-3 py-1.5 text-xs font-bold font-ui uppercase tracking-widest transition-colors ${m.id === 'split' ? 'block' : m.id === 'video' ? 'hidden md:block' : 'hidden sm:block'} ${learn.layout === m.id ? 'bg-black text-white' : 'text-gray-400 hover:text-black'}">${m.label}</button>`).join('');
+            const speedMenu = learn.speedMenu ? `<div class="absolute top-full right-0 mt-2 bg-white border border-gray-200 shadow-xl p-1 z-50 w-20 animate-fade-in">${[0.5, 0.75, 1.0, 1.25, 1.5, 2.0].map(s => `<button type="button" data-rate="${s}" class="w-full text-center py-1.5 text-[10px] font-bold font-ui hover:bg-gray-50 ${learn.rate === s ? 'text-black' : 'text-gray-400'}">${s}x</button>`).join('')}</div>` : '';
+            return `<div class="sticky top-0 z-40 h-16 flex items-center justify-between px-6 py-3 bg-white border-b border-gray-200 shadow-sm pr-14 print:hidden">
+                <div class="flex items-center gap-1 shrink-0">${modeBtns}</div>
+                <div class="flex items-center gap-4 flex-1 justify-end min-w-0">
+                    <div class="hidden sm:flex items-center gap-4 flex-1 max-w-xl justify-end">
+                        <div class="hidden md:flex flex-col flex-1 gap-1 w-full">
+                            <div class="relative group h-2 flex items-center"><div class="absolute inset-0 flex items-center"><div class="w-full h-[1px] bg-gray-200"></div><div id="seek-fill" class="absolute left-0 top-1/2 -translate-y-1/2 h-[2px] bg-black" style="width:0%"></div></div><input id="seek" type="range" min="0" max="100" value="0" class="absolute inset-0 w-full opacity-0 cursor-pointer" /></div>
+                            <span id="time-text" class="text-[10px] font-mono text-gray-400 text-right leading-none">00:00 / 00:00</span>
                         </div>
-
-                        <div className={`flex-1 flex flex-col min-h-0 bg-white border-l border-gray-200 transition-all duration-300 ${scriptContainerResponsiveClass} ${isVideoOnlyMode ? 'hidden' : ''} print:flex print:w-[80%] print:border-none print:overflow-visible`}>
-                            <div className={`flex-1 overflow-y-auto bg-white print:overflow-visible`}>
-                                <div className={`${isScriptMode ? "w-full mx-auto p-4 sm:p-8 min-h-full bg-white shadow-sm my-8 max-w-4xl lg:max-w-5xl" : "p-8 space-y-8"} print:p-0 print:my-0 print:shadow-none print:max-w-none print:space-y-0`}>
-                                    {VIDEO_SCRIPT_DATA.map(line => {
-                                        const isActive = activeLine === line.id;
-                                        const isLeft = ['김원훈', '조진세', '남자1', '남자2', '남자3', '남자4'].includes(line.speaker);
-                                        const translation = translations[line.id];
-
-                                        return (
-                                            <div key={line.id} ref={el => scriptRefs.current[line.id] = el} className={`w-full transition-all duration-500 ${isScriptMode ? `flex flex-col mb-8 ${isLeft ? 'items-start' : 'items-end'}` : `mb-8 ${isActive ? 'opacity-100' : 'opacity-70 hover:opacity-90'}`} print:flex print:flex-col print:mb-6 print:opacity-100 ${isLeft ? 'print:items-start' : 'print:items-end'}`}>
-                                                <div className={`flex items-center gap-2 mb-2 ${isScriptMode ? (isLeft ? 'ml-1' : 'mr-1') : 'justify-start'} print:justify-start print:m-0 ${isLeft ? 'print:ml-1' : 'print:mr-1'}`}>
-                                                    <span className={`text-xs sm:text-sm md:text-base lg:text-base xl:text-base font-bold font-ui uppercase tracking-widest text-gray-400 print:text-[10px] print:text-gray-500`}>{line.speaker}</span>
-                                                    {!isScriptMode && isActive && <span className="w-1.5 h-1.5 bg-black rounded-full animate-pulse print:hidden"></span>}
-                                                </div>
-
-                                                <div onClick={() => handleLineClick(line.time[0])} className={`cursor-pointer group relative ${isScriptMode ? `px-6 py-5 max-w-[90%] md:max-w-[80%] bg-white border border-transparent rounded-2xl ${isLeft ? 'rounded-bl-none' : 'rounded-br-none'} hover:shadow-md ${isActive ? 'ring-1 ring-black border-black' : ''}` : `bg-transparent border-none`} print:px-4 print:py-3 print:max-w-[85%] print:bg-white print:border print:border-gray-200 print:rounded-2xl print:${isLeft ? 'rounded-bl-none' : 'rounded-br-none'}`}>
-                                                    <p className={`text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-serif leading-[1.8] tracking-wide text-left print:text-[12px] print:leading-relaxed ${(!isScriptMode && isActive) ? 'text-black' : 'text-[#1a1a1a]'} print:text-black`}>
-                                                        {renderTextWithVocab(line.kor)}
-                                                    </p>
-
-                                                    {translation && (
-                                                        <div className={`${isScriptMode ? 'mt-3 pt-3 border-t border-dashed border-gray-100' : 'mt-2 pl-3 border-l border-gray-200'} animate-fade-in print:hidden`}>
-                                                            <p className={`text-xs sm:text-sm md:text-sm lg:text-sm xl:text-sm font-serif text-gray-500 text-left`}>{line.eng}</p>
-                                                        </div>
-                                                    )}
-
-                                                    <div className={`flex items-center gap-3 print:hidden ${!isScriptMode ? 'opacity-0 group-hover:opacity-100 justify-start mt-2' : `mt-4 ${isLeft ? 'justify-start' : 'justify-end'}`}`}>
-                                                        <button
-                                                            onClick={(e) => {
-                                                                e.stopPropagation();
-                                                                if (isActive && videoState.isPlaying) {
-                                                                    if (videoState.player) videoState.player.pauseVideo();
-                                                                } else {
-                                                                    handleLineClick(line.time[0]);
-                                                                }
-                                                            }}
-                                                            className="w-4 h-4 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-800 hover:border-gray-800 hover:text-white transition-all text-gray-400 shrink-0"
-                                                        >
-                                                            {(isActive && videoState.isPlaying) ? (
-                                                                <PauseIconSolid className="w-2 h-2" />
-                                                            ) : (
-                                                                <PlayIconSolid className="w-2 h-2 ml-[1.5px]" />
-                                                            )}
-                                                        </button>
-                                                        <TransBtn onClick={() => toggleTranslation(line.id)} isShowing={translation} />
-                                                    </div>
-
-                                                    <div className={`${isScriptMode ? 'block' : 'hidden'} print:block`}>
-                                                        <TailSVG isLeft={isLeft} isActive={isActive} />
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        );
-                                    })}
-                                    <div className="h-32 print:hidden"></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Right Vocab List */}
-                        <div className={`w-80 flex-col bg-white border-l border-gray-200 animate-fade-in ${isScriptMode ? 'fixed right-0 top-[114px] h-[calc(100vh-114px)]' : 'h-full'} ${showVocab ? 'flex' : 'hidden'} print:flex print:static print:w-[20%] print:h-auto print:top-0 print:border-l-0 print:pl-2 print:bg-transparent print:overflow-visible`}>
-                            <div className="p-5 border-b border-gray-100 flex items-center justify-between bg-white print:hidden">
-                                <span className="font-ui text-xs font-bold uppercase tracking-widest text-gray-900">핵심 어휘</span>
-                                <span className="text-xs font-serif text-gray-500 italic">{VOCAB_DATA.length}개</span>
-                            </div>
-                            <div className="flex-1 overflow-y-auto bg-white print:overflow-visible">
-                                {VOCAB_DATA.map((word, idx) => (<VideoSidebarVocabCard key={idx} word={word} activeVocabTerm={activeVocabTerm} sidebarVocabRefs={sidebarVocabRefs} />))}
-                            </div>
+                        <div class="hidden sm:flex items-center gap-3 shrink-0">
+                            <button type="button" data-action="rewind" class="text-gray-400 hover:text-black transition-colors">${svgIcon('rewind', 'w-4 h-4')}</button>
+                            <button type="button" data-action="play" id="play-btn" class="w-6 h-6 border border-black rounded-full flex items-center justify-center hover:bg-black hover:text-white transition-all">${svgIcon('playSolid', 'w-2.5 h-2.5 ml-0.5', { fill: 'currentColor' })}</button>
+                            <button type="button" data-action="forward" class="text-gray-400 hover:text-black transition-colors">${svgIcon('forward', 'w-4 h-4')}</button>
                         </div>
                     </div>
+                    <div class="h-4 w-px bg-gray-200 hidden sm:block"></div>
+                    <div class="relative shrink-0 hidden sm:flex"><button type="button" data-action="speed-menu" class="flex items-center gap-1.5 text-xs font-bold font-ui uppercase tracking-wider text-gray-500 hover:text-black">${learn.rate.toFixed(1)}x</button>${speedMenu}</div>
+                    <button type="button" data-action="autoscroll" class="hidden sm:flex items-center gap-2 text-[10px] font-bold font-ui uppercase tracking-widest transition-colors ${learn.autoScroll ? 'text-black' : 'text-gray-300 hover:text-gray-500'}"><span class="w-2 h-2 rounded-full ${learn.autoScroll ? 'bg-black' : 'border border-gray-300'}"></span><span class="hidden md:inline">자동 스크롤</span><span class="md:hidden">스크롤</span></button>
+                    <button type="button" data-action="learn-vocab" class="hidden xl:flex items-center gap-2 px-3 py-1.5 border transition-all text-[10px] font-bold font-ui uppercase tracking-widest ${learn.showVocab ? 'bg-black text-white border-black' : 'bg-white border-gray-200 text-gray-500 hover:border-black hover:text-black'}">어휘</button>
                 </div>
-            );
-        };
-
-        const SectionHeader = ({ title, subtitle, description }) => (
-            <div className="mb-16 flex flex-col items-center text-center print:mb-8">
-                <h2 className="text-[32px] md:text-[36px] font-bold text-[#1a1a1a] leading-tight font-serif mb-3 tracking-tight print:text-[18px]">
-                    {title}
-                </h2>
-                {subtitle && (
-                    <p className="text-[13px] text-[#888888] font-normal font-sans tracking-widest uppercase mb-2 print:text-[12px]">
-                        {subtitle}
-                    </p>
-                )}
-                {description && (
-                    <p className="text-[16px] text-[#444444] font-serif leading-relaxed mt-2 max-w-2xl print:text-[12px]">
-                        {description}
-                    </p>
-                )}
-                <div className="w-[1px] h-6 bg-gray-200 mt-8 print:hidden"></div>
-            </div>
-        );
-
-        const VocabItem = ({ word, globalShowTrans }) => {
-            const [localShowTrans, setLocalShowTrans] = useState(false);
-
-            // Sync with global show translation toggle
-            useEffect(() => {
-                setLocalShowTrans(globalShowTrans);
-            }, [globalShowTrans]);
-
-            const trans = word.translations?.en;
-            return (
-                <div className="border border-gray-200 hover:border-gray-300 transition-colors p-6 flex flex-col group bg-white h-full print:break-inside-avoid print:p-4">
-                    <div className="flex justify-between items-start mb-4">
-                        <h3 className="text-[28px] font-bold font-serif text-[#1a1a1a] group-hover:text-black transition-colors print:text-[14px]">{word.term}</h3>
-                        <div className="flex flex-col items-end gap-1 print:hidden">
-                            <TransBtn onClick={() => setLocalShowTrans(!localShowTrans)} isShowing={localShowTrans} />
-                            {localShowTrans && trans?.term && <span className="font-serif text-sm text-gray-400 italic animate-fade-in text-right">{trans.term}</span>}
-                        </div>
-                        {trans?.term && <span className="hidden print:block font-serif text-[10px] text-gray-500 italic mt-1">{trans.term}</span>}
-                    </div>
-                    <div className="mb-6 flex-1 print:mb-2">
-                        <p className="text-[17px] text-[#444] font-serif leading-relaxed print:text-[12px]">{word.mainDef}</p>
-                        <p className={`text-sm text-gray-500 font-sans mt-2 leading-relaxed ${localShowTrans ? 'animate-fade-in block' : 'hidden'} print:block print:text-[10px]`}>{trans?.mainDef}</p>
-                    </div>
-                    {word.subDefs && word.subDefs.length > 0 && (
-                        <div className="mb-4 space-y-2">
-                            {word.subDefs.map((sub, i) => (
-                                <div key={i}>
-                                    <p className="text-sm font-bold text-gray-800 font-ui print:text-[13px]">{sub.subTerm}</p>
-                                    <p className="text-xs text-gray-500 font-serif print:text-[11px]">{sub.subDef}</p>
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                    {word.examples && word.examples.length > 0 && (
-                        <div className="bg-gray-50 p-5 mt-auto border-l-2 border-transparent group-hover:border-gray-300 transition-all print:p-3">
-                            <p className="text-[15px] text-[#1a1a1a] font-serif leading-snug print:text-[11px]">{word.examples[0].kor}</p>
-                            <p className={`text-[13px] text-gray-500 font-sans mt-2 pt-2 border-t border-gray-200 ${localShowTrans ? 'animate-fade-in block' : 'hidden'} print:block print:text-[10px]`}>{word.examples[0].eng}</p>
-                        </div>
-                    )}
+            </div>`;
+        }
+        function videoHTML() {
+            return `<div class="flex flex-col h-full animate-fade-in">${toolbarHTML()}
+                <div id="learn-flex" class="flex flex-col lg:flex-row flex-1 overflow-hidden relative">
+                    <div id="video-pane" class="${videoPaneClass()}"><div id="video-loading" class="absolute inset-0 z-10 bg-black flex items-center justify-center"><div class="w-8 h-8 border-2 border-white/20 border-t-white rounded-full animate-spin"></div></div><div id="youtube-player" class="w-full h-full"></div></div>
+                    <div id="script-pane" class="${scriptPaneClass()}"><div class="flex-1 overflow-y-auto bg-white" id="script-scroll"><div id="script-list" class="${learn.layout === 'script' ? 'w-full mx-auto p-4 sm:p-8 min-h-full bg-white shadow-sm my-8 max-w-4xl lg:max-w-5xl' : 'p-8 space-y-8'}">${scriptListHTML()}</div></div></div>
+                    <div id="vocab-pane" class="${vocabPaneClass()}"><div class="p-5 border-b border-gray-100 flex items-center justify-between bg-white"><span class="font-ui text-xs font-bold uppercase tracking-widest text-gray-900">핵심 어휘</span><span class="text-xs font-serif text-gray-500 italic">${VOCAB_DATA.length}개</span></div><div class="flex-1 overflow-y-auto bg-white">${VOCAB_DATA.map((w, i) => sidebarVocabHTML(w, i)).join('')}</div></div>
                 </div>
-            );
-        };
+            </div>`;
+        }
+        function sidebarVocabHTML(word, idx) {
+            const t = (word.translations && word.translations.en) || {};
+            const showT = !!learn.sbTrans && learn.sbTrans[idx];
+            const active = learn.activeVocabTerm === word.term;
+            const subDefs = (word.subDefs || []).map((s, i) => `<div><p class="text-xs font-bold text-gray-800 font-ui mb-0.5">${esc(s.subTerm)}</p><p class="text-xs text-gray-500 font-serif">${esc(s.subDef)}</p>${showT && t.subDefs && t.subDefs[i] && t.subDefs[i].def ? `<p class="text-[10px] text-gray-400 font-ui mt-0.5 italic">${esc(t.subDefs[i].def)}</p>` : ''}</div>`).join('');
+            return `<div class="p-5 border-b border-gray-100 last:border-0 transition-all duration-500 bg-white" data-sb-idx="${idx}" data-sb-term="${esc(word.term)}"><div class="flex justify-between items-baseline mb-2"><h3 class="text-lg font-serif font-bold ${active ? 'text-black underline decoration-1 underline-offset-4' : 'text-gray-900'}">${esc(word.term)}</h3>${transBtn('sb-trans-' + idx, showT)}</div><p class="text-sm font-serif text-gray-600 mb-3 leading-relaxed">${esc(word.mainDef)}</p>${showT && t.mainDef ? `<div class="mt-2 mb-4 pt-2 border-t border-gray-100 animate-fade-in"><p class="text-xs font-ui text-gray-500">${esc(t.mainDef)}</p></div>` : ''}${subDefs ? `<div class="space-y-2 mt-3 pl-3 border-l border-gray-200">${subDefs}</div>` : ''}</div>`;
+        }
+        function afterVideoPaint() { learn.sbTrans = learn.sbTrans || {}; learn.loading = true; createPlayer(); const seek = qs('#seek', viewRoot()); if (seek) seek.addEventListener('input', (e) => { const t = parseFloat(e.target.value); if (learn.player && learn.player.seekTo) { learn.player.seekTo(t, true); } learn.currentTime = t; updateSeekUI(); }); }
 
-        const VocabView = ({ updateProgress }) => {
-            const [searchQuery, setSearchQuery] = useState('');
-            const [globalShowTrans, setGlobalShowTrans] = useState(false);
-
-            useEffect(() => {
-                updateProgress('vocab');
-            }, [updateProgress]);
-
-            const filteredData = useMemo(() => {
-                if (!searchQuery.trim()) return VOCAB_DATA;
-                const query = searchQuery.toLowerCase().trim();
-                return VOCAB_DATA.filter(word => {
-                    const matchTerm = word.term.toLowerCase().includes(query);
-                    const matchDef = word.mainDef.toLowerCase().includes(query);
-                    const matchVariants = word.variants?.some(v => v.toLowerCase().includes(query));
-                    const matchEng = word.translations?.en?.term?.toLowerCase().includes(query) ||
-                        word.translations?.en?.mainDef?.toLowerCase().includes(query);
-                    return matchTerm || matchDef || matchVariants || matchEng;
+        function createPlayer() {
+            const make = () => {
+                if (!(window.YT && window.YT.Player)) return;
+                new window.YT.Player('youtube-player', {
+                    videoId: VIDEO_CONFIG.YOUTUBE_VIDEO_ID, width: '100%', height: '100%',
+                    playerVars: { autoplay: 0, controls: 1, rel: 0, disablekb: 1 },
+                    events: {
+                        onReady: (e) => { learn.player = e.target; learn.duration = e.target.getDuration() || 0; const s = qs('#video-loading'); if (s) s.style.display = 'none'; if (learn.player.setPlaybackRate) learn.player.setPlaybackRate(learn.rate); updateSeekUI(); },
+                        onStateChange: (e) => { if (e.data === window.YT.PlayerState.PLAYING) { startTick(); learn.isPlaying = true; updatePlayBtn(); } else { stopTick(); if (e.data === window.YT.PlayerState.PAUSED || e.data === window.YT.PlayerState.ENDED) { learn.isPlaying = false; updatePlayBtn(); } } }
+                    }
                 });
-            }, [searchQuery]);
-
-            return (
-                <div className="max-w-4xl mx-auto w-full px-6 py-16 animate-fade-in print:pt-4 print:px-0">
-                    <SectionHeader title="핵심 어휘" description={`학습 자료에 등장하는 주요 어휘를 쉬운 한국어로 학습해 보세요.`} />
-
-                    {/* 제어 컨트롤 영역 (검색 & 전체 번역 토글) */}
-                    <div className="mb-8 flex flex-col sm:flex-row gap-4 justify-between items-center print:hidden bg-gray-50 p-4 rounded-xl border border-gray-100">
-                        {/* 실시간 검색 인풋 */}
-                        <div className="relative w-full sm:max-w-xs">
-                            <input
-                                type="text"
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                                placeholder="단어, 뜻, 영어 검색..."
-                                className="w-full px-4 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-800 transition-all"
-                            />
-                            {searchQuery && (
-                                <button
-                                    onClick={() => setSearchQuery('')}
-                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 text-xs font-bold"
-                                >
-                                    ✕
-                                </button>
-                            )}
-                        </div>
-
-                        <div className="flex items-center gap-4 w-full sm:w-auto justify-end">
-                            <span className="text-xs text-gray-500 font-sans">
-                                검색 결과: <strong>{filteredData.length}</strong>개 / 전체 {VOCAB_DATA.length}개
-                            </span>
-                            <button
-                                onClick={() => setGlobalShowTrans(!globalShowTrans)}
-                                className={`px-4 py-2 text-xs font-semibold rounded-lg border transition-all ${globalShowTrans
-                                    ? 'bg-gray-900 text-white border-gray-900 hover:bg-black'
-                                    : 'bg-white text-gray-800 border-gray-300 hover:border-gray-500'
-                                    }`}
-                            >
-                                {globalShowTrans ? '영어 일괄 숨기기' : '영어 일괄 표시'}
-                            </button>
-                        </div>
-                    </div>
-
-                    {filteredData.length === 0 ? (
-                        <div className="text-center py-20 text-gray-400 font-serif">
-                            검색 결과에 맞는 어휘가 없습니다.
-                        </div>
-                    ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 print:grid print:grid-cols-2 print:gap-4">
-                            {filteredData.map((word, idx) => (
-                                <VocabItem key={idx} word={word} globalShowTrans={globalShowTrans} />
-                            ))}
-                        </div>
-                    )}
-                </div>
-            );
-        };
-
-        const QuizSentence = ({ quiz, onAttempt, onShuffle }) => {
-            const [userInput, setUserInput] = useState(''); const [result, setResult] = useState(null); const [showHint, setShowHint] = useState(false); const [showTranslation, setShowTranslation] = useState(false);
-            const handleCheck = () => { const isCorrect = userInput.trim() === quiz.answer; setResult(isCorrect ? 'correct' : 'incorrect'); setShowHint(false); if (onAttempt) onAttempt(quiz.id, isCorrect); if (onShuffle) onShuffle(); };
-            const handleShowAnswer = () => { setUserInput(quiz.answer); setResult(null); setShowHint(false); if (onShuffle) onShuffle(); };
-
-            const textLength = Math.max(userInput.length, quiz.answer ? quiz.answer.length : 0);
-            const safeWidth = Math.max(100, textLength * 25);
-
-            return (
-                <div className="mb-10 pb-10 border-b border-gray-200 last:border-0 print:mb-6 print:pb-4 print:break-inside-avoid">
-                    <div className="flex items-baseline gap-4 mb-4 print:mb-2"><span className="text-xs font-bold font-sans text-black border border-black px-1.5 py-0.5 print:text-[10px] print:border-gray-400 print:text-gray-700">Q.{quiz.id}</span></div>
-                    <div className="text-xl font-serif text-gray-900 leading-loose mb-6 print:text-[12px] print:mb-2"><span>{quiz.textParts[0]}</span><input type="text" value={userInput} onChange={(e) => { setUserInput(e.target.value); setResult(null); }} className={`mx-2 px-2 py-0 border-b-2 font-bold text-center outline-none transition-colors font-serif print:text-[12px] print:bg-transparent print:border-black print:text-black ${result === 'correct' ? 'border-green-500 text-green-700' : result === 'incorrect' ? 'border-red-500 text-red-700' : 'border-gray-300 text-black bg-transparent focus:border-black'}`} style={{ width: `${safeWidth}px` }} /><span>{quiz.textParts[1]}</span></div>
-                    <div className="flex flex-wrap gap-3 items-center print:hidden"><button onClick={handleCheck} className="px-4 py-2 bg-black text-white text-xs font-bold font-sans hover:bg-gray-800 transition-colors">정답 확인</button><button onClick={handleShowAnswer} className="px-4 py-2 bg-white border border-gray-300 text-gray-600 text-xs font-bold font-sans hover:border-black hover:text-black transition-colors">정답 보기</button><button onClick={() => setShowHint(!showHint)} className="text-xs font-bold font-sans text-gray-400 hover:text-gray-600 underline">힌트</button><TransBtn onClick={() => setShowTranslation(!showTranslation)} isShowing={showTranslation} /></div>
-                    <p className={`mt-4 text-sm font-sans text-gray-500 bg-gray-50 p-3 ${showTranslation ? 'block animate-fade-in' : 'hidden print:hidden'} print:text-[10px]`}>{quiz.textParts_eng.join(' ... ')}</p>
-                    {showHint && (<p className="mt-4 text-sm font-sans text-gray-500 italic print:text-[10px] print:block">💡 Hint: {quiz.hint}</p>)}
-                    {result === 'correct' && (<p className="mt-4 text-sm font-sans text-green-700 font-medium print:text-[12px] print:text-black">✓ Correct. {quiz.explanation}</p>)}
-                    {result === 'incorrect' && (<p className="mt-4 text-sm font-sans text-red-600 font-medium print:text-[12px] print:text-black">✕ Try again.</p>)}
-                </div>
-            );
-        };
-
-        const QuizView = ({ updateProgress }) => {
-            const [attempts, setAttempts] = useState({}); const [shuffledChoices, setShuffledChoices] = useState(ANSWER_CHOICES); const totalQuestions = QUIZ_LIST.length; const correctCount = Object.values(attempts).filter(v => v).length; const currentScore = Math.round((correctCount / totalQuestions) * 100);
-            useEffect(() => { const totalAttempts = Object.keys(attempts).length; if (totalAttempts === 0) return; updateProgress('quiz', currentScore); }, [attempts, currentScore, updateProgress]);
-            const handleAttempt = (quizId, isCorrect) => { setAttempts(prev => { if (prev.hasOwnProperty(quizId)) return prev; const newAttempts = { ...prev, [quizId]: isCorrect }; return newAttempts; }); };
-            const shuffleChoices = useCallback(() => { setShuffledChoices(prev => { const newArray = [...prev]; for (let i = newArray.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1));[newArray[i], newArray[j]] = [newArray[j], newArray[i]]; } return newArray; }); }, []);
-            return (
-                <div className="max-w-4xl mx-auto w-full px-6 py-12 flex flex-col md:flex-row gap-12 animate-fade-in print:block print:p-0 print:py-4">
-                    <div className="w-full md:w-64 shrink-0 print:w-full print:mb-6">
-                        <div className="sticky top-24 print:static">
-                            <div className="md:sticky md:top-24 print:static">
-                                <h2 className="text-[32px] md:text-[36px] font-serif font-bold text-gray-900 mb-2 print:text-[18px]">내용 확인 퀴즈</h2>
-                                <p className="text-sm font-sans text-gray-500 mb-6 print:text-[12px] print:mb-4">학습 자료에 대한 이해도를 확인해 보세요.</p>
-                                <div className="border-t border-gray-200 pt-4 mb-8 print:hidden">
-                                    <span className="text-xs font-bold font-sans text-black uppercase block mb-2">정답률</span>
-                                    <span className="text-4xl font-serif font-bold text-gray-900">{currentScore}%</span>
-                                </div>
-                                <div className="bg-gray-50 p-4 border border-gray-100 print:bg-transparent print:border-none print:p-0">
-                                    <h4 className="text-xs font-bold font-sans text-gray-500 uppercase mb-3 border-b border-gray-200 pb-2 print:text-[12px] print:border-none print:pb-0">정답 후보군</h4>
-                                    <div className="flex flex-wrap gap-2 print:gap-1">
-                                        {shuffledChoices.map((choice, idx) => (<span key={idx} className="text-xs font-serif text-gray-600 bg-white border border-gray-200 px-2 py-1 select-all print:border-gray-300 print:text-[10px]">{choice}</span>))}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="flex-1">{QUIZ_LIST.map((quiz) => (<QuizSentence key={quiz.id} quiz={quiz} onAttempt={handleAttempt} onShuffle={shuffleChoices} />))}</div>
-                </div>
-            );
-        };
-
-        const DiscussQuestionItem = ({ item }) => {
-            const [text, setText] = useState('');
-            const [showTranslation, setShowTranslation] = useState(false);
-            const [feedback, setFeedback] = useState(null);
-            const [isLoadingFeedback, setIsLoadingFeedback] = useState(false);
-            const [feedbackError, setFeedbackError] = useState(null);
-            const [showFeedbackTrans, setShowFeedbackTrans] = useState(false);
-
-            const handleGetFeedback = async () => {
-                if (!text.trim()) return;
-                setIsLoadingFeedback(true);
-                setFeedbackError(null);
-
-                const prompt = `당신은 한국어 학습자를 돕는 'AI 한국어 도우미'입니다.
-학습자가 질문에 대해 작성한 답변을 분석하고, 아래의 JSON 형식으로 피드백을 제공해주세요.
-반드시 마크다운 백틱 문자를 제외하고 순수 JSON 문자열만 반환하세요.
-
-[질문]: ${item.questionKor}
-[학습자 답변]: ${text}
-
-[JSON 응답 포맷]:
-{
-  "overallPraise": "학습자의 답변에 대한 총평과 잘한 점 (한국어)",
-  "overallPraiseTrans": "총평의 영어 번역",
-  "corrections": [
-    {
-      "original": "학습자가 쓴 원래 문장",
-      "corrected": "자연스럽게 문법과 어휘를 수정한 문장",
-      "explanation": "왜 그렇게 수정해야 하는지 상세한 이유와 문법적 설명. 문법적 오류일 경우 쉬운 예시 포함 (한국어)",
-      "explanationTrans": "설명의 영어 번역"
-    }
-  ]
-}`;
-
-                const payload = {
-                    contents: [{ role: "user", parts: [{ text: prompt }] }],
-                    generationConfig: { responseMimeType: "application/json" }
-                };
-
-                try {
-                    const data = await callGeminiWithBackoff(payload);
-                    let resultText = data.candidates?.[0]?.content?.parts?.[0]?.text;
-                    if (!resultText) throw new Error("응답이 비어있습니다.");
-
-                    resultText = resultText.replace(/^```json\n?/, '').replace(/\n?```$/, '');
-
-                    const parsedFeedback = JSON.parse(resultText);
-                    setFeedback(parsedFeedback);
-                } catch (err) {
-                    setFeedbackError(err.message);
-                } finally {
-                    setIsLoadingFeedback(false);
-                }
             };
-
-            return (
-                <div className="mb-16 group print:mb-8 print:break-inside-avoid">
-                    <div className="flex items-center gap-4 mb-6 print:mb-2"><span className="text-4xl font-serif font-bold text-gray-200 group-hover:text-gray-900 transition-colors duration-300 print:text-[14px] print:text-black">{String(item.id).padStart(2, '0')}</span><h3 className="text-xl font-serif font-bold text-gray-900 leading-normal print:text-[12px]">{item.questionKor}</h3></div>
-                    <div className="pl-0 md:pl-14 print:pl-6">
-                        <div className="flex gap-2 mb-4 print:hidden"><TransBtn onClick={() => setShowTranslation(!showTranslation)} isShowing={showTranslation} />{showTranslation && (<p className="text-sm font-sans text-gray-500 animate-fade-in">{item.questionEng}</p>)}</div>
-                        <div className="bg-gray-50 p-5 mb-6 border-l-2 border-black print:bg-transparent print:p-0 print:border-l-[1px] print:border-gray-300 print:pl-3 print:mb-2">
-                            <span className="text-xs font-bold font-sans text-gray-400 uppercase mb-2 block print:hidden">핵심 문법/어휘</span>
-                            <div className="space-y-2 print:space-y-0.5">
-                                {item.vocab.map((v, i) => (
-                                    <div key={i} className="flex flex-col">
-                                        <p className="text-sm font-serif text-gray-700 whitespace-pre-line print:text-[10px]"><span className="font-bold text-black mr-2 print:text-[10px] print:mr-1">{v.term}</span>{v.def}</p>
-                                        <p className={`text-xs font-sans text-gray-500 mt-1 whitespace-pre-line ${showTranslation ? 'animate-fade-in block' : 'hidden'} print:hidden`}><span className="font-semibold text-gray-600 mr-1">{v.termEng} :</span>{v.defEng}</p>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                        <textarea value={text} onChange={(e) => setText(e.target.value)} placeholder="여기에 한국어로 생각을 적어보세요..." className="w-full p-4 border border-gray-300 font-serif text-base text-gray-900 focus:border-black focus:ring-0 outline-none min-h-[150px] bg-white resize-y mb-3 transition-colors placeholder:text-gray-300 print:hidden"></textarea>
-                        <div className="flex justify-end print:hidden">
-                            <button onClick={handleGetFeedback} disabled={!text.trim() || isLoadingFeedback} className={`px-6 py-2 text-xs font-bold font-sans uppercase tracking-widest border transition-colors ${!text.trim() || isLoadingFeedback ? 'border-gray-200 text-gray-300 cursor-not-allowed' : 'border-black bg-black text-white hover:bg-white hover:text-black'}`}>
-                                {isLoadingFeedback ? '생성 중...' : 'AI 피드백 받기'}
-                            </button>
-                        </div>
-
-                        {isLoadingFeedback && (
-                            <div className="mt-6 p-6 border border-gray-200 flex flex-col items-center justify-center print:hidden">
-                                <div className="w-6 h-6 border-2 border-gray-200 border-t-black rounded-full animate-spin mb-3"></div>
-                                <p className="text-sm font-sans text-gray-500">AI 한국어 도우미가 답변을 분석하는 중입니다...</p>
-                            </div>
-                        )}
-                        {feedbackError && (
-                            <div className="mt-6 p-4 bg-red-50 text-red-600 text-sm font-sans print:hidden whitespace-pre-wrap">
-                                {feedbackError}
-                            </div>
-                        )}
-                        {feedback && (
-                            <div className="mt-8 relative print:hidden animate-fade-in">
-                                <div className="flex items-center gap-2 mb-4">
-                                    <SparklesIcon className="w-4 h-4 text-black" />
-                                    <h4 className="text-base font-bold font-sans text-black">AI 한국어 피드백</h4>
-                                </div>
-
-                                <div className="bg-gray-50 p-5 mb-6">
-                                    <span className="text-xs font-bold font-sans text-gray-500 uppercase block mb-2">총평 및 잘한 점</span>
-                                    <p className="text-[15px] font-serif text-gray-900 leading-relaxed">{feedback.overallPraise}</p>
-                                    {showFeedbackTrans && feedback.overallPraiseTrans && (
-                                        <p className="text-[13px] font-serif text-gray-500 mt-2 pt-2 border-t border-gray-200 animate-fade-in">{feedback.overallPraiseTrans}</p>
-                                    )}
-                                </div>
-
-                                <div className="space-y-4">
-                                    <span className="text-xs font-bold font-sans text-gray-500 uppercase block mb-1">문장별 교정 및 설명</span>
-                                    {feedback.corrections?.map((c, i) => (
-                                        <div key={i} className="border border-gray-200 p-5 bg-white">
-                                            <div className="flex flex-col gap-3 mb-4">
-                                                <div className="flex items-start gap-3">
-                                                    <span className="shrink-0 px-2 py-0.5 bg-gray-100 text-gray-500 text-[10px] font-bold font-sans rounded-sm mt-0.5">수정 전</span>
-                                                    <p className="text-[15px] font-serif text-gray-400 line-through leading-relaxed">{c.original}</p>
-                                                </div>
-                                                <div className="flex items-start gap-3">
-                                                    <span className="shrink-0 px-2 py-0.5 bg-blue-50 text-blue-600 text-[10px] font-bold font-sans rounded-sm mt-0.5">수정 후</span>
-                                                    <p className="text-[15px] font-serif text-gray-900 font-medium leading-relaxed">{c.corrected}</p>
-                                                </div>
-                                            </div>
-
-                                            <div className="pt-3 border-t border-gray-100">
-                                                <div className="flex items-start gap-2">
-                                                    <span className="shrink-0 text-yellow-500 mt-0.5">💡</span>
-                                                    <div className="flex-1">
-                                                        <p className="text-[14px] font-serif text-gray-700 leading-relaxed">
-                                                            <span className="font-bold text-gray-500 text-xs font-sans mr-2">설명</span>
-                                                            {c.explanation}
-                                                        </p>
-                                                        {showFeedbackTrans && c.explanationTrans && (
-                                                            <p className="text-[13px] font-serif text-gray-500 mt-2 pt-2 border-t border-gray-50 animate-fade-in leading-relaxed">{c.explanationTrans}</p>
-                                                        )}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-
-                                <div className="flex justify-end mt-4">
-                                    <TransBtn
-                                        onClick={() => setShowFeedbackTrans(!showFeedbackTrans)}
-                                        isShowing={showFeedbackTrans}
-                                        className="opacity-40 hover:opacity-100 transition-opacity"
-                                    />
-                                </div>
-                            </div>
-                        )}
-                    </div>
-                </div>
-            );
-        };
-
-        const DiscussView = ({ updateProgress }) => {
-            useEffect(() => {
-                updateProgress('discuss');
-            }, [updateProgress]);
-
-            return (
-                <div className="max-w-3xl mx-auto w-full px-6 py-12 animate-fade-in print:pt-4 print:px-0">
-                    <div className="mb-6 pb-6 text-center print:mb-4 print:pb-2">
-                        <h2 className="text-[32px] md:text-[36px] font-serif font-bold text-gray-900 mb-2 print:text-[18px]">생각해 보기</h2>
-                        <p className="text-sm font-sans text-gray-500 print:text-[12px]">학습 질문에 대해 심층적으로 생각을 작성하고 AI 피드백을 받아보세요.</p>
-                    </div>
-
-                    <div className="bg-gray-50 border border-gray-200 p-4 mb-10 flex items-start gap-3 print:hidden">
-                        <div className="shrink-0 mt-0.5"><SparklesIcon className="w-4 h-4 text-gray-400" /></div>
-                        <p className="text-xs font-sans text-gray-600 leading-relaxed">
-                            AI 피드백은 현재 Gemini 웹에서만 가능합니다. <a href="https://gemini.google.com/share/2df17f6bddcc" target="_blank" rel="noreferrer" className="underline decoration-gray-400 underline-offset-2 hover:text-black inline-flex items-center gap-1">Gemini에서 열기 <ExternalLinkIcon className="w-3 h-3" /></a>
-                        </p>
-                    </div>
-                    {DISCUSS_DATA.map((item) => (
-                        <DiscussQuestionItem key={item.id} item={item} />
-                    ))}
-                </div>
-            );
-        };
-
-        const App = () => {
-            const [activeTab, setActiveTab] = useState('home'); const [userLevel] = useState("B2+"); const [showVocab, setShowVocab] = useState(false); const [progress, setProgress] = useState({ learn: false, vocab: false, quiz: 0, discuss: false });
-            const [isHeaderExpanded, setIsHeaderExpanded] = useState(true);
-
-            useEffect(() => {
-                if (activeTab === 'video') { setIsHeaderExpanded(false); } else { setIsHeaderExpanded(true); }
-            }, [activeTab]);
-
-            const updateProgress = useCallback((key, value = true) => { setProgress(prev => { if (prev[key] === value) return prev; return { ...prev, [key]: value }; }); }, []);
-
-            const renderContent = () => {
-                switch (activeTab) {
-                    case 'home': return <HomeView setActiveTab={setActiveTab} userLevel={userLevel} />;
-                    case 'video': return <LearnView updateProgress={updateProgress} />;
-                    case 'vocab': return <VocabView updateProgress={updateProgress} />;
-                    case 'quiz': return <QuizView updateProgress={updateProgress} />;
-                    case 'discuss': return <DiscussView updateProgress={updateProgress} />;
-                    default: return <HomeView setActiveTab={setActiveTab} userLevel={userLevel} />;
+            if (window.YT && window.YT.Player) { make(); }
+            else {
+                if (!document.querySelector('script[src*="youtube.com/iframe_api"]')) { const t = document.createElement('script'); t.src = 'https://www.youtube.com/iframe_api'; document.head.appendChild(t); }
+                const prev = window.onYouTubeIframeAPIReady;
+                window.onYouTubeIframeAPIReady = () => { if (typeof prev === 'function') try { prev(); } catch (_) {} if (app.activeTab === 'video') make(); };
+                const poll = setInterval(() => { if (window.YT && window.YT.Player) { clearInterval(poll); if (app.activeTab === 'video' && !learn.player) make(); } }, 150);
+                setTimeout(() => clearInterval(poll), 10000);
+            }
+        }
+        function startTick() {
+            stopTick();
+            learn.intervalId = setInterval(() => {
+                const p = learn.player; if (p && p.getCurrentTime) {
+                    learn.currentTime = p.getCurrentTime(); updateSeekUI();
+                    const cl = VIDEO_SCRIPT_DATA.find(l => learn.currentTime >= l.time[0] && learn.currentTime < l.time[1]);
+                    if (cl && cl.id !== learn.activeLine) setActiveLine(cl.id);
                 }
-            };
+            }, 200);
+        }
+        function stopTick() { if (learn.intervalId) { clearInterval(learn.intervalId); learn.intervalId = null; } }
+        function updateSeekUI() {
+            const root = viewRoot(); if (!root) return;
+            const fill = qs('#seek-fill', root), tt = qs('#time-text', root), seek = qs('#seek', root);
+            const pct = learn.duration ? (learn.currentTime / learn.duration) * 100 : 0;
+            if (fill) fill.style.width = pct + '%';
+            if (tt) tt.textContent = `${fmt(learn.currentTime)} / ${fmt(learn.duration)}`;
+            if (seek) { seek.max = learn.duration || 100; seek.value = learn.currentTime; }
+        }
+        function updatePlayBtn() {
+            const root = viewRoot(); if (!root) return;
+            const btn = qs('#play-btn', root); if (btn) btn.innerHTML = learn.isPlaying ? svgIcon('pause', 'w-2.5 h-2.5', { fill: 'currentColor' }) : svgIcon('playSolid', 'w-2.5 h-2.5 ml-0.5', { fill: 'currentColor' });
+            if (learn.activeLine) replaceLine(learn.activeLine);
+        }
+        function replaceLine(id) { const el = qs('#sl-' + id, viewRoot()); if (el) { const line = VIDEO_SCRIPT_DATA.find(l => l.id === id); if (line) el.outerHTML = lineHTML(line); } }
+        function setActiveLine(id) {
+            const old = learn.activeLine; learn.activeLine = id;
+            if (old) replaceLine(old);
+            replaceLine(id);
+            if (learn.autoScroll) { const el = qs('#sl-' + id, viewRoot()); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+        }
+        function updatePanes() {
+            const root = viewRoot(); if (!root) return;
+            const vp = qs('#video-pane', root), sp = qs('#script-pane', root), vop = qs('#vocab-pane', root);
+            if (vp) vp.className = videoPaneClass();
+            if (sp) sp.className = scriptPaneClass();
+            if (vop) vop.className = vocabPaneClass();
+            const sl = qs('#script-list', root); if (sl) sl.className = (learn.layout === 'script' ? 'w-full mx-auto p-4 sm:p-8 min-h-full bg-white shadow-sm my-8 max-w-4xl lg:max-w-5xl' : 'p-8 space-y-8');
+        }
+        function rebuildToolbar() { const root = viewRoot(); if (!root) return; const old = qs('.sticky.top-0.z-40', root) || root.firstElementChild.firstElementChild; const tb = root.querySelector('div.animate-fade-in > div'); if (tb) tb.outerHTML = toolbarHTML(); }
 
-            const isVideoTab = activeTab === 'video';
-            return (
-                <div className={`flex flex-col bg-white text-gray-900 selection:bg-gray-200 selection:text-black font-sans ${isVideoTab ? 'h-screen overflow-hidden' : 'min-h-screen'} print:block print:h-auto print:min-h-0 print:m-0 print:p-0 print:overflow-visible`}>
-                    <Header isExpanded={isHeaderExpanded} setIsExpanded={setIsHeaderExpanded} activeTab={activeTab} setActiveTab={setActiveTab} />
-                    <div className="lg:hidden h-14 border-b border-gray-100 flex items-center justify-center sticky top-0 bg-white z-40 print:hidden"><span className="text-lg font-bold font-sans tracking-tighter">OpenKoreanLearningLab</span></div>
-                    <main className={`flex-1 relative flex flex-col ${isVideoTab ? 'overflow-x-hidden lg:overflow-hidden lg:h-full' : ''} print:block print:overflow-visible print:h-auto`}>{renderContent()}</main>
-                    <nav className="lg:hidden fixed bottom-0 w-full bg-white border-t border-gray-100 flex justify-around p-3 z-50 print:hidden">{NAV_ITEMS.map((item) => (<button key={item.id} onClick={() => setActiveTab(item.id)} className={`p-2 ${activeTab === item.id ? 'text-black' : 'text-gray-300'}`}><item.icon className="w-6 h-6" /></button>))}</nav>
-                </div>
-            );
-        };
-        const root = ReactDOM.createRoot(document.getElementById('root')); root.render(<App />);
+        // ---------- VOCAB ----------
+        function vocabItemHTML(word, idx, showTrans) {
+            const t = (word.translations && word.translations.en) || {};
+            const subDefs = (word.subDefs || []).map(s => `<div><p class="text-sm font-bold text-gray-800 font-ui">${esc(s.subTerm)}</p><p class="text-xs text-gray-500 font-serif">${esc(s.subDef)}</p></div>`).join('');
+            const ex = (word.examples && word.examples[0]) || null;
+            return `<div class="vocab-card border border-gray-200 hover:border-gray-300 transition-colors p-6 flex flex-col group bg-white h-full" data-vidx="${idx}"><div class="flex justify-between items-start mb-4"><h3 class="text-[28px] font-bold font-serif text-[#1a1a1a] group-hover:text-black transition-colors">${esc(word.term)}</h3><div class="flex flex-col items-end gap-1">${transBtn('vocab-toggle', showTrans)}${showTrans && t.term ? `<span class="font-serif text-sm text-gray-400 italic animate-fade-in text-right">${esc(t.term)}</span>` : ''}</div></div><div class="mb-6 flex-1"><p class="text-[17px] text-[#444] font-serif leading-relaxed">${esc(word.mainDef)}</p>${showTrans && t.mainDef ? `<p class="text-sm text-gray-500 font-sans mt-2 animate-fade-in leading-relaxed">${esc(t.mainDef)}</p>` : ''}</div>${subDefs ? `<div class="mb-4 space-y-2">${subDefs}</div>` : ''}${ex ? `<div class="bg-gray-50 p-5 mt-auto border-l-2 border-transparent group-hover:border-gray-300 transition-all"><p class="text-[15px] text-[#1a1a1a] font-serif leading-snug">${esc(ex.kor)}</p>${showTrans ? `<p class="text-[13px] text-gray-500 font-sans mt-2 pt-2 border-t border-gray-200 animate-fade-in">${esc(ex.eng)}</p>` : ''}</div>` : ''}</div>`;
+        }
+        function vocabFiltered() {
+            const q = vocabState.query.toLowerCase().trim();
+            if (!q) return VOCAB_DATA.map((w, i) => ({ w, i }));
+            return VOCAB_DATA.map((w, i) => ({ w, i })).filter(({ w }) => { const t = (w.translations && w.translations.en) || {}; return w.term.toLowerCase().includes(q) || w.mainDef.toLowerCase().includes(q) || (w.variants && w.variants.some(v => v.toLowerCase().includes(q))) || (t.term && t.term.toLowerCase().includes(q)) || (t.mainDef && t.mainDef.toLowerCase().includes(q)); });
+        }
+        function vocabGridHTML() { const list = vocabFiltered(); if (!list.length) return '<div class="text-center py-20 text-gray-400 font-serif">검색 결과에 맞는 어휘가 없습니다.</div>'; return `<div class="grid grid-cols-1 md:grid-cols-2 gap-6">${list.map(({ w, i }) => vocabItemHTML(w, i, vocabState.itemTrans[i] != null ? vocabState.itemTrans[i] : vocabState.globalTrans)).join('')}</div>`; }
+        function vocabHTML() {
+            return `<div class="max-w-4xl mx-auto w-full px-6 py-16 animate-fade-in"><div class="mb-16 flex flex-col items-center text-center"><h2 class="text-[32px] md:text-[36px] font-bold text-[#1a1a1a] leading-tight font-serif mb-3 tracking-tight">핵심 어휘</h2><p class="text-[16px] text-[#444444] font-serif leading-relaxed mt-2 max-w-2xl">학습 자료에 등장하는 주요 어휘를 쉬운 한국어로 학습해 보세요.</p><div class="w-[1px] h-6 bg-gray-200 mt-8"></div></div><div class="mb-8 flex flex-col sm:flex-row gap-4 justify-between items-center bg-gray-50 p-4 rounded-xl border border-gray-100"><div class="relative w-full sm:max-w-xs"><input type="text" id="vocab-search" value="${esc(vocabState.query)}" placeholder="단어, 뜻, 영어 검색..." class="w-full px-4 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-800 transition-all" />${vocabState.query ? '<button type="button" data-action="vocab-clear" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 text-xs font-bold">✕</button>' : ''}</div><div class="flex items-center gap-4 w-full sm:w-auto justify-end"><span class="text-xs text-gray-500 font-sans">검색 결과: <strong id="vocab-count">${vocabFiltered().length}</strong>개 / 전체 ${VOCAB_DATA.length}개</span><button type="button" data-action="vocab-global" class="px-4 py-2 text-xs font-semibold rounded-lg border transition-all ${vocabState.globalTrans ? 'bg-gray-900 text-white border-gray-900 hover:bg-black' : 'bg-white text-gray-800 border-gray-300 hover:border-gray-500'}">${vocabState.globalTrans ? '영어 일괄 숨기기' : '영어 일괄 표시'}</button></div></div><div id="vocab-grid">${vocabGridHTML()}</div></div>`;
+        }
+        function refreshVocabGrid() { const g = qs('#vocab-grid', viewRoot()); if (g) g.innerHTML = vocabGridHTML(); const c = qs('#vocab-count', viewRoot()); if (c) c.textContent = vocabFiltered().length; }
+
+        // ---------- QUIZ ----------
+        function quizScore() { const c = Object.values(quizState.attempts).filter(Boolean).length; return Math.round((c / QUIZ_LIST.length) * 100); }
+        function shuffleChoices() { const a = quizState.shuffled.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } quizState.shuffled = a; }
+        function quizSentenceHTML(quiz) {
+            const st = quizState.q[quiz.id] || (quizState.q[quiz.id] = { input: '', result: null, hint: false, trans: false });
+            const w = Math.max(100, Math.max(st.input.length, quiz.answer ? quiz.answer.length : 0) * 25);
+            const inpCls = st.result === 'correct' ? 'border-green-500 text-green-700' : st.result === 'incorrect' ? 'border-red-500 text-red-700' : 'border-gray-300 text-black bg-transparent focus:border-black';
+            return `<div class="quiz-q mb-10 pb-10 border-b border-gray-200 last:border-0" data-qid="${quiz.id}"><div class="flex items-baseline gap-4 mb-4"><span class="text-xs font-bold font-sans text-black border border-black px-1.5 py-0.5">Q.${quiz.id}</span></div><div class="text-xl font-serif text-gray-900 leading-loose mb-6"><span>${esc(quiz.textParts[0])}</span><input type="text" class="quiz-input mx-2 px-2 py-0 border-b-2 font-bold text-center outline-none transition-colors font-serif ${inpCls}" style="width:${w}px" value="${esc(st.input)}" /><span>${esc(quiz.textParts[1])}</span></div><div class="flex flex-wrap gap-3 items-center print:hidden"><button type="button" data-q="check" class="px-4 py-2 bg-black text-white text-xs font-bold font-sans hover:bg-gray-800 transition-colors">정답 확인</button><button type="button" data-q="show" class="px-4 py-2 bg-white border border-gray-300 text-gray-600 text-xs font-bold font-sans hover:border-black hover:text-black transition-colors">정답 보기</button><button type="button" data-q="hint" class="text-xs font-bold font-sans text-gray-400 hover:text-gray-600 underline">힌트</button>${transBtn('q-trans', st.trans)}</div>${st.trans ? `<p class="mt-4 text-sm font-sans text-gray-500 bg-gray-50 p-3">${esc(quiz.textParts_eng.join(' ... '))}</p>` : ''}${st.hint ? `<p class="mt-4 text-sm font-sans text-gray-500 italic">💡 Hint: ${esc(quiz.hint)}</p>` : ''}${st.result === 'correct' ? `<p class="mt-4 text-sm font-sans text-green-700 font-medium">✓ Correct. ${esc(quiz.explanation)}</p>` : ''}${st.result === 'incorrect' ? '<p class="mt-4 text-sm font-sans text-red-600 font-medium">✕ Try again.</p>' : ''}</div>`;
+        }
+        function quizChoicesHTML() { return quizState.shuffled.map(c => `<span class="text-xs font-serif text-gray-600 bg-white border border-gray-200 px-2 py-1 select-all">${esc(c)}</span>`).join(''); }
+        function quizHTML() {
+            return `<div class="max-w-4xl mx-auto w-full px-6 py-12 flex flex-col md:flex-row gap-12 animate-fade-in"><div class="w-full md:w-64 shrink-0"><div class="sticky top-24"><div class="md:sticky md:top-24"><h2 class="text-[32px] md:text-[36px] font-serif font-bold text-gray-900 mb-2">내용 확인 퀴즈</h2><p class="text-sm font-sans text-gray-500 mb-6">학습 자료에 대한 이해도를 확인해 보세요.</p><div class="border-t border-gray-200 pt-4 mb-8"><span class="text-xs font-bold font-sans text-black uppercase block mb-2">정답률</span><span class="text-4xl font-serif font-bold text-gray-900" id="quiz-score">${quizScore()}%</span></div><div class="bg-gray-50 p-4 border border-gray-100"><h4 class="text-xs font-bold font-sans text-gray-500 uppercase mb-3 border-b border-gray-200 pb-2">정답 후보군</h4><div class="flex flex-wrap gap-2" id="quiz-choices">${quizChoicesHTML()}</div></div></div></div></div><div class="flex-1" id="quiz-list">${QUIZ_LIST.map(quizSentenceHTML).join('')}</div></div>`;
+        }
+        function refreshQuizSidebar() { const sc = qs('#quiz-score', viewRoot()); if (sc) sc.textContent = quizScore() + '%'; const ch = qs('#quiz-choices', viewRoot()); if (ch) ch.innerHTML = quizChoicesHTML(); }
+        function rerenderQuizQ(qid) { const el = qs(`.quiz-q[data-qid="${qid}"]`, viewRoot()); if (el) el.outerHTML = quizSentenceHTML(QUIZ_LIST.find(q => q.id === qid)); }
+
+        // ---------- DISCUSS ----------
+        function discussItemHTML(item) {
+            const st = discussState[item.id] || (discussState[item.id] = { text: '', showTrans: false, feedback: null, error: null, loading: false, fbTrans: false });
+            const vocab = item.vocab.map(v => `<div class="flex flex-col"><p class="text-sm font-serif text-gray-700 whitespace-pre-line"><span class="font-bold text-black mr-2">${esc(v.term)}</span>${esc(v.def)}</p>${st.showTrans ? `<p class="text-xs font-sans text-gray-500 mt-1 whitespace-pre-line animate-fade-in"><span class="font-semibold text-gray-600 mr-1">${esc(v.termEng)} :</span>${esc(v.defEng)}</p>` : ''}</div>`).join('');
+            let fb = '';
+            if (st.loading) fb = '<div class="mt-6 p-6 border border-gray-200 flex flex-col items-center justify-center"><div class="w-6 h-6 border-2 border-gray-200 border-t-black rounded-full animate-spin mb-3"></div><p class="text-sm font-sans text-gray-500">AI 한국어 도우미가 답변을 분석하는 중입니다...</p></div>';
+            else if (st.error) fb = `<div class="mt-6 p-4 bg-red-50 text-red-600 text-sm font-sans whitespace-pre-wrap">${esc(st.error)}</div>`;
+            else if (st.feedback) {
+                const corr = (st.feedback.corrections || []).map(c => `<div class="border border-gray-200 p-5 bg-white"><div class="flex flex-col gap-3 mb-4"><div class="flex items-start gap-3"><span class="shrink-0 px-2 py-0.5 bg-gray-100 text-gray-500 text-[10px] font-bold font-sans rounded-sm mt-0.5">수정 전</span><p class="text-[15px] font-serif text-gray-400 line-through leading-relaxed">${esc(c.original)}</p></div><div class="flex items-start gap-3"><span class="shrink-0 px-2 py-0.5 bg-blue-50 text-blue-600 text-[10px] font-bold font-sans rounded-sm mt-0.5">수정 후</span><p class="text-[15px] font-serif text-gray-900 font-medium leading-relaxed">${esc(c.corrected)}</p></div></div><div class="pt-3 border-t border-gray-100"><p class="text-[14px] font-serif text-gray-700 leading-relaxed"><span class="font-bold text-gray-500 text-xs font-sans mr-2">💡 설명</span>${esc(c.explanation)}</p>${st.fbTrans && c.explanationTrans ? `<p class="text-[13px] font-serif text-gray-500 mt-2 pt-2 border-t border-gray-50 animate-fade-in leading-relaxed">${esc(c.explanationTrans)}</p>` : ''}</div></div>`).join('');
+                fb = `<div class="mt-8 relative animate-fade-in"><div class="flex items-center gap-2 mb-4">${svgIcon('sparkles', 'w-4 h-4 text-black', { fill: 'currentColor' })}<h4 class="text-base font-bold font-sans text-black">AI 한국어 피드백</h4></div><div class="bg-gray-50 p-5 mb-6"><span class="text-xs font-bold font-sans text-gray-500 uppercase block mb-2">총평 및 잘한 점</span><p class="text-[15px] font-serif text-gray-900 leading-relaxed">${esc(st.feedback.overallPraise)}</p>${st.fbTrans && st.feedback.overallPraiseTrans ? `<p class="text-[13px] font-serif text-gray-500 mt-2 pt-2 border-t border-gray-200 animate-fade-in">${esc(st.feedback.overallPraiseTrans)}</p>` : ''}</div><div class="space-y-4"><span class="text-xs font-bold font-sans text-gray-500 uppercase block mb-1">문장별 교정 및 설명</span>${corr}</div><div class="flex justify-end mt-4">${transBtn('discuss-fbtrans', st.fbTrans)}</div></div>`;
+            }
+            const disabled = (!st.text.trim() || st.loading);
+            return `<div class="discuss-q mb-16 group" data-did="${item.id}"><div class="flex items-center gap-4 mb-6"><span class="text-4xl font-serif font-bold text-gray-200 group-hover:text-gray-900 transition-colors duration-300">${String(item.id).padStart(2, '0')}</span><h3 class="text-xl font-serif font-bold text-gray-900 leading-normal">${esc(item.questionKor)}</h3></div><div class="pl-0 md:pl-14"><div class="flex gap-2 mb-4">${transBtn('discuss-qtrans', st.showTrans)}${st.showTrans ? `<p class="text-sm font-sans text-gray-500 animate-fade-in">${esc(item.questionEng)}</p>` : ''}</div><div class="bg-gray-50 p-5 mb-6 border-l-2 border-black"><span class="text-xs font-bold font-sans text-gray-400 uppercase mb-2 block">핵심 문법/어휘</span><div class="space-y-2">${vocab}</div></div><textarea data-action="discuss-text" placeholder="여기에 한국어로 생각을 적어보세요..." class="w-full p-4 border border-gray-300 font-serif text-base text-gray-900 focus:border-black focus:ring-0 outline-none min-h-[150px] bg-white resize-y mb-3 transition-colors placeholder:text-gray-300">${esc(st.text)}</textarea><div class="flex justify-end"><button type="button" data-action="discuss-feedback" ${disabled ? 'disabled' : ''} class="px-6 py-2 text-xs font-bold font-sans uppercase tracking-widest border transition-colors ${disabled ? 'border-gray-200 text-gray-300 cursor-not-allowed' : 'border-black bg-black text-white hover:bg-white hover:text-black'}">${st.loading ? '생성 중...' : 'AI 피드백 받기'}</button></div>${fb}</div></div>`;
+        }
+        function discussHTML() {
+            return `<div class="max-w-3xl mx-auto w-full px-6 py-12 animate-fade-in"><div class="mb-6 pb-6 text-center"><h2 class="text-[32px] md:text-[36px] font-serif font-bold text-gray-900 mb-2">생각해 보기</h2><p class="text-sm font-sans text-gray-500">학습 질문에 대해 심층적으로 생각을 작성하고 AI 피드백을 받아보세요.</p></div><div class="bg-gray-50 border border-gray-200 p-4 mb-10 flex items-start gap-3"><div class="shrink-0 mt-0.5">${svgIcon('sparkles', 'w-4 h-4 text-gray-400', { fill: 'currentColor' })}</div><p class="text-xs font-sans text-gray-600 leading-relaxed">AI 피드백은 현재 Gemini 웹에서만 가능합니다. <a href="https://gemini.google.com/share/2df17f6bddcc" target="_blank" rel="noreferrer" class="underline decoration-gray-400 underline-offset-2 hover:text-black inline-flex items-center gap-1">Gemini에서 열기 ${svgIcon('externalLink', 'w-3 h-3')}</a></p></div><div id="discuss-list">${DISCUSS_DATA.map(discussItemHTML).join('')}</div></div>`;
+        }
+        function rerenderDiscussItem(id) { const el = qs(`.discuss-q[data-did="${id}"]`, viewRoot()); if (el) el.outerHTML = discussItemHTML(DISCUSS_DATA.find(d => d.id === id)); }
+
+        // ---------- 이벤트 위임 (#app 1회) ----------
+        appEl.addEventListener('click', (e) => {
+            const tabBtn = e.target.closest('[data-tab]'); if (tabBtn) { setTab(tabBtn.dataset.tab); return; }
+            if (e.target.closest('[data-action="toggle-header"]')) { app.headerExpanded = !app.headerExpanded; buildApp(); return; }
+            const tab = app.activeTab;
+
+            if (tab === 'video') {
+                const vspan = e.target.closest('[data-vocab-idx]');
+                if (vspan) { e.stopPropagation(); const w = VOCAB_DATA[+vspan.dataset.vocabIdx]; const r = vspan.getBoundingClientRect(); if (popupEl && popupEl.dataset.fixed && popupEl.dataset.idx == String(VOCAB_DATA.indexOf(w))) { closeVocabPopup(); } else { showVocabPopup(w, r.left + r.width / 2, r.bottom, true); } return; }
+                const lay = e.target.closest('[data-layout]'); if (lay) { learn.layout = lay.dataset.layout; const sl = qs('#script-list', viewRoot()); if (sl) sl.innerHTML = scriptListHTML(); updatePanes(); rebuildToolbar(); return; }
+                const rate = e.target.closest('[data-rate]'); if (rate) { learn.rate = parseFloat(rate.dataset.rate); learn.speedMenu = false; if (learn.player && learn.player.setPlaybackRate) learn.player.setPlaybackRate(learn.rate); rebuildToolbar(); return; }
+                const lp = e.target.closest('[data-line-play]'); if (lp) { e.stopPropagation(); const id = lp.dataset.linePlay; const line = VIDEO_SCRIPT_DATA.find(l => l.id === id); if (learn.activeLine === id && learn.isPlaying) { if (learn.player) learn.player.pauseVideo(); } else if (learn.player) { learn.player.seekTo(line.time[0], true); learn.player.playVideo(); } return; }
+                const lt = e.target.closest('[data-action^="line-trans-"]'); if (lt) { e.stopPropagation(); const id = lt.dataset.action.replace('line-trans-', ''); learn.trans[id] = !learn.trans[id]; replaceLine(id); return; }
+                const seekLine = e.target.closest('[data-line-seek]'); if (seekLine) { if (learn.player) { learn.player.seekTo(parseFloat(seekLine.dataset.lineSeek), true); learn.player.playVideo(); } return; }
+                const sb = e.target.closest('[data-sb-idx]'); const sbBtn = e.target.closest('[data-action^="sb-trans-"]');
+                if (sb && sbBtn) { const i = +sb.dataset.sbIdx; learn.sbTrans = learn.sbTrans || {}; learn.sbTrans[i] = !learn.sbTrans[i]; sb.outerHTML = sidebarVocabHTML(VOCAB_DATA[i], i); return; }
+                const a = e.target.closest('[data-action]'); if (a) {
+                    const act = a.dataset.action;
+                    if (act === 'rewind') { if (learn.player) { const n = Math.max(0, learn.currentTime - 1.5); learn.player.seekTo(n, true); learn.currentTime = n; updateSeekUI(); } }
+                    else if (act === 'forward') { if (learn.player) { const n = Math.min(learn.duration, learn.currentTime + 1.5); learn.player.seekTo(n, true); learn.currentTime = n; updateSeekUI(); } }
+                    else if (act === 'play') { if (learn.player) { if (learn.isPlaying) learn.player.pauseVideo(); else learn.player.playVideo(); } }
+                    else if (act === 'speed-menu') { learn.speedMenu = !learn.speedMenu; rebuildToolbar(); }
+                    else if (act === 'autoscroll') { learn.autoScroll = !learn.autoScroll; rebuildToolbar(); }
+                    else if (act === 'learn-vocab') { learn.showVocab = !learn.showVocab; updatePanes(); rebuildToolbar(); }
+                }
+                return;
+            }
+            if (tab === 'vocab') {
+                const a = e.target.closest('[data-action]'); if (!a) return;
+                if (a.dataset.action === 'vocab-clear') { vocabState.query = ''; paint(); }
+                else if (a.dataset.action === 'vocab-global') { vocabState.globalTrans = !vocabState.globalTrans; vocabState.itemTrans = {}; paint(); }
+                else if (a.dataset.action === 'vocab-toggle') { const card = a.closest('[data-vidx]'); const i = +card.dataset.vidx; const cur = vocabState.itemTrans[i] != null ? vocabState.itemTrans[i] : vocabState.globalTrans; vocabState.itemTrans[i] = !cur; card.outerHTML = vocabItemHTML(VOCAB_DATA[i], i, !cur); }
+                return;
+            }
+            if (tab === 'quiz') {
+                const btn = e.target.closest('[data-q]'); if (!btn) return;
+                const qEl = btn.closest('.quiz-q'); const qid = +qEl.dataset.qid; const quiz = QUIZ_LIST.find(q => q.id === qid); const st = quizState.q[qid];
+                const inp = qs('.quiz-input', qEl); if (inp) st.input = inp.value;
+                if (btn.dataset.q === 'check') { const ok = st.input.trim() === quiz.answer; st.result = ok ? 'correct' : 'incorrect'; st.hint = false; if (!quizState.attempts.hasOwnProperty(qid)) quizState.attempts[qid] = ok; shuffleChoices(); rerenderQuizQ(qid); refreshQuizSidebar(); }
+                else if (btn.dataset.q === 'show') { st.input = quiz.answer; st.result = null; st.hint = false; shuffleChoices(); rerenderQuizQ(qid); refreshQuizSidebar(); }
+                else if (btn.dataset.q === 'hint') { st.hint = !st.hint; rerenderQuizQ(qid); }
+                else if (btn.dataset.q === 'q-trans') { st.trans = !st.trans; rerenderQuizQ(qid); }
+                return;
+            }
+            if (tab === 'discuss') {
+                const a = e.target.closest('[data-action]'); if (!a) return;
+                const qEl = a.closest('.discuss-q'); const id = +qEl.dataset.did; const st = discussState[id];
+                if (a.dataset.action === 'discuss-qtrans') { st.showTrans = !st.showTrans; rerenderDiscussItem(id); }
+                else if (a.dataset.action === 'discuss-fbtrans') { st.fbTrans = !st.fbTrans; rerenderDiscussItem(id); }
+                else if (a.dataset.action === 'discuss-feedback') { runDiscussFeedback(id); }
+                return;
+            }
+        });
+        appEl.addEventListener('input', (e) => {
+            const tab = app.activeTab;
+            if (tab === 'vocab' && e.target.id === 'vocab-search') { vocabState.query = e.target.value; vocabState.itemTrans = {}; refreshVocabGrid(); }
+            else if (tab === 'quiz' && e.target.classList.contains('quiz-input')) { const qid = +e.target.closest('.quiz-q').dataset.qid; const st = quizState.q[qid]; st.input = e.target.value; st.result = null; }
+            else if (tab === 'discuss' && e.target.matches('[data-action="discuss-text"]')) { const id = +e.target.closest('.discuss-q').dataset.did; const st = discussState[id]; const was = !st.text.trim(); st.text = e.target.value; if (was !== !st.text.trim()) { const pos = e.target.selectionStart; rerenderDiscussItem(id); const ta = qs(`.discuss-q[data-did="${id}"] [data-action="discuss-text"]`, viewRoot()); if (ta) { ta.focus(); try { ta.setSelectionRange(pos, pos); } catch (_) {} } } }
+        });
+        // video: 어휘 호버 팝업
+        appEl.addEventListener('mouseover', (e) => { if (app.activeTab !== 'video') return; const sp = e.target.closest && e.target.closest('[data-vocab-idx]'); if (!sp) return; if (popupEl && popupEl.dataset.fixed) return; const w = VOCAB_DATA[+sp.dataset.vocabIdx]; const r = sp.getBoundingClientRect(); showVocabPopup(w, r.left + r.width / 2, r.bottom, false); });
+        appEl.addEventListener('mouseout', (e) => { if (app.activeTab !== 'video') return; const sp = e.target.closest && e.target.closest('[data-vocab-idx]'); if (!sp) return; if (popupEl && popupEl.dataset.fixed) return; if (e.relatedTarget && sp.contains(e.relatedTarget)) return; closeVocabPopup(); });
+        // keyboard (video)
+        window.addEventListener('keydown', (e) => {
+            if (app.activeTab !== 'video') return;
+            if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) return;
+            if (e.code === 'Space') { e.preventDefault(); const p = learn.player; if (p && p.getPlayerState) { if (p.getPlayerState() === 1) p.pauseVideo(); else p.playVideo(); } }
+            else if (e.code === 'ArrowLeft') { e.preventDefault(); const i = VIDEO_SCRIPT_DATA.findIndex(l => l.id === learn.activeLine); if (i > 0 && learn.player) { learn.player.seekTo(VIDEO_SCRIPT_DATA[i - 1].time[0], true); learn.player.playVideo(); } }
+            else if (e.code === 'ArrowRight') { e.preventDefault(); const i = VIDEO_SCRIPT_DATA.findIndex(l => l.id === learn.activeLine); const ni = (i === -1) ? 0 : i + 1; if (ni < VIDEO_SCRIPT_DATA.length && learn.player) { learn.player.seekTo(VIDEO_SCRIPT_DATA[ni].time[0], true); learn.player.playVideo(); } }
+        });
+
+        async function runDiscussFeedback(id) {
+            const st = discussState[id]; if (!st.text.trim() || st.loading) return;
+            st.loading = true; st.error = null; st.feedback = null; rerenderDiscussItem(id);
+            const item = DISCUSS_DATA.find(d => d.id === id);
+            const prompt = `당신은 한국어 학습자를 돕는 'AI 한국어 도우미'입니다. 학습자 답변을 분석하고 JSON으로만 답하세요. 순수 JSON만 반환하세요.\n[질문]: ${item.questionKor}\n[학습자 답변]: ${st.text}\n[포맷]: {"overallPraise":"","overallPraiseTrans":"","corrections":[{"original":"","corrected":"","explanation":"","explanationTrans":""}]}`;
+            const payload = { contents: [{ role: 'user', parts: [{ text: prompt }] }], generationConfig: { responseMimeType: 'application/json' } };
+            try { const data = await callGeminiWithBackoff(payload); let txt = data.candidates && data.candidates[0] && data.candidates[0].content.parts[0].text; if (!txt) throw new Error('응답이 비어있습니다.'); txt = txt.replace(/^```json\n?/, '').replace(/\n?```$/, ''); st.feedback = JSON.parse(txt); }
+            catch (err) { st.error = err.message; }
+            finally { st.loading = false; rerenderDiscussItem(id); }
+        }
+
+        // ---------- 시작 ----------
+        buildApp();
+    })();
     </script>
 </body>
 
