@@ -6,14 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OpenKoreanLab — 학습 자료 (Learning Content)</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght=300;400;500;700&family=Noto+Serif+KR:wght=300;400;500;600;700&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght=300;400;500;700&family=Noto+Serif+KR:wght=300;400;500;600;700&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
             theme: {
@@ -51,14 +46,63 @@
     </style>
 </head>
 
-<body>
-    <div id="root"></div>
+<body class="min-h-screen bg-white">
+    <!-- Header -->
+    <header class="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-gray-100">
+        <div class="max-w-6xl mx-auto px-6 lg:px-8 h-16 flex items-center justify-between gap-6">
+            <a href="#" onclick="window.setActiveLevel('home'); return false;" class="flex items-center gap-2 shrink-0">
+                <span class="font-serif text-lg md:text-xl font-bold text-black tracking-tight">OpenKoreanLab</span>
+            </a>
+            <nav id="nav-container" class="flex items-center gap-1 overflow-x-auto scrollbar-none"></nav>
+        </div>
+    </header>
 
-    <script type="text/babel">
-        const { useState, useEffect, useMemo } = React;
-        const { createPortal } = ReactDOM;
+    <!-- Main Content -->
+    <main class="max-w-6xl mx-auto px-6 lg:px-8 pt-16 md:pt-24 pb-24 animate-fade-in">
+        <!-- Hero Section -->
+        <div id="hero-container" class="flex flex-col items-start mb-12 md:mb-16"></div>
 
-        // --- Level Definitions ---
+        <!-- Search + Tags Section -->
+        <div class="flex flex-col gap-5 mb-10 md:mb-12">
+            <div class="relative w-full md:max-w-md">
+                <div class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4">
+                        <circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" />
+                    </svg>
+                </div>
+                <input
+                    type="text"
+                    id="search-input"
+                    placeholder="제목 또는 태그로 검색..."
+                    class="w-full pl-11 pr-10 py-3 bg-white border border-gray-200 text-sm font-sans text-gray-800 placeholder-gray-400 focus:outline-none focus:border-black transition-colors rounded-lg"
+                />
+                <button
+                    id="search-clear-btn"
+                    class="hidden absolute right-3 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-black transition-colors"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4">
+                        <path d="M18 6 6 18" /><path d="m6 6 12 12" />
+                    </svg>
+                </button>
+            </div>
+
+            <div id="tags-container" class="flex flex-wrap gap-2"></div>
+        </div>
+
+        <!-- Cards List Container -->
+        <div id="cards-container" class="flex flex-col gap-4"></div>
+
+        <!-- Footer -->
+        <div class="mt-20 pt-8 pb-12 border-t border-gray-100 text-center text-xs font-sans text-gray-400 flex flex-col items-center gap-2">
+            <p>© 2025 - 2026 Sangbin Lee (OpenKoreanLearningLab). All rights reserved.</p>
+            <a href="https://www.italki.com/ko/teacher/3553151" target="_blank" rel="noopener noreferrer" class="hover:text-gray-800 transition-colors underline underline-offset-4">
+                Visit Sangbin's italki profile
+            </a>
+        </div>
+    </main>
+
+    <script>
+        // --- Static Level Definitions ---
         const LEVEL_DEFINITIONS = {
             "ALL": { title: "All Levels", desc: "All Learning Content" },
             "A1":  { title: "Novice",            desc: "Basic everyday expressions." },
@@ -88,7 +132,7 @@
             "C2": "Proficient Level Learning Content"
         };
 
-        // --- Materials Data ---
+        // --- Materials Data Set ---
         const MATERIALS_DATA = [
             { level: "C2", tags: ["문학", "철학"], title: "소설 <혼모노>를 통해 살펴보는 진짜와 가짜의 경계", link: "https://docs.google.com/document/d/1ji7VWgB-8yvApxyYLt7H34MYg-lcX0iI6kAb5ZPXTS8/edit?usp=sharing" },
             { level: "C1", tags: ["사회", "철학", "과학"], title: "뒷담화에 대해서 - 뒷담화는 자제할 수 없는 인간 본성인가?", link: "https://docs.google.com/document/d/1hWysNw_TrVlrWHhLyvLaIprazQWejXJsqZrfaTXRO2E/edit?usp=sharing" },
@@ -341,13 +385,13 @@
             { level: "C2", tags: ["철학", "과학"], title: "📚 단 한 번의 앎혁명", link: "https://drive.google.com/open?id=1ISxowjHOeoDNEKiBqMK8gWdr7R92KjSZn3OY9FswpWo&usp=drive_copy" },
             { level: "C2", tags: ["철학", "과학"], title: "과학과 철학 그리고 언어 - 철학으로 보는 과학", link: "https://drive.google.com/open?id=1NDDNBUuj2RRPPBOrwpSV3gWTRrbMG5QhHyxTSv_ENKQ&usp=drive_copy" },
             { level: "C2", tags: ["철학", "과학"], title: "시간에 대한 태도와 무시제적 시간 이론", link: "https://drive.google.com/open?id=1yX5y4-ugi7mewufTKc8LRIRDaBcVgq6UybVSBe_XzsE&usp=drive_copy" },
-            { level: "C2", tags: ["철학", "교육"], title: "<메نون>과 <무지한 스승>을 통해 알아보는 배움의 정의: 설명 없이 배울 수 있을까?", link: "https://drive.google.com/open?id=1ZKkboh1LzYDRC3HW1--1zcfWmpcTEVQ8RmCjURXuIXM&usp=drive_copy" },
+            { level: "C2", tags: ["철학", "교육"], title: "<메논>과 <무지한 스승>을 통해 알아보는 배움의 정의: 설명 없이 배울 수 있을까?", link: "https://drive.google.com/open?id=1ZKkboh1LzYDRC3HW1--1zcfWmpcTEVQ8RmCjURXuIXM&usp=drive_copy" },
             { level: "C2", tags: ["철학", "언어"], title: "말할 수 없는 것은 침묵해야 한다 : 언어와 삶", link: "https://drive.google.com/open?id=14rzpxQAEauYPqTUUD91io6gqhxgMpYedlrdBcD7xJx0&usp=drive_copy" },
             { level: "C2", tags: ["철학", "언어"], title: "표상과 현상은 무엇일까요?", link: "https://drive.google.com/open?id=1e2mKtmrd3gN2EIVVQ4oWjC3c4PHYJHZqyY5DAHKkAOU&usp=drive_copy" },
             { level: "C2", tags: ["철학", "언어", "역사"], title: "<역사를 읽는 방법> - 1장 서론：그들의 방식으로 바라보기", link: "https://drive.google.com/open?id=1bWysDNo3szA9MIWAv0Ud-oPGGG3ovkop6YMa4pnTLLU&usp=drive_copy" }
         ];
 
-        // --- Thumbnail Resolver ---
+        // --- Thumbnail Lookup ---
         const HTML_THUMBNAIL_MAP = {
             "c1-bookstore-pickup.html":                   { type: "image",   url: "https://www.heavenraven.com/wp-content/uploads/2024/05/TELEMMGLPICT000181622487_trans_NvBQzQNjv4BqGLLAPY3LddE1Qiv-bsIMYN_NrT6kNvN6YRSyUisEf90.jpg" },
             "b2-bookstore-pickup.html":                   { type: "youtube", id: "fwBGVX5NbsA" },
@@ -388,51 +432,57 @@
             return null;
         };
 
-        const HomePreview = ({ item }) => {
-            const tags = (item.tags || []).slice(0, 3);
-            const levelTitle = LEVEL_DEFINITIONS[item.level] ? LEVEL_DEFINITIONS[item.level].title : "";
-            return (
-                <div className="absolute inset-0 bg-white border-r border-gray-100 flex flex-col items-center justify-center text-center px-3 sm:px-4 py-5">
-                    <div className="flex items-center justify-center flex-wrap gap-1 mb-3">
-                        {tags.map((t, i) => (
-                            <span key={i} className="bg-gray-900 text-white text-[9px] font-bold font-sans tracking-widest uppercase px-1.5 py-0.5">{t}</span>
-                        ))}
-                        <span className="border border-gray-900 text-gray-900 text-[9px] font-bold font-sans tracking-widest uppercase px-1.5 py-0.5">
-                            {item.level}{levelTitle ? ` · ${levelTitle}` : ""}
-                        </span>
-                    </div>
-                    <h4 className="font-serif text-[13px] sm:text-sm md:text-base font-bold text-gray-900 leading-snug line-clamp-4 break-keep">
-                        {item.title}
-                    </h4>
-                    <div className="mt-3 w-6 h-px bg-gray-200"></div>
-                </div>
-            );
+        const isYoutubeVideo = (link) => {
+            if (!link) return false;
+            if (link.endsWith('.html') && HTML_THUMBNAIL_MAP[link] && HTML_THUMBNAIL_MAP[link].type === 'youtube') {
+                return true;
+            }
+            return false;
         };
 
-        // --- Icons ---
-        const SearchIcon = ({ className }) => (
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
-                <circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" />
-            </svg>
-        );
-        const XIcon = ({ className }) => (
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
-                <path d="M18 6 6 18" /><path d="m6 6 12 12" />
-            </svg>
-        );
-        const ArrowRightIcon = ({ className }) => (
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
-                <path d="M5 12h14" /><path d="m12 5 7 7-7 7" />
-            </svg>
-        );
-        const PlayIcon = ({ className }) => (
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className={className}>
-                <path d="M8 5v14l11-7z" />
-            </svg>
-        );
+        // --- Application State ---
+        let state = {
+            activeLevel: 'home',
+            selectedTag: '전체',
+            searchQuery: ''
+        };
 
-        // --- Top Navigation ---
-        const TopNav = ({ activeLevel, setActiveLevel }) => {
+        // --- UI Render Elements ---
+        const navContainer = document.getElementById('nav-container');
+        const heroContainer = document.getElementById('hero-container');
+        const tagsContainer = document.getElementById('tags-container');
+        const cardsContainer = document.getElementById('cards-container');
+        const searchInput = document.getElementById('search-input');
+        const searchClearBtn = document.getElementById('search-clear-btn');
+
+        // --- Controller / Actions ---
+        window.setActiveLevel = (level) => {
+            state.activeLevel = level;
+            state.selectedTag = '전체';
+            state.searchQuery = '';
+            searchInput.value = '';
+            searchClearBtn.classList.add('hidden');
+            
+            renderAll();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+
+        window.setSelectedTag = (tag) => {
+            state.selectedTag = tag;
+            renderTags();
+            renderCards();
+        };
+
+        window.handleTagClickFromCard = (event, tag) => {
+            event.preventDefault();
+            event.stopPropagation();
+            state.selectedTag = tag;
+            renderTags();
+            renderCards();
+        };
+
+        // --- Component Renderers ---
+        function renderNav() {
             const items = [
                 { id: 'home', label: '전체' },
                 { id: 'B1+',  label: 'B1+' },
@@ -442,248 +492,223 @@
                 { id: 'C1+',  label: 'C1+' },
                 { id: 'C2',   label: 'C2' }
             ];
-            return (
-                <header className="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-gray-100">
-                    <div className="max-w-6xl mx-auto px-6 lg:px-8 h-16 flex items-center justify-between gap-6">
-                        <a href="#" onClick={(e) => { e.preventDefault(); setActiveLevel('home'); }} className="flex items-center gap-2 shrink-0">
-                            <span className="font-serif text-lg md:text-xl font-bold text-black tracking-tight">OpenKoreanLab</span>
-                        </a>
-                        <nav className="flex items-center gap-1 overflow-x-auto scrollbar-none">
-                            {items.map(item => {
-                                const isActive = activeLevel === item.id;
-                                return (
-                                    <button
-                                        key={item.id}
-                                        onClick={() => setActiveLevel(item.id)}
-                                        className={`relative shrink-0 px-3 md:px-4 py-2 text-xs md:text-sm font-sans tracking-wide transition-colors duration-200
-                                            ${isActive ? 'text-black font-bold' : 'text-gray-400 hover:text-gray-700 font-medium'}`}
-                                    >
-                                        {item.label}
-                                        {isActive && <span className="absolute left-3 right-3 -bottom-px h-px bg-black"></span>}
-                                    </button>
-                                );
-                            })}
-                        </nav>
-                    </div>
-                </header>
-            );
-        };
 
-        // --- Card Thumbnail ---
-        const CardThumbnail = ({ item }) => {
-            const externalUrl = getThumbnail(item.link);
-            const [errored, setErrored] = useState(false);
-            const useFallback = !externalUrl || errored;
-            const isVideo = !useFallback
-                && item.link && item.link.endsWith('.html')
-                && HTML_THUMBNAIL_MAP[item.link]
-                && HTML_THUMBNAIL_MAP[item.link].type === 'youtube';
-            return (
-                <div className={`w-1/3 sm:w-1/4 min-w-[120px] sm:min-w-[180px] md:min-w-[220px] relative overflow-hidden shrink-0 ${useFallback ? 'bg-white' : 'bg-gray-900'}`}>
-                    {useFallback ? (
-                        <HomePreview item={item} />
-                    ) : (
-                        <img
-                            src={externalUrl}
-                            alt={item.title}
-                            loading="lazy"
-                            referrerPolicy="no-referrer"
-                            onError={() => setErrored(true)}
-                            className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-95 group-hover:opacity-100"
-                        />
-                    )}
-                    {isVideo && (
-                        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                            <div className="w-9 h-9 md:w-10 md:h-10 bg-black/55 rounded-full flex items-center justify-center backdrop-blur-sm group-hover:bg-black/75 transition-colors">
-                                <PlayIcon className="w-3.5 h-3.5 md:w-4 md:h-4 text-white ml-0.5" />
-                            </div>
-                        </div>
-                    )}
-                </div>
-            );
-        };
+            navContainer.innerHTML = items.map(item => {
+                const isActive = state.activeLevel === item.id;
+                return `
+                    <button
+                        onclick="window.setActiveLevel('${item.id}')"
+                        class="relative shrink-0 px-3 md:px-4 py-2 text-xs md:text-sm font-sans tracking-wide transition-colors duration-200
+                            ${isActive ? 'text-black font-bold' : 'text-gray-400 hover:text-gray-700 font-medium'}"
+                    >
+                        ${item.label}
+                        ${isActive ? '<span class="absolute left-3 right-3 -bottom-px h-px bg-black"></span>' : ''}
+                    </button>
+                `;
+            }).join('');
+        }
 
-        // --- Material Card ---
-        const MaterialCard = ({ item, onSelectTag, selectedTag }) => {
-            const isExternal = item.link && item.link.startsWith('http');
-            const linkProps = isExternal ? { target: '_blank', rel: 'noreferrer' } : {};
-            return (
-                <a
-                    href={item.link || '#'}
-                    {...linkProps}
-                    className="group relative flex items-stretch w-full bg-white border border-gray-200 hover:border-black transition-all duration-300 text-left overflow-hidden rounded-xl"
-                >
-                    <CardThumbnail item={item} />
-                    <div className="flex-1 p-5 md:p-6 flex flex-col justify-center min-w-0">
-                        <div className="flex items-center flex-wrap gap-2 mb-3">
-                            <span className="px-2 py-0.5 border border-gray-900 text-gray-900 text-[10px] font-sans font-bold tracking-widest uppercase rounded-sm">
-                                {item.level}
-                            </span>
-                            {item.tags && item.tags.map(tag => (
-                                <button
-                                    key={tag}
-                                    onClick={(e) => { e.preventDefault(); onSelectTag(tag); }}
-                                    className={`px-2 py-0.5 text-[10px] font-sans font-bold tracking-widest uppercase rounded-sm transition-colors
-                                        ${selectedTag === tag
-                                            ? 'bg-gray-900 text-white border border-gray-900'
-                                            : 'bg-gray-100 text-gray-600 border border-gray-100 hover:bg-gray-200'}`}
-                                >
-                                    {tag}
-                                </button>
-                            ))}
-                        </div>
-                        <h3 className="font-serif text-base md:text-lg lg:text-xl font-bold text-gray-900 leading-snug line-clamp-3 group-hover:text-black">
-                            {item.title}
-                        </h3>
-                        <div className="mt-3 hidden md:flex items-center gap-1.5 text-gray-400 group-hover:text-black text-xs font-sans transition-colors">
-                            <span>자료 보기</span>
-                            <ArrowRightIcon className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
-                        </div>
-                    </div>
-                </a>
-            );
-        };
-
-        // --- Home View ---
-        const HomeView = ({ activeLevel, setActiveLevel }) => {
-            const [selectedTag, setSelectedTag] = useState("전체");
-            const [searchQuery, setSearchQuery] = useState("");
-
-            const allTags = useMemo(() => {
-                const tags = new Set(["전체", "최신"]);
-                MATERIALS_DATA.forEach(item => {
-                    if (activeLevel !== 'home' && item.level !== activeLevel) return;
-                    if (item.tags) item.tags.forEach(t => tags.add(t));
-                });
-                return Array.from(tags);
-            }, [activeLevel]);
-
-            const filtered = useMemo(() => {
-                let result = MATERIALS_DATA;
-                if (activeLevel !== 'home') result = result.filter(i => i.level === activeLevel);
-                if (selectedTag === "최신") result = result.slice(0, 5);
-                else if (selectedTag !== "전체") result = result.filter(i => i.tags && i.tags.includes(selectedTag));
-                if (searchQuery) {
-                    const q = searchQuery.toLowerCase();
-                    result = result.filter(i =>
-                        i.title.toLowerCase().includes(q) ||
-                        (i.tags && i.tags.some(t => t.toLowerCase().includes(q)))
-                    );
-                }
-                return result;
-            }, [activeLevel, selectedTag, searchQuery]);
-
-            useEffect(() => { setSelectedTag("전체"); setSearchQuery(""); }, [activeLevel]);
-
+        function renderHero() {
+            const activeLevel = state.activeLevel;
             const pageTitle    = LEVEL_TITLES[activeLevel === 'home' ? 'ALL' : activeLevel] || `Level ${activeLevel} 학습 자료`;
             const pageSubtitle = LEVEL_SUBTITLES[activeLevel === 'home' ? 'ALL' : activeLevel] || `Learning Content for ${activeLevel}`;
             const levelInfo    = LEVEL_DEFINITIONS[activeLevel === 'home' ? 'ALL' : activeLevel];
             const levelLabel   = activeLevel === 'home' ? 'ALL' : activeLevel;
 
-            return (
-                <main className="max-w-6xl mx-auto px-6 lg:px-8 pt-16 md:pt-24 pb-24 animate-fade-in">
-                    {/* Hero */}
-                    <div className="flex flex-col items-start mb-12 md:mb-16">
-                        <div className="flex items-center gap-3 mb-6">
-                            <div className="flex items-center border border-gray-900 px-3 py-1 text-[10px] font-sans tracking-widest uppercase text-gray-900">
-                                <span className="font-bold">{levelLabel}</span>
-                                <span className="mx-2 w-px h-2.5 bg-gray-300"></span>
-                                <span className="font-medium">{levelInfo ? levelInfo.title : 'All Levels'}</span>
-                            </div>
-                        </div>
-                        <h1 className="font-serif text-3xl md:text-5xl lg:text-6xl text-black font-bold leading-tight mb-3 tracking-tight">
-                            {pageTitle}
-                        </h1>
-                        <p className="font-serif text-gray-500 text-sm md:text-base italic">
-                            {pageSubtitle}
-                        </p>
+            heroContainer.innerHTML = `
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="flex items-center border border-gray-900 px-3 py-1 text-[10px] font-sans tracking-widest uppercase text-gray-900">
+                        <span class="font-bold">${levelLabel}</span>
+                        <span class="mx-2 w-px h-2.5 bg-gray-300"></span>
+                        <span class="font-medium">${levelInfo ? levelInfo.title : 'All Levels'}</span>
                     </div>
-
-                    {/* Search + Tags */}
-                    <div className="flex flex-col gap-5 mb-10 md:mb-12">
-                        <div className="relative w-full md:max-w-md">
-                            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
-                                <SearchIcon className="w-4 h-4" />
-                            </div>
-                            <input
-                                type="text"
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                                placeholder="제목 또는 태그로 검색..."
-                                className="w-full pl-11 pr-10 py-3 bg-white border border-gray-200 text-sm font-sans text-gray-800 placeholder-gray-400 focus:outline-none focus:border-black transition-colors rounded-lg"
-                            />
-                            {searchQuery && (
-                                <button
-                                    onClick={() => setSearchQuery("")}
-                                    className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-black transition-colors"
-                                >
-                                    <XIcon className="w-4 h-4" />
-                                </button>
-                            )}
-                        </div>
-
-                        <div className="flex flex-wrap gap-2">
-                            {allTags.map(tag => {
-                                const isActive = selectedTag === tag;
-                                return (
-                                    <button
-                                        key={tag}
-                                        onClick={() => setSelectedTag(tag)}
-                                        className={`px-3.5 py-1.5 text-xs font-sans font-bold tracking-widest uppercase rounded-sm transition-colors duration-200
-                                            ${isActive
-                                                ? 'bg-gray-900 text-white border border-gray-900'
-                                                : 'bg-white text-gray-500 border border-gray-200 hover:border-gray-900 hover:text-gray-900'}`}
-                                    >
-                                        {tag}
-                                    </button>
-                                );
-                            })}
-                        </div>
-                    </div>
-
-                    {/* Single-column Card list */}
-                    <div className="flex flex-col gap-4">
-                        {filtered.map((item, idx) => (
-                            <MaterialCard
-                                key={idx}
-                                item={item}
-                                selectedTag={selectedTag}
-                                onSelectTag={(t) => setSelectedTag(t)}
-                            />
-                        ))}
-
-                        {filtered.length === 0 && (
-                            <div className="text-center py-16 text-gray-400 text-sm font-sans border border-dashed border-gray-200 rounded-xl">
-                                해당 조건에 맞는 자료가 없습니다.
-                            </div>
-                        )}
-                    </div>
-
-                    {/* 하단 오타 수정 표기 적용 완료 */}
-                    <div className="mt-20 pt-8 pb-12 border-t border-gray-100 text-center text-xs font-sans text-gray-400 flex flex-col items-center gap-2">
-                        <p>© 2025 - 2026 Sangbin Lee (OpenKoreanLearningLab). All rights reserved.</p>
-                        <a href="https://www.italki.com/ko/teacher/3553151" target="_blank" rel="noopener noreferrer" className="hover:text-gray-800 transition-colors underline underline-offset-4">
-                            Visit Sangbin's italki profile
-                        </a>
-                    </div>
-                </main>
-            );
-        };
-
-        // --- App ---
-        const App = () => {
-            const [activeLevel, setActiveLevel] = useState('home');
-            useEffect(() => { window.scrollTo({ top: 0, behavior: 'smooth' }); }, [activeLevel]);
-            return (
-                <div className="min-h-screen bg-white">
-                    <TopNav activeLevel={activeLevel} setActiveLevel={setActiveLevel} />
-                    <HomeView activeLevel={activeLevel} setActiveLevel={setActiveLevel} />
                 </div>
-            );
-        };
+                <h1 class="font-serif text-3xl md:text-5xl lg:text-6xl text-black font-bold leading-tight mb-3 tracking-tight">
+                    ${pageTitle}
+                </h1>
+                <p class="font-serif text-gray-500 text-sm md:text-base italic">
+                    ${pageSubtitle}
+                </p>
+            `;
+        }
 
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
+        function renderTags() {
+            // Recalculate dynamic tags for current active level
+            const tagsSet = new Set(["전체", "최신"]);
+            MATERIALS_DATA.forEach(item => {
+                if (state.activeLevel !== 'home' && item.level !== state.activeLevel) return;
+                if (item.tags) item.tags.forEach(t => tagsSet.add(t));
+            });
+            const allTags = Array.from(tagsSet);
+
+            tagsContainer.innerHTML = allTags.map(tag => {
+                const isActive = state.selectedTag === tag;
+                return `
+                    <button
+                        onclick="window.setSelectedTag('${tag}')"
+                        class="px-3.5 py-1.5 text-xs font-sans font-bold tracking-widest uppercase rounded-sm transition-colors duration-200
+                            ${isActive
+                                ? 'bg-gray-900 text-white border border-gray-900'
+                                : 'bg-white text-gray-500 border border-gray-200 hover:border-gray-900 hover:text-gray-900'}"
+                    >
+                        ${tag}
+                    </button>
+                `;
+            }).join('');
+        }
+
+        function renderCards() {
+            // Filter materials
+            let filtered = MATERIALS_DATA;
+            if (state.activeLevel !== 'home') {
+                filtered = filtered.filter(i => i.level === state.activeLevel);
+            }
+            if (state.selectedTag === "최신") {
+                filtered = filtered.slice(0, 5);
+            } else if (state.selectedTag !== "전체") {
+                filtered = filtered.filter(i => i.tags && i.tags.includes(state.selectedTag));
+            }
+            if (state.searchQuery) {
+                const q = state.searchQuery.toLowerCase();
+                filtered = filtered.filter(i =>
+                    i.title.toLowerCase().includes(q) ||
+                    (i.tags && i.tags.some(t => t.toLowerCase().includes(q)))
+                );
+            }
+
+            if (filtered.length === 0) {
+                cardsContainer.innerHTML = `
+                    <div class="text-center py-16 text-gray-400 text-sm font-sans border border-dashed border-gray-200 rounded-xl">
+                        해당 조건에 맞는 자료가 없습니다.
+                    </div>
+                `;
+                return;
+            }
+
+            cardsContainer.innerHTML = filtered.map(item => {
+                const isExternal = item.link && item.link.startsWith('http');
+                const linkProps = isExternal ? 'target="_blank" rel="noreferrer"' : '';
+                const thumbnailSrc = getThumbnail(item.link);
+                const isVideo = isYoutubeVideo(item.link);
+                const levelTitle = LEVEL_DEFINITIONS[item.level] ? LEVEL_DEFINITIONS[item.level].title : "";
+
+                // Generate dynamic tag buttons
+                const tagsHTML = (item.tags || []).map(tag => `
+                    <button
+                        onclick="window.handleTagClickFromCard(event, '${tag}')"
+                        class="px-2 py-0.5 text-[10px] font-sans font-bold tracking-widest uppercase rounded-sm transition-colors
+                            ${state.selectedTag === tag
+                                ? 'bg-gray-900 text-white border border-gray-900'
+                                : 'bg-gray-100 text-gray-600 border border-gray-100 hover:bg-gray-200'}"
+                    >
+                        ${tag}
+                    </button>
+                `).join('');
+
+                // Render Thumbnail Block with inline error fallback handler to switch to Text-Based layout
+                let thumbnailHTML = '';
+                if (thumbnailSrc) {
+                    thumbnailHTML = `
+                        <div class="w-1/3 sm:w-1/4 min-w-[120px] sm:min-w-[180px] md:min-w-[220px] relative overflow-hidden shrink-0 bg-gray-900">
+                            <img
+                                src="${thumbnailSrc}"
+                                alt="${item.title}"
+                                loading="lazy"
+                                referrerPolicy="no-referrer"
+                                class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-95 group-hover:opacity-100"
+                                onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                            />
+                            <!-- Inner Fallback Text (Hidden unless image load fails) -->
+                            <div class="hidden absolute inset-0 bg-white border-r border-gray-100 flex-col items-center justify-center text-center px-3 sm:px-4 py-5">
+                                <div class="flex items-center justify-center flex-wrap gap-1 mb-3">
+                                    ${(item.tags || []).slice(0, 3).map(t => `<span class="bg-gray-900 text-white text-[9px] font-bold font-sans tracking-widest uppercase px-1.5 py-0.5">${t}</span>`).join('')}
+                                    <span class="border border-gray-900 text-gray-900 text-[9px] font-bold font-sans tracking-widest uppercase px-1.5 py-0.5">${item.level}</span>
+                                </div>
+                                <h4 class="font-serif text-[11px] sm:text-xs md:text-sm font-bold text-gray-900 leading-snug line-clamp-4 break-keep">${item.title}</h4>
+                            </div>
+                            ${isVideo ? `
+                                <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                    <div class="w-9 h-9 md:w-10 md:h-10 bg-black/55 rounded-full flex items-center justify-center backdrop-blur-sm group-hover:bg-black/75 transition-colors">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-3.5 h-3.5 md:w-4 md:h-4 text-white ml-0.5">
+                                            <path d="M8 5v14l11-7z" />
+                                        </svg>
+                                    </div>
+                                </div>
+                            ` : ''}
+                        </div>
+                    `;
+                } else {
+                    // Default Pure Text Fallback Layout
+                    thumbnailHTML = `
+                        <div class="w-1/3 sm:w-1/4 min-w-[120px] sm:min-w-[180px] md:min-w-[220px] relative overflow-hidden shrink-0 bg-white border-r border-gray-100 flex flex-col items-center justify-center text-center px-3 sm:px-4 py-5">
+                            <div class="flex items-center justify-center flex-wrap gap-1 mb-3">
+                                ${(item.tags || []).slice(0, 3).map(t => `<span class="bg-gray-900 text-white text-[9px] font-bold font-sans tracking-widest uppercase px-1.5 py-0.5">${t}</span>`).join('')}
+                                <span class="border border-gray-900 text-gray-900 text-[9px] font-bold font-sans tracking-widest uppercase px-1.5 py-0.5">${item.level}</span>
+                            </div>
+                            <h4 class="font-serif text-[11px] sm:text-xs md:text-sm font-bold text-gray-900 leading-snug line-clamp-4 break-keep">${item.title}</h4>
+                            <div class="mt-3 w-6 h-px bg-gray-200"></div>
+                        </div>
+                    `;
+                }
+
+                return `
+                    <a
+                        href="${item.link || '#'}"
+                        ${linkProps}
+                        class="group relative flex items-stretch w-full bg-white border border-gray-200 hover:border-black transition-all duration-300 text-left overflow-hidden rounded-xl"
+                    >
+                        ${thumbnailHTML}
+                        <div class="flex-1 p-5 md:p-6 flex flex-col justify-center min-w-0">
+                            <div class="flex items-center flex-wrap gap-2 mb-3">
+                                <span class="px-2 py-0.5 border border-gray-900 text-gray-900 text-[10px] font-sans font-bold tracking-widest uppercase rounded-sm">
+                                    ${item.level}
+                                </span>
+                                ${tagsHTML}
+                            </div>
+                            <h3 class="font-serif text-base md:text-lg lg:text-xl font-bold text-gray-900 leading-snug line-clamp-3 group-hover:text-black">
+                                ${item.title}
+                            </h3>
+                            <div class="mt-3 hidden md:flex items-center gap-1.5 text-gray-400 group-hover:text-black text-xs font-sans transition-colors">
+                                <span>자료 보기</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-3.5 h-3.5 transition-transform group-hover:translate-x-1">
+                                    <path d="M5 12h14" /><path d="m12 5 7 7-7 7" />
+                                </svg>
+                            </div>
+                        </div>
+                    </a>
+                `;
+            }).join('');
+        }
+
+        function renderAll() {
+            renderNav();
+            renderHero();
+            renderTags();
+            renderCards();
+        }
+
+        // --- Event Listeners ---
+        searchInput.addEventListener('input', (e) => {
+            state.searchQuery = e.target.value;
+            if (state.searchQuery) {
+                searchClearBtn.classList.remove('hidden');
+            } else {
+                searchClearBtn.classList.add('hidden');
+            }
+            renderCards();
+        });
+
+        searchClearBtn.addEventListener('click', () => {
+            searchInput.value = '';
+            state.searchQuery = '';
+            searchClearBtn.classList.add('hidden');
+            renderCards();
+        });
+
+        // --- Initialize ---
+        document.addEventListener('DOMContentLoaded', () => {
+            renderAll();
+        });
     </script>
 </body>
 
