@@ -6,15 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>[문화][사회][C1] ‘번호 따기’ 성지가 된 서점</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <!-- Chart.js 라이브러리 추가 -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght=300;400;500;700&family=Noto+Serif+KR:wght=300;400;500;600;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Noto+Serif+KR:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
     <script>
         tailwind.config = {
@@ -165,12 +162,13 @@
 </head>
 
 <body>
-    <div id="root"></div>
-    <script type="text/babel">
-        const { useState, useEffect, useRef, useMemo, useCallback } = React;
-        const { createPortal } = ReactDOM;
+    <noscript><div style="max-width:720px;margin:24px auto;padding:16px;border:1px solid #ddd;border-radius:8px;font-family:sans-serif;font-size:14px;color:#374151">이 학습 자료를 보려면 자바스크립트를 켜 주세요. (Please enable JavaScript to view this learning material.)</div></noscript>
+    <div id="app"></div>
+    <script>
+    (function () {
+        'use strict';
 
-        // --- Data & Config ---
+        /* ===== 데이터 (원본 보존, JSX 제목 1건만 문자열화) ===== */
         const CONFIG = {
             GEMINI_API_URL: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent',
             API_RETRY_DELAYS: [1000, 2000, 4000, 8000, 16000]
@@ -190,7 +188,7 @@
         const READING_DATA = [
             {
                 id: 1,
-                title: <>연애 상대를 찾으러 왜 대형 서점에 갔을까? <br /> ‘교보문고 번따’가 화제가 된 이유 📚📱</>,
+                title: "연애 상대를 찾으러 왜 대형 서점에 갔을까? <br> ‘교보문고 번따’가 화제가 된 이유 📚📱",
                 subtitle: "",
                 source: "https://newneek.co/@pizzastation/article/39901?utm_source=article&utm_medium=share&utm_content=39901",
                 content: [
@@ -2329,843 +2327,463 @@
             }
         ];
 
-        // --- Icons ---
-        const HomeIcon = ({ className }) => (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square" strokeLinejoin="miter" className={className}><rect x="3" y="3" width="18" height="18" rx="0" ry="0" /><path d="M3 9h18" /><path d="M9 21V9" /></svg>);
-        const LearnIcon = ({ className }) => (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square" strokeLinejoin="miter" className={className}><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>);
-        const VocabIcon = ({ className }) => (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square" strokeLinejoin="miter" className={className}><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" /><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" /></svg>);
-        const QuizIcon = ({ className }) => (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square" strokeLinejoin="miter" className={className}><circle cx="12" cy="12" r="10" /><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" /><path d="M12 17h.01" /></svg>);
-        const DiscussIcon = ({ className }) => (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square" strokeLinejoin="miter" className={className}><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" /></svg>);
-        const OpenBookSolidIcon = ({ className }) => (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square" strokeLinejoin="miter" className={className}><path d="M2 6 C2 3 8 2 12 6 C16 2 22 3 22 6 V20 C22 17 16 16 12 20 C8 16 2 17 2 20 Z" /><path d="M12 6 V20" /></svg>);
-        const TranslateIcon = ({ className }) => (<svg viewBox="0 0 24 24" fill="currentColor" className={className}><path d="M12.87 15.07l-2.54-2.51.03-.03A17.52 17.52 0 0014.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.09-.02.67-.02zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z" /></svg>);
-        const ExternalLinkIcon = ({ className }) => (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square" strokeLinejoin="miter" className={className}><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /><polyline points="15 3 21 3 21 9" /><line x1="10" y1="14" x2="21" y2="3" /></svg>);
-        const SparklesIcon = ({ className }) => (<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className={className}><path d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 00-1.423 1.423z" /></svg>);
-        const HighlighterIcon = ({ className, style }) => (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square" strokeLinejoin="miter" className={className} style={style}><path d="M9 11l-6 6v3h9l3-3" /><path d="m22 12-4.6 4.6a2 2 0 0 1-2.8 0l-5.2-5.2a2 2 0 0 1 0-2.8L14 4" /></svg>);
-        const EraserIcon = ({ className }) => (<svg viewBox="0 0 24 24" fill="currentColor" className={className}><path d="M15.143 2.617a2.5 2.5 0 0 0-3.536 0l-9 9a2.5 2.5 0 0 0 0 3.536l6.364 6.364a2.5 2.5 0 0 0 3.536 0l9-9a2.5 2.5 0 0 0 0-3.536l-6.364-6.364zm-2.829 12.02L5.8 8.122l6.364-6.364 6.514 6.515-6.364 6.364z" /><path d="M10 18l4 4" stroke="white" strokeWidth="2" /></svg>);
-        const ArrowRightIcon = ({ className }) => (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square" strokeLinejoin="miter" className={className}><path d="M5 12h14M12 5l7 7-7 7" /></svg>);
-        const MenuIcon = ({ className }) => (<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="square" strokeLinejoin="miter" className={className}><line x1="3" y1="12" x2="21" y2="12" /><line x1="3" y1="6" x2="21" y2="6" /><line x1="3" y1="18" x2="21" y2="18" /></svg>);
 
-        // --- Shared Configurations (Optimized) ---
+        /* =====================================================================
+           OpenKoreanLearningLab — 학습자료 베이스 템플릿 (순수 바닐라 JS)
+           단일 state · 부분 렌더 · #app 1회 이벤트 위임 · 안전한 이스케이프
+           React/ReactDOM/Babel 제거. 데이터(위 블록) + Chart.js만 사용.
+           새 학습자료는 위 데이터 배열만 교체하면 됩니다.
+           ===================================================================== */
+
+        // ---------- 0. 유틸 ----------
+        const esc = (v) => String(v == null ? '' : v).replace(/[&<>"']/g, (c) => ({
+            '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+        }[c]));
+        const qs  = (sel, root) => (root || document).querySelector(sel);
+        const qsa = (sel, root) => Array.from((root || document).querySelectorAll(sel));
+        const viewRoot = () => document.getElementById('view-root');
+
+        // ---------- 1. 아이콘 ----------
+        const ICON = {
+            home:'<rect x="3" y="3" width="18" height="18" rx="0" ry="0"/><path d="M3 9h18"/><path d="M9 21V9"/>',
+            learn:'<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>',
+            vocab:'<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>',
+            quiz:'<circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/>',
+            discuss:'<path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>',
+            openbook:'<path d="M2 6 C2 3 8 2 12 6 C16 2 22 3 22 6 V20 C22 17 16 16 12 20 C8 16 2 17 2 20 Z"/><path d="M12 6 V20"/>',
+            arrowRight:'<path d="M5 12h14M12 5l7 7-7 7"/>',
+            menu:'<line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/>',
+            externalLink:'<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>',
+            sparkles:'<path d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/>',
+            highlighter:'<path d="M9 11l-6 6v3h9l3-3"/><path d="m22 12-4.6 4.6a2 2 0 0 1-2.8 0l-5.2-5.2a2 2 0 0 1 0-2.8L14 4"/>',
+            eraser:'<path d="M20 20H7L3 16C2 15 2 13 3 12L13 2L22 11L20 20Z"/>',
+            search:'<circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>',
+            close:'<path d="M18 6 6 18"/><path d="m6 6 12 12"/>'
+        };
+        const svgIcon = (name, cls, opts) => {
+            opts = opts || {};
+            const fill = opts.fill || 'none';
+            const stroke = opts.fill === 'currentColor' ? '' : 'stroke="currentColor" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter"';
+            const style = opts.style ? ` style="${opts.style}"` : '';
+            return `<svg viewBox="0 0 24 24" fill="${fill}" ${stroke} class="${cls || ''}"${style}>${ICON[name]}</svg>`;
+        };
         const NAV_ITEMS = [
-            { id: 'home', label: '시작 페이지', icon: HomeIcon },
-            { id: 'reading', label: '읽기 자료', icon: LearnIcon },
-            { id: 'vocab', label: '핵심 어휘', icon: VocabIcon },
-            { id: 'quiz', label: '내용 확인 퀴즈', icon: QuizIcon },
-            { id: 'discuss', label: '생각해 보기', icon: DiscussIcon }
+            { id: 'home', label: '시작 페이지', icon: 'home' },
+            { id: 'reading', label: '읽기 자료', icon: 'learn' },
+            { id: 'vocab', label: '핵심 어휘', icon: 'vocab' },
+            { id: 'quiz', label: '내용 확인 퀴즈', icon: 'quiz' },
+            { id: 'discuss', label: '생각해 보기', icon: 'discuss' }
         ];
 
-        // --- Utils & Helpers ---
+        // ---------- 2. 공용 헬퍼 ----------
         const getContainerOffset = (root, node, offset) => {
-            let totalOffset = 0; const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
-            while (walker.nextNode()) { if (walker.currentNode === node) return totalOffset + offset; totalOffset += walker.currentNode.length; }
-            return totalOffset;
+            let total = 0; const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+            while (walker.nextNode()) { if (walker.currentNode === node) return total + offset; total += walker.currentNode.length; }
+            return total;
         };
-
         const getPopupLeftPos = (x, width) => {
-            const padding = 20; const windowWidth = window.innerWidth; let left = x - (width / 2);
-            if (left < padding) return padding;
-            if (left + width > windowWidth - padding) return windowWidth - width - padding;
+            const pad = 20, ww = window.innerWidth; let left = x - width / 2;
+            if (left < pad) return pad;
+            if (left + width > ww - pad) return ww - width - pad;
             return left;
         };
-
-        // API 오류 시 무한 재시도를 방지하고, 에러를 UI로 전파하도록 개선된 Backoff
         const callGeminiWithBackoff = async (payload) => {
-            const apiKey = ""; const apiUrl = `${CONFIG.GEMINI_API_URL}?key=${apiKey}`; const delays = CONFIG.API_RETRY_DELAYS;
+            const apiKey = ''; const apiUrl = `${CONFIG.GEMINI_API_URL}?key=${apiKey}`; const delays = CONFIG.API_RETRY_DELAYS;
             for (let i = 0; i <= delays.length; i++) {
                 try {
-                    const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-                    if (!response.ok) {
-                        const errorText = await response.text();
-                        if (response.status === 400 || response.status === 401 || response.status === 403) {
-                            throw new Error(`API 인증/요청 오류(HTTP ${response.status}): 올바른 요청 형식이나 유효한 API 키가 필요합니다. 세부: ${errorText}`);
-                        }
-                        if (response.status === 429 || response.status >= 500) throw new Error(`Server error: ${response.status} - ${errorText}`);
-                        throw new Error(`API error: ${response.statusText} - ${errorText}`);
+                    const r = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                    if (!r.ok) {
+                        const t = await r.text();
+                        if (r.status === 400 || r.status === 401 || r.status === 403) throw new Error(`API 인증/요청 오류(HTTP ${r.status}): ${t}`);
+                        if (r.status === 429 || r.status >= 500) throw new Error(`Server error: ${r.status} - ${t}`);
+                        throw new Error(`API error: ${r.statusText} - ${t}`);
                     }
-                    return await response.json();
-                } catch (error) {
-                    if (i === delays.length || error.message.includes("API 인증/요청 오류")) throw error;
-                    await new Promise(resolve => setTimeout(resolve, delays[i]));
+                    return await r.json();
+                } catch (e) {
+                    if (i === delays.length || e.message.includes('API 인증/요청 오류')) throw e;
+                    await new Promise(res => setTimeout(res, delays[i]));
                 }
             }
         };
-
         const getAIDictionaryData = async (term, contextData) => {
             const articleText = contextData.map(p => p.text).filter(Boolean).join('\n');
-            const systemPrompt = `당신은 친절한 한국어 선생님입니다. 학생이 B1 수준임을 감안하여, 주어진 '본문 맥락'을 참고하여 '검색어'를 설명해주세요. 설명은 간결하고 이해하기 쉽게 '-요' 체를 사용해주세요.\n\n본문 맥락:\n---${articleText}\n---\n\n위의 맥락을 바탕으로 검색어에 대해 설명해주세요.`;
-            const payload = { contents: [{ parts: [{ text: `검색어: "${term}"` }] }], systemInstruction: { parts: [{ text: systemPrompt }] }, generationConfig: { responseMimeType: "application/json", responseSchema: { type: "OBJECT", properties: { "term": { "type": "STRING" }, "definition": { "type": "STRING" }, "termTranslation": { "type": "STRING" }, "definitionTranslation": { "type": "STRING" }, "example": { "type": "STRING" } }, required: ["term", "definition", "termTranslation", "definitionTranslation", "example"] } } };
-            const result = await callGeminiWithBackoff(payload); return JSON.parse(result.candidates[0].content.parts[0].text);
+            const systemPrompt = `당신은 친절한 한국어 선생님입니다. '본문 맥락'을 참고하여 '검색어'를 '-요' 체로 간결히 설명해주세요.\n\n본문 맥락:\n---${articleText}\n---`;
+            const payload = { contents: [{ parts: [{ text: `검색어: "${term}"` }] }], systemInstruction: { parts: [{ text: systemPrompt }] }, generationConfig: { responseMimeType: 'application/json' } };
+            const result = await callGeminiWithBackoff(payload);
+            return JSON.parse(result.candidates[0].content.parts[0].text);
+        };
+        const transBtn = (action, isShowing, extra) =>
+            `<button type="button" data-action="${action}" class="inline-flex items-center gap-1 text-[8px] font-bold font-sans uppercase tracking-widest text-gray-500 opacity-40 hover:opacity-100 transition-opacity cursor-pointer border-none p-0 bg-transparent ${extra || ''}">${svgIcon('externalLink', 'w-2.5 h-2.5')}${isShowing ? 'Hide Eng' : 'Eng'}</button>`;
+        const levelBadgeHTML = (code) => {
+            const d = LEVEL_DEFINITIONS[code] || { title: 'Unknown' };
+            return `<div class="flex items-center gap-2 border border-black px-2 py-0.5 rounded-none"><span class="text-xs font-bold font-sans text-black print:text-[12px]">${esc(code)}</span><div class="w-px h-3 bg-gray-300"></div><span class="text-xs text-gray-500 font-sans print:text-[12px]">${esc(d.title)}</span></div>`;
         };
 
-        // --- Reusable UI Components ---
-        const TranslateBtn = ({ onClick, isShowing, className = "" }) => (
-            <button onClick={(e) => { e.stopPropagation(); onClick(e); }} className={`inline-flex items-center gap-1 text-[8px] font-bold font-sans uppercase tracking-widest text-gray-500 opacity-40 hover:opacity-100 transition-opacity cursor-pointer border-none p-0 ${className}`}>
-                <TranslateIcon className="w-2.5 h-2.5" />{isShowing ? 'Hide Eng' : 'Eng'}
-            </button>
-        );
-        const LevelBadge = ({ levelCode }) => { const definition = LEVEL_DEFINITIONS[levelCode] || { title: "Unknown", desc: "" }; return (<div className="flex items-center gap-2 border border-black px-2 py-0.5 rounded-none"><span className="text-xs font-bold font-sans text-black print:text-[12px]">{levelCode}</span><div className="w-px h-3 bg-gray-300"></div><span className="text-xs text-gray-500 font-sans print:text-[12px]">{definition.title}</span></div>); };
+        // ---------- 3. 전역 상태 ----------
+        const app = { activeTab: 'home', userLevel: 'C1', showVocab: false, headerExpanded: true };
+        const reading = { activeId: 1, highlightMode: false, color: 'yellow', highlights: {}, trans: {}, showDict: false, dictTerm: '', dictResult: null, dictLoading: false };
+        const vocabState = { query: '', globalTrans: false, itemTrans: {} };
+        const quizState = { attempts: {}, shuffled: ANSWER_CHOICES.slice(), q: {} };
+        const discussState = {};
+        const appEl = document.getElementById('app');
 
-        // --- React-integrated Chart.js Component ---
-        const SurveyChart = () => {
-            const chartRef = useRef(null);
-            const chartInstance = useRef(null);
+        function setTab(tab) { app.activeTab = tab; app.headerExpanded = (tab !== 'reading'); closeVocabPopup(); buildApp(); window.scrollTo({ top: 0, behavior: 'auto' }); }
 
-            useEffect(() => {
-                if (chartInstance.current) {
-                    chartInstance.current.destroy();
-                }
-                const ctx = chartRef.current.getContext('2d');
-                chartInstance.current = new Chart(ctx, {
-                    type: 'pie',
-                    data: {
-                        labels: ['제한해야 해', '제한하는 건 지나쳐', '다른 해결책이 필요해', '잘 모르겠어'],
-                        datasets: [{
-                            data: [1532, 1871, 913, 510],
-                            backgroundColor: [
-                                'rgb(245, 46, 45)',
-                                'rgb(3, 104, 247)',
-                                'rgb(255, 170, 69)',
-                                'rgb(29, 173, 100)'
-                            ],
-                            borderWidth: 2,
-                            borderColor: '#ffffff'
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: { display: false },
-                            tooltip: {
-                                callbacks: {
-                                    label: function (context) {
-                                        let label = context.label || '';
-                                        let value = context.parsed;
-                                        return ` ${label}: ${value}명`;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                });
-
-                return () => {
-                    if (chartInstance.current) {
-                        chartInstance.current.destroy();
-                    }
-                };
-            }, []);
-
-            return (
-                <div className="bg-white rounded-2xl border border-gray-200 p-6 md:p-8 w-full max-w-lg mx-auto my-8 font-sans shadow-sm print:break-inside-avoid">
-                    <div className="text-center mb-6">
-                        <span className="inline-block bg-black text-white text-[10px] font-bold px-3 py-1 rounded-full mb-3 uppercase tracking-widest">Today's PIZZA</span>
-                        <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-1 leading-snug">🍕 '교보문고 번호 따기', 어떻게 생각해? 📚📱</h3>
-                        <p className="text-xs text-gray-500">전체 참여자 수 4,826명</p>
-                    </div>
-
-                    <div className="relative mb-6 flex justify-center h-64">
-                        <canvas ref={chartRef}></canvas>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-3 bg-gray-50 p-4 rounded-xl">
-                        <div className="flex items-center gap-2">
-                            <div className="w-3.5 h-3.5 rounded-full shrink-0" style={{ backgroundColor: 'rgb(245, 46, 45)' }}></div>
-                            <span className="text-xs font-medium text-gray-700 whitespace-nowrap">제한해야 해 (31.8%)</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <div className="w-3.5 h-3.5 rounded-full shrink-0" style={{ backgroundColor: 'rgb(3, 104, 247)' }}></div>
-                            <span className="text-xs font-medium text-gray-700 whitespace-nowrap">제한하는 건 지나쳐 (38.8%)</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <div className="w-3.5 h-3.5 rounded-full shrink-0" style={{ backgroundColor: 'rgb(255, 170, 69)' }}></div>
-                            <span className="text-xs font-medium text-gray-700 whitespace-nowrap">다른 해결책이 필요해 (18.9%)</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <div className="w-3.5 h-3.5 rounded-full shrink-0" style={{ backgroundColor: 'rgb(29, 173, 100)' }}></div>
-                            <span className="text-xs font-medium text-gray-700 whitespace-nowrap">잘 모르겠어 (10.5%)</span>
-                        </div>
-                    </div>
-                </div>
-            );
-        };
-
-        // Internal Content Component for Popup & Sidebar Card
-        const ReadingVocabContent = ({ word, showTrans, toggleTrans }) => {
-            const trans = word.translations?.en;
-            return (
-                <div className="flex flex-col h-full print:p-1 print:break-inside-avoid print:border-transparent">
-                    <div className="flex justify-between items-start mb-2 print:mb-0 print:flex-row print:items-baseline print:justify-start print:gap-1">
-                        <h3 className="font-serif text-xl font-bold text-gray-900 leading-tight print:text-[10px] print:leading-none">{word.term}</h3>
-                        <span className="hidden print:inline font-sans text-[6px] text-gray-400 opacity-20 leading-none">{trans?.term}</span>
-                        <TranslateBtn onClick={toggleTrans} isShowing={showTrans} className="print:hidden" />
-                    </div>
-                    {showTrans && trans?.term && <p className="font-sans text-xs text-gray-400 mb-1 animate-fade-in print:hidden">{trans.term}</p>}
-                    <p className="font-serif text-[15px] text-gray-800 leading-snug mb-3 print:text-[9px] print:leading-[1.15] print:mb-0">{word.mainDef}</p>
-                    {showTrans && trans?.mainDef && <p className="font-sans text-xs text-gray-400 mb-3 animate-fade-in print:hidden">{trans.mainDef}</p>}
-                    {word.subDefs && word.subDefs.length > 0 && (
-                        <div className="mb-3 pl-3 border-l-2 border-gray-200 print:mb-0 print:pl-2">
-                            {word.subDefs.map((sub, idx) => (
-                                <div key={idx} className="mb-2 last:mb-0 print:mb-0">
-                                    <p className="font-serif text-sm font-bold text-gray-700 print:text-[8px] print:leading-[1.15] print:mb-0">{sub.subTerm}</p>
-                                    {showTrans && trans?.subDefs?.[idx]?.subTerm && <p className="font-sans text-[10px] text-gray-400 mb-0.5 animate-fade-in print:hidden">{trans.subDefs[idx].subTerm}</p>}
-                                    <p className="font-serif text-sm text-gray-600 print:text-[8px] print:leading-[1.15] print:mb-0">{sub.subDef}</p>
-                                    {showTrans && trans?.subDefs?.[idx]?.subDef && <p className="font-sans text-[10px] text-gray-400 animate-fade-in print:hidden">{trans.subDefs[idx].subDef}</p>}
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                    {word.examples && word.examples.length > 0 && (
-                        <div className="mt-auto pt-2 print:hidden">
-                            <span className="inline-block border border-gray-300 text-gray-500 text-[10px] px-1 rounded mb-1 font-sans">예문</span>
-                            {word.examples.map((ex, idx) => (
-                                <div key={idx} className="mb-2 last:mb-0">
-                                    <p className="font-serif text-sm text-gray-800 leading-relaxed">{ex.kor}</p>
-                                    {showTrans && <p className="font-sans text-xs text-gray-400 mt-0.5 animate-fade-in">{ex.eng}</p>}
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                </div>
-            );
-        };
-
-        const VocabPopup = ({ popup, onGlobalClick }) => {
-            const [showTrans, setShowTrans] = useState(false);
-            useEffect(() => { setShowTrans(false); }, [popup.data]);
-            if (!popup.show || !popup.data) return null;
-
-            const popupWidth = 300;
-            const leftPos = getPopupLeftPos(popup.x, popupWidth);
-            const arrowLeft = popup.x - leftPos;
-
-            return createPortal(
-                <div className={`fixed z-[9999] bg-white border border-gray-200 rounded-lg p-5 w-[300px] animate-fade-in shadow-lg ${!popup.fixed ? 'pointer-events-none' : ''} print:hidden`} style={{ left: leftPos, top: popup.y + 16 }} onClick={(e) => e.stopPropagation()}>
-                    <div className="absolute top-0 -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-white border-l border-t border-gray-200 rotate-45" style={{ left: arrowLeft }}></div>
-                    {popup.fixed ? (<ReadingVocabContent word={popup.data} showTrans={showTrans} toggleTrans={() => setShowTrans(!showTrans)} />) : (<div><h3 className="font-serif text-lg font-bold text-gray-900 mb-1">{popup.data.term}</h3><p className="font-serif text-sm text-gray-600 line-clamp-2">{popup.data.mainDef}</p></div>)}
-                </div>,
-                document.body);
-        };
-
-        const SidebarVocabCard = ({ word, activeVocabTerm, sidebarVocabRefs }) => {
-            const [showTrans, setShowTrans] = useState(false);
-            const isActive = activeVocabTerm === word.term;
-            return (
-                <div ref={el => sidebarVocabRefs.current[word.term] = el} className={`mb-4 rounded-lg border p-4 transition-all duration-200 ${isActive ? 'bg-gray-50 border-black shadow-sm' : 'bg-white border-gray-200 hover:bg-gray-50 hover:border-gray-300'} print:mb-0.5 print:border-transparent print:p-0 print:break-inside-avoid`}>
-                    <ReadingVocabContent word={word} showTrans={showTrans} toggleTrans={() => setShowTrans(!showTrans)} />
-                </div>
-            );
-        };
-
-        const VocabItem = ({ word, globalShowTrans }) => {
-            const [localShowTrans, setLocalShowTrans] = useState(false);
-
-            useEffect(() => {
-                setLocalShowTrans(globalShowTrans);
-            }, [globalShowTrans]);
-
-            const showTrans = localShowTrans;
-            const trans = word.translations?.en;
-
-            return (
-                <div className="border border-gray-200 hover:border-gray-300 transition-colors p-6 flex flex-col group bg-white h-full print:p-2 print:break-inside-avoid">
-                    <div className="flex justify-between items-start mb-4 print:mb-2">
-                        <h3 className="text-[28px] font-bold font-serif text-[#1a1a1a] group-hover:text-black transition-colors print:text-[14px]">{word.term}</h3>
-                        <div className="flex flex-col items-end gap-1">
-                            <TranslateBtn onClick={() => setLocalShowTrans(!localShowTrans)} isShowing={showTrans} className="print:hidden" />
-                            {showTrans && trans?.term && <span className="font-serif text-sm text-gray-400 italic animate-fade-in text-right print:text-[10px]">{trans.term}</span>}
-                        </div>
-                    </div>
-                    <div className="mb-6 flex-1 print:mb-2">
-                        <p className="text-[17px] text-[#444] font-serif leading-relaxed print:text-[12px]">{word.mainDef}</p>
-                        {showTrans && trans?.mainDef && (<p className="text-sm text-gray-500 font-sans mt-2 animate-fade-in leading-relaxed print:text-[10px]">{trans.mainDef}</p>)}
-                    </div>
-                    {word.subDefs && word.subDefs.length > 0 && (
-                        <div className="mb-4 space-y-2 border-t border-gray-100 pt-3">
-                            {word.subDefs.map((sub, i) => (
-                                <div key={i} className="text-left">
-                                    <p className="text-sm font-bold text-gray-800 font-ui print:text-[13px]">{sub.subTerm}</p>
-                                    <p className="text-xs text-gray-600 font-serif print:text-[11px] mt-0.5 ml-2">{sub.subDef}</p>
-                                    {showTrans && trans?.subDefs && trans.subDefs[i] && (
-                                        <p className="text-[11px] text-gray-400 font-sans mt-0.5 ml-2 animate-fade-in print:hidden">
-                                            <span className="font-semibold">{trans.subDefs[i].term || trans.subDefs[i].subTerm}</span> — {trans.subDefs[i].def || trans.subDefs[i].subDef}
-                                        </p>
-                                    )}
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                    {word.examples && word.examples.length > 0 && (
-                        <div className="bg-gray-50 p-5 mt-auto border-l-2 border-transparent group-hover:border-gray-300 transition-all print:p-2">
-                            <p className="text-[15px] text-[#1a1a1a] font-serif leading-snug print:text-[11px]">{word.examples[0].kor}</p>
-                            {showTrans && (<p className="text-[13px] text-gray-500 font-sans mt-2 pt-2 border-t border-gray-200 animate-fade-in print:text-[10px]">{word.examples[0].eng}</p>)}
-                        </div>
-                    )}
-                </div>
-            );
-        };
-
-        const QuizSentence = ({ quiz, onAttempt, onShuffle }) => {
-            const [userInput, setUserInput] = useState(''); const [result, setResult] = useState(null); const [showHint, setShowHint] = useState(false); const [showTranslation, setShowTranslation] = useState(false);
-            const handleCheck = () => { const trimmed = userInput.trim(); const isCorrect = trimmed === quiz.answer || (quiz.altAnswer && trimmed === quiz.altAnswer); setResult(isCorrect ? 'correct' : 'incorrect'); setShowHint(false); if (onAttempt) onAttempt(quiz.id, isCorrect); if (onShuffle) onShuffle(); };
-            const handleShowAnswer = () => { setUserInput(quiz.answer); setResult(null); setShowHint(false); if (onShuffle) onShuffle(); };
-
-            const textLength = Math.max(userInput.length, quiz.answer ? quiz.answer.length : 0);
-            const safeWidth = Math.max(120, textLength * 25);
-
-            return (
-                <div className="mb-10 pb-10 border-b border-gray-200 last:border-0 print:mb-4 print:pb-4 print:break-inside-avoid">
-                    <div className="flex items-baseline gap-4 mb-4 print:mb-2"><span className="text-xs font-bold font-sans text-black border border-black px-1.5 py-0.5 print:text-[10px] print:border-0 print:p-0">Q.{quiz.id}</span></div>
-                    <div className="text-xl font-serif text-gray-900 leading-loose mb-6 print:text-[12px] print:mb-2"><span>{quiz.textParts[0]}</span><input type="text" value={userInput} onChange={(e) => { setUserInput(e.target.value); setResult(null); }} className={`mx-2 px-2 py-0 border-b-2 font-bold text-center outline-none bg-transparent transition-colors font-serif print:text-[12px] print:border-b-black print:border-b ${result === 'correct' ? 'border-green-500 text-green-700' : result === 'incorrect' ? 'border-red-500 text-red-700' : 'border-gray-300 text-black focus:border-black'}`} style={{ width: `${safeWidth}px` }} /><span>{quiz.textParts[1]}</span></div>
-                    <div className="flex flex-wrap gap-3 items-center print:hidden"><button onClick={handleCheck} className="px-4 py-2 bg-black text-white text-xs font-bold font-sans hover:bg-gray-800 transition-colors">정답 확인</button><button onClick={handleShowAnswer} className="px-4 py-2 bg-white border border-gray-300 text-gray-600 text-xs font-bold font-sans hover:border-black hover:text-black transition-colors">정답 보기</button><button onClick={() => setShowHint(!showHint)} className="text-xs font-bold font-sans text-gray-400 hover:text-gray-600 underline">힌트</button><TranslateBtn onClick={() => setShowTranslation(!showTranslation)} isShowing={showTranslation} className="print:hidden" /></div>
-                    {showTranslation && (<p className="mt-4 text-sm font-sans text-gray-500 bg-gray-50 p-3 print:text-[10px] print:bg-transparent print:p-0 print:mt-1">{quiz.textParts_eng[0]}<span className="font-bold text-gray-700">{quiz.answer_eng}</span>{quiz.textParts_eng[1]}</p>)}
-                    {showHint && (<p className="mt-4 text-sm font-sans text-gray-500 italic print:text-[10px] print:mt-1">💡 Hint: {quiz.hint}</p>)}
-                    {result === 'correct' && (<p className="mt-4 text-sm font-sans text-green-700 font-medium print:text-[12px] print:mt-1 print:text-black">✓ Correct. {quiz.explanation}</p>)}
-                    {result === 'incorrect' && (<p className="mt-4 text-sm font-sans text-red-600 font-medium print:hidden">✕ Try again.</p>)}
-                </div>
-            );
-        };
-
-        const DiscussQuestionItem = ({ item }) => {
-            const [text, setText] = useState('');
-            const [showTranslation, setShowTranslation] = useState(false);
-            const [feedbackData, setFeedbackData] = useState(null);
-            const [isFeedbackLoading, setIsFeedbackLoading] = useState(false);
-            const [showFeedbackTrans, setShowFeedbackTrans] = useState(false);
-
-            // AI 한국어 도우미 호출 함수
-            const handleGetFeedback = async () => {
-                if (!text.trim()) return;
-                setIsFeedbackLoading(true);
-                setFeedbackData(null);
-                setShowFeedbackTrans(false);
-                try {
-                    const prompt = `당신은 친절하고 전문적인 'AI 한국어 도우미'입니다. 학습자가 작성한 다음 한국어 문장을 분석하여 교정하고 자세한 설명을 제공해주세요.
-반드시 아래 지정된 JSON 형식으로만 응답해야 하며, 마크다운 코드 블록(\`\`\`json 등)은 절대 포함하지 마세요.
-
-형식:
-{
-  "overallComment": "학습자에게 주는 전체적인 칭찬 and 조언 (한국어)",
-  "overallCommentTrans": "전체적인 칭찬과 조언에 대한 영어 번역",
-  "corrections": [
-    {
-      "original": "수정 전 학습자 문장 (원본)",
-      "corrected": "자연스럽고 문법에 맞게 수정된 문장",
-      "explanation": "무엇이 잘못되었는지, 왜 이렇게 수정했는지 문법/어휘 이유와 쉬운 예시 설명 (한국어)",
-      "explanationTrans": "설명에 대한 영어 번역"
-    }
-  ]
-}`;
-
-                    const payload = {
-                        contents: [{ role: "user", parts: [{ text: prompt + `\n\n질문: ${item.questionKor}\n학습자 작성 문장: ${text}` }] }],
-                        generationConfig: { responseMimeType: "application/json" }
-                    };
-                    const result = await callGeminiWithBackoff(payload);
-                    let jsonText = result.candidates[0].content.parts[0].text;
-                    jsonText = jsonText.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
-                    setFeedbackData(JSON.parse(jsonText));
-                } catch (error) {
-                    setFeedbackData({
-                        overallComment: "피드백을 받아오는 중 오류가 발생했습니다. (API 키가 없거나 요청 형식 오류)",
-                        overallCommentTrans: error.message,
-                        corrections: []
-                    });
-                } finally {
-                    setIsFeedbackLoading(false);
-                }
-            };
-
-            return (
-                <div className="mb-16 group print:mb-6 print:break-inside-avoid">
-                    <div className="flex items-center gap-4 mb-6 print:mb-2"><span className="text-4xl font-serif font-bold text-gray-200 transition-colors duration-300 group-hover:text-gray-900 print:text-[14px] print:text-black">{String(item.id).padStart(2, '0')}</span><h3 className="text-xl font-serif font-bold text-gray-900 leading-normal print:text-[12px]">{item.questionKor}</h3></div>
-                    <div className="pl-0 md:pl-14 print:pl-6">
-                        <div className="flex gap-2 mb-4 print:hidden"><TranslateBtn onClick={() => setShowTranslation(!showTranslation)} isShowing={showTranslation} className="print:hidden" />{showTranslation && (<p className="text-sm font-sans text-gray-500 animate-fade-in">{item.questionEng}</p>)}</div>
-                        <div className="bg-gray-50 p-5 mb-6 border-l-2 border-black print:bg-transparent print:p-2 print:border-gray-300 print:mb-2">
-                            <span className="text-xs font-bold font-sans text-gray-400 uppercase mb-3 block print:hidden">핵심 어휘 {showTranslation && <span className="font-normal normal-case ml-1">(Key Vocabulary)</span>}</span>
-                            <div className="space-y-4 print:space-y-1">
-                                {item.vocab.map((v, i) => (
-                                    <div key={i}>
-                                        <p className="text-sm font-serif text-gray-700 print:text-[10px]"><span className="font-bold text-black mr-2">{v.term}</span>{v.def}</p>
-                                        {showTranslation && (
-                                            <p className="text-[13px] font-sans text-gray-500 mt-1 animate-fade-in print:hidden">
-                                                <span className="font-bold mr-2">{v.termEng}</span>{v.defEng}
-                                            </p>
-                                        )}
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-
-                        <textarea value={text} onChange={(e) => setText(e.target.value)} placeholder="여기에 생각을 적어보세요..." className="w-full p-4 border border-gray-300 font-serif text-base text-gray-900 focus:border-black focus:ring-0 outline-none min-h-[150px] bg-white resize-y mb-3 transition-colors placeholder:text-gray-300 print:hidden"></textarea>
-
-                        <div className="flex justify-end print:hidden">
-                            <button onClick={handleGetFeedback} disabled={!text.trim() || isFeedbackLoading} className={`px-6 py-2 text-xs font-bold font-sans uppercase tracking-widest border transition-colors flex items-center gap-2 ${(!text.trim() || isFeedbackLoading) ? 'border-gray-200 text-gray-300 cursor-not-allowed' : 'border-black bg-black text-white hover:bg-white hover:text-black'}`}>
-                                {isFeedbackLoading && <div className="w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin"></div>}
-                                AI 피드백 받기
-                            </button>
-                        </div>
-
-                        {/* AI 한국어 도우미 피드백 UI 영역 */}
-                        {feedbackData && (
-                            <div className="mt-8 border border-gray-100 rounded-sm p-6 bg-white animate-fade-in relative print:hidden shadow-sm">
-                                <h4 className="text-lg font-bold font-serif flex items-center gap-2 mb-6 text-gray-900">
-                                    <SparklesIcon className="w-5 h-5 text-gray-700" /> AI 한국어 도우미
-                                </h4>
-
-                                <div className="bg-gray-50 px-5 py-4 mb-8 border-l-[3px] border-gray-800">
-                                    <span className="text-xs font-bold text-gray-500 mb-2 block font-sans">총평 및 잘한 점</span>
-                                    <p className="text-[15px] font-serif text-gray-800 leading-relaxed">{feedbackData.overallComment}</p>
-                                    {showFeedbackTrans && <p className="text-[13px] font-sans text-gray-500 mt-2 pt-2 border-t border-gray-200 animate-fade-in">{feedbackData.overallCommentTrans}</p>}
-                                </div>
-
-                                {feedbackData.corrections && feedbackData.corrections.length > 0 && (
-                                    <>
-                                        <h5 className="text-xs font-bold text-gray-500 mb-4 font-sans">문장별 교정 및 설명</h5>
-                                        <div className="space-y-6">
-                                            {feedbackData.corrections.map((corr, idx) => (
-                                                <div key={idx} className="border border-gray-100 p-5 bg-white">
-                                                    {/* 수정 전 원본 */}
-                                                    <div className="flex items-start gap-4 mb-3">
-                                                        <span className="shrink-0 text-[11px] font-bold px-2 py-0.5 bg-gray-100 text-gray-400 mt-0.5">수정 전</span>
-                                                        <p className="text-[15px] font-serif text-gray-400 line-through leading-relaxed">{corr.original}</p>
-                                                    </div>
-                                                    {/* 수정 후 피드백 */}
-                                                    <div className="flex items-start gap-4 mb-5">
-                                                        <span className="shrink-0 text-[11px] font-bold px-2 py-0.5 bg-blue-50 text-blue-600 mt-0.5">수정 후</span>
-                                                        <p className="text-[15px] font-serif text-gray-900 font-bold leading-relaxed">{corr.corrected}</p>
-                                                    </div>
-                                                    {/* 설명 섹션 */}
-                                                    <div className="pt-4 border-t border-gray-100 border-dashed">
-                                                        <div className="flex items-start gap-1">
-                                                            <span className="text-yellow-400 shrink-0 text-sm mt-0.5">💡</span>
-                                                            <div className="flex-1 ml-1">
-                                                                <span className="font-bold text-gray-400 text-[11px] mr-2 font-sans">설명</span>
-                                                                <span className="text-[14px] font-serif text-gray-700 leading-relaxed">{corr.explanation}</span>
-                                                            </div>
-                                                        </div>
-                                                        {showFeedbackTrans && <p className="text-[13px] font-sans text-gray-500 mt-2 ml-6 animate-fade-in">{corr.explanationTrans}</p>}
-                                                    </div>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </>
-                                )}
-
-                                {/* 넛지 기반 번역 버튼 */}
-                                <div className="flex justify-end mt-4">
-                                    <TranslateBtn onClick={() => setShowFeedbackTrans(!showFeedbackTrans)} isShowing={showFeedbackTrans} className="print:hidden" />
-                                </div>
-                            </div>
-                        )}
-                    </div>
-                </div>
-            );
-        };
-
-        // --- View Components ---
-
-        const Header = ({ activeTab, setActiveTab, isExpanded, setIsExpanded }) => (
-            <div className="hidden lg:block relative z-50 print:hidden">
-                <header className={`fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-100 flex items-center justify-between px-8 pr-20 transition-all duration-500 ease-in-out overflow-hidden ${isExpanded ? 'h-16 opacity-100' : 'h-0 opacity-0 border-none'}`}>
-                    <div className="flex items-center cursor-pointer text-left" onClick={() => setActiveTab('home')}>
-                        <span className="text-lg font-bold font-sans tracking-tighter text-black whitespace-nowrap">OpenKoreanLearningLab</span>
-                    </div>
-                    <nav className="flex items-center gap-8">
-                        {NAV_ITEMS.map((menu) => (
-                            <button key={menu.id} onClick={() => setActiveTab(menu.id)} className={`text-sm font-medium transition-colors font-sans relative ${activeTab === menu.id ? 'text-black' : 'text-gray-400 hover:text-gray-600'}`}>{menu.label}{activeTab === menu.id && <div className="absolute -bottom-6 left-0 w-full h-0.5 bg-black"></div>}</button>
-                        ))}
-                    </nav>
+        // ---------- 4. 셸 ----------
+        function shellHTML() {
+            const isReading = app.activeTab === 'reading';
+            const navBtns = NAV_ITEMS.map(m => `<button type="button" data-tab="${m.id}" class="text-sm font-medium transition-colors font-sans relative ${app.activeTab === m.id ? 'text-black' : 'text-gray-400 hover:text-gray-600'}">${esc(m.label)}${app.activeTab === m.id ? '<div class="absolute -bottom-6 left-0 w-full h-0.5 bg-black"></div>' : ''}</button>`).join('');
+            const desktopHeader = `<div class="hidden lg:block relative z-50 print:hidden">
+                <header class="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-100 flex items-center justify-between px-8 pr-20 transition-all duration-500 ease-in-out overflow-hidden ${app.headerExpanded ? 'h-16 opacity-100' : 'h-0 opacity-0 border-none'}">
+                    <div class="flex items-center cursor-pointer text-left" data-tab="home"><span class="text-lg font-bold font-sans tracking-tighter text-black whitespace-nowrap">OpenKoreanLearningLab</span></div>
+                    <nav class="flex items-center gap-8">${navBtns}</nav>
                 </header>
-                <button onClick={() => setIsExpanded(!isExpanded)} className={`fixed top-0 right-0 z-[60] w-10 h-16 bg-white flex items-center justify-center transition-colors hover:bg-gray-50 ${isExpanded ? 'border-b border-gray-100' : 'border-transparent'}`}><MenuIcon className="w-5 h-5 text-black" /></button>
-            </div>
-        );
+                <button type="button" data-action="toggle-header" class="fixed top-0 right-0 z-[60] w-10 h-16 bg-white flex items-center justify-center transition-colors hover:bg-gray-50 ${app.headerExpanded ? 'border-b border-gray-100' : 'border-transparent'}">${svgIcon('menu', 'w-5 h-5 text-black')}</button>
+            </div>`;
+            const mobileTop = `<div class="lg:hidden h-14 border-b border-gray-100 flex items-center justify-center sticky top-0 bg-white z-40 print:hidden"><span class="text-lg font-bold font-sans tracking-tighter">OpenKoreanLearningLab</span></div>`;
+            const mobileNav = `<nav class="lg:hidden fixed bottom-0 w-full bg-white border-t border-gray-100 flex justify-around p-3 z-50 print:hidden">${NAV_ITEMS.map(m => `<button type="button" data-tab="${m.id}" class="p-2 ${app.activeTab === m.id ? 'text-black' : 'text-gray-300'}">${svgIcon(m.icon, 'w-6 h-6')}</button>`).join('')}</nav>`;
+            return `${desktopHeader}${mobileTop}<main id="view-root" class="flex-1 relative flex flex-col ${isReading ? 'overflow-x-hidden lg:overflow-hidden lg:h-full print:h-auto print:overflow-visible' : ''}"></main>${mobileNav}`;
+        }
+        function buildApp() {
+            const isReading = app.activeTab === 'reading';
+            appEl.className = `flex flex-col bg-white text-gray-900 selection:bg-gray-200 selection:text-black font-sans ${isReading ? 'h-screen overflow-hidden print:h-auto print:overflow-visible' : 'min-h-screen'}`;
+            appEl.innerHTML = shellHTML();
+            paint();
+        }
+        function viewHTML() {
+            switch (app.activeTab) {
+                case 'home': return homeHTML();
+                case 'reading': return readingHTML();
+                case 'vocab': return vocabHTML();
+                case 'quiz': return quizHTML();
+                case 'discuss': return discussHTML();
+                default: return homeHTML();
+            }
+        }
+        function paint() {
+            const root = viewRoot(); if (!root) return;
+            root.innerHTML = viewHTML();
+            if (app.activeTab === 'reading') mountChart();
+        }
 
-        const HomeView = ({ setActiveTab, userLevel }) => {
-            const levelInfo = LEVEL_DEFINITIONS[userLevel] || { title: "Unknown" };
-            return (
-                <div className="animate-fade-in max-w-5xl mx-auto w-full px-6 lg:px-0 pt-36 pb-20 flex flex-col items-center print:pt-0 print:pb-0">
-                    <div className="flex flex-col items-center justify-center min-h-[40vh] md:min-h-[50vh] text-center mb-10 pb-6 w-full print:min-h-0 print:mb-4 print:pb-4">
-                        <div className="flex items-center gap-3 mb-6 print:mb-2">
-                            <span className="px-3 py-1 bg-gray-900 text-white text-[10px] font-sans font-bold tracking-widest uppercase print:text-[12px]">문화</span>
-                            <span className="px-3 py-1 bg-gray-900 text-white text-[10px] font-sans font-bold tracking-widest uppercase print:text-[12px]">사회</span>
-                            <div className="flex items-center border border-gray-900 px-3 py-1 text-[10px] font-sans tracking-widest uppercase text-gray-900">
-                                <span className="font-bold print:text-[12px]">{userLevel}</span><span className="mx-2 w-px h-2.5 bg-gray-300"></span><span className="font-medium print:text-[12px]">{levelInfo.title}</span>
-                            </div>
-                        </div>
-                        <h1 className="font-serif text-4xl md:text-6xl lg:text-7xl text-black leading-tight mb-6 font-bold print:text-[22px] print:mb-2">‘번호 따기’ 성지가 된 서점</h1>
-                        <p className="font-serif text-gray-500 text-sm md:text-lg italic mb-10 max-w-2xl leading-relaxed print:text-[16px] print:mb-4">
-                            MZ세대는 연애 상대를 찾으러 왜 대형 서점에 갔을까?
-                        </p>
-                        
-                        {/* 1열 배치 컨테이너 */}
-                        <div className="flex flex-col gap-5 w-full max-w-xl mx-auto print:hidden">
-                            {/* Featured Reading Card */}
-                            <button onClick={() => setActiveTab('reading')} className="group relative flex items-stretch w-full bg-white border border-gray-200 hover:border-black hover:shadow-md transition-all duration-300 text-left overflow-hidden rounded-xl">
-                                <div className="w-1/3 min-w-[140px] md:min-w-[180px] relative overflow-hidden bg-gray-900 shrink-0">
-                                    <img 
-                                        src="https://www.heavenraven.com/wp-content/uploads/2024/05/TELEMMGLPICT000181622487_trans_NvBQzQNjv4BqGLLAPY3LddE1Qiv-bsIMYN_NrT6kNvN6YRSyUisEf90.jpg" 
-                                        onError={(e) => { e.target.src = 'https://placehold.co/600x400/111827/ffffff?text=Bookstore'; }} 
-                                        alt="본문 썸네일" 
-                                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" 
-                                    />
-                                </div>
-                                <div className="flex-1 p-5 md:p-6 flex flex-col justify-center">
-                                    <div className="flex items-center gap-2 mb-2">
-                                        <span className="px-2 py-0.5 bg-gray-100 text-gray-600 text-[10px] font-bold font-sans tracking-widest uppercase rounded">읽기 자료</span>
-                                    </div>
-                                    <h3 className="font-serif text-lg md:text-xl font-bold text-gray-900 mb-2">‘교보문고 번따’가 화제가 된 이유</h3>
-                                    <p className="font-sans text-sm text-gray-500 line-clamp-2 mb-4">공공 독서 에티켓과 계획적인 의도 사이, 뜨겁게 펼쳐지는 찬반 생각을 만나보세요.</p>
-                                    <div className="mt-auto flex items-center gap-2 text-black font-bold text-sm">
-                                        읽기 시작하기 <ArrowRightIcon className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-                                    </div>
-                                </div>
-                            </button>
-
-                            {/* Vocab Card - Horizontal & Sleek */}
-                            <button onClick={() => setActiveTab('vocab')} className="group flex flex-col sm:flex-row sm:items-center justify-between p-5 md:p-6 bg-white border border-gray-200 hover:border-black hover:shadow-md transition-all duration-300 text-left rounded-xl gap-4">
-                                <div className="flex-1">
-                                    <div className="flex items-center gap-2 mb-2">
-                                        <span className="px-2 py-0.5 bg-gray-100 text-gray-600 text-[10px] font-bold font-sans tracking-widest uppercase rounded">핵심 어휘</span>
-                                    </div>
-                                    <h3 className="font-serif text-lg font-bold text-gray-900 mb-1">'번호 따기'는 무슨 뜻일까요?</h3>
-                                    <p className="font-sans text-sm text-gray-500 leading-relaxed">
-                                        학습 자료에 등장하는 주요 어휘를 쉬운 한국어로 학습해 보세요.
-                                    </p>
-                                </div>
-                                <div className="flex items-center gap-2 text-black font-bold text-sm shrink-0 self-end sm:self-center">
-                                    학습 하기 <ArrowRightIcon className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
-                                </div>
-                            </button>
-
-                            {/* Quiz Card - Horizontal & Sleek */}
-                            <button onClick={() => setActiveTab('quiz')} className="group flex flex-col sm:flex-row sm:items-center justify-between p-5 md:p-6 bg-white border border-gray-200 hover:border-black hover:shadow-md transition-all duration-300 text-left rounded-xl gap-4">
-                                <div className="flex-1">
-                                    <div className="flex items-center gap-2 mb-2">
-                                        <span className="px-2 py-0.5 bg-gray-100 text-gray-600 text-[10px] font-bold font-sans tracking-widest uppercase rounded">내용 확인 퀴즈</span>
-                                    </div>
-                                    <h3 className="font-serif text-lg font-bold text-gray-900 mb-1">대형 서점이 SNS에서 인기 있는 이유는?</h3>
-                                    <p className="font-sans text-sm text-gray-500 leading-relaxed">
-                                        빈칸 퀴즈를 통해 학습 자료를 제대로 이해했는지 확인해 보세요.
-                                    </p>
-                                </div>
-                                <div className="flex items-center gap-2 text-black font-bold text-sm shrink-0 self-end sm:self-center">
-                                    퀴즈 풀기 <ArrowRightIcon className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
-                                </div>
-                            </button>
-
-                            {/* Discuss Card - Horizontal & Sleek */}
-                            <button onClick={() => setActiveTab('discuss')} className="group flex flex-col sm:flex-row sm:items-center justify-between p-5 md:p-6 bg-white border border-gray-200 hover:border-black hover:shadow-md transition-all duration-300 text-left rounded-xl gap-4">
-                                <div className="flex-1">
-                                    <div className="flex items-center gap-2 mb-2">
-                                        <span className="px-2 py-0.5 bg-gray-100 text-gray-600 text-[10px] font-bold font-sans tracking-widest uppercase rounded">생각해 보기</span>
-                                    </div>
-                                    <h3 className="font-serif text-lg font-bold text-gray-900 mb-1"> 여러분은 어떻게 생각해요?</h3>
-                                    <p className="font-sans text-sm text-gray-500 leading-relaxed">
-                                        학습 자료에 대해 심층적으로 생각하고 표현해 보세요.
-                                    </p>
-                                </div>
-                                <div className="flex items-center gap-2 text-black font-bold text-sm shrink-0 self-end sm:self-center">
-                                    사유 하기 <ArrowRightIcon className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
-                                </div>
-                            </button>
-                        </div>
+        // ---------- 5. HOME ----------
+        function homeHTML() {
+            const lvl = app.userLevel, info = LEVEL_DEFINITIONS[lvl] || { title: 'Unknown' };
+            const card = (tab, kicker, title, desc, cta) =>
+                `<button type="button" data-tab="${tab}" class="group flex flex-col sm:flex-row sm:items-center justify-between p-5 md:p-6 bg-white border border-gray-200 hover:border-black hover:shadow-md transition-all duration-300 text-left rounded-xl gap-4">
+                    <div class="flex-1"><div class="flex items-center gap-2 mb-2"><span class="px-2 py-0.5 bg-gray-100 text-gray-600 text-[10px] font-bold font-sans tracking-widest uppercase rounded">${esc(kicker)}</span></div><h3 class="font-serif text-lg font-bold text-gray-900 mb-1">${esc(title)}</h3><p class="font-sans text-sm text-gray-500 leading-relaxed">${esc(desc)}</p></div>
+                    <div class="flex items-center gap-2 text-black font-bold text-sm shrink-0 self-end sm:self-center">${esc(cta)} ${svgIcon('arrowRight', 'w-3.5 h-3.5 transition-transform group-hover:translate-x-1')}</div>
+                </button>`;
+            return `<div class="animate-fade-in max-w-5xl mx-auto w-full px-6 lg:px-0 pt-36 pb-20 flex flex-col items-center print:pt-0 print:pb-0">
+                <div class="flex flex-col items-center justify-center min-h-[40vh] md:min-h-[50vh] text-center mb-10 pb-6 w-full print:min-h-0 print:mb-4 print:pb-4">
+                    <div class="flex items-center gap-3 mb-6 print:mb-2"><span class="px-3 py-1 bg-gray-900 text-white text-[10px] font-sans font-bold tracking-widest uppercase">문화</span><span class="px-3 py-1 bg-gray-900 text-white text-[10px] font-sans font-bold tracking-widest uppercase">사회</span><div class="flex items-center border border-gray-900 px-3 py-1 text-[10px] font-sans tracking-widest uppercase text-gray-900"><span class="font-bold">${esc(lvl)}</span><span class="mx-2 w-px h-2.5 bg-gray-300"></span><span class="font-medium">${esc(info.title)}</span></div></div>
+                    <h1 class="font-serif text-4xl md:text-6xl lg:text-7xl text-black leading-tight mb-6 font-bold print:text-[22px] print:mb-2">‘번호 따기’ 성지가 된 서점</h1>
+                    <p class="font-serif text-gray-500 text-sm md:text-lg italic mb-10 max-w-2xl leading-relaxed print:text-[16px] print:mb-4">MZ세대는 연애 상대를 찾으러 왜 대형 서점에 갔을까?</p>
+                    <div class="flex flex-col gap-5 w-full max-w-xl mx-auto print:hidden">
+                        <button type="button" data-tab="reading" class="group relative flex items-stretch w-full bg-white border border-gray-200 hover:border-black hover:shadow-md transition-all duration-300 text-left overflow-hidden rounded-xl">
+                            <div class="w-1/3 min-w-[140px] md:min-w-[180px] relative overflow-hidden bg-gray-900 shrink-0"><img src="https://www.heavenraven.com/wp-content/uploads/2024/05/TELEMMGLPICT000181622487_trans_NvBQzQNjv4BqGLLAPY3LddE1Qiv-bsIMYN_NrT6kNvN6YRSyUisEf90.jpg" onerror="this.src='https://placehold.co/600x400/111827/ffffff?text=Bookstore';" alt="본문 썸네일" class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" /></div>
+                            <div class="flex-1 p-5 md:p-6 flex flex-col justify-center"><div class="flex items-center gap-2 mb-2"><span class="px-2 py-0.5 bg-gray-100 text-gray-600 text-[10px] font-bold font-sans tracking-widest uppercase rounded">읽기 자료</span></div><h3 class="font-serif text-lg md:text-xl font-bold text-gray-900 mb-2">‘교보문고 번따’가 화제가 된 이유</h3><p class="font-sans text-sm text-gray-500 line-clamp-2 mb-4">공공 독서 에티켓과 계획적인 의도 사이, 뜨겁게 펼쳐지는 찬반 생각을 만나보세요.</p><div class="mt-auto flex items-center gap-2 text-black font-bold text-sm">읽기 시작하기 ${svgIcon('arrowRight', 'w-4 h-4 transition-transform group-hover:translate-x-1')}</div></div>
+                        </button>
+                        ${card('vocab', '핵심 어휘', "'번호 따기'는 무슨 뜻일까요?", '학습 자료에 등장하는 주요 어휘를 쉬운 한국어로 학습해 보세요.', '학습 하기')}
+                        ${card('quiz', '내용 확인 퀴즈', '대형 서점이 SNS에서 인기 있는 이유는?', '빈칸 퀴즈를 통해 학습 자료를 제대로 이해했는지 확인해 보세요.', '퀴즈 풀기')}
+                        ${card('discuss', '생각해 보기', '여러분은 어떻게 생각해요?', '학습 자료에 대해 심층적으로 생각하고 표현해 보세요.', '사유 하기')}
                     </div>
                 </div>
-            );
-        };
+            </div>`;
+        }
 
-        const ReadingView = ({ updateProgress, showVocab, setShowVocab, userLevel }) => {
-            const [activeReadingId, setActiveReadingId] = useState(1); const [isHighlightMode, setIsHighlightMode] = useState(false); const [highlightColor, setHighlightColor] = useState('yellow'); const [highlights, setHighlights] = useState({}); const [popup, setPopup] = useState({ show: false, fixed: false, data: null, x: 0, y: 0 }); const [activeVocabTerm, setActiveVocabTerm] = useState(null); const [visibleTranslations, setVisibleTranslations] = useState({}); const [showDictionary, setShowDictionary] = useState(false); const [dictSearchTerm, setDictSearchTerm] = useState(''); const [dictResult, setDictResult] = useState(null); const [isDictLoading, setIsDictLoading] = useState(false); const [showDictTranslation, setShowDictTranslation] = useState(false); const sidebarVocabRefs = useRef({}); const currentReading = READING_DATA.find(r => r.id === activeReadingId);
-            useEffect(() => { updateProgress('learn'); }, []);
-            const handleGlobalClick = useCallback(() => { if (popup.fixed) setPopup(prev => ({ ...prev, show: false, fixed: false })); }, [popup.fixed]); useEffect(() => { if (popup.fixed) window.addEventListener('click', handleGlobalClick); return () => window.removeEventListener('click', handleGlobalClick); }, [popup.fixed, handleGlobalClick]);
-            const toggleTranslation = (idx) => { setVisibleTranslations(prev => ({ ...prev, [idx]: !prev[idx] })); };
-            const handleDictionarySearch = async (e) => { e.preventDefault(); if (!dictSearchTerm.trim()) return; setIsDictLoading(true); setDictResult(null); setShowDictTranslation(false); try { const result = await getAIDictionaryData(dictSearchTerm, currentReading.content); setDictResult(result); } catch (error) { setDictResult({ term: dictSearchTerm, definition: "검색 중 오류가 발생했습니다.", termTranslation: "Error", definitionTranslation: "", example: "" }); } finally { setIsDictLoading(false); } };
-            const handleTextMouseUp = useCallback((e) => {
-                if (!isHighlightMode) return; const selection = window.getSelection(); if (selection.isCollapsed) return;
-                let container = selection.anchorNode.parentElement; while (container && !container.dataset.blockIndex) container = container.parentElement;
-                if (!container) return; const blockId = `${activeReadingId}-${container.dataset.blockIndex}`; const range = selection.getRangeAt(0); const start = getContainerOffset(container, range.startContainer, range.startOffset); const end = getContainerOffset(container, range.endContainer, range.endOffset); const effectiveStart = Math.min(start, end); const effectiveEnd = Math.max(start, end); if (effectiveStart === effectiveEnd) return;
-                setHighlights(prev => {
-                    const currentBlockHighlights = prev[blockId] || [];
-                    if (highlightColor === 'eraser') {
-                        let newHighlights = [];
-                        for (let h of currentBlockHighlights) {
-                            const overlapStart = Math.max(h.start, effectiveStart); const overlapEnd = Math.min(h.end, effectiveEnd);
-                            if (overlapStart < overlapEnd) { if (h.start < overlapStart) newHighlights.push({ start: h.start, end: overlapStart, color: h.color }); if (h.end > overlapEnd) newHighlights.push({ start: overlapEnd, end: h.end, color: h.color }); } else { newHighlights.push(h); }
-                        }
-                        return { ...prev, [blockId]: newHighlights };
-                    } else { return { ...prev, [blockId]: [...currentBlockHighlights, { start: effectiveStart, end: effectiveEnd, color: highlightColor }] }; }
-                }); selection.removeAllRanges();
-            }, [isHighlightMode, highlightColor, activeReadingId]);
-            const handleVocabEnter = (e, wordData) => { if (popup.fixed) return; const rect = e.target.getBoundingClientRect(); setPopup({ show: true, fixed: false, data: wordData, x: rect.left + rect.width / 2, y: rect.bottom }); if (showVocab) { setActiveVocabTerm(wordData.term); if (sidebarVocabRefs.current[wordData.term]) sidebarVocabRefs.current[wordData.term].scrollIntoView({ behavior: 'smooth', block: 'center' }); } };
-            const handleVocabLeave = () => { if (popup.fixed) return; setPopup(prev => ({ ...prev, show: false })); };
-            const handleVocabClick = (e, wordData) => { e.stopPropagation(); if (popup.fixed && popup.data && popup.data.term === wordData.term) { setPopup(prev => ({ ...prev, show: false, fixed: false })); return; } const rect = e.target.getBoundingClientRect(); setPopup({ show: true, fixed: true, data: wordData, x: rect.left + rect.width / 2, y: rect.bottom }); if (showVocab) { setActiveVocabTerm(wordData.term); if (sidebarVocabRefs.current[wordData.term]) sidebarVocabRefs.current[wordData.term].scrollIntoView({ behavior: 'smooth', block: 'center' }); } };
+        // ---------- 6. 어휘 카드 공용 ----------
+        function readingVocabContentHTML(word, showTrans, toggleAction) {
+            const t = (word.translations && word.translations.en) || {};
+            const subDefs = (word.subDefs || []).map((s, i) => `<div class="mb-2 last:mb-0"><p class="font-serif text-sm font-bold text-gray-700">${esc(s.subTerm)}</p>${showTrans && t.subDefs && t.subDefs[i] && t.subDefs[i].subTerm ? `<p class="font-sans text-[10px] text-gray-400 mb-0.5 animate-fade-in">${esc(t.subDefs[i].subTerm)}</p>` : ''}<p class="font-serif text-sm text-gray-600">${esc(s.subDef)}</p>${showTrans && t.subDefs && t.subDefs[i] && t.subDefs[i].subDef ? `<p class="font-sans text-[10px] text-gray-400 animate-fade-in">${esc(t.subDefs[i].subDef)}</p>` : ''}</div>`).join('');
+            const examples = (word.examples || []).map(ex => `<div class="mb-2 last:mb-0"><p class="font-serif text-sm text-gray-800 leading-relaxed">${esc(ex.kor)}</p>${showTrans ? `<p class="font-sans text-xs text-gray-400 mt-0.5 animate-fade-in">${esc(ex.eng)}</p>` : ''}</div>`).join('');
+            return `<div class="flex flex-col h-full"><div class="flex justify-between items-start mb-2"><h3 class="font-serif text-xl font-bold text-gray-900 leading-tight">${esc(word.term)}</h3>${transBtn(toggleAction, showTrans)}</div>${showTrans && t.term ? `<p class="font-sans text-xs text-gray-400 mb-1 animate-fade-in">${esc(t.term)}</p>` : ''}<p class="font-serif text-[15px] text-gray-800 leading-snug mb-3">${esc(word.mainDef)}</p>${showTrans && t.mainDef ? `<p class="font-sans text-xs text-gray-400 mb-3 animate-fade-in">${esc(t.mainDef)}</p>` : ''}${subDefs ? `<div class="mb-3 pl-3 border-l-2 border-gray-200">${subDefs}</div>` : ''}${examples ? `<div class="mt-auto pt-2"><span class="inline-block border border-gray-300 text-gray-500 text-[10px] px-1 rounded mb-1 font-sans">예문</span>${examples}</div>` : ''}</div>`;
+        }
+        function vocabItemHTML(word, idx, showTrans) {
+            const t = (word.translations && word.translations.en) || {};
+            const subDefs = (word.subDefs || []).map((s, i) => `<div class="text-left"><p class="text-sm font-bold text-gray-800 font-ui">${esc(s.subTerm)}</p><p class="text-xs text-gray-600 font-serif mt-0.5 ml-2">${esc(s.subDef)}</p>${showTrans && t.subDefs && t.subDefs[i] ? `<p class="text-[11px] text-gray-400 font-sans mt-0.5 ml-2 animate-fade-in"><span class="font-semibold">${esc(t.subDefs[i].term || t.subDefs[i].subTerm || '')}</span> — ${esc(t.subDefs[i].def || t.subDefs[i].subDef || '')}</p>` : ''}</div>`).join('');
+            const ex = (word.examples && word.examples[0]) || null;
+            return `<div class="vocab-card border border-gray-200 hover:border-gray-300 transition-colors p-6 flex flex-col group bg-white h-full" data-vidx="${idx}"><div class="flex justify-between items-start mb-4"><h3 class="text-[28px] font-bold font-serif text-[#1a1a1a] group-hover:text-black transition-colors">${esc(word.term)}</h3><div class="flex flex-col items-end gap-1">${transBtn('vocab-toggle', showTrans)}${showTrans && t.term ? `<span class="font-serif text-sm text-gray-400 italic animate-fade-in text-right">${esc(t.term)}</span>` : ''}</div></div><div class="mb-6 flex-1"><p class="text-[17px] text-[#444] font-serif leading-relaxed">${esc(word.mainDef)}</p>${showTrans && t.mainDef ? `<p class="text-sm text-gray-500 font-sans mt-2 animate-fade-in leading-relaxed">${esc(t.mainDef)}</p>` : ''}</div>${subDefs ? `<div class="mb-4 space-y-2 border-t border-gray-100 pt-3">${subDefs}</div>` : ''}${ex ? `<div class="bg-gray-50 p-5 mt-auto border-l-2 border-transparent group-hover:border-gray-300 transition-all"><p class="text-[15px] text-[#1a1a1a] font-serif leading-snug">${esc(ex.kor)}</p>${showTrans ? `<p class="text-[13px] text-gray-500 font-sans mt-2 pt-2 border-t border-gray-200 animate-fade-in">${esc(ex.eng)}</p>` : ''}</div>` : ''}</div>`;
+        }
 
-            const renderTextWithVocabAndHighlights = (text, blockIndex, isHeading = false) => {
-                if (!text) return "";
-                const blockId = `${activeReadingId}-${blockIndex}`; const blockHighlights = highlights[blockId] || []; const allTerms = VOCAB_READING_DATA.flatMap(vocab => { const terms = [vocab.term]; if (vocab.variants) terms.push(...vocab.variants); return terms.map(term => ({ term, vocab })); }).sort((a, b) => b.term.length - a.term.length);
-                const vocabRanges = []; allTerms.forEach(({ term, vocab }) => { let index = 0; while ((index = text.indexOf(term, index)) !== -1) { const end = index + term.length; const overlaps = vocabRanges.some(m => (index >= m.start && index < m.end) || (end > m.start && end <= m.end)); if (!overlaps) vocabRanges.push({ start: index, end, term, vocab }); index = end; } });
-                const points = new Set([0, text.length]); blockHighlights.forEach(h => { points.add(h.start); points.add(h.end); }); vocabRanges.forEach(v => { points.add(v.start); points.add(v.end); });
-                const sortedPoints = Array.from(points).sort((a, b) => a - b); const segments = [];
-                for (let i = 0; i < sortedPoints.length - 1; i++) { const start = sortedPoints[i]; const end = sortedPoints[i + 1]; const mid = (start + end) / 2; let activeHighlightColor = null; for (let j = blockHighlights.length - 1; j >= 0; j--) { const h = blockHighlights[j]; if (h.start <= mid && h.end >= mid) { activeHighlightColor = h.color; break; } } const activeVocab = vocabRanges.find(v => v.start <= mid && v.end >= mid); segments.push({ key: `${start}-${end}`, text: text.slice(start, end), highlightColor: activeHighlightColor, isVocab: !!activeVocab, vocabData: activeVocab ? activeVocab.vocab : null }); }
-                return segments.map(seg => {
-                    let className = "transition-colors duration-200 decoration-clone ";
-                    if (seg.highlightColor) {
-                        if (seg.highlightColor === 'yellow') className += "bg-yellow-200 ";
-                        else if (seg.highlightColor === 'red') className += "bg-red-200 ";
-                        else if (seg.highlightColor === 'green') className += "bg-green-200 ";
-                    }
-                    if (seg.isVocab) { const fontWeight = isHeading ? 'font-extrabold' : 'font-semibold'; className += `cursor-pointer ${fontWeight} text-gray-900 hover:text-black hover:bg-gray-100 rounded px-0.5 `; const isActive = (popup.show && popup.data && popup.data.term === seg.vocabData.term) || (showVocab && activeVocabTerm === seg.vocabData.term); if (isActive) className += `text-black bg-gray-100 ring-1 ring-gray-200 `; } else { if (!seg.highlightColor) className += "text-gray-800 "; }
-                    return (<span key={seg.key} className={className} onMouseEnter={seg.isVocab ? (e) => handleVocabEnter(e, seg.vocabData) : undefined} onMouseLeave={seg.isVocab ? handleVocabLeave : undefined} onClick={seg.isVocab ? (e) => handleVocabClick(e, seg.vocabData) : undefined}>{seg.text}</span>);
+        // ---------- 7. 어휘 팝업 ----------
+        let popupEl = null;
+        function ensurePopupEl() {
+            if (!popupEl) {
+                popupEl = document.createElement('div'); popupEl.id = 'vocab-popup'; popupEl.style.display = 'none';
+                document.body.appendChild(popupEl);
+                popupEl.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const tb = e.target.closest('[data-action="popup-trans"]'); if (!tb) return;
+                    const word = VOCAB_READING_DATA.find(w => w.term === popupEl.dataset.term);
+                    const showing = popupEl.dataset.trans === '1'; popupEl.dataset.trans = showing ? '' : '1';
+                    fillPopup(word, !showing);
                 });
-            };
+            }
+            return popupEl;
+        }
+        function fillPopup(word, showTrans) {
+            const arrow = popupEl.dataset.arrow || '0';
+            popupEl.innerHTML = `<div class="absolute top-0 -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-white border-l border-t border-gray-200 rotate-45" style="left:${arrow}px"></div>` +
+                (popupEl.dataset.fixed ? readingVocabContentHTML(word, showTrans, 'popup-trans') : `<div><h3 class="font-serif text-lg font-bold text-gray-900 mb-1">${esc(word.term)}</h3><p class="font-serif text-sm text-gray-600 line-clamp-2">${esc(word.mainDef)}</p></div>`);
+        }
+        function showVocabPopup(word, x, y, fixed) {
+            const el = ensurePopupEl();
+            const width = 300, left = getPopupLeftPos(x, width);
+            el.className = `fixed z-[9999] bg-white border border-gray-200 rounded-lg p-5 w-[300px] animate-fade-in shadow-lg ${fixed ? '' : 'pointer-events-none'} print:hidden`;
+            el.style.left = left + 'px'; el.style.top = (y + 16) + 'px'; el.style.display = 'block';
+            el.dataset.fixed = fixed ? '1' : ''; el.dataset.term = word.term; el.dataset.trans = ''; el.dataset.arrow = String(x - left);
+            fillPopup(word, false);
+        }
+        function closeVocabPopup() { if (popupEl) { popupEl.style.display = 'none'; popupEl.dataset.fixed = ''; popupEl.dataset.term = ''; } }
+        document.addEventListener('click', (e) => {
+            if (!popupEl || popupEl.style.display === 'none') return;
+            if (popupEl.dataset.fixed && !popupEl.contains(e.target) && !(e.target.closest && e.target.closest('[data-vocab-idx]'))) closeVocabPopup();
+        });
 
-            return (
-                <div className="flex flex-col lg:flex-row h-full relative print:flex print:flex-row print:h-auto print:items-start">
-                    <VocabPopup popup={popup} onGlobalClick={handleGlobalClick} />
-                    <div className={`flex-1 flex flex-col h-full bg-white transition-all duration-300 ${showVocab ? 'lg:pr-0' : ''} print:w-[80%] print:flex-none print:h-auto print:pr-4`}>
-                        <div className="h-16 px-6 border-b border-gray-50 flex items-center justify-between bg-white sticky top-0 z-20 pr-12 print:hidden">
-                            <div className="flex items-center gap-4"><LevelBadge levelCode={userLevel} /><div className="flex items-center gap-2 ml-4">{READING_DATA.map((reading) => (<button key={reading.id} onClick={() => setActiveReadingId(reading.id)} className={`text-xs font-bold font-sans px-2 py-1 ${activeReadingId === reading.id ? 'text-black underline underline-offset-4' : 'text-gray-400 hover:text-gray-600'}`}>읽기 자료 {reading.id}</button>))}</div></div>
-                            <div className="flex items-center gap-4">
-                                <div className="flex items-center gap-2">
-                                    <button onClick={() => setIsHighlightMode(!isHighlightMode)} className={`p-1 ${isHighlightMode ? 'text-black' : 'text-gray-300 hover:text-gray-500'}`}><HighlighterIcon className="w-5 h-5" style={{ color: isHighlightMode ? (highlightColor === 'yellow' ? '#facc15' : (highlightColor === 'red' ? '#f87171' : (highlightColor === 'green' ? '#4ade80' : '#9ca3af'))) : 'currentColor' }} /></button>
-                                    {isHighlightMode && (<div className="flex items-center gap-2 pl-2 border-l border-gray-200 animate-fade-in"><button onClick={() => setHighlightColor('yellow')} className={`w-3 h-3 rounded-full bg-yellow-300 ring-1 ring-gray-200 ${highlightColor === 'yellow' ? 'ring-offset-1 ring-black' : ''}`} /><button onClick={() => setHighlightColor('red')} className={`w-3 h-3 rounded-full bg-red-300 ring-1 ring-gray-200 ${highlightColor === 'red' ? 'ring-offset-1 ring-black' : ''}`} /><button onClick={() => setHighlightColor('green')} className={`w-3 h-3 rounded-full bg-green-300 ring-1 ring-gray-200 ${highlightColor === 'green' ? 'ring-offset-1 ring-black' : ''}`} /><button onClick={() => setHighlightColor('eraser')} className={`text-gray-400 hover:text-black ${highlightColor === 'eraser' ? 'text-black' : ''}`}><EraserIcon className="w-4 h-4" /></button></div>)}
-                                </div>
-                                <div className="w-px h-3 bg-gray-200"></div>
-                                <div className="relative">
-                                    <button onClick={() => setShowDictionary(!showDictionary)} className={`flex items-center gap-2 text-xs font-bold font-sans uppercase tracking-wider transition-colors ${showDictionary ? 'text-blue-600' : 'text-gray-400 hover:text-gray-600'}`}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg><span>사전</span></button>
-                                    {showDictionary && (
-                                        <div className="absolute top-full right-0 mt-4 w-80 bg-white border border-gray-200 shadow-xl p-5 rounded-lg z-50 animate-fade-in font-sans">
-                                            <div className="flex justify-between items-center mb-3"><h3 className="text-sm font-bold text-gray-900">AI 문맥 사전 <span className="font-normal text-xs text-gray-500">(AI Context Dictionary)</span></h3><button onClick={() => setShowDictionary(false)} className="text-gray-400 hover:text-gray-600"><svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg></button></div>
-                                            <form onSubmit={handleDictionarySearch} className="flex gap-2 mb-4"><input type="text" value={dictSearchTerm} onChange={(e) => setDictSearchTerm(e.target.value)} placeholder="단어를 입력하세요..." className="flex-1 bg-gray-50 border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500" /><button type="submit" className="bg-black text-white px-3 py-2 rounded text-sm font-bold hover:bg-gray-800">검색</button></form>
-                                            {isDictLoading ? (<div className="flex justify-center py-6"><div className="animate-spin rounded-full h-6 w-6 border-2 border-gray-200 border-t-blue-600"></div></div>) : dictResult ? (<div className="space-y-3 animate-fade-in"><div className="flex justify-between items-start"><h3 className="text-lg font-bold text-gray-900 font-serif">{dictResult.term}{showDictTranslation && <span className="text-sm font-medium text-gray-500 ml-2 font-sans animate-fade-in">({dictResult.termTranslation})</span>}</h3><TranslateBtn onClick={() => setShowDictTranslation(!showDictTranslation)} isShowing={showDictTranslation} /></div><div className="text-sm text-gray-800 leading-relaxed font-serif border-l-2 border-blue-500 pl-3">{dictResult.definition}</div>{showDictTranslation && (<div className="text-xs text-gray-500 italic animate-fade-in">{dictResult.definitionTranslation}</div>)}<div className="pt-3 mt-3 border-t border-gray-100 bg-gray-50 p-3 rounded"><p className="text-xs font-bold text-gray-500 mb-1 font-sans uppercase">Example</p><p className="text-sm text-gray-800 font-serif">{dictResult.example}</p></div></div>) : (<p className="text-xs text-gray-400 text-center py-4 leading-relaxed">본문의 내용을 바탕으로 단어를 설명해드립니다.<br />현재 Gemini 웹에서만 가능합니다. <a href="https://gemini.google.com/share/d2347dbc1c24" target="_blank" rel="noreferrer" className="underline hover:text-black inline-flex items-center gap-1">Gemini에서 열기 <ExternalLinkIcon className="w-3 h-3" /></a></p>)}
-                                        </div>
-                                    )}
-                                </div>
-                                <div className="w-px h-3 bg-gray-200"></div>
-                                <button onClick={() => setShowVocab(!showVocab)} className={`flex items-center gap-2 text-xs font-bold font-sans uppercase ${showVocab ? 'text-black' : 'text-gray-400 hover:text-gray-600'}`}><OpenBookSolidIcon className="w-4 h-4" /> <span>어휘 목록</span></button>
-                            </div>
-                        </div>
-                        <div className={`flex-1 overflow-y-auto px-6 py-12 md:px-12 ${isHighlightMode ? (highlightColor === 'eraser' ? 'cursor-eraser' : `highlight-${highlightColor}`) : ''} print:overflow-visible print:h-auto print:p-0`}>
-                            <div className="max-w-3xl mx-auto">
-                                <div className="mb-10 flex flex-col items-center text-center print:mb-4 print:text-left print:items-start">
-                                    <h1 className="text-2xl md:text-3xl lg:text-4xl font-serif font-bold text-gray-900 mb-4 leading-snug print:text-[18px] print:mb-1">{currentReading.title}</h1>
-                                    {currentReading.subtitle && <h2 className="text-xl font-serif text-gray-600 mb-6 print:text-[14px] print:mb-2">{currentReading.subtitle}</h2>}
-                                    <div className="flex items-center justify-center text-xs font-sans text-gray-400 print:text-[10px]">
-                                        <a href={currentReading.source} target="_blank" rel="noreferrer" className="hover:text-black flex items-center gap-1">원문 링크 <ExternalLinkIcon className="w-3 h-3" /></a>
-                                    </div>
-                                    <div className="w-[1px] h-6 bg-gray-200 mt-8 print:hidden"></div>
-                                </div>
-                                <div className="space-y-8 print:space-y-4">
-                                    {currentReading.content.map((paragraphData, idx) => {
-                                        // 그래프 노드일 때 직접 설문조사 컴포넌트 렌더링
-                                        if (paragraphData.isChart) {
-                                            return <SurveyChart key={idx} />;
-                                        }
+        // ---------- 8. READING ----------
+        function currentReading() { return READING_DATA.find(r => r.id === reading.activeId); }
+        function buildVocabRanges(text) {
+            const allTerms = VOCAB_READING_DATA.flatMap(v => { const terms = [v.term]; if (v.variants) terms.push(...v.variants); return terms.map(term => ({ term, vocab: v })); }).sort((a, b) => b.term.length - a.term.length);
+            const ranges = [];
+            allTerms.forEach(({ term, vocab }) => { let i = 0; while ((i = text.indexOf(term, i)) !== -1) { const end = i + term.length; const overlaps = ranges.some(m => (i >= m.start && i < m.end) || (end > m.start && end <= m.end)); if (!overlaps) ranges.push({ start: i, end, term, vocab }); i = end; } });
+            return ranges;
+        }
+        function renderTextSegments(text, blockIndex, isHeading) {
+            if (!text) return '';
+            const blockId = `${reading.activeId}-${blockIndex}`;
+            const blockHi = reading.highlights[blockId] || [];
+            const vocabRanges = buildVocabRanges(text);
+            const points = new Set([0, text.length]);
+            blockHi.forEach(h => { points.add(h.start); points.add(h.end); });
+            vocabRanges.forEach(v => { points.add(v.start); points.add(v.end); });
+            const sorted = Array.from(points).sort((a, b) => a - b);
+            let out = '';
+            for (let i = 0; i < sorted.length - 1; i++) {
+                const s = sorted[i], e = sorted[i + 1], mid = (s + e) / 2;
+                let hiColor = null;
+                for (let j = blockHi.length - 1; j >= 0; j--) { const h = blockHi[j]; if (h.start <= mid && h.end >= mid) { hiColor = h.color; break; } }
+                const av = vocabRanges.find(v => v.start <= mid && v.end >= mid);
+                let cls = 'transition-colors duration-200 decoration-clone ';
+                if (hiColor === 'yellow') cls += 'bg-yellow-200 '; else if (hiColor === 'red') cls += 'bg-red-200 '; else if (hiColor === 'green') cls += 'bg-green-200 ';
+                let attrs = '';
+                if (av) { cls += `cursor-pointer ${isHeading ? 'font-extrabold' : 'font-semibold'} text-gray-900 hover:text-black hover:bg-gray-100 rounded px-0.5 `; attrs = ` data-vocab-idx="${VOCAB_READING_DATA.indexOf(av.vocab)}"`; }
+                else if (!hiColor) cls += 'text-gray-800 ';
+                out += `<span class="${cls}"${attrs}>${esc(text.slice(s, e))}</span>`;
+            }
+            return out;
+        }
+        function readingBlocksHTML() {
+            const cr = currentReading();
+            return cr.content.map((p, idx) => {
+                if (p.isChart) return `<div class="my-8" data-chart="1"></div>`;
+                const pcls = p.isHeading ? 'text-xl md:text-2xl font-bold text-gray-900 mt-12 mb-5 border-l-4 border-black pl-3' : p.isSubHeading ? 'text-lg md:text-xl font-bold text-gray-800 mt-8 mb-4 border-l-2 border-gray-400 pl-3' : 'text-[17px] md:text-[18px] text-[#222]';
+                const segs = renderTextSegments(p.text, idx, p.isHeading || p.isSubHeading);
+                const transBlock = reading.trans[idx] ? `<div class="flex flex-col mt-3 print:hidden"><p class="text-sm font-sans text-gray-500 bg-gray-50 p-4 rounded-sm w-full animate-fade-in leading-relaxed text-left">${esc(p.trans)}</p></div>` : '';
+                return `<div class="relative mb-8 ${p.isBullet ? 'pl-5 md:pl-7' : ''}" data-block-index="${idx}">${p.isBullet ? '<span class="absolute left-0 md:left-2 top-0 text-[17px] md:text-[18px] text-[#222] font-serif select-none leading-[1.9]">•</span>' : ''}<p class="${pcls} leading-[1.9] font-serif tracking-wide text-justify">${segs}<button type="button" data-action="para-trans" data-idx="${idx}" class="ml-3 relative -top-0.5 inline-flex items-center gap-1 text-[8px] font-bold font-sans uppercase tracking-widest text-gray-500 opacity-40 hover:opacity-100 cursor-pointer bg-transparent border-none p-0">${svgIcon('externalLink', 'w-2.5 h-2.5')}${reading.trans[idx] ? 'Hide Eng' : 'Eng'}</button></p>${transBlock}</div>`;
+            }).join('');
+        }
+        function readingHeaderRightHTML() {
+            const colorBtns = reading.highlightMode ? `<div class="flex items-center gap-2 pl-2 border-l border-gray-200 animate-fade-in"><button type="button" data-hcolor="yellow" class="w-3 h-3 rounded-full bg-yellow-300 ring-1 ring-gray-200 ${reading.color === 'yellow' ? 'ring-offset-1 ring-black' : ''}"></button><button type="button" data-hcolor="red" class="w-3 h-3 rounded-full bg-red-300 ring-1 ring-gray-200 ${reading.color === 'red' ? 'ring-offset-1 ring-black' : ''}"></button><button type="button" data-hcolor="green" class="w-3 h-3 rounded-full bg-green-300 ring-1 ring-gray-200 ${reading.color === 'green' ? 'ring-offset-1 ring-black' : ''}"></button><button type="button" data-hcolor="eraser" class="text-gray-400 hover:text-black ${reading.color === 'eraser' ? 'text-black' : ''}">${svgIcon('eraser', 'w-4 h-4', { fill: 'currentColor' })}</button></div>` : '';
+            const hex = reading.highlightMode ? (reading.color === 'yellow' ? '#facc15' : reading.color === 'red' ? '#f87171' : reading.color === 'green' ? '#4ade80' : '#9ca3af') : 'currentColor';
+            const dictPanel = reading.showDict ? `<div class="absolute top-full right-0 mt-4 w-80 bg-white border border-gray-200 shadow-xl p-5 rounded-lg z-50 animate-fade-in font-sans"><div class="flex justify-between items-center mb-3"><h3 class="text-sm font-bold text-gray-900">AI 문맥 사전 <span class="font-normal text-xs text-gray-500">(AI Context Dictionary)</span></h3><button type="button" data-action="dict-close" class="text-gray-400 hover:text-gray-600">${svgIcon('close', 'w-4 h-4')}</button></div><form data-action="dict-search" class="flex gap-2 mb-4"><input type="text" id="dict-input" value="${esc(reading.dictTerm)}" placeholder="단어를 입력하세요..." class="flex-1 bg-gray-50 border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:border-blue-500" /><button type="submit" class="bg-black text-white px-3 py-2 rounded text-sm font-bold hover:bg-gray-800">검색</button></form>${reading.dictLoading ? '<div class="flex justify-center py-6"><div class="animate-spin rounded-full h-6 w-6 border-2 border-gray-200 border-t-blue-600"></div></div>' : reading.dictResult ? `<div class="space-y-3 animate-fade-in"><h3 class="text-lg font-bold text-gray-900 font-serif">${esc(reading.dictResult.term)}</h3><div class="text-sm text-gray-800 leading-relaxed font-serif border-l-2 border-blue-500 pl-3">${esc(reading.dictResult.definition)}</div>${reading.dictResult.example ? `<div class="pt-3 mt-3 border-t border-gray-100 bg-gray-50 p-3 rounded"><p class="text-xs font-bold text-gray-500 mb-1 font-sans uppercase">Example</p><p class="text-sm text-gray-800 font-serif">${esc(reading.dictResult.example)}</p></div>` : ''}</div>` : `<p class="text-xs text-gray-400 text-center py-4 leading-relaxed">본문의 내용을 바탕으로 단어를 설명해드립니다.<br/>현재 Gemini 웹에서만 가능합니다. <a href="https://gemini.google.com/share/d2347dbc1c24" target="_blank" rel="noreferrer" class="underline hover:text-black inline-flex items-center gap-1">Gemini에서 열기 ${svgIcon('externalLink', 'w-3 h-3')}</a></p>`}</div>` : '';
+            return `<div class="flex items-center gap-4"><div class="flex items-center gap-2"><button type="button" data-action="toggle-highlight" class="p-1 ${reading.highlightMode ? 'text-black' : 'text-gray-300 hover:text-gray-500'}">${svgIcon('highlighter', 'w-5 h-5', { style: `color:${hex}` })}</button>${colorBtns}</div><div class="w-px h-3 bg-gray-200"></div><div class="relative"><button type="button" data-action="toggle-dict" class="flex items-center gap-2 text-xs font-bold font-sans uppercase tracking-wider transition-colors ${reading.showDict ? 'text-blue-600' : 'text-gray-400 hover:text-gray-600'}">${svgIcon('search', 'w-4 h-4')}<span>사전</span></button>${dictPanel}</div><div class="w-px h-3 bg-gray-200"></div><button type="button" data-action="toggle-vocab" class="flex items-center gap-2 text-xs font-bold font-sans uppercase ${app.showVocab ? 'text-black' : 'text-gray-400 hover:text-gray-600'}">${svgIcon('openbook', 'w-4 h-4')} <span>어휘 목록</span></button></div>`;
+        }
+        function readingHTML() {
+            const cr = currentReading();
+            const readingTabs = READING_DATA.map(r => `<button type="button" data-reading="${r.id}" class="text-xs font-bold font-sans px-2 py-1 ${reading.activeId === r.id ? 'text-black underline underline-offset-4' : 'text-gray-400 hover:text-gray-600'}">읽기 자료 ${r.id}</button>`).join('');
+            const cursorCls = reading.highlightMode ? (reading.color === 'eraser' ? 'cursor-eraser' : `highlight-${reading.color}`) : '';
+            return `<div class="flex flex-col lg:flex-row h-full relative"><div class="flex-1 flex flex-col h-full bg-white transition-all duration-300"><div class="h-16 px-6 border-b border-gray-50 flex items-center justify-between bg-white sticky top-0 z-20 pr-12 print:hidden"><div class="flex items-center gap-4">${levelBadgeHTML(app.userLevel)}<div class="flex items-center gap-2 ml-4">${readingTabs}</div></div>${readingHeaderRightHTML()}</div><div id="reading-scroll" class="flex-1 overflow-y-auto px-6 py-12 md:px-12 ${cursorCls} print:overflow-visible print:h-auto print:p-0"><div class="max-w-3xl mx-auto"><div class="mb-10 flex flex-col items-center text-center"><h1 class="text-2xl md:text-3xl lg:text-4xl font-serif font-bold text-gray-900 mb-4 leading-snug">${cr.title}</h1>${cr.subtitle ? `<h2 class="text-xl font-serif text-gray-600 mb-6">${esc(cr.subtitle)}</h2>` : ''}<div class="flex items-center justify-center text-xs font-sans text-gray-400"><a href="${esc(cr.source)}" target="_blank" rel="noreferrer" class="hover:text-black flex items-center gap-1">원문 링크 ${svgIcon('externalLink', 'w-3 h-3')}</a></div><div class="w-[1px] h-6 bg-gray-200 mt-8"></div></div><div id="reading-blocks" class="space-y-8">${readingBlocksHTML()}</div><div class="h-24"></div></div></div></div><div class="w-80 flex-col border-l border-black bg-white shrink-0 animate-fade-in z-10 ${app.showVocab ? 'hidden lg:flex' : 'hidden'}"><div class="h-14 px-5 border-b border-gray-200 flex items-center bg-gray-50"><span class="text-xs font-bold font-sans text-black uppercase tracking-widest">핵심 어휘</span></div><div class="flex-1 overflow-y-auto px-5 py-2">${VOCAB_READING_DATA.map((w, i) => `<div class="mb-4 rounded-lg border p-4 bg-white border-gray-200 hover:bg-gray-50" data-sb-idx="${i}">${readingVocabContentHTML(w, false, 'sb-trans')}</div>`).join('')}</div></div></div>`;
+        }
+        function mountChart() {
+            const slot = qs('[data-chart="1"]', viewRoot()); if (!slot) return;
+            if (typeof window.Chart === 'undefined') { slot.innerHTML = '<div class="text-center text-xs text-gray-400 py-8 print:hidden">차트를 불러올 수 없습니다.</div>'; return; }
+            slot.innerHTML = `<div class="bg-white rounded-2xl border border-gray-200 p-6 md:p-8 w-full max-w-lg mx-auto my-8 font-sans shadow-sm"><div class="text-center mb-6"><span class="inline-block bg-black text-white text-[10px] font-bold px-3 py-1 rounded-full mb-3 uppercase tracking-widest">Today's PIZZA</span><h3 class="text-lg md:text-xl font-bold text-gray-900 mb-1 leading-snug">🍕 '교보문고 번호 따기', 어떻게 생각해? 📚📱</h3><p class="text-xs text-gray-500">전체 참여자 수 4,826명</p></div><div class="relative mb-6 flex justify-center h-64"><canvas id="survey-chart"></canvas></div><div class="grid grid-cols-2 gap-3 bg-gray-50 p-4 rounded-xl"><div class="flex items-center gap-2"><div class="w-3.5 h-3.5 rounded-full shrink-0" style="background-color:rgb(245,46,45)"></div><span class="text-xs font-medium text-gray-700 whitespace-nowrap">제한해야 해 (31.8%)</span></div><div class="flex items-center gap-2"><div class="w-3.5 h-3.5 rounded-full shrink-0" style="background-color:rgb(3,104,247)"></div><span class="text-xs font-medium text-gray-700 whitespace-nowrap">제한하는 건 지나쳐 (38.8%)</span></div><div class="flex items-center gap-2"><div class="w-3.5 h-3.5 rounded-full shrink-0" style="background-color:rgb(255,170,69)"></div><span class="text-xs font-medium text-gray-700 whitespace-nowrap">다른 해결책이 필요해 (18.9%)</span></div><div class="flex items-center gap-2"><div class="w-3.5 h-3.5 rounded-full shrink-0" style="background-color:rgb(29,173,100)"></div><span class="text-xs font-medium text-gray-700 whitespace-nowrap">잘 모르겠어 (10.5%)</span></div></div></div>`;
+            try {
+                const ctx = qs('#survey-chart', viewRoot()).getContext('2d');
+                new window.Chart(ctx, { type: 'pie', data: { labels: ['제한해야 해', '제한하는 건 지나쳐', '다른 해결책이 필요해', '잘 모르겠어'], datasets: [{ data: [1532, 1871, 913, 510], backgroundColor: ['rgb(245,46,45)', 'rgb(3,104,247)', 'rgb(255,170,69)', 'rgb(29,173,100)'], borderWidth: 2, borderColor: '#ffffff' }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { callbacks: { label: (c) => ` ${c.label || ''}: ${c.parsed}명` } } } } });
+            } catch (e) {}
+        }
+        function rerenderReadingBlocks() { const w = qs('#reading-blocks', viewRoot()); if (w) { w.innerHTML = readingBlocksHTML(); mountChart(); } }
 
-                                        return (
-                                            <div key={idx} className={`relative mb-8 print:mb-2 ${paragraphData.isBullet ? 'pl-5 md:pl-7' : ''}`} data-block-index={idx} onMouseUp={handleTextMouseUp}>
-                                                {paragraphData.isBullet && <span className="absolute left-0 md:left-2 top-0 text-[17px] md:text-[18px] text-[#222] font-serif select-none print:text-[12px] print:left-0 leading-[1.9]">•</span>}
-                                                
-                                                <p className={`${
-                                                    paragraphData.isHeading 
-                                                        ? 'text-xl md:text-2xl font-bold text-gray-900 mt-12 mb-5 border-l-4 border-black pl-3' 
-                                                        : paragraphData.isSubHeading 
-                                                            ? 'text-lg md:text-xl font-bold text-gray-800 mt-8 mb-4 border-l-2 border-gray-400 pl-3' 
-                                                            : 'text-[17px] md:text-[18px] text-[#222]'
-                                                } leading-[1.9] font-serif tracking-wide text-justify print:text-[12px] print:leading-relaxed`}>
-                                                    {renderTextWithVocabAndHighlights(paragraphData.text, idx, paragraphData.isHeading || paragraphData.isSubHeading)}
-                                                    <TranslateBtn onClick={() => toggleTranslation(idx)} isShowing={visibleTranslations[idx]} className="ml-3 relative -top-0.5 print:hidden inline-flex" />
-                                                </p>
-                                                <div className="flex flex-col mt-3 print:hidden">
-                                                    {visibleTranslations[idx] && (
-                                                        <p className="text-sm font-sans text-gray-500 bg-gray-50 p-4 rounded-sm w-full animate-fade-in leading-relaxed text-left print:text-[10px]">
-                                                            {paragraphData.trans}
-                                                        </p>
-                                                    )}
-                                                </div>
-                                            </div>
-                                        );
-                                    })}
-                                </div>
-                                <div className="h-24 print:hidden"></div>
-                            </div>
-                        </div>
-                    </div>
-                    {/* Reading Vocab Sidebar - Always print in 8:2 layout */}
-                    <div className={`w-80 flex-col border-l border-black bg-white shrink-0 animate-fade-in z-10 ${showVocab ? 'hidden lg:flex' : 'hidden'} print:flex print:w-[20%] print:flex-none print:h-auto print:overflow-visible print:border-l-0`}>
-                        <div className="h-14 px-5 border-b border-gray-200 flex items-center bg-gray-50 print:h-auto print:p-2 print:bg-transparent print:border-b-0">
-                            <span className="text-xs font-bold font-sans text-black uppercase tracking-widest print:text-[10px]">핵심 어휘</span>
-                        </div>
-                        <div className="flex-1 overflow-y-auto px-5 py-2 print:p-0 print:overflow-visible print:h-auto">
-                            {VOCAB_READING_DATA.map((word, idx) => (<SidebarVocabCard key={idx} word={word} activeVocabTerm={activeVocabTerm} sidebarVocabRefs={sidebarVocabRefs} />))}
-                        </div>
-                    </div>
-                </div>
-            );
-        };
+        // ---------- 9. VOCAB ----------
+        function vocabFiltered() {
+            const q = vocabState.query.toLowerCase().trim();
+            if (!q) return VOCAB_READING_DATA.map((w, i) => ({ w, i }));
+            return VOCAB_READING_DATA.map((w, i) => ({ w, i })).filter(({ w }) => {
+                const t = (w.translations && w.translations.en) || {};
+                return w.term.toLowerCase().includes(q) || w.mainDef.toLowerCase().includes(q) || (w.variants && w.variants.some(v => v.toLowerCase().includes(q))) || (t.term && t.term.toLowerCase().includes(q)) || (t.mainDef && t.mainDef.toLowerCase().includes(q));
+            });
+        }
+        function vocabGridHTML() {
+            const list = vocabFiltered();
+            if (list.length === 0) return '<div class="text-center py-20 text-gray-400 font-serif">검색 결과에 맞는 어휘가 없습니다.</div>';
+            return `<div class="grid grid-cols-1 md:grid-cols-2 gap-6">${list.map(({ w, i }) => vocabItemHTML(w, i, vocabState.itemTrans[i] != null ? vocabState.itemTrans[i] : vocabState.globalTrans)).join('')}</div>`;
+        }
+        function vocabHTML() {
+            return `<div class="max-w-4xl mx-auto w-full px-6 pt-40 pb-20 animate-fade-in"><div class="mb-16 flex flex-col items-center text-center"><h2 class="text-[32px] md:text-[36px] font-bold text-[#1a1a1a] leading-tight font-serif mb-3 tracking-tight">핵심 어휘</h2><p class="text-[16px] text-[#444444] font-serif leading-relaxed mt-2 max-w-2xl">학습 자료에 등장하는 주요 어휘를 쉬운 한국어로 학습해 보세요.</p><div class="w-[1px] h-6 bg-gray-200 mt-8"></div></div><div class="mb-8 flex flex-col sm:flex-row gap-4 justify-between items-center bg-gray-50 p-4 rounded-xl border border-gray-100"><div class="relative w-full sm:max-w-xs"><input type="text" id="vocab-search" value="${esc(vocabState.query)}" placeholder="단어, 뜻, 영어 검색..." class="w-full px-4 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-800 transition-all" />${vocabState.query ? '<button type="button" data-action="vocab-clear" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 text-xs font-bold">✕</button>' : ''}</div><div class="flex items-center gap-4 w-full sm:w-auto justify-end"><span class="text-xs text-gray-500 font-sans">검색 결과: <strong id="vocab-count">${vocabFiltered().length}</strong>개 / 전체 ${VOCAB_READING_DATA.length}개</span><button type="button" data-action="vocab-global" class="px-4 py-2 text-xs font-semibold rounded-lg border transition-all ${vocabState.globalTrans ? 'bg-gray-900 text-white border-gray-900 hover:bg-black' : 'bg-white text-gray-800 border-gray-300 hover:border-gray-500'}">${vocabState.globalTrans ? '영어 일괄 숨기기' : '영어 일괄 표시'}</button></div></div><div class="mb-16"><div class="flex items-center gap-3 mb-8"><h3 class="text-xl font-bold font-serif text-black">읽기 자료 어휘</h3><div class="h-px flex-1 bg-gray-200"></div><span class="text-xs font-sans text-gray-400 font-bold uppercase tracking-widest">Reading</span></div><div id="vocab-grid">${vocabGridHTML()}</div></div></div>`;
+        }
+        function refreshVocabGrid() { const g = qs('#vocab-grid', viewRoot()); if (g) g.innerHTML = vocabGridHTML(); const c = qs('#vocab-count', viewRoot()); if (c) c.textContent = vocabFiltered().length; }
 
-        const SectionHeader = ({ title, subtitle, description }) => (
-            <div className="mb-16 flex flex-col items-center text-center print:mb-4">
-                <h2 className="text-[32px] md:text-[36px] font-bold text-[#1a1a1a] leading-tight font-serif mb-3 tracking-tight print:text-[18px] print:mb-1">{title}</h2>
-                {subtitle && (<p className="text-[13px] text-[#888888] font-normal font-sans tracking-widest uppercase mb-2 print:text-[12px]">{subtitle}</p>)}
-                {description && (<p className="text-[16px] text-[#444444] font-serif leading-relaxed mt-2 max-w-2xl print:text-[12px]">{description}</p>)}
-                <div className="w-[1px] h-6 bg-gray-200 mt-8 print:hidden"></div>
-            </div>
-        );
+        // ---------- 10. QUIZ ----------
+        function quizScore() { const c = Object.values(quizState.attempts).filter(Boolean).length; return Math.round((c / QUIZ_LIST.length) * 100); }
+        function shuffleChoices() { const a = quizState.shuffled.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } quizState.shuffled = a; }
+        function quizSentenceHTML(quiz) {
+            const st = quizState.q[quiz.id] || (quizState.q[quiz.id] = { input: '', result: null, hint: false, trans: false });
+            const len = Math.max(st.input.length, quiz.answer ? quiz.answer.length : 0);
+            const w = Math.max(120, len * 25);
+            const inpCls = st.result === 'correct' ? 'border-green-500 text-green-700' : st.result === 'incorrect' ? 'border-red-500 text-red-700' : 'border-gray-300 text-black focus:border-black';
+            return `<div class="quiz-q mb-10 pb-10 border-b border-gray-200 last:border-0" data-qid="${quiz.id}"><div class="flex items-baseline gap-4 mb-4"><span class="text-xs font-bold font-sans text-black border border-black px-1.5 py-0.5">Q.${quiz.id}</span></div><div class="text-xl font-serif text-gray-900 leading-loose mb-6"><span>${esc(quiz.textParts[0])}</span><input type="text" class="quiz-input mx-2 px-2 py-0 border-b-2 font-bold text-center outline-none bg-transparent transition-colors font-serif ${inpCls}" style="width:${w}px" value="${esc(st.input)}" /><span>${esc(quiz.textParts[1])}</span></div><div class="flex flex-wrap gap-3 items-center print:hidden"><button type="button" data-q="check" class="px-4 py-2 bg-black text-white text-xs font-bold font-sans hover:bg-gray-800 transition-colors">정답 확인</button><button type="button" data-q="show" class="px-4 py-2 bg-white border border-gray-300 text-gray-600 text-xs font-bold font-sans hover:border-black hover:text-black transition-colors">정답 보기</button><button type="button" data-q="hint" class="text-xs font-bold font-sans text-gray-400 hover:text-gray-600 underline">힌트</button><button type="button" data-q="trans" class="inline-flex items-center gap-1 text-[8px] font-bold font-sans uppercase tracking-widest text-gray-500 opacity-40 hover:opacity-100 cursor-pointer bg-transparent border-none p-0">${svgIcon('externalLink', 'w-2.5 h-2.5')}${st.trans ? 'Hide Eng' : 'Eng'}</button></div>${st.trans ? `<p class="mt-4 text-sm font-sans text-gray-500 bg-gray-50 p-3">${esc(quiz.textParts_eng[0])}<span class="font-bold text-gray-700">${esc(quiz.answer_eng)}</span>${esc(quiz.textParts_eng[1])}</p>` : ''}${st.hint ? `<p class="mt-4 text-sm font-sans text-gray-500 italic">💡 Hint: ${esc(quiz.hint)}</p>` : ''}${st.result === 'correct' ? `<p class="mt-4 text-sm font-sans text-green-700 font-medium">✓ Correct. ${esc(quiz.explanation)}</p>` : ''}${st.result === 'incorrect' ? '<p class="mt-4 text-sm font-sans text-red-600 font-medium">✕ Try again.</p>' : ''}</div>`;
+        }
+        function quizChoicesHTML() { return quizState.shuffled.map(c => `<span class="text-xs font-serif text-gray-600 bg-white border border-gray-200 px-2 py-1 select-all">${esc(c)}</span>`).join(''); }
+        function quizHTML() {
+            return `<div class="max-w-4xl mx-auto w-full px-6 pt-40 pb-20 flex flex-col md:flex-row gap-12 animate-fade-in"><div class="w-full md:w-64 shrink-0"><div class="sticky top-24"><div class="md:sticky md:top-24"><h2 class="text-[32px] md:text-[36px] font-serif font-bold text-[#1a1a1a] mb-2">내용 확인 퀴즈</h2><p class="text-sm font-sans text-gray-500 mb-6">학습 자료에 대한 이해도를 확인해 보세요.</p><div class="border-t border-gray-200 pt-4 mb-8"><span class="text-xs font-bold font-sans text-black uppercase block mb-2">정답률</span><span class="text-4xl font-serif font-bold text-gray-900" id="quiz-score">${quizScore()}%</span></div><div class="bg-gray-50 p-4 border border-gray-100"><h4 class="text-xs font-bold font-sans text-gray-500 uppercase mb-3 border-b border-gray-200 pb-2">정답 목록</h4><div class="flex flex-wrap gap-2" id="quiz-choices">${quizChoicesHTML()}</div></div></div></div></div><div class="flex-1" id="quiz-list">${QUIZ_LIST.map(quizSentenceHTML).join('')}</div></div>`;
+        }
+        function refreshQuizSidebar() { const sc = qs('#quiz-score', viewRoot()); if (sc) sc.textContent = quizScore() + '%'; const ch = qs('#quiz-choices', viewRoot()); if (ch) ch.innerHTML = quizChoicesHTML(); }
+        function rerenderQuizQ(qid) { const el = qs(`.quiz-q[data-qid="${qid}"]`, viewRoot()); if (el) el.outerHTML = quizSentenceHTML(QUIZ_LIST.find(q => q.id === qid)); }
 
-        const VocabView = ({ updateProgress }) => {
-            const [searchQuery, setSearchQuery] = useState('');
-            const [globalShowTrans, setGlobalShowTrans] = useState(false);
+        // ---------- 11. DISCUSS ----------
+        function discussItemHTML(item) {
+            const st = discussState[item.id] || (discussState[item.id] = { text: '', showTrans: false, feedback: null, loading: false, fbTrans: false });
+            const vocab = item.vocab.map(v => `<div><p class="text-sm font-serif text-gray-700"><span class="font-bold text-black mr-2">${esc(v.term)}</span>${esc(v.def)}</p>${st.showTrans ? `<p class="text-[13px] font-sans text-gray-500 mt-1 animate-fade-in"><span class="font-bold mr-2">${esc(v.termEng)}</span>${esc(v.defEng)}</p>` : ''}</div>`).join('');
+            let fb = '';
+            if (st.feedback) {
+                const corr = (st.feedback.corrections || []).map(c => `<div class="border border-gray-100 p-5 bg-white"><div class="flex items-start gap-4 mb-3"><span class="shrink-0 text-[11px] font-bold px-2 py-0.5 bg-gray-100 text-gray-400 mt-0.5">수정 전</span><p class="text-[15px] font-serif text-gray-400 line-through leading-relaxed">${esc(c.original)}</p></div><div class="flex items-start gap-4 mb-5"><span class="shrink-0 text-[11px] font-bold px-2 py-0.5 bg-blue-50 text-blue-600 mt-0.5">수정 후</span><p class="text-[15px] font-serif text-gray-900 font-bold leading-relaxed">${esc(c.corrected)}</p></div><div class="pt-4 border-t border-gray-100 border-dashed"><span class="font-bold text-gray-400 text-[11px] mr-2 font-sans">💡 설명</span><span class="text-[14px] font-serif text-gray-700 leading-relaxed">${esc(c.explanation)}</span>${st.fbTrans ? `<p class="text-[13px] font-sans text-gray-500 mt-2 ml-6 animate-fade-in">${esc(c.explanationTrans)}</p>` : ''}</div></div>`).join('');
+                fb = `<div class="mt-8 border border-gray-100 rounded-sm p-6 bg-white animate-fade-in shadow-sm"><h4 class="text-lg font-bold font-serif flex items-center gap-2 mb-6 text-gray-900">${svgIcon('sparkles', 'w-5 h-5 text-gray-700', { fill: 'currentColor' })} AI 한국어 도우미</h4><div class="bg-gray-50 px-5 py-4 mb-8 border-l-[3px] border-gray-800"><span class="text-xs font-bold text-gray-500 mb-2 block font-sans">총평 및 잘한 점</span><p class="text-[15px] font-serif text-gray-800 leading-relaxed">${esc(st.feedback.overallComment)}</p>${st.fbTrans && st.feedback.overallCommentTrans ? `<p class="text-[13px] font-sans text-gray-500 mt-2 pt-2 border-t border-gray-200 animate-fade-in">${esc(st.feedback.overallCommentTrans)}</p>` : ''}</div>${corr ? `<h5 class="text-xs font-bold text-gray-500 mb-4 font-sans">문장별 교정 및 설명</h5><div class="space-y-6">${corr}</div>` : ''}<div class="flex justify-end mt-4">${transBtn('discuss-fbtrans', st.fbTrans)}</div></div>`;
+            }
+            const disabled = (!st.text.trim() || st.loading);
+            return `<div class="discuss-q mb-16 group" data-did="${item.id}"><div class="flex items-center gap-4 mb-6"><span class="text-4xl font-serif font-bold text-gray-200 transition-colors duration-300 group-hover:text-gray-900">${String(item.id).padStart(2, '0')}</span><h3 class="text-xl font-serif font-bold text-gray-900 leading-normal">${esc(item.questionKor)}</h3></div><div class="pl-0 md:pl-14"><div class="flex gap-2 mb-4">${transBtn('discuss-qtrans', st.showTrans)}${st.showTrans ? `<p class="text-sm font-sans text-gray-500 animate-fade-in">${esc(item.questionEng)}</p>` : ''}</div><div class="bg-gray-50 p-5 mb-6 border-l-2 border-black"><span class="text-xs font-bold font-sans text-gray-400 uppercase mb-3 block">핵심 어휘${st.showTrans ? ' <span class="font-normal normal-case ml-1">(Key Vocabulary)</span>' : ''}</span><div class="space-y-4">${vocab}</div></div><textarea data-action="discuss-text" placeholder="여기에 생각을 적어보세요..." class="w-full p-4 border border-gray-300 font-serif text-base text-gray-900 focus:border-black focus:ring-0 outline-none min-h-[150px] bg-white resize-y mb-3 transition-colors placeholder:text-gray-300">${esc(st.text)}</textarea><div class="flex justify-end"><button type="button" data-action="discuss-feedback" ${disabled ? 'disabled' : ''} class="px-6 py-2 text-xs font-bold font-sans uppercase tracking-widest border transition-colors flex items-center gap-2 ${disabled ? 'border-gray-200 text-gray-300 cursor-not-allowed' : 'border-black bg-black text-white hover:bg-white hover:text-black'}">${st.loading ? '<div class="w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin"></div>' : ''}AI 피드백 받기</button></div>${fb}</div></div>`;
+        }
+        function discussHTML() {
+            return `<div class="max-w-3xl mx-auto w-full px-6 pt-40 pb-20 animate-fade-in"><div class="mb-6 pb-6 text-center"><h2 class="text-[32px] md:text-[36px] font-serif font-bold text-[#1a1a1a] mb-2">생각해 보기</h2><p class="text-sm font-sans text-gray-500">학습 자료에 대해 심층적으로 생각해 보세요.</p></div><div class="bg-gray-50 border border-gray-200 p-4 mb-10 flex items-start gap-3"><div class="shrink-0 mt-0.5">${svgIcon('sparkles', 'w-4 h-4 text-gray-400', { fill: 'currentColor' })}</div><p class="text-xs font-sans text-gray-600 leading-relaxed">AI 피드백은 현재 Gemini 웹에서만 가능합니다. <a href="https://gemini.google.com/share/d2347dbc1c24" target="_blank" rel="noreferrer" class="underline decoration-gray-400 underline-offset-2 hover:text-black inline-flex items-center gap-1">Gemini에서 열기 ${svgIcon('externalLink', 'w-3 h-3')}</a></p></div><div id="discuss-list">${DISCUSS_DATA.map(discussItemHTML).join('')}</div></div>`;
+        }
+        function rerenderDiscussItem(id) { const el = qs(`.discuss-q[data-did="${id}"]`, viewRoot()); if (el) el.outerHTML = discussItemHTML(DISCUSS_DATA.find(d => d.id === id)); }
 
-            useEffect(() => { updateProgress('vocab'); }, []);
+        // ---------- 12. 이벤트 위임 (안정적 #app 에 1회만) ----------
+        appEl.addEventListener('click', (e) => {
+            const tabBtn = e.target.closest('[data-tab]'); if (tabBtn) { setTab(tabBtn.dataset.tab); return; }
+            const hdr = e.target.closest('[data-action="toggle-header"]'); if (hdr) { app.headerExpanded = !app.headerExpanded; buildApp(); return; }
+            const a = e.target.closest('[data-action]');
+            const tab = app.activeTab;
 
-            // 실시간 검색어 필터링 구현
-            const filteredData = useMemo(() => {
-                if (!searchQuery.trim()) return VOCAB_READING_DATA;
-                const query = searchQuery.toLowerCase().trim();
-                return VOCAB_READING_DATA.filter(word => {
-                    const matchTerm = word.term.toLowerCase().includes(query);
-                    const matchDef = word.mainDef.toLowerCase().includes(query);
-                    const matchVariants = word.variants?.some(v => v.toLowerCase().includes(query));
-                    const matchEng = word.translations?.en?.term?.toLowerCase().includes(query) ||
-                        word.translations?.en?.mainDef?.toLowerCase().includes(query);
-                    return matchTerm || matchDef || matchVariants || matchEng;
-                });
-            }, [searchQuery]);
-
-            return (
-                <div className="max-w-4xl mx-auto w-full px-6 pt-40 pb-20 animate-fade-in print:pt-0 print:pb-0">
-                    <SectionHeader title="핵심 어휘" description={`학습 자료에 등장하는 주요 어휘를 쉬운 한국어로 학습해 보세요.`} />
-
-                    {/* 제어 컨트롤 영역 (검색 & 전체 번역 토글) */}
-                    <div className="mb-8 flex flex-col sm:flex-row gap-4 justify-between items-center print:hidden bg-gray-50 p-4 rounded-xl border border-gray-100">
-                        {/* 실시간 검색 인풋 */}
-                        <div className="relative w-full sm:max-w-xs">
-                            <input
-                                type="text"
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                                placeholder="단어, 뜻, 영어 검색..."
-                                className="w-full px-4 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-800 transition-all"
-                            />
-                            {searchQuery && (
-                                <button
-                                    onClick={() => setSearchQuery('')}
-                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 text-xs font-bold"
-                                >
-                                    ✕
-                                </button>
-                            )}
-                        </div>
-
-                        <div className="flex items-center gap-4 w-full sm:w-auto justify-end">
-                            <span className="text-xs text-gray-500 font-sans">
-                                검색 결과: <strong>{filteredData.length}</strong>개 / 전체 {VOCAB_READING_DATA.length}개
-                            </span>
-                            <button
-                                onClick={() => setGlobalShowTrans(!globalShowTrans)}
-                                className={`px-4 py-2 text-xs font-semibold rounded-lg border transition-all ${globalShowTrans
-                                        ? 'bg-gray-900 text-white border-gray-900 hover:bg-black'
-                                        : 'bg-white text-gray-800 border-gray-300 hover:border-gray-500'
-                                    }`}
-                            >
-                                {globalShowTrans ? '영어 일괄 숨기기' : '영어 일괄 표시'}
-                            </button>
-                        </div>
-                    </div>
-
-                    <div className="mb-16 print:mb-6">
-                        <div className="flex items-center gap-3 mb-8 print:mb-2">
-                            <h3 className="text-xl font-bold font-serif text-black print:text-[14px]">읽기 자료 어휘</h3>
-                            <div className="h-px flex-1 bg-gray-200"></div>
-                            <span className="text-xs font-sans text-gray-400 font-bold uppercase tracking-widest print:text-[10px]">Reading</span>
-                        </div>
-                        {filteredData.length === 0 ? (
-                            <div className="text-center py-20 text-gray-400 font-serif">
-                                검색 결과에 맞는 어휘가 없습니다.
-                            </div>
-                        ) : (
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 print:grid-cols-2 print:gap-2">
-                                {filteredData.map((word, idx) => (
-                                    <VocobItemWrapper key={idx} word={word} globalShowTrans={globalShowTrans} />
-                                ))}
-                            </div>
-                        )}
-                    </div>
-                </div>
-            );
-        };
-
-        const VocobItemWrapper = ({ word, globalShowTrans }) => {
-            return <VocabItem word={word} globalShowTrans={globalShowTrans} />;
-        };
-
-        const QuizViewComponent = ({ updateProgress }) => {
-            const [attempts, setAttempts] = useState({}); const [shuffledChoices, setShuffledChoices] = useState(ANSWER_CHOICES); const totalQuestions = QUIZ_LIST.length; const correctCount = Object.values(attempts).filter(v => v).length; const currentScore = Math.round((correctCount / totalQuestions) * 100);
-            useEffect(() => { const totalAttempts = Object.keys(attempts).length; if (totalAttempts === 0) return; updateProgress('quiz', currentScore); }, [attempts, currentScore, updateProgress]);
-            const handleAttempt = (quizId, isCorrect) => { setAttempts(prev => { if (prev.hasOwnProperty(quizId)) return prev; const newAttempts = { ...prev, [quizId]: isCorrect }; return newAttempts; }); };
-            const shuffleChoices = useCallback(() => { setShuffledChoices(prev => { const newArray = [...prev]; for (let i = newArray.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1));[newArray[i], newArray[j]] = [newArray[j], newArray[i]]; } return newArray; }); }, []);
-            return (
-                <div className="max-w-4xl mx-auto w-full px-6 pt-40 pb-20 flex flex-col md:flex-row gap-12 animate-fade-in print:pt-0 print:pb-0 print:flex-col print:gap-4">
-                    <div className="w-full md:w-64 shrink-0 print:w-full">
-                        <div className="sticky top-24 print:static">
-                            <div className="md:sticky md:top-24 print:static">
-                                <h2 className="text-[32px] md:text-[36px] font-serif font-bold text-[#1a1a1a] mb-2 print:text-[18px] print:mb-1">내용 확인 퀴즈</h2><p className="text-sm font-sans text-gray-500 mb-6 print:text-[12px] print:mb-2">학습 자료에 대한 이해도를 확인해 보세요.</p><div className="border-t border-gray-200 pt-4 mb-8 print:hidden"><span className="text-xs font-bold font-sans text-black uppercase block mb-2">정답률</span><span className="text-4xl font-serif font-bold text-gray-900">{currentScore}%</span></div><div className="bg-gray-50 p-4 border border-gray-100 print:p-0 print:bg-transparent print:border-0"><h4 className="text-xs font-bold font-sans text-gray-500 uppercase mb-3 border-b border-gray-200 pb-2 print:text-[12px] print:mb-1 print:border-0">정답 목록</h4><div className="flex flex-wrap gap-2">{shuffledChoices.map((choice, idx) => (<span key={idx} className="text-xs font-serif text-gray-600 bg-white border border-gray-200 px-2 py-1 select-all print:text-[10px] print:border-0 print:p-0 print:mr-2">{choice}</span>))}</div></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="flex-1">{QUIZ_LIST.map((quiz) => (<QuizSentence key={quiz.id} quiz={quiz} onAttempt={handleAttempt} onShuffle={shuffleChoices} />))}</div>
-                </div>
-            );
-        };
-
-        const DiscussView = ({ updateProgress }) => (
-            <div className="max-w-3xl mx-auto w-full px-6 pt-40 pb-20 animate-fade-in print:pt-0 print:pb-0">
-                <div className="mb-6 pb-6 text-center print:mb-4 print:pb-0 print:text-left">
-                    <h2 className="text-[32px] md:text-[36px] font-serif font-bold text-[#1a1a1a] mb-2 print:text-[18px] print:mb-1">생각해 보기</h2><p className="text-sm font-sans text-gray-500 print:text-[12px]">학습 자료에 대해 심층적으로 생각해 보세요.</p>
-                </div>
-                <div className="bg-gray-50 border border-gray-200 p-4 mb-10 flex items-start gap-3 print:hidden"><div className="shrink-0 mt-0.5"><SparklesIcon className="w-4 h-4 text-gray-400" /></div><p className="text-xs font-sans text-gray-600 leading-relaxed">AI 피드백은 현재 Gemini 웹에서만 가능합니다. <a href="https://gemini.google.com/share/d2347dbc1c24" target="_blank" rel="noreferrer" className="underline decoration-gray-400 underline-offset-2 hover:text-black inline-flex items-center gap-1">Gemini에서 열기 <ExternalLinkIcon className="w-3 h-3" /></a></p></div>
-                {DISCUSS_DATA.map((item) => (<DiscussQuestionItem key={item.id} item={item} />))}
-            </div>
-        );
-
-        const App = () => {
-            const [activeTab, setActiveTab] = useState('home');
-            const [userLevel] = useState("C1");
-            const [showVocab, setShowVocab] = useState(false);
-            const [progress, setProgress] = useState({ learn: false, vocab: false, quiz: 0, discuss: false });
-            const [isHeaderExpanded, setIsHeaderExpanded] = useState(true);
-
-            useEffect(() => {
-                if (activeTab === 'reading') setIsHeaderExpanded(false);
-                else setIsHeaderExpanded(true);
-            }, [activeTab]);
-
-            const updateProgress = useCallback((key, value = true) => { setProgress(prev => { if (prev[key] === value) return prev; return { ...prev, [key]: value }; }); }, []);
-
-            const renderContent = () => {
-                switch (activeTab) {
-                    case 'home': return <HomeView setActiveTab={setActiveTab} userLevel={userLevel} />;
-                    case 'reading': return <ReadingView updateProgress={updateProgress} showVocab={showVocab} setShowVocab={setShowVocab} userLevel={userLevel} />;
-                    case 'vocab': return <VocabView updateProgress={updateProgress} />;
-                    case 'quiz': return <QuizViewComponent updateProgress={updateProgress} />;
-                    case 'discuss': return <DiscussView updateProgress={updateProgress} />;
-                    default: return <HomeView setActiveTab={setActiveTab} userLevel={userLevel} />;
+            if (tab === 'reading') {
+                const vspan = e.target.closest('[data-vocab-idx]');
+                if (vspan) { e.stopPropagation(); const w = VOCAB_READING_DATA[+vspan.dataset.vocabIdx]; const r = vspan.getBoundingClientRect(); if (popupEl && popupEl.dataset.fixed && popupEl.dataset.term === w.term) { closeVocabPopup(); } else { showVocabPopup(w, r.left + r.width / 2, r.bottom, true); } return; }
+                const hc = e.target.closest('[data-hcolor]'); if (hc) { reading.color = hc.dataset.hcolor; paint(); return; }
+                const rd = e.target.closest('[data-reading]'); if (rd) { reading.activeId = +rd.dataset.reading; paint(); return; }
+                const sb = e.target.closest('[data-sb-idx]'); const sbBtn = e.target.closest('[data-action="sb-trans"]');
+                if (sb && sbBtn) { const i = +sb.dataset.sbIdx; const showing = sb.dataset.trans === '1'; sb.dataset.trans = showing ? '' : '1'; sb.innerHTML = readingVocabContentHTML(VOCAB_READING_DATA[i], !showing, 'sb-trans'); return; }
+                if (a) {
+                    const act = a.dataset.action;
+                    if (act === 'toggle-highlight') { reading.highlightMode = !reading.highlightMode; paint(); }
+                    else if (act === 'toggle-dict') { reading.showDict = !reading.showDict; paint(); }
+                    else if (act === 'dict-close') { reading.showDict = false; paint(); }
+                    else if (act === 'toggle-vocab') { app.showVocab = !app.showVocab; paint(); }
+                    else if (act === 'para-trans') { const i = +a.dataset.idx; reading.trans[i] = !reading.trans[i]; rerenderReadingBlocks(); }
+                    return;
                 }
-            };
+            } else if (tab === 'vocab') {
+                if (!a) return;
+                if (a.dataset.action === 'vocab-clear') { vocabState.query = ''; paint(); }
+                else if (a.dataset.action === 'vocab-global') { vocabState.globalTrans = !vocabState.globalTrans; vocabState.itemTrans = {}; paint(); }
+                else if (a.dataset.action === 'vocab-toggle') { const card = a.closest('[data-vidx]'); const i = +card.dataset.vidx; const cur = vocabState.itemTrans[i] != null ? vocabState.itemTrans[i] : vocabState.globalTrans; vocabState.itemTrans[i] = !cur; card.outerHTML = vocabItemHTML(VOCAB_READING_DATA[i], i, !cur); }
+                return;
+            } else if (tab === 'quiz') {
+                const btn = e.target.closest('[data-q]'); if (!btn) return;
+                const qEl = btn.closest('.quiz-q'); const qid = +qEl.dataset.qid; const quiz = QUIZ_LIST.find(q => q.id === qid); const st = quizState.q[qid];
+                const inp = qs('.quiz-input', qEl); if (inp) st.input = inp.value;
+                if (btn.dataset.q === 'check') { const t = st.input.trim(); const ok = t === quiz.answer || (quiz.altAnswer && t === quiz.altAnswer); st.result = ok ? 'correct' : 'incorrect'; st.hint = false; if (!quizState.attempts.hasOwnProperty(qid)) quizState.attempts[qid] = ok; shuffleChoices(); rerenderQuizQ(qid); refreshQuizSidebar(); }
+                else if (btn.dataset.q === 'show') { st.input = quiz.answer; st.result = null; st.hint = false; shuffleChoices(); rerenderQuizQ(qid); refreshQuizSidebar(); }
+                else if (btn.dataset.q === 'hint') { st.hint = !st.hint; rerenderQuizQ(qid); }
+                else if (btn.dataset.q === 'trans') { st.trans = !st.trans; rerenderQuizQ(qid); }
+                return;
+            } else if (tab === 'discuss') {
+                if (!a) return;
+                const qEl = a.closest('.discuss-q'); const id = +qEl.dataset.did; const st = discussState[id];
+                if (a.dataset.action === 'discuss-qtrans') { st.showTrans = !st.showTrans; rerenderDiscussItem(id); }
+                else if (a.dataset.action === 'discuss-fbtrans') { st.fbTrans = !st.fbTrans; rerenderDiscussItem(id); }
+                else if (a.dataset.action === 'discuss-feedback') { runDiscussFeedback(id); }
+                return;
+            }
+        });
 
-            const isFullscreenTab = activeTab === 'reading';
+        appEl.addEventListener('input', (e) => {
+            const tab = app.activeTab;
+            if (tab === 'vocab' && e.target.id === 'vocab-search') { vocabState.query = e.target.value; vocabState.itemTrans = {}; refreshVocabGrid(); }
+            else if (tab === 'quiz' && e.target.classList.contains('quiz-input')) { const qid = +e.target.closest('.quiz-q').dataset.qid; const st = quizState.q[qid]; st.input = e.target.value; st.result = null; }
+            else if (tab === 'discuss' && e.target.matches('[data-action="discuss-text"]')) {
+                const id = +e.target.closest('.discuss-q').dataset.did; const st = discussState[id];
+                const wasDisabled = !st.text.trim(); st.text = e.target.value;
+                if (wasDisabled !== !st.text.trim()) { const pos = e.target.selectionStart; rerenderDiscussItem(id); const ta = qs(`.discuss-q[data-did="${id}"] [data-action="discuss-text"]`, viewRoot()); if (ta) { ta.focus(); try { ta.setSelectionRange(pos, pos); } catch (_) {} } }
+            }
+        });
 
-            return (
-                <div className={`flex flex-col bg-white text-gray-900 selection:bg-gray-200 selection:text-black font-sans ${isFullscreenTab ? 'h-screen overflow-hidden print:h-auto print:overflow-visible' : 'min-h-screen'}`}>
-                    <Header activeTab={activeTab} setActiveTab={setActiveTab} isExpanded={isHeaderExpanded} setIsExpanded={setIsHeaderExpanded} />
-                    <div className="lg:hidden h-14 border-b border-gray-100 flex items-center justify-center sticky top-0 bg-white z-40 print:hidden"><span className="text-lg font-bold font-sans tracking-tighter">OpenKoreanLearningLab</span></div>
-                    <main className={`flex-1 relative flex flex-col ${isFullscreenTab ? 'overflow-x-hidden lg:overflow-hidden lg:h-full print:h-auto print:overflow-visible' : ''}`}>{renderContent()}</main>
-                    <nav className="lg:hidden fixed bottom-0 w-full bg-white border-t border-gray-100 flex justify-around p-3 z-50 print:hidden">{NAV_ITEMS.map((item) => (<button key={item.id} onClick={() => setActiveTab(item.id)} className={`p-2 ${activeTab === item.id ? 'text-black' : 'text-gray-300'}`}><item.icon className="w-6 h-6" /></button>))}</nav>
-                </div>
-            );
-        };
-        const root = ReactDOM.createRoot(document.getElementById('root')); root.render(<App />);
+        appEl.addEventListener('submit', async (e) => {
+            const form = e.target.closest('[data-action="dict-search"]'); if (!form) return;
+            e.preventDefault();
+            const inp = qs('#dict-input', viewRoot()); reading.dictTerm = inp ? inp.value : '';
+            if (!reading.dictTerm.trim()) return;
+            reading.dictLoading = true; reading.dictResult = null; paint();
+            try { reading.dictResult = await getAIDictionaryData(reading.dictTerm, currentReading().content); }
+            catch (err) { reading.dictResult = { term: reading.dictTerm, definition: '검색 중 오류가 발생했습니다. (API 키 없음/요청 오류)', example: '' }; }
+            finally { reading.dictLoading = false; paint(); }
+        });
+
+        // reading: 어휘 호버 팝업 (bubbling 가능한 mouseover/mouseout)
+        appEl.addEventListener('mouseover', (e) => {
+            if (app.activeTab !== 'reading') return;
+            const span = e.target.closest && e.target.closest('[data-vocab-idx]'); if (!span) return;
+            if (popupEl && popupEl.dataset.fixed) return;
+            const w = VOCAB_READING_DATA[+span.dataset.vocabIdx]; const r = span.getBoundingClientRect();
+            showVocabPopup(w, r.left + r.width / 2, r.bottom, false);
+        });
+        appEl.addEventListener('mouseout', (e) => {
+            if (app.activeTab !== 'reading') return;
+            const span = e.target.closest && e.target.closest('[data-vocab-idx]'); if (!span) return;
+            if (popupEl && popupEl.dataset.fixed) return;
+            if (e.relatedTarget && span.contains(e.relatedTarget)) return;
+            closeVocabPopup();
+        });
+        // reading: 형광펜 선택
+        appEl.addEventListener('mouseup', () => { if (app.activeTab === 'reading') handleTextMouseUp(); });
+
+        function handleTextMouseUp() {
+            if (!reading.highlightMode) return;
+            const sel = window.getSelection(); if (!sel || sel.isCollapsed) return;
+            let container = sel.anchorNode && sel.anchorNode.parentElement;
+            while (container && !(container.dataset && container.dataset.blockIndex)) container = container.parentElement;
+            if (!container) return;
+            const blockId = `${reading.activeId}-${container.dataset.blockIndex}`;
+            const range = sel.getRangeAt(0);
+            const start = getContainerOffset(container, range.startContainer, range.startOffset);
+            const end = getContainerOffset(container, range.endContainer, range.endOffset);
+            const s = Math.min(start, end), e2 = Math.max(start, end); if (s === e2) return;
+            const cur = reading.highlights[blockId] || [];
+            if (reading.color === 'eraser') {
+                const next = [];
+                for (const h of cur) { const os = Math.max(h.start, s), oe = Math.min(h.end, e2); if (os < oe) { if (h.start < os) next.push({ start: h.start, end: os, color: h.color }); if (h.end > oe) next.push({ start: oe, end: h.end, color: h.color }); } else next.push(h); }
+                reading.highlights[blockId] = next;
+            } else { reading.highlights[blockId] = [...cur, { start: s, end: e2, color: reading.color }]; }
+            sel.removeAllRanges();
+            rerenderReadingBlocks();
+        }
+
+        async function runDiscussFeedback(id) {
+            const st = discussState[id]; if (!st.text.trim() || st.loading) return;
+            st.loading = true; st.feedback = null; rerenderDiscussItem(id);
+            try {
+                const prompt = `당신은 친절한 'AI 한국어 도우미'입니다. 학습자의 한국어 문장을 교정하고 설명하세요. 반드시 JSON으로만 응답하세요. 형식: {"overallComment":"","overallCommentTrans":"","corrections":[{"original":"","corrected":"","explanation":"","explanationTrans":""}]}`;
+                const payload = { contents: [{ role: 'user', parts: [{ text: prompt + `\n\n질문: ${DISCUSS_DATA.find(d => d.id === id).questionKor}\n학습자 작성 문장: ${st.text}` }] }], generationConfig: { responseMimeType: 'application/json' } };
+                const result = await callGeminiWithBackoff(payload);
+                let jt = result.candidates[0].content.parts[0].text; jt = jt.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+                st.feedback = JSON.parse(jt);
+            } catch (err) { st.feedback = { overallComment: '피드백을 받아오는 중 오류가 발생했습니다. (API 키가 없거나 요청 형식 오류)', overallCommentTrans: err.message, corrections: [] }; }
+            finally { st.loading = false; rerenderDiscussItem(id); }
+        }
+
+        // ---------- 13. 시작 ----------
+        buildApp();
+    })();
     </script>
 </body>
 
